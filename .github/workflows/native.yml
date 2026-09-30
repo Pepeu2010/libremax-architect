@@ -1,0 +1,30 @@
+name: Native Linux verification
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  build-test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Distribution dependencies
+        run: bash scripts/bootstrap.sh
+      - name: Build
+        run: bash scripts/build.sh
+      - name: Core geometry persistence library import
+        run: bash scripts/test.sh
+      - name: Format
+        run: find apps libs tests -type f \( -name '*.cpp' -o -name '*.h' \) -print0 | xargs -0 clang-format --dry-run --Werror
+      - name: Native UI with Mesa / Xvfb
+        run: |
+          sudo apt-get install -y xvfb libgl1-mesa-dri
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build/libremax-architect --ui-smoke build/evidence
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build/libremax-architect --recovery-smoke
+      - name: Debian package
+        run: cpack --config build/CPackConfig.cmake -G DEB -B dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-evidence-and-deb
+          path: |
+            build/evidence
+            dist/*.deb

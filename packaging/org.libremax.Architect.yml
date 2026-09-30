@@ -1,0 +1,19 @@
+app-id: org.libremax.Architect
+runtime: org.kde.Platform
+runtime-version: '6.10'
+sdk: org.kde.Sdk
+command: libremax-architect
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --device=dri
+  - --filesystem=home
+modules:
+  # Not advertised as buildable until pinned dependency modules are provided.
+  - name: libremax-architect
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DBUILD_TESTING=OFF
+    sources:
+      - type: dir
+        path: ..

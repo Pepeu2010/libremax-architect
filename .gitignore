@@ -1,0 +1,7 @@
+/build*/
+/dist/
+/.local-tools/
+*.user
+*.autosave.lmx
+__pycache__/
+*.log

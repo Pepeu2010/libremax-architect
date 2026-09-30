@@ -1,0 +1,572 @@
+[
+  {
+    "id": "base-1",
+    "name": "Balcão 1 porta",
+    "category": "Cozinha",
+    "width": 600,
+    "height": 720,
+    "depth": 550,
+    "tags": "Cozinha cabinet 600 720 550",
+    "recipe": {
+      "type": "FurnitureModule",
+      "material": "white",
+      "parameters": {
+        "family": "cabinet",
+        "doors": 1,
+        "legs": 100,
+        "carcass": "oak",
+        "handle": "bar",
+        "glass": false
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "base-2",
+    "name": "Balcão 2 portas",
+    "category": "Cozinha",
+    "width": 800,
+    "height": 720,
+    "depth": 550,
+    "tags": "Cozinha cabinet 800 720 550",
+    "recipe": {
+      "type": "FurnitureModule",
+      "material": "white",
+      "parameters": {
+        "family": "cabinet",
+        "doors": 2,
+        "legs": 100,
+        "carcass": "oak",
+        "handle": "bar",
+        "glass": false
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "base-3",
+    "name": "Balcão 3 portas",
+    "category": "Cozinha",
+    "width": 1200,
+    "height": 720,
+    "depth": 550,
+    "tags": "Cozinha cabinet 1200 720 550",
+    "recipe": {
+      "type": "FurnitureModule",
+      "material": "white",
+      "parameters": {
+        "family": "cabinet",
+        "doors": 3,
+        "legs": 100,
+        "carcass": "oak",
+        "handle": "bar",
+        "glass": false
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "drawer",
+    "name": "Gaveteiro",
+    "category": "Cozinha",
+    "width": 600,
+    "height": 720,
+    "depth": 550,
+    "tags": "Cozinha drawer 600 720 550",
+    "recipe": {
+      "type": "FurnitureModule",
+      "material": "white",
+      "parameters": {
+        "family": "drawer",
+        "doors": 1,
+        "legs": 100,
+        "carcass": "oak",
+        "handle": "bar",
+        "glass": false
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "upper-1",
+    "name": "Aéreo 1 porta",
+    "category": "Cozinha",
+    "width": 600,
+    "height": 700,
+    "depth": 320,
+    "tags": "Cozinha cabinet 600 700 320",
+    "recipe": {
+      "type": "FurnitureModule",
+      "material": "white",
+      "parameters": {
+        "family": "cabinet",
+        "doors": 1,
+        "legs": 0,
+        "carcass": "oak",
+        "handle": "bar",
+        "glass": false
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "upper-2",
+    "name": "Aéreo 2 portas",
+    "category": "Cozinha",
+    "width": 800,
+    "height": 700,
+    "depth": 320,
+    "tags": "Cozinha cabinet 800 700 320",
+    "recipe": {
+      "type": "FurnitureModule",
+      "material": "white",
+      "parameters": {
+        "family": "cabinet",
+        "doors": 2,
+        "legs": 0,
+        "carcass": "oak",
+        "handle": "bar",
+        "glass": false
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "tower",
+    "name": "Torre de armazenamento",
+    "category": "Cozinha",
+    "width": 600,
+    "height": 2100,
+    "depth": 550,
+    "tags": "Cozinha cabinet 600 2100 550",
+    "recipe": {
+      "type": "FurnitureModule",
+      "material": "white",
+      "parameters": {
+        "family": "cabinet",
+        "doors": 2,
+        "legs": 100,
+        "carcass": "oak",
+        "handle": "bar",
+        "glass": false
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "niche",
+    "name": "Nicho aberto",
+    "category": "Cozinha",
+    "width": 600,
+    "height": 400,
+    "depth": 320,
+    "tags": "Cozinha niche 600 400 320",
+    "recipe": {
+      "type": "FurnitureModule",
+      "material": "white",
+      "parameters": {
+        "family": "niche",
+        "doors": 1,
+        "legs": 0,
+        "carcass": "oak",
+        "handle": "bar",
+        "glass": false
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "island",
+    "name": "Ilha 3 portas",
+    "category": "Cozinha",
+    "width": 1500,
+    "height": 850,
+    "depth": 700,
+    "tags": "Cozinha cabinet 1500 850 700",
+    "recipe": {
+      "type": "FurnitureModule",
+      "material": "white",
+      "parameters": {
+        "family": "cabinet",
+        "doors": 3,
+        "legs": 100,
+        "carcass": "oak",
+        "handle": "bar",
+        "glass": false
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "wardrobe-2",
+    "name": "Roupeiro 2 portas",
+    "category": "Dormitório",
+    "width": 1200,
+    "height": 2200,
+    "depth": 600,
+    "tags": "Dormitório cabinet 1200 2200 600",
+    "recipe": {
+      "type": "FurnitureModule",
+      "material": "white",
+      "parameters": {
+        "family": "cabinet",
+        "doors": 2,
+        "legs": 80,
+        "carcass": "oak",
+        "handle": "point",
+        "glass": false
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "wardrobe-3",
+    "name": "Roupeiro 3 portas",
+    "category": "Dormitório",
+    "width": 1800,
+    "height": 2200,
+    "depth": 600,
+    "tags": "Dormitório cabinet 1800 2200 600",
+    "recipe": {
+      "type": "FurnitureModule",
+      "material": "white",
+      "parameters": {
+        "family": "cabinet",
+        "doors": 3,
+        "legs": 80,
+        "carcass": "oak",
+        "handle": "point",
+        "glass": false
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "wardrobe-4",
+    "name": "Roupeiro 4 portas",
+    "category": "Dormitório",
+    "width": 2400,
+    "height": 2200,
+    "depth": 600,
+    "tags": "Dormitório cabinet 2400 2200 600",
+    "recipe": {
+      "type": "FurnitureModule",
+      "material": "white",
+      "parameters": {
+        "family": "cabinet",
+        "doors": 4,
+        "legs": 80,
+        "carcass": "oak",
+        "handle": "point",
+        "glass": false
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "nightstand",
+    "name": "Criado com gavetas",
+    "category": "Dormitório",
+    "width": 500,
+    "height": 600,
+    "depth": 420,
+    "tags": "Dormitório drawer 500 600 420",
+    "recipe": {
+      "type": "FurnitureModule",
+      "material": "white",
+      "parameters": {
+        "family": "drawer",
+        "doors": 1,
+        "legs": 80,
+        "carcass": "oak",
+        "handle": "point",
+        "glass": false
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "shelf",
+    "name": "Estante aberta",
+    "category": "Dormitório",
+    "width": 800,
+    "height": 1800,
+    "depth": 320,
+    "tags": "Dormitório shelf 800 1800 320",
+    "recipe": {
+      "type": "FurnitureModule",
+      "material": "white",
+      "parameters": {
+        "family": "shelf",
+        "doors": 1,
+        "legs": 80,
+        "carcass": "oak",
+        "handle": "point",
+        "glass": false
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "bed",
+    "name": "Cama com cabeceira",
+    "category": "Dormitório",
+    "width": 1600,
+    "height": 450,
+    "depth": 2000,
+    "tags": "Dormitório bed 1600 450 2000",
+    "recipe": {
+      "type": "DecorativeObject",
+      "material": "white",
+      "parameters": {
+        "family": "bed"
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "sofa",
+    "name": "Sofá 3 lugares",
+    "category": "Sala",
+    "width": 2100,
+    "height": 850,
+    "depth": 850,
+    "tags": "Sala sofa 2100 850 850",
+    "recipe": {
+      "type": "DecorativeObject",
+      "material": "fabric",
+      "parameters": {
+        "family": "sofa"
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "chair",
+    "name": "Cadeira de jantar",
+    "category": "Sala",
+    "width": 450,
+    "height": 850,
+    "depth": 450,
+    "tags": "Sala chair 450 850 450",
+    "recipe": {
+      "type": "DecorativeObject",
+      "material": "fabric",
+      "parameters": {
+        "family": "chair"
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "table",
+    "name": "Mesa de jantar",
+    "category": "Sala",
+    "width": 1600,
+    "height": 750,
+    "depth": 850,
+    "tags": "Sala table 1600 750 850",
+    "recipe": {
+      "type": "DecorativeObject",
+      "material": "white",
+      "parameters": {
+        "family": "table"
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "desk",
+    "name": "Mesa de escritório",
+    "category": "Escritório",
+    "width": 1200,
+    "height": 750,
+    "depth": 600,
+    "tags": "Escritório desk 1200 750 600",
+    "recipe": {
+      "type": "DecorativeObject",
+      "material": "white",
+      "parameters": {
+        "family": "desk"
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "fridge",
+    "name": "Geladeira duplex",
+    "category": "Eletrodomésticos",
+    "width": 700,
+    "height": 1800,
+    "depth": 650,
+    "tags": "Eletrodomésticos fridge 700 1800 650",
+    "recipe": {
+      "type": "DecorativeObject",
+      "material": "white",
+      "parameters": {
+        "family": "fridge"
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "oven",
+    "name": "Forno de embutir",
+    "category": "Eletrodomésticos",
+    "width": 600,
+    "height": 600,
+    "depth": 550,
+    "tags": "Eletrodomésticos oven 600 600 550",
+    "recipe": {
+      "type": "DecorativeObject",
+      "material": "white",
+      "parameters": {
+        "family": "oven"
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "vase",
+    "name": "Vaso cerâmico",
+    "category": "Decoração",
+    "width": 240,
+    "height": 350,
+    "depth": 240,
+    "tags": "Decoração vase 240 350 240",
+    "recipe": {
+      "type": "DecorativeObject",
+      "material": "white",
+      "parameters": {
+        "family": "vase"
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "plant",
+    "name": "Planta em vaso",
+    "category": "Decoração",
+    "width": 450,
+    "height": 1100,
+    "depth": 450,
+    "tags": "Decoração plant 450 1100 450",
+    "recipe": {
+      "type": "DecorativeObject",
+      "material": "white",
+      "parameters": {
+        "family": "plant"
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "rug",
+    "name": "Tapete retangular",
+    "category": "Decoração",
+    "width": 2200,
+    "height": 8,
+    "depth": 1600,
+    "tags": "Decoração rug 2200 8 1600",
+    "recipe": {
+      "type": "DecorativeObject",
+      "material": "fabric",
+      "parameters": {
+        "family": "rug"
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  },
+  {
+    "id": "picture",
+    "name": "Quadro com moldura",
+    "category": "Decoração",
+    "width": 700,
+    "height": 900,
+    "depth": 33,
+    "tags": "Decoração picture 700 900 33",
+    "recipe": {
+      "type": "DecorativeObject",
+      "material": "white",
+      "parameters": {
+        "family": "picture"
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-29"
+  }
+]

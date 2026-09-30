@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=LibreMax Architect
+Comment=Design de interiores nativo e offline
+Exec=libremax-architect %f
+Icon=libremax
+Terminal=false
+Categories=Graphics;3DGraphics;Engineering;
+MimeType=application/x-libremax;
