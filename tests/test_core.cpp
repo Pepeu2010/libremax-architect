@@ -1,6 +1,7 @@
 #include "commands/editor.h"
 #include "core/expression.h"
 #include "document/document.h"
+#include "document/examples.h"
 #include "geometry/geometry.h"
 #include "import/dxf.h"
 #include "library/library.h"
@@ -440,4 +441,59 @@ TEST_CASE("library thumbnails show real furniture geometry and distinct decorati
         for (int x = 0; x < first.width(); ++x)
             geometryPixels += first.pixelColor(x, y) != QColor("#111a22");
     REQUIRE(geometryPixels > 1000);
+}
+TEST_CASE("bundled PBR maps remain self contained and reject missing normals or tampered source",
+          "[materials][persistence][pbr]") {
+    application();
+    auto pack = readPbrMaterials(QStringLiteral(LMX_SOURCE_DIR) + "/starter-materials");
+    REQUIRE(pack.materials.size() == 2);
+    REQUIRE(pack.assets.size() == 6);
+    auto document = kitchenExample();
+    attachPbrMaterials(document, pack);
+    REQUIRE(document.embeddedAssets.size() == 6);
+    QTemporaryDir directory;
+    ProjectStore::save(directory.filePath("photo.lmx"), document, false);
+    auto reopened = ProjectStore::open(directory.filePath("photo.lmx"));
+    REQUIRE(reopened.serialize() == document.serialize());
+    REQUIRE(meshSnapshot(reopened)["assets"].size() == 6);
+    REQUIRE(reopened.renderSettings["environmentMode"] == "sky");
+    auto bad = reopened;
+    auto material = std::find_if(bad.materials.begin(), bad.materials.end(),
+                                 [](const auto &m) { return m.at("id") == "oak"; });
+    material->at("normalTexture") = std::string(64, '0');
+    REQUIRE_THROWS(bad.validate());
+    bad = reopened;
+    bad.renderSettings["sunElevation"] = 95;
+    REQUIRE_THROWS(bad.validate());
+    bad.renderSettings["sunElevation"] = 35;
+    bad.renderSettings["environmentMode"] = "invented";
+    REQUIRE_THROWS(bad.validate());
+    QFile source(QStringLiteral(LMX_SOURCE_DIR) + "/starter-materials/catalog.json");
+    REQUIRE(source.open(QIODevice::ReadOnly));
+    auto manifest = Json::parse(source.readAll().toStdString());
+    manifest["materials"][0]["maps"]["baseColorTexture"]["file"] = "../escape.png";
+    QFile corrupt(directory.filePath("catalog.json"));
+    REQUIRE(corrupt.open(QIODevice::WriteOnly));
+    corrupt.write(QByteArray::fromStdString(manifest.dump()));
+    corrupt.close();
+    REQUIRE_THROWS(readPbrMaterials(directory.path()));
+    source.seek(0);
+    manifest = Json::parse(source.readAll().toStdString());
+    auto &map = manifest["materials"][0]["maps"]["baseColorTexture"];
+    const auto filename = QString::fromStdString(map.at("file").get<std::string>());
+    REQUIRE(QFile::copy(QStringLiteral(LMX_SOURCE_DIR) + "/starter-materials/" + filename,
+                        directory.filePath(filename)));
+    map["sha256"] = std::string(64, '0');
+    REQUIRE(corrupt.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    corrupt.write(QByteArray::fromStdString(manifest.dump()));
+    corrupt.close();
+    REQUIRE_THROWS(readPbrMaterials(directory.path()));
+    Editor editor;
+    auto original = kitchenExample();
+    editor.load(original);
+    editor.apply("PBR", [&](Document &d) { attachPbrMaterials(d, pack); });
+    editor.history.undo();
+    REQUIRE(editor.document().serialize() == original.serialize());
+    editor.history.redo();
+    REQUIRE(editor.document().embeddedAssets.size() == 6);
 }

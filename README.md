@@ -2,7 +2,7 @@
 
 Editor desktop open source de interiores, com C++20, Qt 6 e OpenCASCADE. Linux é o alvo principal. A implementação é independente e clean-room, usando o VDMax Arquitetos e Decoradores somente como referência pública de capacidades.
 
-**Estado: 0.2.0 em desenvolvimento. Esta entrega ainda não atende à paridade integral da master spec e não é uma release 1.0.** A [master spec](docs/MASTER_SPEC.md) é o requisito de referência. A [matriz de paridade](docs/VDMAX_ARCHITECT_PARITY.md) registra as lacunas por requisito, sem promover testes do kernel a prova de um workflow completo.
+**Estado: 0.3.0 em desenvolvimento. Esta entrega ainda não atende à paridade integral da master spec e não é uma release 1.0.** A [master spec](docs/MASTER_SPEC.md) é o requisito de referência. A [matriz de paridade](docs/VDMAX_ARCHITECT_PARITY.md) registra as lacunas por requisito, sem promover testes do kernel a prova de um workflow completo.
 
 ![Interface nativa real, capturada no teste executável](docs/screenshots/native-ui.png)
 
@@ -21,9 +21,11 @@ Já disponível neste ciclo:
 - Importar DXF ASCII com layers e unidade; incorporar texturas JPG/PNG ao projeto.
 - Salvar/abrir `.lmx` ZIP versionado, backup `.bak`, undo/redo, autosave configurável (1–60 minutos) e recuperação de versões locais.
 - Criar câmeras e luzes point/spot/area; renderizar com Blender/Cycles em processo separado, PNG/JPEG, presets, seleção de câmera, exposição, luz ambiente, denoise e descoberta GPU com fallback CPU.
-- Workspace escuro de render com zoom/pan, Ajustar, 1:1 e exportação de cópia PNG/JPEG; madeira e pedra procedurais no Cycles.
+- Workspace escuro de render com zoom/pan, Ajustar, 1:1 e exportação de cópia PNG/JPEG; materiais PBR incorporados de madeira/pedra, céu natural/sol e câmera fotográfica no Cycles.
 
 Faltam recursos essenciais: detecção de regiões, junções avançadas, cotas, snap completo, escadas L/U, geometria livre/perfis/sancas, importadores 3D, packs, catálogo extenso, agrupamento/gizmos, galeria/fila de renders persistentes e pacotes Linux testados. Veja [ROADMAP](docs/ROADMAP.md).
+
+Para apresentação, abra `examples/cozinha.lmx`, escolha **Céu natural** e a qualidade desejada no Render. Em outros projetos, **Ativar texturas reais** incorpora mapas de carvalho e pedra. Exposição e direção do sol são editáveis; abertura e foco ficam nas propriedades da câmera. [Guia de render](docs/RENDERING.md).
 
 ## Compilar e executar
 
@@ -64,6 +66,6 @@ Em Arquivo, configure o intervalo de autosave ou recupere versões anteriores. S
 | Botão do meio / roda | Pan / zoom |
 | Botão direito em 3D | Orbit |
 
-[Biblioteca](docs/LIBRARY.md), [materiais](docs/MATERIALS.md), [render](docs/RENDERING.md), [formato do projeto](docs/PROJECT_FORMAT.md), [recuperação](docs/RECOVERY.md), [testes](docs/TEST_REPORT.md), [entrega atual](docs/CYCLE_02.md) e [auditoria das referências visuais](docs/VISUAL_REFERENCE_AUDIT.md).
+[Biblioteca](docs/LIBRARY.md), [materiais](docs/MATERIALS.md), [render](docs/RENDERING.md), [formato do projeto](docs/PROJECT_FORMAT.md), [recuperação](docs/RECOVERY.md), [testes](docs/TEST_REPORT.md), [entrega atual](docs/CYCLE_03.md) e [auditoria das referências visuais](docs/VISUAL_REFERENCE_AUDIT.md).
 
-Código: GPL-3.0-or-later. Receitas e assets próprios: CC0-1.0. [Licenças de dependências](docs/THIRD_PARTY.md). Contribuições devem incluir fluxo integrado e teste; [CONTRIBUTING](docs/CONTRIBUTING.md).
+Código: GPL-3.0-or-later. Receitas e assets próprios: CC0-1.0. Mapas PBR Poly Haven: CC0-1.0, com proveniência em [starter-materials](starter-materials/README.md). [Licenças de dependências](docs/THIRD_PARTY.md). Contribuições devem incluir fluxo integrado e teste; [CONTRIBUTING](docs/CONTRIBUTING.md).

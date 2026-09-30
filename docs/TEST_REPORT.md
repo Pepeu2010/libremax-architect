@@ -1,3 +1,11 @@
+# Test report — ciclo 0.3.0
+
+Executado em 2026-09-30 no mesmo host Windows/toolchain descrito abaixo: **18 casos/463 assertions**, CTest 6,30 s; FTS5/10.000 fixtures 1,7564 ms em concorrência. Build Release, ativação PBR/sol e persistência pela UI, inspeção de render Cycles CPU 1280×720/128, exportação PNG e recuperação passaram. Fonte e hashes dos seis mapas verificados; nenhum download em runtime.
+
+Evidência e limites atuais em [CYCLE_03](CYCLE_03.md). Render final: [1280×720](screenshots/photoreal-kitchen.png), [workspace](screenshots/render-workspace.png). Presets 1080p/4K, GPU, Linux e equivalência a foto física permanecem sem validação. Os ciclos abaixo são históricos; screenshots de workspace foram atualizados.
+
+---
+
 # Test report — ciclo 0.2.0
 
 Execução 2026-09-30 no mesmo host Windows/toolchain documentado abaixo. **17 casos/408 assertions passaram**; FTS5 com 10.000 fixtures: 0,5936 ms; CTest: 2,94 s. Build nativo, 25 thumbnails, UI/roundtrip/900 px, visualizador/exportação PNG, crash recovery e Cycles 960×540/64 CPU passaram. Render salvo pelo Blender aos 32,953 s em execução concorrente com testes. Falha sem câmera preservou a imagem anterior.

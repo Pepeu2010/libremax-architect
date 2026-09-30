@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 — 2026-09-30 — desenvolvimento, sem release
+
+- Materiais PBR locais CC0 com albedo/roughness/normal, hashes, escala e incorporação em .lmx.
+- Céu natural/sol editáveis e câmera com abertura/foco fotográficos.
+- UV por face, bevel de apresentação, weighted normals e denoise mais preciso.
+- Puxadores cilíndricos com suportes e cozinha original revisada com pedra/cerâmica.
+- Presets de apresentação com mais samples; testes de pack, roundtrip e controles nativos.
+
 ## 0.2.0 — 2026-09-30 — desenvolvimento, sem release
 
 - Workspace Qt escuro, faixas de comandos, ícones próprios, foco e indicadores legíveis.

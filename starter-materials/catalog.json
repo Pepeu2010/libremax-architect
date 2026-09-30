@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "materials": [
+    {
+      "id": "oak",
+      "name": "Carvalho natural · PBR",
+      "source": "https://polyhaven.com/a/oak_veneer_03",
+      "license": "CC0-1.0",
+      "authors": {
+        "Jenelle van Heerden": "All"
+      },
+      "textureScale": 1000,
+      "maps": {
+        "baseColorTexture": {
+          "file": "oak_veneer_03_diff_1k.png",
+          "sha256": "f9d2aa7eb2d16da32efdb563b18a2e7037eae57853204a3a728bbf194e6bfde0",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/oak_veneer_03/oak_veneer_03_diff_1k.png"
+        },
+        "roughnessTexture": {
+          "file": "oak_veneer_03_rough_1k.png",
+          "sha256": "650b5e6bbca8a1de326fb3f5af06b6b4dad94be3824ba4d2c2e0406fc687ad72",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/oak_veneer_03/oak_veneer_03_rough_1k.png"
+        },
+        "normalTexture": {
+          "file": "oak_veneer_03_nor_gl_1k.png",
+          "sha256": "708769292e2c6cc5761bbc1385fb60becef78a8201910cbf662df2e8f58a04c3",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/oak_veneer_03/oak_veneer_03_nor_gl_1k.png"
+        }
+      }
+    },
+    {
+      "id": "porcelain",
+      "name": "Mármore claro · PBR",
+      "source": "https://polyhaven.com/a/marble_01",
+      "license": "CC0-1.0",
+      "authors": {
+        "Rob Tuytel": "All"
+      },
+      "textureScale": 1500,
+      "maps": {
+        "baseColorTexture": {
+          "file": "marble_01_diff_1k.png",
+          "sha256": "3dca2e4d474d2be25efb41c0fdc6f3c62121fb6a6cd56bce8b85e2970e58cda1",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/marble_01/marble_01_diff_1k.png"
+        },
+        "roughnessTexture": {
+          "file": "marble_01_rough_1k.png",
+          "sha256": "0311debbf570016b658d09b1a7190493520cf50a033168dd260629bb86fedbe4",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/marble_01/marble_01_rough_1k.png"
+        },
+        "normalTexture": {
+          "file": "marble_01_nor_gl_1k.png",
+          "sha256": "fc704b82aaff2634ebadd1939c8e675cd6cc8280953c1d28db7f66b4c6b6dbab",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/marble_01/marble_01_nor_gl_1k.png"
+        }
+      }
+    }
+  ]
+}

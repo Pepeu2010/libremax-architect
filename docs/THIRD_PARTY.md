@@ -14,3 +14,7 @@
 Fontes: [Qt](https://doc.qt.io/qt-6/licensing.html), [OCCT](https://dev.opencascade.org/resources/licensing), [libzip](https://libzip.org/license/), [SQLite](https://sqlite.org/copyright.html), [JSON](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT), [spdlog](https://github.com/gabime/spdlog/blob/v1.x/LICENSE), [Catch2](https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt), [Blender](https://www.blender.org/about/license/).
 
 As dependências são vinculadas dinamicamente onde distribuídas, exceto core próprio. Binário final deve incluir avisos, licenças e fontes/ofertas aplicáveis. Dependências transitivas do MSYS2 incluem mais módulos do que o app usa; não distribuir toda a pasta de desenvolvimento. SBOM/auditoria dos pacotes finais ainda não executados. Assimp ainda não integrado.
+
+## Texturas distribuídas
+
+`starter-materials`: seis mapas CC0-1.0, Oak Veneer 03 (Jenelle van Heerden) e Marble 01 (Rob Tuytel), Poly Haven. Proveniência, escala e hashes em [catálogo](../starter-materials/catalog.json) e [avisos](../starter-materials/README.md). Licença dos assets: [Poly Haven](https://polyhaven.com/license). Não incluem renders promocionais, logotipos ou imagens do VDMax.

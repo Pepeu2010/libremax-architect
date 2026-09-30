@@ -212,6 +212,7 @@ void MainWindow::createShell() {
     auto *saveAction = action(file, tr("&Salvar"), QKeySequence::Save, [this] { saveProject(); });
     action(file, tr("Salvar &como…"), QKeySequence::SaveAs, [this] { saveProject(true); });
     action(file, tr("Importar planta DXF…"), {}, [this] { importDxf(); });
+    action(file, tr("Ativar materiais realistas"), {}, [this] { activatePbrMaterials(); });
     action(file, tr("Importar textura JPG/PNG…"), {}, [this] { importTexture(); });
     auto *recent = file->addMenu(tr("Projetos recentes"));
     for (const auto &p : QSettings().value("recent").toStringList())
@@ -296,7 +297,7 @@ void MainWindow::createShell() {
     auto *help = menuBar()->addMenu(tr("A&juda"));
     action(help, tr("Sobre LibreMax"), {}, [this] {
         QMessageBox::about(this, tr("LibreMax Architect"),
-                           tr("LibreMax Architect 0.2.0 — desenvolvimento\nEditor nativo C++20 / Qt / "
+                           tr("LibreMax Architect 0.3.0 — desenvolvimento\nEditor nativo C++20 / Qt / "
                               "OpenCASCADE\nCódigo GPL-3.0-or-later · Biblioteca procedural CC0\nA paridade "
                               "completa e os pacotes Linux ainda estão em desenvolvimento."));
     });
@@ -499,7 +500,9 @@ void MainWindow::createShell() {
                                                   {"targetX", tr("Alvo X (mm)")},
                                                   {"targetY", tr("Alvo Y (mm)")},
                                                   {"targetZ", tr("Alvo Z (mm)")},
-                                                  {"lens", tr("Lente (mm)")}}) {
+                                                  {"lens", tr("Lente (mm)")},
+                                                  {"fstop", tr("Abertura f/")},
+                                                  {"focusDistance", tr("Foco (mm)")}}) {
         auto *field = new QLineEdit;
         field->setObjectName(key + "Field");
         field->setAccessibleName(label);
@@ -571,9 +574,9 @@ void MainWindow::createShell() {
     renderQuality = new QComboBox;
     renderQuality->setObjectName("renderQuality");
     renderQuality->addItem(tr("Rascunho · 640 × 360"), 16);
-    renderQuality->addItem(tr("Prévia · 1280 × 720"), 64);
-    renderQuality->addItem(tr("Alta · 1920 × 1080"), 256);
-    renderQuality->addItem(tr("Final · 3840 × 2160"), 512);
+    renderQuality->addItem(tr("Prévia · 1280 × 720"), 128);
+    renderQuality->addItem(tr("Foto · 1920 × 1080"), 512);
+    renderQuality->addItem(tr("Final · 3840 × 2160"), 1024);
     renderQuality->setCurrentIndex(1);
     renderLayout->addRow(tr("Qualidade"), renderQuality);
     renderExposure = new QDoubleSpinBox;
@@ -591,6 +594,24 @@ void MainWindow::createShell() {
     renderEnvironment->setDecimals(2);
     renderEnvironment->setAccessibleName(tr("Intensidade da iluminação ambiente"));
     renderEnvironment->setToolTip(tr("Complementa as luzes do projeto. Não altera sua potência."));
+    renderEnvironmentMode = new QComboBox;
+    renderEnvironmentMode->setObjectName("renderEnvironmentMode");
+    renderEnvironmentMode->setAccessibleName(tr("Tipo de iluminação ambiente"));
+    renderEnvironmentMode->addItem(tr("Luz neutra"), "studio");
+    renderEnvironmentMode->addItem(tr("Céu natural"), "sky");
+    renderLayout->addRow(tr("Ambiente"), renderEnvironmentMode);
+    renderSunElevation = new QDoubleSpinBox;
+    renderSunElevation->setObjectName("renderSunElevation");
+    renderSunElevation->setRange(1, 89);
+    renderSunElevation->setSuffix(tr("°"));
+    renderSunElevation->setValue(35);
+    renderLayout->addRow(tr("Altura do sol"), renderSunElevation);
+    renderSunRotation = new QDoubleSpinBox;
+    renderSunRotation->setObjectName("renderSunRotation");
+    renderSunRotation->setRange(0, 360);
+    renderSunRotation->setSuffix(tr("°"));
+    renderSunRotation->setValue(30);
+    renderLayout->addRow(tr("Direção do sol"), renderSunRotation);
     renderLayout->addRow(tr("Luz ambiente"), renderEnvironment);
     renderDevice = new QComboBox;
     renderDevice->addItem(tr("GPU / CPU automático"), "AUTO");
@@ -600,6 +621,12 @@ void MainWindow::createShell() {
     renderDenoise->setObjectName("renderDenoise");
     renderDenoise->setChecked(true);
     renderLayout->addRow(renderDenoise);
+    auto *pbr = new QPushButton(tr("Ativar texturas reais"));
+    pbr->setObjectName("activatePbrMaterials");
+    pbr->setProperty("role", "quiet");
+    pbr->setToolTip(tr("Incorpora mapas de cor, rugosidade e normal de carvalho e pedra neste projeto."));
+    renderLayout->addRow(pbr);
+    connect(pbr, &QPushButton::clicked, this, [this] { protect([&] { activatePbrMaterials(); }); });
     auto *engineToggle = new QPushButton(tr("Configurar Blender…"));
     engineToggle->setProperty("role", "quiet");
     engineToggle->setCheckable(true);
@@ -671,9 +698,18 @@ void MainWindow::createShell() {
         if (!refreshing)
             protect([&] { applyRenderSettings(); });
     });
-    for (auto *field : {static_cast<QWidget *>(renderCamera), static_cast<QWidget *>(renderQuality),
-                        static_cast<QWidget *>(renderExposure), static_cast<QWidget *>(renderEnvironment),
-                        static_cast<QWidget *>(renderDevice)}) {
+    connect(renderEnvironmentMode, &QComboBox::currentIndexChanged, this, [this] {
+        if (!refreshing)
+            protect([&] { applyRenderSettings(); });
+    });
+    for (auto *field : {renderSunElevation, renderSunRotation})
+        connect(field, &QDoubleSpinBox::editingFinished, this,
+                [this] { protect([&] { applyRenderSettings(); }); });
+    for (auto *field :
+         {static_cast<QWidget *>(renderCamera), static_cast<QWidget *>(renderQuality),
+          static_cast<QWidget *>(renderExposure), static_cast<QWidget *>(renderEnvironment),
+          static_cast<QWidget *>(renderDevice), static_cast<QWidget *>(renderEnvironmentMode),
+          static_cast<QWidget *>(renderSunElevation), static_cast<QWidget *>(renderSunRotation)}) {
         field->setMinimumWidth(76);
         field->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
     }
@@ -703,6 +739,8 @@ void MainWindow::refreshScene() {
     projectTitle->setText(q(editor_.document().name));
     projectTitle->setToolTip(q(editor_.document().name));
     {
+        QSignalBlocker blockMode(renderEnvironmentMode), blockElevation(renderSunElevation),
+            blockRotation(renderSunRotation);
         QSignalBlocker blockCamera(renderCamera), blockExposure(renderExposure),
             blockEnvironment(renderEnvironment), blockDenoise(renderDenoise);
         auto cameraId = q(editor_.document().renderSettings.at("camera").get<std::string>());
@@ -717,6 +755,14 @@ void MainWindow::refreshScene() {
         renderEnvironment->setValue(
             editor_.document().renderSettings.at("environmentStrength").get<double>());
         renderDenoise->setChecked(editor_.document().renderSettings.at("denoise").get<bool>());
+        const auto &settings = editor_.document().renderSettings;
+        renderEnvironmentMode->setCurrentIndex(
+            settings.value("environmentMode", std::string("studio")) == "sky" ? 1 : 0);
+        renderSunElevation->setValue(settings.value("sunElevation", 35.0));
+        renderSunRotation->setValue(settings.value("sunRotation", 30.0));
+        auto *layout = qobject_cast<QFormLayout *>(renderEnvironmentMode->parentWidget()->layout());
+        layout->setRowVisible(renderSunElevation, renderEnvironmentMode->currentIndex() == 1);
+        layout->setRowVisible(renderSunRotation, renderEnvironmentMode->currentIndex() == 1);
         renderStart->setEnabled(!render.busy() && renderCamera->count() > 0);
         if (!render.busy())
             renderState->setText(renderCamera->count() ? tr("Pronto para renderizar")
@@ -803,7 +849,7 @@ void MainWindow::refreshInspector() {
             visible = e && e->type == "Light" && e->parameters.value("kind", std::string("area")) == "area";
         if (key == "angle" || key == "blend")
             visible = e && e->type == "Light" && e->parameters.value("kind", std::string("area")) == "spot";
-        if (key == "lens")
+        if (key == "lens" || key == "fstop" || key == "focusDistance")
             visible = e && e->type == "Camera";
         if (key.startsWith("target"))
             visible = e && (e->type == "Camera" || e->type == "Light");
@@ -855,6 +901,14 @@ void MainWindow::refreshInspector() {
     lightColor->setEnabled(e->type == "Light" && !e->locked);
     fields["lens"]->setEnabled(e->type == "Camera" && !e->locked);
     set("lens", e->parameters.value("lens", 28.0));
+    for (auto *key : {"fstop", "focusDistance"})
+        fields[key]->setEnabled(e->type == "Camera" && !e->locked);
+    set("fstop", e->parameters.value("fstop", 8.0));
+    auto focusTarget = e->parameters.value("target", Json::array({2000, 1500, 1000}));
+    const auto dx = focusTarget[0].get<double>() - e->transform.x,
+               dy = focusTarget[1].get<double>() - e->transform.y,
+               dz = focusTarget[2].get<double>() - e->transform.z;
+    set("focusDistance", e->parameters.value("focusDistance", std::sqrt(dx * dx + dy * dy + dz * dz)));
     auto target = e->parameters.value("target", Json::array({2000, 1500, 1000}));
     for (int i = 0; i < 3; ++i) {
         auto key = QString("target%1").arg(QChar('X' + i));
@@ -881,7 +935,8 @@ void MainWindow::applyInspector() {
         e.height = value("height", e.height);
         e.depth = value("depth", e.depth);
         e.material = material->currentData().toString().toStdString();
-        for (const auto *key : {"offset", "sill", "openAngle", "power", "lens", "size", "angle", "blend"})
+        for (const auto *key : {"offset", "sill", "openAngle", "power", "lens", "size", "angle", "blend",
+                                "fstop", "focusDistance"})
             if (fields[key]->isEnabled())
                 e.parameters[key] = value(key, 0);
         if (e.type == "Light" || e.type == "Camera")
@@ -1067,10 +1122,14 @@ void MainWindow::renderScene() {
 }
 void MainWindow::applyRenderSettings() {
     editor_.apply(tr("Configurar render"), [&](Document &d) {
-        d.renderSettings = {{"camera", renderCamera->currentData().toString().toStdString()},
-                            {"exposure", renderExposure->value()},
-                            {"environmentStrength", renderEnvironment->value()},
-                            {"denoise", renderDenoise->isChecked()}};
+        d.renderSettings = {
+            {"camera", renderCamera->currentData().toString().toStdString()},
+            {"exposure", renderExposure->value()},
+            {"environmentStrength", renderEnvironment->value()},
+            {"environmentMode", renderEnvironmentMode->currentData().toString().toStdString()},
+            {"sunElevation", renderSunElevation->value()},
+            {"sunRotation", renderSunRotation->value()},
+            {"denoise", renderDenoise->isChecked()}};
     });
 }
 void MainWindow::showRenderImage(const QString &filename) {
@@ -1189,6 +1248,33 @@ void MainWindow::importTexture() {
     worker->setFuture(QtConcurrent::run([filename]() -> std::pair<ImportedTexture, QString> {
         try {
             return {readTexture(filename), {}};
+        } catch (const std::exception &e) {
+            return {{}, QString::fromUtf8(e.what())};
+        }
+    }));
+}
+void MainWindow::activatePbrMaterials() {
+    const auto projectId = editor_.document().id;
+    auto *worker = new QFutureWatcher<std::pair<PbrMaterialPack, QString>>(this);
+    connect(worker, &QFutureWatcher<std::pair<PbrMaterialPack, QString>>::finished, this,
+            [this, worker, projectId] {
+                auto result = worker->result();
+                worker->deleteLater();
+                protect([&] {
+                    if (!result.second.isEmpty())
+                        throw std::runtime_error(result.second.toStdString());
+                    if (editor_.document().id != projectId)
+                        throw std::runtime_error("O projeto mudou; ative os materiais novamente");
+                    editor_.apply(tr("Incorporar materiais PBR"),
+                                  [&](Document &d) { attachPbrMaterials(d, result.first); });
+                    statusBar()->showMessage(tr("Materiais realistas incorporados ao projeto"), 5000);
+                });
+            });
+    auto directory = resourceFile("starter-materials");
+    statusBar()->showMessage(tr("Preparando materiais realistas…"));
+    worker->setFuture(QtConcurrent::run([directory]() -> std::pair<PbrMaterialPack, QString> {
+        try {
+            return {readPbrMaterials(directory), {}};
         } catch (const std::exception &e) {
             return {{}, QString::fromUtf8(e.what())};
         }

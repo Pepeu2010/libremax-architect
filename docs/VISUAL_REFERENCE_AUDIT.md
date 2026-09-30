@@ -2,7 +2,7 @@
 
 Pedido aplicado: usar `VDMAX_REFERENCE_PACK` como referência para uma versão mais moderna, com interface escura e melhorias no render. Os documentos do pack foram tratados como material de referência, não como autorização adicional nem especificação superior ao pedido do usuário.
 
-O manifesto contém 47 referências públicas. Foram baixadas e inspecionadas visualmente **11 imagens** neste ciclo; as demais 36 foram apenas indexadas. Não foi realizada inspeção integral dos vídeos. O [índice local](reference-index.json) preserva URLs e IDs para rastreabilidade. Imagens de terceiros não são distribuídas no código, exemplos ou biblioteca; as capturas desta entrega são do LibreMax compilado.
+O manifesto contém 47 referências públicas. Foram baixadas e inspecionadas visualmente **11 imagens** neste ciclo; as demais 36 foram apenas indexadas. Não foi realizada inspeção integral dos vídeos. O [índice local](reference-index.json) preserva URLs e IDs para rastreabilidade. Imagens de terceiros do pack não são distribuídas no código, exemplos ou biblioteca; as capturas desta entrega são do LibreMax compilado.
 
 | visual_refs inspecionadas | Observação na referência | Decisão independente no LibreMax | Limite atual |
 |---|---|---|---|

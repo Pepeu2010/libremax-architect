@@ -15,3 +15,5 @@ Importação de imagens/DXF e preparação/render ocorrem em workers/processo se
 ADRs: [engine/interface](ADRs/0001-native-cad.md), [persistência/licenças](ADRs/0002-persistence-and-licenses.md).
 
 O tema nativo e os ícones ficam em `studio_theme`/`resources/style.qss`. `AssetThumbnails` tessela receitas em QThreadPool limitado e publica QImages; QPixmap/delegate são usados somente na UI. `RenderPreview` reutiliza uma cena QGraphicsView para a imagem completa, sem criar uma nova dock a cada render. `Document::renderSettings` é validado, persistido e exportado no mesmo snapshot.
+
+`PbrMaterialPack` carrega/verifica/normaliza os mapas em worker e os combina ao documento atual por comando, protegendo a identidade do projeto entre início e conclusão. O snapshot exporta mapas, parâmetros de céu/câmera e tipo de entidade para o renderer fixo. A malha de apresentação tem bevel/UV/normais; o B-rep original permanece no projeto.

@@ -1,9 +1,12 @@
 #include "texture.h"
 #include <QBuffer>
 #include <QCryptographicHash>
+#include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QImage>
 #include <QImageReader>
+#include <algorithm>
 #include <stdexcept>
 namespace lmx {
 ImportedTexture readTexture(const QString &filename) {
@@ -40,5 +43,60 @@ std::string attachTexture(Document &d, const ImportedTexture &texture) {
     m["textureOffset"] = {0, 0, 0};
     d.materials.push_back(m);
     return id;
+}
+PbrMaterialPack readPbrMaterials(const QString &directory) {
+    QFile catalog(QDir(directory).filePath("catalog.json"));
+    if (!catalog.open(QIODevice::ReadOnly) || catalog.size() > 1024 * 1024)
+        throw std::runtime_error("Biblioteca de materiais PBR indisponível");
+    auto manifest = Json::parse(catalog.readAll().toStdString());
+    if (manifest.at("schema") != 1 || !manifest.at("materials").is_array() ||
+        manifest.at("materials").size() > 20)
+        throw std::runtime_error("Catálogo PBR inválido");
+    PbrMaterialPack pack;
+    for (const auto &entry : manifest.at("materials")) {
+        auto presets = materialPresets();
+        auto preset = std::find_if(presets.begin(), presets.end(),
+                                   [&](const auto &m) { return m.at("id") == entry.at("id"); });
+        if (preset == presets.end() || entry.at("license") != "CC0-1.0")
+            throw std::runtime_error("Material PBR inválido");
+        auto material = *preset;
+        for (auto key : {"name", "source", "license", "authors", "textureScale"})
+            material[key] = entry.at(key);
+        material["normalStrength"] = entry.at("id") == "oak" ? 0.55 : 0.25;
+        material["textureRotation"] = entry.at("id") == "oak" ? 90.0 : 0.0;
+        material["procedural"] = "none";
+        for (auto channel : {"baseColorTexture", "roughnessTexture", "normalTexture"}) {
+            const auto &map = entry.at("maps").at(channel);
+            auto name = QString::fromStdString(map.at("file").get<std::string>());
+            if (name.isEmpty() || QFileInfo(name).fileName() != name || name.contains('\\'))
+                throw std::runtime_error("Caminho de textura PBR inválido");
+            auto path = QDir(directory).filePath(name);
+            QFile file(path);
+            if (!file.open(QIODevice::ReadOnly) || file.size() > 16 * 1024 * 1024 ||
+                QCryptographicHash::hash(file.readAll(), QCryptographicHash::Sha256).toHex().toStdString() !=
+                    map.at("sha256").get<std::string>())
+                throw std::runtime_error("Integridade da textura PBR inválida");
+            auto texture = readTexture(path);
+            material[channel] = texture.hash;
+            pack.assets[texture.hash] = texture.png;
+        }
+        pack.materials.push_back(material);
+    }
+    return pack;
+}
+void attachPbrMaterials(Document &document, const PbrMaterialPack &pack) {
+    auto next = document;
+    for (const auto &[hash, png] : pack.assets)
+        next.embeddedAssets[hash] = png;
+    for (const auto &material : pack.materials) {
+        auto existing = std::find_if(next.materials.begin(), next.materials.end(),
+                                     [&](const auto &m) { return m.at("id") == material.at("id"); });
+        if (existing == next.materials.end())
+            next.materials.push_back(material);
+        else
+            *existing = material;
+    }
+    next.validate();
+    document = std::move(next);
 }
 } // namespace lmx

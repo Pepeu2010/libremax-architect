@@ -24,3 +24,5 @@ ctest --test-dir build --output-on-failure
 `./scripts/package-source.ps1` gera no Windows `dist/source.tar.gz`, `starter-library.tar.gz`, `sample-projects.tar.gz` e `SHA256SUMS`, somente a partir do HEAD commitado. Arquivos de desenvolvimento não commitados e toolchains não entram nesses arquivos.
 
 Para reproduzir as capturas e render da interface 0.2, use os comandos de [CYCLE_02](CYCLE_02.md): `--render-size 960x540 --render-samples 64` e UI smoke com `--preview-image`. O smoke padrão continua pequeno para integração rápida.
+
+No ciclo 0.3, `starter-materials` é instalado com os recursos. `package-source.ps1` inclui `starter-materials.tar.gz`; exemplos incorporam seis mapas PBR e têm aproximadamente 14,5 MB por .lmx. Render 1280×720/128 e controles de céu/PBR estão em [CYCLE_03](CYCLE_03.md).

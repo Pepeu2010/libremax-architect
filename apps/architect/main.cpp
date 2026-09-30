@@ -1,4 +1,5 @@
 #include "main_window.h"
+#include "materials/texture.h"
 #include "persistence/project_store.h"
 #include "studio_theme.h"
 #include <QApplication>
@@ -34,7 +35,7 @@ int main(int argc, char **argv) {
     QApplication app(argc, argv);
     QApplication::setApplicationName("libremax");
     QApplication::setOrganizationName("LibreMax");
-    QApplication::setApplicationVersion("0.2.0");
+    QApplication::setApplicationVersion("0.3.0");
     QCommandLineParser parser;
     parser.setApplicationDescription("LibreMax Architect — native interior design");
     parser.addHelpOption();
@@ -110,8 +111,12 @@ int main(int argc, char **argv) {
         if (parser.isSet("examples")) {
             QDir dir(parser.value("examples"));
             QDir().mkpath(dir.absolutePath());
-            lmx::ProjectStore::save(dir.filePath("cozinha.lmx"), lmx::kitchenExample(), false);
-            lmx::ProjectStore::save(dir.filePath("dormitorio.lmx"), lmx::bedroomExample(), false);
+            auto pack = lmx::readPbrMaterials(QStringLiteral(LMX_SOURCE_DIR) + "/starter-materials");
+            auto kitchen = lmx::kitchenExample(), bedroom = lmx::bedroomExample();
+            lmx::attachPbrMaterials(kitchen, pack);
+            lmx::attachPbrMaterials(bedroom, pack);
+            lmx::ProjectStore::save(dir.filePath("cozinha.lmx"), kitchen, false);
+            lmx::ProjectStore::save(dir.filePath("dormitorio.lmx"), bedroom, false);
             return 0;
         }
         if (parser.isSet("render-smoke")) {
@@ -123,6 +128,8 @@ int main(int argc, char **argv) {
             const auto directory = QDir(parser.value("render-smoke")).absolutePath();
             QDir().mkpath(directory);
             auto document = lmx::kitchenExample();
+            lmx::attachPbrMaterials(
+                document, lmx::readPbrMaterials(QStringLiteral(LMX_SOURCE_DIR) + "/starter-materials"));
             lmx::ProjectStore::save(directory + "/render-project.lmx", document, false);
             lmx::RenderJob job;
             bool checkingFailure = false;
@@ -166,7 +173,7 @@ int main(int argc, char **argv) {
                           QStringLiteral(LMX_SOURCE_DIR) + "/scripts/cycles_render.py", path, renderWidth,
                           renderHeight, renderSamples, "CPU");
             });
-            QTimer::singleShot(180000, &app, [&] {
+            QTimer::singleShot(600000, &app, [&] {
                 job.cancel();
                 std::cerr << "Render acceptance timeout\n";
                 app.exit(1);
@@ -321,6 +328,28 @@ int main(int argc, char **argv) {
                     auto *camera = window.findChild<QComboBox *>("renderCamera");
                     auto *exposure = window.findChild<QDoubleSpinBox *>("renderExposure");
                     ensure(camera && exposure && camera->count() == 2, "Render controls are unavailable");
+                    auto *renderDock = window.findChild<QDockWidget *>("renderDock");
+                    renderDock->raise();
+                    QTest::qWait(100);
+                    auto *pbrButton = window.findChild<QPushButton *>("activatePbrMaterials");
+                    ensure(pbrButton, "PBR material action is unavailable");
+                    window.findChild<QScrollArea *>("renderScroll")->ensureWidgetVisible(pbrButton);
+                    QTest::qWait(100);
+                    QTest::mouseClick(pbrButton, Qt::LeftButton);
+                    for (int i = 0; i < 100 && window.editor().document().embeddedAssets.size() != 6; ++i)
+                        QTest::qWait(100);
+                    ensure(window.editor().document().embeddedAssets.size() == 6,
+                           "PBR material activation failed");
+                    auto *sky = window.findChild<QComboBox *>("renderEnvironmentMode");
+                    auto *sun = window.findChild<QDoubleSpinBox *>("renderSunElevation");
+                    ensure(sky && sun, "Natural sky controls unavailable");
+                    sky->setCurrentIndex(1);
+                    sun->setValue(42);
+                    QMetaObject::invokeMethod(sun, "editingFinished", Qt::DirectConnection);
+                    ensure(window.editor().document().renderSettings["sunElevation"] == 42,
+                           "Sun controls did not update the project");
+                    window.findChild<QDockWidget *>("propertiesDock")->raise();
+                    std::cout << "PHOTOGRAPHIC_UI_PASS: six PBR maps and natural sky controls\n";
                     camera->setCurrentIndex(1);
                     exposure->setValue(-0.8);
                     QMetaObject::invokeMethod(exposure, "editingFinished", Qt::DirectConnection);

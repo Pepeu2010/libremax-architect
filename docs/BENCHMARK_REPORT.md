@@ -1,12 +1,12 @@
-# Benchmark report — limites do ciclo 0.2.0
+# Benchmark report — limites do ciclo 0.3.0
 
 Host e versões em [TEST_REPORT](TEST_REPORT.md). Build Release, Windows/UCRT64. Nenhuma extrapolação para Linux ou desempenho de produto completo.
 
 | Medida | Entrada e método | Resultado observado |
 |---|---|---|
-| Busca FTS5 | Banco temporário com 10.000 fixtures sintéticas; consulta `armario`, uma correspondência com acento; QElapsedTimer ao redor de `Library::search` | 0,5936 ms na última execução |
-| Suite core | 17 casos, 408 assertions; geometria, 25 receitas, SQLite, DXF, textures, ZIP e recuperação | CTest: 2,94 s total na última execução |
-| Render smoke | Cozinha de exemplo, Cycles CPU, denoise, 960 × 540, 64 samples | Imagem válida; Blender informou save aos 32,953 s em execução concorrente com outros testes |
+| Busca FTS5 | Banco temporário com 10.000 fixtures sintéticas; consulta `armario`, uma correspondência com acento; QElapsedTimer ao redor de `Library::search` | 1,7564 ms na última execução |
+| Suite core | 18 casos, 463 assertions; geometria, 25 receitas, SQLite, DXF, textures, ZIP e recuperação | CTest: 6,30 s total na última execução |
+| Render smoke | Cozinha de exemplo, Cycles CPU, denoise, 1280 × 720, 128 samples | Imagem válida; Blender informou save aos 147,187 s em execução concorrente com outros testes |
 
 A medida FTS é uma amostra local após inserção/transação do catálogo, sem limpar caches do sistema. Não há distribuição estatística/p95 nem medição de busca concorrente; o limite de teste é <100 ms. **10.000 fixtures não significam 10.000 assets de produto**: a biblioteca distribuída tem 25 receitas próprias.
 

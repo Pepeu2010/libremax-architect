@@ -157,8 +157,18 @@ std::vector<Part> buildEntity(const Document &doc, const Entity &e) {
                         "metal");
                 else if (handle == "profile")
                     block(fx + 10, d + t, fz + fh - 15, fw - 20, 12, 10, "metal");
-                else if (handle == "bar")
-                    block(fx + fw - 32, d + t, fz + fh * 0.60, 10, 24, std::min(130.0, fh / 3), "metal");
+                else if (handle == "bar") {
+                    const auto length = std::min(130.0, fh / 3);
+                    const auto hx = fx + fw - 27, hz = fz + fh * 0.60;
+                    add(BRepPrimAPI_MakeCylinder(gp_Ax2(gp_Pnt(hx, d + t + 24, hz), gp_Dir(0, 0, 1)), 5,
+                                                 length)
+                            .Shape(),
+                        "metal");
+                    for (double z : {hz + 8, hz + length - 8})
+                        add(BRepPrimAPI_MakeCylinder(gp_Ax2(gp_Pnt(hx, d + t, z), gp_Dir(0, 1, 0)), 3.5, 24)
+                                .Shape(),
+                            "metal");
+                }
             }
             block(t, 6, leg + (h - leg) / 2, w - 2 * t, d - 6, t, carcass);
         }
@@ -272,7 +282,7 @@ std::vector<Part> buildEntity(const Document &doc, const Entity &e) {
             Transform center;
             center.x = w / 2;
             center.y = d / 2;
-            add(place(pot, center), "white");
+            add(place(pot, center));
             if (family == "plant") {
                 add(BRepPrimAPI_MakeCylinder(gp_Ax2(gp_Pnt(w / 2, d / 2, h * 0.4), gp_Dir(0, 0, 1)), 8,
                                              h * 0.6)
@@ -366,6 +376,7 @@ Json meshSnapshot(const Document &d) {
             }
         }
         meshes.push_back({{"owner", part.owner},
+                          {"kind", d.at(part.owner).type},
                           {"material", part.material},
                           {"vertices", vertices},
                           {"triangles", triangles}});

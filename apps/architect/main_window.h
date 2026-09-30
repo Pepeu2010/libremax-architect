@@ -52,6 +52,9 @@ class MainWindow final : public QMainWindow {
     QComboBox *renderCamera;
     QDoubleSpinBox *renderExposure;
     QDoubleSpinBox *renderEnvironment;
+    QComboBox *renderEnvironmentMode;
+    QDoubleSpinBox *renderSunElevation;
+    QDoubleSpinBox *renderSunRotation;
     QCheckBox *renderDenoise;
     QPushButton *renderStart;
     QPushButton *renderCancel;
@@ -87,6 +90,7 @@ class MainWindow final : public QMainWindow {
     void createCamera();
     void importDxf();
     void importTexture();
+    Q_INVOKABLE void activatePbrMaterials();
     void renderScene();
     void applyRenderSettings();
     Q_INVOKABLE void recover();

@@ -1,6 +1,6 @@
 # Matriz de paridade — VDMax 3.0 Arquitetos e Decoradores
 
-Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. Versão LibreMax: 0.2.0 em desenvolvimento. **Não há paridade completa nem release 1.0.**
+Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. Versão LibreMax: 0.3.0 em desenvolvimento. **Não há paridade completa nem release 1.0.**
 
 Complemento visual em 2026-09-30: [auditoria](VISUAL_REFERENCE_AUDIT.md), 11 imagens inspecionadas de 47 referências indexadas. `visual_refs` indica somente essas imagens consultadas; não promove paridade funcional automaticamente.
 
@@ -44,9 +44,9 @@ Fontes oficiais consultadas:
 | M04 | Módulos | Acabamentos/modelos | Acabamentos e modelos variados | Materiais por objeto, corpo/frente separados | `[modules]` | IN_PROGRESS | C | Editor de modelos/frentes ainda limitado | — |
 | M05 | Módulos | Puxadores | Diferentes modelos | Alça, perfil, ponto e nenhum | — | FUNCTIONAL | C | Cava/embutido ausentes | — |
 | M06 | Módulos | Portas de vidro | Modelos com vidro | Moldura recortada e painel de vidro | `[modules]` | IN_PROGRESS | C | Fumê/canelado/bronze não implementados | — |
-| T01 | Materiais | Materiais | Objetos recebem acabamentos | Presets PBR, madeira/pedra/tecido/pintura procedurais no Cycles | `[render]` | IN_PROGRESS | P | Controle UV e propriedades emissivas ausentes; textura de cor incorporada implementada | RENDER-08,VISUAL-02 |
+| T01 | Materiais | Materiais | Objetos recebem acabamentos | Presets PBR, mapas albedo/roughness/normal incorporados e materiais procedurais | `[render]` | IN_PROGRESS | P | Controle UV e propriedades emissivas ausentes; textura de cor incorporada implementada | RENDER-08,VISUAL-02 |
 | T02 | Materiais | Texturas JPG | Tabela menciona importação JPG | Worker, normalização PNG, incorporação por SHA256, viewport e Cycles | `[materials][persistence]` | FUNCTIONAL | C | Roundtrip sem original testado; equivalência UV e UI QA pendentes | — |
-| T03 | Materiais | Vidro e espelho | Vidro documentado; espelho da spec | Cycles PBR + transparência de preview | Smoke 960×540/64 CPU + inspeção visual | IN_PROGRESS | C,SPEC | Viewport não oferece reflexo ray-traced | VISUAL-01,VISUAL-02 |
+| T03 | Materiais | Vidro e espelho | Vidro documentado; espelho da spec | Cycles PBR + transparência de preview | Smoke 1280×720/128 CPU + inspeção visual | IN_PROGRESS | C,SPEC | Viewport não oferece reflexo ray-traced | VISUAL-01,VISUAL-02 |
 | U01 | Automação | Tampos | Inserção automática | União de sólidos sobre fontes com recálculo | `[automation]` | IN_PROGRESS | P | Testes retos; junções complexas/recortes de cuba faltam | — |
 | U02 | Automação | Rodatampos | Inserção automática | Segmentos associados | — | FUNCTIONAL | P | QA de conjuntos diversos pendente | — |
 | U03 | Automação | Rodapés | Inserção automática | Segmentos sob fontes | `[automation]` | IN_PROGRESS | P | Detectar sequências/compatibilidade por tipo falta | — |
@@ -61,10 +61,10 @@ Fontes oficiais consultadas:
 | V05 | Editor | Alinhamento/distribuição | Requisito da spec | — | — | NOT_STARTED | SPEC | — | — |
 | V06 | Editor | Visualização 3D | Apresentação de ambientes | AIS/V3d sobre B-rep, ortográfica superior/isométrica, orbit/pan/zoom | UI smoke | IN_PROGRESS | P | Dividida, perspectiva/walk e outras vistas faltam | VIEW-01,SCENE-01 |
 | V07 | Editor | Undo/redo | Requisito da spec | QUndoStack + Command Pattern validado | `[commands]` | FUNCTIONAL | SPEC | UI smoke amplia cobertura | — |
-| R01 | Luz | Iluminação | Render calcula iluminação | Point/spot/area persistentes; cor/tamanho/ângulo/suavidade no inspector | `[render]` | IN_PROGRESS | P,SPEC | LED/sol/céu configurável/emissivo ausentes | LIGHT-02,LIGHT-03 |
-| R02 | Câmeras | Câmeras | Requisito da spec | Posição/alvo/lente e seleção por UUID; exposição/ambiente/denoise persistentes | `[render]` | IN_PROGRESS | SPEC | Seletor integrado e roundtrip testados; presets e posicionamento interativo faltam | RENDER-06 |
+| R01 | Luz | Iluminação | Render calcula iluminação | Point/spot/area persistentes; cor/tamanho/ângulo/suavidade no inspector | `[render]` | IN_PROGRESS | P,SPEC | Céu natural/sol editáveis integrados; LED/HDRI/emissivo e QA amplo pendentes | LIGHT-02,LIGHT-03 |
+| R02 | Câmeras | Câmeras | Requisito da spec | Posição/alvo/lente, abertura/foco e seleção por UUID; exposição/ambiente/denoise persistentes | `[render]` | IN_PROGRESS | SPEC | Seletor integrado e roundtrip testados; presets e posicionamento interativo faltam | RENDER-06 |
 | R03 | Render | Ray tracing | Ray-trace com qualidade variável | QProcess + snapshot + Cycles + denoise, exposição/ambiente, GPU/CPU | Smoke QProcess/Cycles CPU | IN_PROGRESS | P | Sem fila multi-job e galeria persistente | RENDER-06,RENDER-08 |
-| R04 | Render | Exportar imagens | Resultado de apresentação | PNG/JPEG via Blender e visualizador central com exportação de cópia | Smoke 960×540/64 CPU + inspeção visual | FUNCTIONAL | P,SPEC | PNG 960×540 e cópia pela UI testados; JPEG pela UI e 1080p/4K pendentes | RENDER-08,VISUAL-03 |
+| R04 | Render | Exportar imagens | Resultado de apresentação | PNG/JPEG via Blender e visualizador central com exportação de cópia | Smoke 1280×720/128 CPU + inspeção visual | FUNCTIONAL | P,SPEC | PNG 1280×720 e cópia pela UI testados; JPEG pela UI e 1080p/4K pendentes | RENDER-08,VISUAL-03 |
 | P01 | Projetos | Salvar/abrir | Requisito da spec | Container ZIP v1, UUIDs, backup, validação e atomic replace | `[persistence]` + UI smoke | IN_PROGRESS | SPEC | Texturas incorporadas; modelos 3D/renders/migrations futuros faltam | — |
 | P02 | Projetos | Autosave | Requisito da spec | Intervalo configurável 1–60 min, 5 snapshots por UUID | `[recovery]` + encerramento forçado/reinício | FUNCTIONAL | SPEC | Timer configurável implementado; QA de configuração pela UI pendente | — |
 | P03 | Projetos | Crash recovery | Requisito da spec | Seleção de versão, diálogo, descarte seguro, skip de corruptos | `[recovery]` + `--recovery-smoke` (processo morto e outro iniciado) | FUNCTIONAL | SPEC | Um projeto via UI comprovado; múltiplas versões via core; energia/interrupção durante escrita não testadas | — |

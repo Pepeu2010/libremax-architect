@@ -5,7 +5,9 @@ import os
 import sys
 import base64
 import hashlib
+import math
 import bpy
+import bmesh
 from mathutils import Vector
 
 def arguments():
@@ -46,13 +48,75 @@ def surface_detail(entry, material, shader):
         tree.links.new(noise.outputs['Fac'], bump.inputs['Height'])
         normal = bump.outputs['Normal']
         if surface == 'fabric': shader.inputs['Sheen Weight'].default_value = 0.25
-    if entry.get('transmission', 0) == 0:
-        bevel = tree.nodes.new('ShaderNodeBevel')
-        bevel.inputs['Radius'].default_value = 0.0007
-        bevel.samples = 4
-        if normal: tree.links.new(normal, bevel.inputs['Normal'])
-        normal = bevel.outputs['Normal']
     if normal: tree.links.new(normal, shader.inputs['Normal'])
+
+def surface_maps(entry, material, shader, texture_paths):
+    tree = material.node_tree
+    uv = tree.nodes.new('ShaderNodeTexCoord')
+    for channel, socket in [('baseColorTexture', 'Base Color'), ('roughnessTexture', 'Roughness'), ('normalTexture', None)]:
+        if not entry.get(channel):
+            continue
+        texture = tree.nodes.new('ShaderNodeTexImage')
+        texture.image = bpy.data.images.load(texture_paths[entry[channel]], check_existing=True)
+        texture.image.colorspace_settings.name = 'sRGB' if channel == 'baseColorTexture' else 'Non-Color'
+        texture.interpolation = 'Linear'
+        tree.links.new(uv.outputs['UV'], texture.inputs['Vector'])
+        if socket:
+            tree.links.new(texture.outputs['Color'], shader.inputs[socket])
+        else:
+            normal = tree.nodes.new('ShaderNodeNormalMap')
+            normal.inputs['Strength'].default_value = entry.get('normalStrength', 1)
+            normal.uv_map = 'LMXSurfaceUV'
+            tree.links.new(texture.outputs['Color'], normal.inputs['Color'])
+            bevel = next((node for node in tree.nodes if node.type == 'BEVEL'), None)
+            tree.links.new(normal.outputs['Normal'], bevel.inputs['Normal'] if bevel else shader.inputs['Normal'])
+
+
+def photographic_mesh(part, entry, material):
+    mesh = bpy.data.meshes.new(part['owner'])
+    mesh.from_pydata(part['vertices'], [], part['triangles'])
+    mesh.update()
+    # OCC faces have separate vertices. Weld topology before beveling real edges.
+    bm = bmesh.new()
+    bm.from_mesh(mesh)
+    bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=1e-7)
+    bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+    bmesh.ops.dissolve_limit(bm, angle_limit=0.001, verts=list(bm.verts), edges=list(bm.edges))
+    bm.to_mesh(mesh)
+    bm.free()
+    mesh.update()
+    uv = mesh.uv_layers.new(name='LMXSurfaceUV')
+    scale = 1000.0 / entry.get('textureScale', 1000.0)
+    rotation = math.radians(entry.get('textureRotation', 0))
+    offset = [v / 1000 for v in entry.get('textureOffset', [0, 0, 0])]
+    for face in mesh.polygons:
+        axis = max(range(3), key=lambda i: abs(face.normal[i]))
+        axes = (1, 2) if axis == 0 else (0, 2) if axis == 1 else (0, 1)
+        for loop in face.loop_indices:
+            p = mesh.vertices[mesh.loops[loop].vertex_index].co
+            u, v = ((p[i] + offset[i]) * scale for i in axes)
+            uv.data[loop].uv = (u * math.cos(rotation) - v * math.sin(rotation), u * math.sin(rotation) + v * math.cos(rotation))
+        face.use_smooth = True
+    mesh.set_sharp_from_angle(angle=math.radians(35))
+    obj = bpy.data.objects.new(part['owner'], mesh)
+    bpy.context.scene.collection.objects.link(obj)
+    obj.data.materials.append(material)
+    # Room boundaries meet other solids; beveling them opens tiny daylight gaps.
+    if part.get('kind') not in ('Wall', 'HalfWall', 'Floor', 'Ceiling'):
+        bevel = obj.modifiers.new('Physical edge highlights', 'BEVEL')
+        bevel.width = 0.0004 if entry.get('transmission', 0) else 0.0012
+        bevel.segments = 3
+        bevel.limit_method = 'ANGLE'
+        bevel.angle_limit = math.radians(35)
+        bevel.harden_normals = True
+    normal = obj.modifiers.new('Planar face normals', 'WEIGHTED_NORMAL')
+    normal.keep_sharp = True
+    # Thin architectural panes pass daylight shadow rays; camera/glossy rays keep glass.
+    # This avoids noisy refractive caustics, while preserving geometry and reflections.
+    if part.get('kind') == 'Window' and entry.get('transmission', 0) > 0:
+        obj.visible_shadow = False
+    return obj
+
 
 def main():
     args = arguments()
@@ -67,10 +131,16 @@ def main():
     scene.cycles.samples = args.samples
     settings = package.get('renderSettings', {})
     scene.cycles.use_denoising = settings.get('denoise', True)
-    scene.cycles.max_bounces = 10
-    scene.cycles.transmission_bounces = 8
+    scene.cycles.max_bounces = 16
+    scene.cycles.diffuse_bounces = 8
+    scene.cycles.glossy_bounces = 8
+    scene.cycles.transmission_bounces = 12
+    scene.cycles.transparent_max_bounces = 12
+    scene.cycles.denoising_prefilter = 'ACCURATE'
+    scene.cycles.denoising_input_passes = 'RGB_ALBEDO_NORMAL'
+    scene.cycles.sample_clamp_indirect = 5
     scene.cycles.use_adaptive_sampling = True
-    scene.cycles.adaptive_threshold = 0.03
+    scene.cycles.adaptive_threshold = 0.008
     scene.view_settings.view_transform = 'AgX'
     scene.view_settings.look = 'AgX - Medium High Contrast'
     scene.view_settings.exposure = settings.get('exposure', 0.0)
@@ -111,29 +181,11 @@ def main():
         shader.inputs['Transmission Weight'].default_value = entry.get('transmission', 0.0)
         shader.inputs['IOR'].default_value = entry.get('ior', 1.45)
         surface_detail(entry, material, shader)
-        if entry.get('baseColorTexture'):
-            texture = material.node_tree.nodes.new('ShaderNodeTexImage')
-            texture.image = bpy.data.images.load(texture_paths[entry['baseColorTexture']], check_existing=True)
-            texture.projection = 'BOX'
-            texture.projection_blend = 0.15
-            coordinate = material.node_tree.nodes.new('ShaderNodeNewGeometry')
-            mapping = material.node_tree.nodes.new('ShaderNodeMapping')
-            scale = 1000.0 / entry.get('textureScale', 1000.0)
-            mapping.inputs['Scale'].default_value = (scale, scale, scale)
-            import math
-            mapping.inputs['Rotation'].default_value.z = math.radians(entry.get('textureRotation', 0))
-            mapping.inputs['Location'].default_value = [v / 1000 for v in entry.get('textureOffset', [0, 0, 0])]
-            material.node_tree.links.new(coordinate.outputs['Position'], mapping.inputs['Vector'])
-            material.node_tree.links.new(mapping.outputs['Vector'], texture.inputs['Vector'])
-            material.node_tree.links.new(texture.outputs['Color'], shader.inputs['Base Color'])
+        surface_maps(entry, material, shader, texture_paths)
         materials[entry['id']] = material
-    for index, part in enumerate(package['meshes']):
-        mesh = bpy.data.meshes.new(f'mesh-{index}')
-        mesh.from_pydata(part['vertices'], [], part['triangles'])
-        mesh.update()
-        obj = bpy.data.objects.new(part['owner'], mesh)
-        scene.collection.objects.link(obj)
-        obj.data.materials.append(materials[part['material']])
+    material_entries = {entry['id']: entry for entry in package['materials']}
+    for part in package['meshes']:
+        photographic_mesh(part, material_entries[part['material']], materials[part['material']])
     for entry in package['lights']:
         p = entry['parameters']
         kind = p.get('kind', 'area').upper()
@@ -144,7 +196,6 @@ def main():
             light.shape = 'DISK'
             light.size = p.get('size', 1000) / 1000
         elif kind == 'SPOT':
-            import math
             light.spot_size = math.radians(p.get('angle', 45))
             light.spot_blend = p.get('blend', 0.3)
         obj = bpy.data.objects.new(entry['name'], light)
@@ -158,15 +209,30 @@ def main():
         raise ValueError('Create a persistent camera before rendering')
     camera = bpy.data.cameras.new(camera_entry['name'])
     camera.lens = camera_entry['parameters'].get('lens', 28)
+    camera.sensor_width = 36
+    camera.sensor_fit = 'HORIZONTAL'
     obj = bpy.data.objects.new(camera_entry['name'], camera)
     scene.collection.objects.link(obj)
     obj.location = camera_entry['position']
     target = Vector([v / 1000 for v in camera_entry['parameters'].get('target', [2000, 1500, 1000])])
     obj.rotation_euler = (target - obj.location).to_track_quat('-Z', 'Y').to_euler()
     scene.camera = obj
+    camera.dof.use_dof = True
+    camera.dof.aperture_fstop = camera_entry['parameters'].get('fstop', 8)
+    camera.dof.focus_distance = camera_entry['parameters'].get('focusDistance', (target - obj.location).length * 1000) / 1000
+    camera.dof.aperture_blades = 7
     scene.world.use_nodes = True
     scene.world.node_tree.nodes['Background'].inputs['Color'].default_value = (0.7, 0.8, 1.0, 1.0)
     scene.world.node_tree.nodes['Background'].inputs['Strength'].default_value = settings.get('environmentStrength', 0.2)
+    if settings.get('environmentMode', 'studio') == 'sky':
+        sky = scene.world.node_tree.nodes.new('ShaderNodeTexSky')
+        sky.sky_type = 'MULTIPLE_SCATTERING'
+        sky.sun_elevation = math.radians(settings.get('sunElevation', 35))
+        sky.sun_rotation = math.radians(settings.get('sunRotation', 30))
+        sky.sun_size = math.radians(0.526)
+        sky.sun_intensity = 1
+        scene.world.node_tree.links.new(sky.outputs['Color'], scene.world.node_tree.nodes['Background'].inputs['Color'])
+    print('LIBREMAX_PHOTOGRAPHIC', 'PBR maps', len(texture_paths), 'environment', settings.get('environmentMode', 'studio'), 'UV physical scale', 'beveled geometry', 'fstop', camera.dof.aperture_fstop, flush=True)
     print('LIBREMAX_SETTINGS', camera_entry['id'], 'exposure', scene.view_settings.exposure,
           'environment', settings.get('environmentStrength', 0.2), 'denoise', scene.cycles.use_denoising,
           'look', scene.view_settings.look, flush=True)

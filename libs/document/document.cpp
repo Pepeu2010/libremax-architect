@@ -47,13 +47,15 @@ Json materialPresets() {
     add("fabric", "Tecido verde", {0.21, 0.34, 0.27}, 0.9, 0);
     add("graphite", "Grafite acetinado", {0.045, 0.065, 0.075}, 0.38, 0);
     add("porcelain", "Porcelanato areia", {0.55, 0.51, 0.43}, 0.55, 0);
+    add("quartz", "Quartzo claro", {0.62, 0.59, 0.52}, 0.22, 0);
+    add("ceramic", "Cerâmica esmaltada", {0.7, 0.69, 0.65}, 0.18, 0);
     for (auto &material : materials) {
         const auto id = material.at("id").get<std::string>();
-        material["procedural"] = id == "oak"                          ? "wood"
-                                 : id == "stone" || id == "porcelain" ? "stone"
-                                 : id == "fabric"                     ? "fabric"
-                                 : id == "paint"                      ? "paint"
-                                                                      : "none";
+        material["procedural"] = id == "oak"                                            ? "wood"
+                                 : id == "stone" || id == "porcelain" || id == "quartz" ? "stone"
+                                 : id == "fabric"                                       ? "fabric"
+                                 : id == "paint" || id == "graphite"                    ? "paint"
+                                                                                        : "none";
     }
     return materials;
 }
@@ -104,6 +106,12 @@ void Document::validate() const {
     auto selectedCamera = renderSettings.at("camera").get<std::string>();
     if (!selectedCamera.empty() && (!contains(selectedCamera) || at(selectedCamera).type != "Camera"))
         throw std::invalid_argument("Câmera de render não encontrada");
+    const auto environment = renderSettings.value("environmentMode", std::string("studio"));
+    const auto elevation = renderSettings.value("sunElevation", 35.0);
+    const auto rotation = renderSettings.value("sunRotation", 30.0);
+    if ((environment != "studio" && environment != "sky") || !std::isfinite(elevation) ||
+        !std::isfinite(rotation) || elevation < 1 || elevation > 89 || rotation < 0 || rotation > 360)
+        throw std::invalid_argument("Configuração de céu inválida");
     qint64 assetTotal = 0;
     for (const auto &[hash, bytes] : embeddedAssets) {
         assetTotal += bytes.size();
@@ -126,12 +134,15 @@ void Document::validate() const {
             if (!c.is_number() || !std::isfinite(c.get<double>()) || c.get<double>() < 0 ||
                 c.get<double>() > 1)
                 throw std::invalid_argument("Cor inválida");
-        if (m.contains("baseColorTexture") &&
-            (!m.at("baseColorTexture").is_string() ||
-             !embeddedAssets.contains(m.at("baseColorTexture").get<std::string>()) ||
-             !std::isfinite(m.value("textureScale", 1000.0)) || m.value("textureScale", 1000.0) < 1 ||
-             m.value("textureScale", 1000.0) > 1e7))
-            throw std::invalid_argument("Textura ou escala de material inválida");
+        for (auto channel : {"baseColorTexture", "roughnessTexture", "normalTexture"})
+            if (m.contains(channel) &&
+                (!m.at(channel).is_string() || !embeddedAssets.contains(m.at(channel).get<std::string>()) ||
+                 !std::isfinite(m.value("textureScale", 1000.0)) || m.value("textureScale", 1000.0) < 1 ||
+                 m.value("textureScale", 1000.0) > 1e7))
+                throw std::invalid_argument("Mapa ou escala de material inválido");
+        if (!std::isfinite(m.value("normalStrength", 1.0)) || m.value("normalStrength", 1.0) < 0 ||
+            m.value("normalStrength", 1.0) > 2)
+            throw std::invalid_argument("Intensidade de relevo inválida");
         if (!std::isfinite(m.value("ior", 1.45)) || m.value("ior", 1.45) < 1 || m.value("ior", 1.45) > 3)
             throw std::invalid_argument("Índice de refração inválido");
         for (auto key : {"roughness", "metallic", "transmission", "opacity"}) {
@@ -275,8 +286,11 @@ void Document::validate() const {
                     throw std::invalid_argument("Luz inválida");
             }
             if (e.type == "Camera" &&
-                (e.parameters.value("lens", 28.0) < 1 || e.parameters.value("lens", 28.0) > 1000))
-                throw std::invalid_argument("Lente inválida");
+                (e.parameters.value("lens", 28.0) < 1 || e.parameters.value("lens", 28.0) > 1000 ||
+                 e.parameters.value("fstop", 8.0) < 1 || e.parameters.value("fstop", 8.0) > 64 ||
+                 e.parameters.value("focusDistance", 2500.0) < 100 ||
+                 e.parameters.value("focusDistance", 2500.0) > 1e7))
+                throw std::invalid_argument("Lente, abertura ou foco inválidos");
         }
         if (e.type == "Stair") {
             int steps = e.parameters.value("steps", 15);

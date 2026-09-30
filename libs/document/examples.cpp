@@ -4,6 +4,9 @@ namespace lmx {
 Document kitchenExample() {
     Document d;
     d.name = "Cozinha de referência";
+    for (auto &material : d.materials)
+        if (material.at("id") == "paint")
+            material["baseColor"] = {0.76, 0.76, 0.73};
     addRectangularRoom(d, 4000, 3000, 2700, 120);
     for (auto &e : d.entities) {
         if (e.type == "Floor")
@@ -42,12 +45,20 @@ Document kitchenExample() {
         x += width;
     }
     d.entities.push_back(automation(d, bases, "countertop"));
-    d.entities.back().material = "porcelain";
+    d.entities.back().material = "quartz";
+    auto backsplash = entity("GeometryObject", "Revestimento em pedra");
+    backsplash.width = 3000;
+    backsplash.height = 550;
+    backsplash.depth = 12;
+    backsplash.transform = {230, 63, 750, 0, false};
+    backsplash.material = "porcelain";
+    d.entities.push_back(backsplash);
     d.entities.push_back(automation(d, bases, "plinth"));
     auto upper = entity("FurnitureModule", "Aéreo com vidro");
     upper.width = 1200;
     upper.height = 700;
     upper.depth = 320;
+    upper.material = "oak";
     upper.transform = {1300, 80, 1550, 0, false};
     upper.parameters = {{"family", "cabinet"}, {"doors", 2},          {"legs", 0},
                         {"glass", true},       {"handle", "profile"}, {"carcass", "oak"}};
@@ -70,7 +81,7 @@ Document kitchenExample() {
     auto light = entity("Light", "Luz de área");
     light.transform = {1800, 1700, 2450, 0, false};
     light.parameters = {{"kind", "area"},
-                        {"power", 180},
+                        {"power", 0},
                         {"size", 1500},
                         {"target", {1800, 600, 700}},
                         {"color", {1.0, 0.9, 0.77}}};
@@ -78,7 +89,7 @@ Document kitchenExample() {
     auto fill = entity("Light", "Luz da janela");
     fill.transform = {3700, 1800, 2000, 0, false};
     fill.parameters = {{"kind", "area"},
-                       {"power", 100},
+                       {"power", 0},
                        {"size", 1200},
                        {"target", {1800, 300, 900}},
                        {"color", {0.8, 0.89, 1.0}}};
@@ -89,13 +100,24 @@ Document kitchenExample() {
     vase.height = 230;
     vase.transform = {700, 400, 750, 0, false};
     vase.parameters = {{"family", "vase"}};
+    vase.material = "ceramic";
     d.entities.push_back(vase);
+    for (int i = 0; i < 2; ++i) {
+        auto ceramic = vase;
+        ceramic.id = uuid();
+        ceramic.name = "Cerâmica no aéreo";
+        ceramic.width = ceramic.depth = 110;
+        ceramic.height = 190 + i * 35;
+        ceramic.transform = {1450.0 + i * 600, 180, 1568, 0, false};
+        d.entities.push_back(ceramic);
+    }
     auto camera = entity("Camera", "Vista da cozinha");
-    camera.transform = {1200, 2900, 1600, 0, false};
-    camera.parameters = {{"target", {1950, 350, 1250}}, {"lens", 19.5}};
+    camera.transform = {1100, 2970, 1300, 0, false};
+    camera.parameters = {{"target", {1950, 350, 1300}}, {"lens", 19}, {"fstop", 8}};
     d.entities.push_back(camera);
-    d.renderSettings = {
-        {"camera", camera.id}, {"exposure", -0.3}, {"environmentStrength", 0.15}, {"denoise", true}};
+    d.renderSettings = {{"camera", camera.id}, {"exposure", 1.6},          {"environmentStrength", 0.12},
+                        {"denoise", true},     {"environmentMode", "sky"}, {"sunElevation", 35.0},
+                        {"sunRotation", 30.0}};
     auto detail = camera;
     detail.id = uuid();
     detail.name = "Detalhe de materiais";
