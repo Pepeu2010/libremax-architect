@@ -39,12 +39,22 @@ Json materialPresets() {
     };
     add("paint", "Pintura areia", {0.82, 0.78, 0.70}, 0.8, 0);
     add("white", "Branco fosco", {0.92, 0.92, 0.88}, 0.5, 0);
-    add("oak", "Carvalho", {0.48, 0.29, 0.14}, 0.5, 0);
+    add("oak", "Carvalho", {0.32, 0.19, 0.095}, 0.5, 0);
     add("stone", "Pedra escura", {0.12, 0.14, 0.15}, 0.3, 0);
     add("glass", "Vidro", {0.88, 0.96, 0.98}, 0.05, 0, 1);
     add("metal", "Inox", {0.62, 0.65, 0.68}, 0.25, 1);
     add("mirror", "Espelho", {0.96, 0.96, 0.96}, 0.01, 1);
     add("fabric", "Tecido verde", {0.21, 0.34, 0.27}, 0.9, 0);
+    add("graphite", "Grafite acetinado", {0.045, 0.065, 0.075}, 0.38, 0);
+    add("porcelain", "Porcelanato areia", {0.55, 0.51, 0.43}, 0.55, 0);
+    for (auto &material : materials) {
+        const auto id = material.at("id").get<std::string>();
+        material["procedural"] = id == "oak"                          ? "wood"
+                                 : id == "stone" || id == "porcelain" ? "stone"
+                                 : id == "fabric"                     ? "fabric"
+                                 : id == "paint"                      ? "paint"
+                                                                      : "none";
+    }
     return materials;
 }
 Document::Document() : id(uuid()), materials(materialPresets()) {
@@ -81,6 +91,19 @@ void Document::validate() const {
         throw std::invalid_argument("Documento inválido ou versão não suportada");
     if (!materials.is_array() || materials.size() > 1000)
         throw std::invalid_argument("Materiais inválidos");
+    if (!renderSettings.is_object())
+        throw std::invalid_argument("Configuração de render inválida");
+    for (auto key : {"exposure", "environmentStrength"})
+        if (!std::isfinite(renderSettings.at(key).get<double>()))
+            throw std::invalid_argument("Configuração de render inválida");
+    if (std::abs(renderSettings.at("exposure").get<double>()) > 8 ||
+        renderSettings.at("environmentStrength").get<double>() < 0 ||
+        renderSettings.at("environmentStrength").get<double>() > 5 ||
+        !renderSettings.at("denoise").is_boolean() || !renderSettings.at("camera").is_string())
+        throw std::invalid_argument("Configuração de render fora do limite");
+    auto selectedCamera = renderSettings.at("camera").get<std::string>();
+    if (!selectedCamera.empty() && (!contains(selectedCamera) || at(selectedCamera).type != "Camera"))
+        throw std::invalid_argument("Câmera de render não encontrada");
     qint64 assetTotal = 0;
     for (const auto &[hash, bytes] : embeddedAssets) {
         assetTotal += bytes.size();
@@ -93,6 +116,9 @@ void Document::validate() const {
     for (const auto &m : materials) {
         const auto mid = m.at("id").get<std::string>();
         const auto materialName = m.at("name").get<std::string>();
+        const std::set<std::string> procedures = {"none", "wood", "stone", "fabric", "paint"};
+        if (!procedures.contains(m.value("procedural", std::string("none"))))
+            throw std::invalid_argument("Material procedural inválido");
         if (mid.empty() || mid.size() > 128 || materialName.empty() || materialName.size() > 512 ||
             !materialIds.insert(mid).second || !m.at("baseColor").is_array() || m.at("baseColor").size() != 3)
             throw std::invalid_argument("Material inválido");
@@ -233,10 +259,19 @@ void Document::validate() const {
             for (const auto &v : target)
                 millimeters(v.get<double>());
             if (e.type == "Light") {
+                auto color = e.parameters.value("color", Json::array({1.0, 0.89, 0.73}));
+                if (!color.is_array() || color.size() != 3)
+                    throw std::invalid_argument("Cor de luz inválida");
+                for (const auto &value : color)
+                    if (!value.is_number() || !std::isfinite(value.get<double>()) ||
+                        value.get<double>() < 0 || value.get<double>() > 1)
+                        throw std::invalid_argument("Cor de luz inválida");
                 auto kind = e.parameters.value("kind", std::string("area"));
                 if ((kind != "area" && kind != "point" && kind != "spot") ||
                     e.parameters.value("power", 500.0) < 0 || e.parameters.value("power", 500.0) > 100000 ||
-                    e.parameters.value("size", 1000.0) < 1)
+                    e.parameters.value("size", 1000.0) < 1 || e.parameters.value("angle", 45.0) < 1 ||
+                    e.parameters.value("angle", 45.0) > 179 || e.parameters.value("blend", 0.3) < 0 ||
+                    e.parameters.value("blend", 0.3) > 1)
                     throw std::invalid_argument("Luz inválida");
             }
             if (e.type == "Camera" &&
@@ -301,9 +336,14 @@ Json Document::serialize() const {
     Json assets = Json::object();
     for (const auto &[hash, bytes] : embeddedAssets)
         assets[hash] = bytes.toBase64().toStdString();
-    return {{"version", version},      {"uuid", id},       {"name", name},
-            {"units", "mm"},           {"entities", list}, {"materials", materials},
-            {"embeddedAssets", assets}};
+    return {{"version", version},
+            {"uuid", id},
+            {"name", name},
+            {"units", "mm"},
+            {"entities", list},
+            {"materials", materials},
+            {"embeddedAssets", assets},
+            {"renderSettings", renderSettings}};
 }
 Document Document::deserialize(const Json &j) {
     Document d;
@@ -313,6 +353,7 @@ Document Document::deserialize(const Json &j) {
     d.name = j.at("name");
     d.version = j.at("version");
     d.materials = j.at("materials");
+    d.renderSettings = j.value("renderSettings", d.renderSettings);
     const auto storedAssets = j.value("embeddedAssets", Json::object());
     if (!storedAssets.is_object() || storedAssets.size() > 120)
         throw std::invalid_argument("Lista de assets inválida");
@@ -411,5 +452,7 @@ void eraseCascade(Document &d, const std::vector<std::string> &requested) {
             }
     }
     std::erase_if(d.entities, [&](const auto &e) { return ids.contains(e.id); });
+    if (ids.contains(d.renderSettings.at("camera").get<std::string>()))
+        d.renderSettings["camera"] = "";
 }
 } // namespace lmx

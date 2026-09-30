@@ -1,6 +1,6 @@
 # Materiais e texturas
 
-Presets: pintura, branco, carvalho (cor visual), pedra, vidro, inox, espelho e tecido. Cada material guarda cor, roughness, metallic, transmission, IOR e opacity. Cor carvalho não representa uma textura de madeira distribuída.
+Presets: pintura, branco, grafite acetinado, porcelanato, carvalho, pedra, vidro, inox, espelho e tecido. Cada material guarda cor, roughness, metallic, transmission, IOR e opacity. No Cycles, carvalho/pedra/tecido/pintura usam nodes procedurais originais para variação de cor, roughness e micro relevo; não são texturas fotografadas distribuídas. O bevel é de shader e não modifica a geometria CAD. Viewport e miniaturas mostram a cor do preset, sem equivalência visual ao shader procedural.
 
 Arquivo → Importar textura JPG/PNG normaliza imagem para PNG num worker, calcula SHA256, deduplica e incorpora ao documento. Se houver seleção desbloqueada, aplica; caso contrário cria material selecionável no inspector. O arquivo original pode ser removido. Limites: arquivo 16 MiB, dimensão máxima 8192 por eixo e 16 milhões de pixels; armazenamento convertido limitado a 16 MiB.
 

@@ -25,6 +25,8 @@ struct Document {
     int version = 1;
     std::vector<Entity> entities;
     Json materials;
+    Json renderSettings = {
+        {"camera", ""}, {"exposure", 0.0}, {"environmentStrength", 0.2}, {"denoise", true}};
     std::map<std::string, QByteArray> embeddedAssets;
     Document();
     Entity &at(const std::string &id);

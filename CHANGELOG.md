@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 — 2026-09-30 — desenvolvimento, sem release
+
+- Workspace Qt escuro, faixas de comandos, ícones próprios, foco e indicadores legíveis.
+- Miniaturas reais assíncronas com cache; inspector com rolagem vertical em 900 px.
+- Câmera por UUID, exposição/ambiente/denoise persistidos, luz spot/cor e área.
+- Render central com Ajustar/1:1/zoom/pan/exportar cópia, estado real do job e logs recolhidos.
+- Shaders procedurais de madeira/pedra/tecido/pintura, AgX e exemplo de cozinha revisado.
+- Auditoria de 11 imagens das 47 referências e testes de render real/roundtrip/miniaturas.
+
 ## 0.1.0 — 2026-09-29 — desenvolvimento, sem release
 
 - Pesquisa clean-room, baseline e matriz de paridade de Arquitetos e Decoradores.

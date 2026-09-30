@@ -1,3 +1,11 @@
+# Test report — ciclo 0.2.0
+
+Execução 2026-09-30 no mesmo host Windows/toolchain documentado abaixo. **17 casos/408 assertions passaram**; FTS5 com 10.000 fixtures: 0,5936 ms; CTest: 2,94 s. Build nativo, 25 thumbnails, UI/roundtrip/900 px, visualizador/exportação PNG, crash recovery e Cycles 960×540/64 CPU passaram. Render salvo pelo Blender aos 32,953 s em execução concorrente com testes. Falha sem câmera preservou a imagem anterior.
+
+Evidência e comandos atuais: [CYCLE_02](CYCLE_02.md). Capturas: [1440 px](screenshots/native-ui.png), [1024 px](screenshots/native-ui-1024.png), [900 px](screenshots/native-ui-900.png), [render workspace](screenshots/render-workspace.png), [Cycles](screenshots/cycles-kitchen.png). Limites: sem prova Linux/GPU/1080p/4K, JPEG pela UI e aceitação integral da master spec. O relatório do ciclo 01 abaixo é histórico; as capturas foram atualizadas para o ciclo 02.
+
+---
+
 # Test report — ciclo 0.1.0
 
 Execução local em 2026-09-29/30: Windows 11 Pro x86_64, Ryzen 5 5500 (6 cores/12 threads), 15,9 GiB de RAM. Toolchain isolado MSYS2 UCRT64: GCC 16.2.0, CMake 4.4.3, Ninja 1.13.2, Qt 6.11.2, OpenCASCADE 7.9.3, libzip 1.11.4, Catch2 3.16.0. Blender 5.2.1 LTS, executado como processo externo.

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(LibreMaxArchitect VERSION 0.1.0 LANGUAGES CXX)
+project(LibreMaxArchitect VERSION 0.2.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
@@ -20,6 +20,7 @@ add_library(lmx_core
   libs/persistence/project_store.cpp libs/persistence/project_store.h
   libs/persistence/recovery_store.cpp libs/persistence/recovery_store.h
   libs/library/library.cpp libs/library/library.h
+  libs/library/thumbnails.cpp libs/library/thumbnails.h
   libs/rendering/render_job.cpp libs/rendering/render_job.h)
 target_include_directories(lmx_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 target_include_directories(lmx_core SYSTEM PUBLIC ${OpenCASCADE_INCLUDE_DIR})
@@ -30,7 +31,11 @@ if(MSVC)
 else()
   target_compile_options(lmx_core PRIVATE -Wall -Wextra -Wpedantic)
 endif()
-add_executable(libremax-architect apps/architect/main.cpp apps/architect/main_window.cpp apps/architect/main_window.h libs/viewport/cad_view.cpp libs/viewport/cad_view.h)
+add_executable(libremax-architect apps/architect/main.cpp apps/architect/main_window.cpp apps/architect/main_window.h
+  apps/architect/studio_theme.cpp apps/architect/studio_theme.h libs/viewport/cad_view.cpp libs/viewport/cad_view.h)
+target_sources(libremax-architect PRIVATE apps/architect/render_preview.cpp apps/architect/render_preview.h)
+qt_add_resources(libremax-architect studio_icons PREFIX "/studio" BASE resources
+  FILES resources/arrow-down.png resources/arrow-up.png resources/check.png)
 target_link_libraries(libremax-architect PRIVATE lmx_core Qt6::Test)
 if(NOT MSVC)
   target_compile_options(libremax-architect PRIVATE -Wall -Wextra -Wpedantic)

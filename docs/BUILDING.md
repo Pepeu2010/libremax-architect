@@ -22,3 +22,5 @@ ctest --test-dir build --output-on-failure
 `scripts/package.sh` prepara `.deb` e AppDir em Linux. AppImage requer linuxdeploy/Qt plugin/appimagetool previamente verificados. Manifest Flatpak é rascunho: faltam módulos das dependências e integração segura de Blender no sandbox. Não confundir configuração de empacotamento com pacote já testado.
 
 `./scripts/package-source.ps1` gera no Windows `dist/source.tar.gz`, `starter-library.tar.gz`, `sample-projects.tar.gz` e `SHA256SUMS`, somente a partir do HEAD commitado. Arquivos de desenvolvimento não commitados e toolchains não entram nesses arquivos.
+
+Para reproduzir as capturas e render da interface 0.2, use os comandos de [CYCLE_02](CYCLE_02.md): `--render-size 960x540 --render-samples 64` e UI smoke com `--preview-image`. O smoke padrão continua pequeno para integração rápida.

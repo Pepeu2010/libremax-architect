@@ -1,5 +1,6 @@
 #include "main_window.h"
 #include "persistence/project_store.h"
+#include "studio_theme.h"
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QCryptographicHash>
@@ -8,6 +9,7 @@
 #include <QDragMoveEvent>
 #include <QDropEvent>
 #include <QFile>
+#include <QFileDialog>
 #include <QFileInfo>
 #include <QImage>
 #include <QImageReader>
@@ -16,6 +18,9 @@
 #include <QProcess>
 #include <QPushButton>
 #include <QScreen>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QSignalSpy>
 #include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QTest>
@@ -25,10 +30,11 @@
 #include <spdlog/spdlog.h>
 
 int main(int argc, char **argv) {
+    QApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
     QApplication app(argc, argv);
     QApplication::setApplicationName("libremax");
     QApplication::setOrganizationName("LibreMax");
-    QApplication::setApplicationVersion("0.1.0");
+    QApplication::setApplicationVersion("0.2.0");
     QCommandLineParser parser;
     parser.setApplicationDescription("LibreMax Architect — native interior design");
     parser.addHelpOption();
@@ -36,6 +42,9 @@ int main(int argc, char **argv) {
     parser.addOption({"ui-smoke", "Run native UI acceptance and save real screenshots", "directory"});
     parser.addOption({"examples", "Generate valid sample .lmx projects", "directory"});
     parser.addOption({"render-smoke", "Run real Cycles through asynchronous QProcess pipeline", "directory"});
+    parser.addOption({"render-size", "Acceptance render size WxH", "size", "320x180"});
+    parser.addOption({"render-samples", "Acceptance Cycles samples", "samples", "16"});
+    parser.addOption({"preview-image", "Exercise native image viewer with an existing real render", "image"});
     parser.addOption({"recovery-smoke", "Kill a child process and verify recovery in a fresh process"});
     parser.addOption({"recovery-fixture", "Internal crash acceptance writer", "directory"});
     parser.addOption({"recovery-verify", "Internal crash acceptance reader", "directory"});
@@ -106,6 +115,11 @@ int main(int argc, char **argv) {
             return 0;
         }
         if (parser.isSet("render-smoke")) {
+            const auto size = parser.value("render-size").split('x');
+            if (size.size() != 2)
+                throw std::runtime_error("Use render size WxH");
+            const int renderWidth = size[0].toInt(), renderHeight = size[1].toInt(),
+                      renderSamples = parser.value("render-samples").toInt();
             const auto directory = QDir(parser.value("render-smoke")).absolutePath();
             QDir().mkpath(directory);
             auto document = lmx::kitchenExample();
@@ -131,12 +145,13 @@ int main(int argc, char **argv) {
             });
             QObject::connect(&job, &lmx::RenderJob::completed, &app, [&](const QString &path) {
                 QImage image(path);
-                if (image.size() != QSize(320, 180)) {
+                if (image.size() != QSize(renderWidth, renderHeight)) {
                     std::cerr << "Invalid render dimensions\n";
                     app.exit(1);
                     return;
                 }
-                std::cout << "RENDER_SMOKE_PASS: real Cycles, CPU, denoise, 320x180 image\n";
+                std::cout << "RENDER_SMOKE_PASS: real Cycles, CPU, denoise, " << renderWidth << "x"
+                          << renderHeight << " image\n";
                 QFile file(path);
                 if (!file.open(QIODevice::ReadOnly)) {
                     std::cerr << "Unable to verify the completed render\n";
@@ -146,9 +161,10 @@ int main(int argc, char **argv) {
                 successfulHash = QCryptographicHash::hash(file.readAll(), QCryptographicHash::Sha256);
                 checkingFailure = true;
                 std::erase_if(document.entities, [](const auto &e) { return e.type == "Camera"; });
+                document.renderSettings["camera"] = "";
                 job.start(document, parser.value("blender"),
-                          QStringLiteral(LMX_SOURCE_DIR) + "/scripts/cycles_render.py", path, 320, 180, 16,
-                          "CPU");
+                          QStringLiteral(LMX_SOURCE_DIR) + "/scripts/cycles_render.py", path, renderWidth,
+                          renderHeight, renderSamples, "CPU");
             });
             QTimer::singleShot(180000, &app, [&] {
                 job.cancel();
@@ -157,11 +173,10 @@ int main(int argc, char **argv) {
             });
             job.start(document, parser.value("blender"),
                       QStringLiteral(LMX_SOURCE_DIR) + "/scripts/cycles_render.py",
-                      directory + "/cycles-kitchen.png", 320, 180, 16, "CPU");
+                      directory + "/cycles-kitchen.png", renderWidth, renderHeight, renderSamples, "CPU");
             return app.exec();
         }
-        QApplication::setStyle("Fusion");
-        app.setFont(QFont("Segoe UI", 10));
+        lmx::applyStudioPalette();
         QString stylesheet = QApplication::applicationDirPath() + "/../share/libremax/resources/style.qss";
         if (!QFileInfo::exists(stylesheet))
             stylesheet = QStringLiteral(LMX_SOURCE_DIR) + "/resources/style.qss";
@@ -217,7 +232,7 @@ int main(int argc, char **argv) {
         if (parser.isSet("ui-smoke")) {
             const auto directory = QDir(parser.value("ui-smoke")).absolutePath();
             QDir().mkpath(directory);
-            QTimer::singleShot(1500, &window, [&window, directory, &app] {
+            QTimer::singleShot(1500, &window, [&window, directory, &app, &parser] {
                 try {
                     auto ensure = [](bool value, const char *error) {
                         if (!value)
@@ -241,6 +256,17 @@ int main(int argc, char **argv) {
                     cad->setTool("select");
                     auto *assets = window.findChild<QListWidget *>("assetList");
                     ensure(assets && assets->count() > 0, "Starter library is unavailable");
+                    int ready = 0;
+                    for (int attempt = 0; attempt < 100; ++attempt) {
+                        ready = 0;
+                        for (int i = 0; i < assets->count(); ++i)
+                            ready += assets->item(i)->data(Qt::UserRole + 2).toBool();
+                        if (ready == assets->count())
+                            break;
+                        QTest::qWait(100);
+                    }
+                    ensure(ready == 25, "Shipped asset geometry thumbnails were not generated");
+                    std::cout << "THUMBNAILS_PASS: 25 actual geometry previews\n";
                     auto *asset = assets->item(0);
                     auto assetId = asset->data(Qt::UserRole).toString();
                     QTest::mouseClick(assets->viewport(), Qt::LeftButton, Qt::NoModifier,
@@ -281,7 +307,9 @@ int main(int argc, char **argv) {
                     window.selectIds({QString::fromStdString(it->id)});
                     auto *field = window.findChild<QLineEdit *>("widthField");
                     ensure(field, "Missing width editor");
-                    field->setText("753+59,5");
+                    field->setFocus();
+                    field->clear();
+                    QTest::keyClicks(field, "753+59,5");
                     auto *button = window.findChild<QPushButton *>("applyProperties");
                     ensure(button, "Missing apply button");
                     QTest::mouseClick(button, Qt::LeftButton);
@@ -290,6 +318,16 @@ int main(int argc, char **argv) {
                     window.editor().history.undo();
                     ensure(window.editor().document().at(it->id).width == 600, "Resize undo failed");
                     window.editor().history.redo();
+                    auto *camera = window.findChild<QComboBox *>("renderCamera");
+                    auto *exposure = window.findChild<QDoubleSpinBox *>("renderExposure");
+                    ensure(camera && exposure && camera->count() == 2, "Render controls are unavailable");
+                    camera->setCurrentIndex(1);
+                    exposure->setValue(-0.8);
+                    QMetaObject::invokeMethod(exposure, "editingFinished", Qt::DirectConnection);
+                    ensure(window.editor().document().renderSettings["camera"] ==
+                                   camera->currentData().toString().toStdString() &&
+                               window.editor().document().renderSettings["exposure"] == -0.8,
+                           "Camera and exposure controls did not update the document");
                     lmx::ProjectStore::save(directory + "/ui-roundtrip.lmx", window.editor().document(),
                                             false);
                     auto saved = window.editor().document().serialize();
@@ -308,6 +346,95 @@ int main(int argc, char **argv) {
                     ensure(
                         window.screen()->grabWindow(window.winId()).save(directory + "/native-ui-1024.png"),
                         "Compact screenshot failed");
+                    window.resize(900, 650);
+                    QTest::qWait(300);
+                    ensure(window.screen()->grabWindow(window.winId()).save(directory + "/native-ui-900.png"),
+                           "Small desktop screenshot failed");
+                    auto *inspector = window.findChild<QScrollArea *>("inspectorScroll");
+                    ensure(inspector && inspector->horizontalScrollBar()->maximum() == 0,
+                           "Inspector requires horizontal scrolling at 900 px");
+                    inspector->verticalScrollBar()->setValue(inspector->verticalScrollBar()->maximum());
+                    QTest::qWait(100);
+                    auto *applyButton = window.findChild<QPushButton *>("applyProperties");
+                    ensure(applyButton && inspector->viewport()->rect().contains(applyButton->mapTo(
+                                              inspector->viewport(), applyButton->rect().center())),
+                           "Apply button is inaccessible in compact inspector");
+                    std::cout
+                        << "COMPACT_INSPECTOR_PASS: no horizontal overflow, Apply reachable at 900 px\n";
+                    inspector->verticalScrollBar()->setValue(0);
+                    if (parser.isSet("preview-image")) {
+                        window.resize(1440, 900);
+                        const auto renderProject =
+                            QFileInfo(parser.value("preview-image")).dir().filePath("render-project.lmx");
+                        if (QFileInfo::exists(renderProject))
+                            window.loadProject(renderProject);
+                        window.showRenderImage(parser.value("preview-image"));
+                        auto *dock = window.findChild<QDockWidget *>("renderDock");
+                        dock->show();
+                        dock->raise();
+                        QTest::qWait(400);
+                        auto *canvas = window.findChild<lmx::ImageCanvas *>("renderCanvas");
+                        auto *actual = window.findChild<QPushButton *>("actualRenderSize");
+                        ensure(canvas && actual, "Render viewer is unavailable");
+                        QTest::mouseClick(actual, Qt::LeftButton);
+                        ensure(canvas->transform().m11() == 1.0, "Render viewer 1:1 scale failed");
+                        QTest::mouseClick(window.findChild<QPushButton *>("fitRenderImage"), Qt::LeftButton);
+                        QTest::qWait(200);
+                        const auto copyPath = directory + "/exported-render.png";
+                        QFile::remove(copyPath);
+                        QTimer exportDeadline;
+                        exportDeadline.setSingleShot(true);
+                        QObject::connect(&exportDeadline, &QTimer::timeout, &window, [] {
+                            if (auto *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()))
+                                dialog->reject();
+                        });
+                        exportDeadline.start(5000);
+                        QTimer::singleShot(300, &window, [copyPath] {
+                            if (auto *dialog =
+                                    qobject_cast<QFileDialog *>(QApplication::activeModalWidget())) {
+                                if (auto *filename = dialog->findChild<QLineEdit *>("fileNameEdit")) {
+                                    filename->setFocus();
+                                    QTest::keyClick(filename, Qt::Key_A, Qt::ControlModifier);
+                                    QTest::keyClicks(filename, copyPath);
+                                }
+                                QMetaObject::invokeMethod(dialog, "accept", Qt::DirectConnection);
+                            }
+                        });
+                        auto *exportButton = window.findChild<QPushButton *>("exportRenderImage");
+                        ensure(exportButton && exportButton->isVisible(), "Render export button unavailable");
+                        QSignalSpy exportClick(exportButton, &QPushButton::clicked);
+                        QTest::mouseClick(exportButton, Qt::LeftButton);
+                        exportDeadline.stop();
+                        ensure(exportClick.count() == 1, "Render export button did not receive click");
+                        ensure(QImage(copyPath).convertToFormat(QImage::Format_RGBA8888) ==
+                                   QImage(parser.value("preview-image"))
+                                       .convertToFormat(QImage::Format_RGBA8888),
+                               "Render export did not preserve image pixels");
+                        ensure(window.screen()
+                                   ->grabWindow(window.winId())
+                                   .save(directory + "/render-workspace.png"),
+                               "Render workspace screenshot failed");
+                        window.resize(900, 650);
+                        QTest::qWait(300);
+                        auto *renderScroll = window.findChild<QScrollArea *>("renderScroll");
+                        ensure(renderScroll && renderScroll->horizontalScrollBar()->maximum() == 0,
+                               "Render panel requires horizontal scrolling at 900 px");
+                        renderScroll->verticalScrollBar()->setValue(
+                            renderScroll->verticalScrollBar()->maximum());
+                        auto *startRender = window.findChild<QPushButton *>("startRender");
+                        ensure(startRender && renderScroll->viewport()->rect().contains(startRender->mapTo(
+                                                  renderScroll->viewport(), startRender->rect().center())),
+                               "Render action is inaccessible in compact workspace");
+                        renderScroll->verticalScrollBar()->setValue(0);
+                        canvas->fit();
+                        QTest::qWait(100);
+                        ensure(window.screen()
+                                   ->grabWindow(window.winId())
+                                   .save(directory + "/render-workspace-900.png"),
+                               "Compact render screenshot failed");
+                        std::cout << "RENDER_VIEWER_PASS: real image, fit, 1:1, native PNG export preserves "
+                                     "pixels\n";
+                    }
                     std::cout << "UI_SMOKE_PASS: wall draw, library double-click and drop/ghost, "
                                  "undo/redo, millimetric expression edit, "
                                  "save/open, native CAD screenshots\n";

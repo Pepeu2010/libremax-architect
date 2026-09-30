@@ -1,0 +1,378 @@
+[
+  {
+    "id": "PROD-01",
+    "category": "product",
+    "title": "Criar ambiente — imagem oficial do produto",
+    "url": "https://static.wixstatic.com/media/d67187_586830ff1d5944b2a38af3c43dca14ca.png/v1/fill/w_236%2Ch_236%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/d67187_586830ff1d5944b2a38af3c43dca14ca.png",
+    "source": "https://www.vdmax.com/vdmaxad",
+    "observe": "Representação oficial da criação de ambientes no VDMax Arquitetos."
+  },
+  {
+    "id": "PROD-02",
+    "category": "product",
+    "title": "Automatização — imagem oficial do produto",
+    "url": "https://static.wixstatic.com/media/d67187_7080af54d905460aa9392e432b6bb72e.png/v1/fill/w_236%2Ch_236%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/d67187_7080af54d905460aa9392e432b6bb72e.png",
+    "source": "https://www.vdmax.com/vdmaxad",
+    "observe": "Referência oficial de automações como tampo, rodapé, rodaforro e fechamentos."
+  },
+  {
+    "id": "PROD-03",
+    "category": "product",
+    "title": "Módulos editáveis — imagem oficial do produto",
+    "url": "https://static.wixstatic.com/media/d67187_3860030777814aa1a9d4706602182f05.png/v1/fill/w_236%2Ch_236%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/d67187_3860030777814aa1a9d4706602182f05.png",
+    "source": "https://www.vdmax.com/vdmaxad",
+    "observe": "Referência para módulos redimensionáveis em largura, altura e profundidade."
+  },
+  {
+    "id": "PROD-04",
+    "category": "product",
+    "title": "Objetos decorativos — imagem oficial do produto",
+    "url": "https://static.wixstatic.com/media/d67187_cbfd1eb0dad641aeb3e9b446206ac62d.jpg/v1/fill/w_236%2Ch_236%2Cal_c%2Cq_80%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/d67187_cbfd1eb0dad641aeb3e9b446206ac62d.jpg",
+    "source": "https://www.vdmax.com/vdmaxad",
+    "observe": "Referência para densidade/variedade visual da biblioteca decorativa."
+  },
+  {
+    "id": "PROD-05",
+    "category": "product",
+    "title": "Render — imagem oficial do produto",
+    "url": "https://static.wixstatic.com/media/d67187_a627c21d13f1415a937f7c5af2858141.jpg/v1/fill/w_236%2Ch_236%2Cal_c%2Cq_80%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/d67187_a627c21d13f1415a937f7c5af2858141.jpg",
+    "source": "https://www.vdmax.com/vdmaxad",
+    "observe": "Resultado visual que a edição Arquitetos anuncia como render ray-trace."
+  },
+  {
+    "id": "VIEW-01",
+    "category": "interface",
+    "title": "Vista em perspectiva",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/206465008/Screenshot_6.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/218739427-Tipos-de-Vista",
+    "observe": "Como a perspectiva é apresentada no viewport."
+  },
+  {
+    "id": "VIEW-02",
+    "category": "interface",
+    "title": "Vista ortogonal",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/206465048/Screenshot_7.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/218739427-Tipos-de-Vista",
+    "observe": "Comparar projeção ortogonal com perspectiva."
+  },
+  {
+    "id": "VIEW-03",
+    "category": "interface",
+    "title": "Alternância de vista na barra de status",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/206498467/Untitled-2.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/218739427-Tipos-de-Vista",
+    "observe": "Localização e baixo atrito para alternar modo de projeção."
+  },
+  {
+    "id": "SCENE-01",
+    "category": "interface",
+    "title": "Modo de cena renderizado",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/206465608/1.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/218888107-Modos-de-Cena",
+    "observe": "Viewport renderizado com texturas."
+  },
+  {
+    "id": "SCENE-02",
+    "category": "interface",
+    "title": "Modo linhas ocultas",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/206498907/2.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/218888107-Modos-de-Cena",
+    "observe": "Modo técnico para leitura/impressão."
+  },
+  {
+    "id": "SCENE-03",
+    "category": "interface",
+    "title": "Modo aramado",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/206465598/3.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/218888107-Modos-de-Cena",
+    "observe": "Visualização de internos/arestas."
+  },
+  {
+    "id": "SCENE-04",
+    "category": "interface",
+    "title": "Modo esboço",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/206465618/4.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/218888107-Modos-de-Cena",
+    "observe": "Representação simplificada durante manipulação."
+  },
+  {
+    "id": "SCENE-05",
+    "category": "interface",
+    "title": "Renderizado com contorno",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/206498917/5.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/218888107-Modos-de-Cena",
+    "observe": "Texturas + contorno no viewport."
+  },
+  {
+    "id": "ENV-01",
+    "category": "environment",
+    "title": "Entrada numérica de parede angular",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/208458627/Screenshot_8.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/221131247-Desenhar-Paredes-com-%C3%82ngulos",
+    "observe": "Entrada de comprimento e ângulo no fluxo de criação de parede."
+  },
+  {
+    "id": "ENV-02",
+    "category": "environment",
+    "title": "Resultado de parede com ângulo",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/208443948/Screenshot_9.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/221131247-Desenhar-Paredes-com-%C3%82ngulos",
+    "observe": "Feedback visual após entrada angular."
+  },
+  {
+    "id": "ENV-03",
+    "category": "environment",
+    "title": "Parede com ângulo negativo",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/208444268/Screenshot_10.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/221131247-Desenhar-Paredes-com-%C3%82ngulos",
+    "observe": "Suporte a ângulos positivos/negativos e fluxo Ortho."
+  },
+  {
+    "id": "ENV-04",
+    "category": "environment",
+    "title": "Biblioteca de janelas",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/212848687/Screenshot_1.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/228190848-Janelas",
+    "observe": "Organização de Utilitário > Janelas na biblioteca lateral."
+  },
+  {
+    "id": "ENV-05",
+    "category": "environment",
+    "title": "Arrastar janela para parede",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/212676148/Screenshot_3.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/228190848-Janelas",
+    "observe": "Inserção contextual arrastar-e-soltar sobre a parede."
+  },
+  {
+    "id": "ENV-06",
+    "category": "environment",
+    "title": "Propriedades de janela",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/212849507/Screenshot_4.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/228190848-Janelas",
+    "observe": "Painel de propriedades à direita para configuração do objeto selecionado."
+  },
+  {
+    "id": "LIB-01",
+    "category": "library",
+    "title": "Biblioteca e drag-and-drop de objeto",
+    "url": "https://vdmax.zendesk.com/hc/article_attachments/115008552148/Sem_t_tulo.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/115004427847-Inserindo-Objetos-na-Cena-Arrastar-e-Soltar",
+    "observe": "Estrutura da Barra de Objetos e Texturas e origem do gesto de arrastar."
+  },
+  {
+    "id": "LIB-02",
+    "category": "library",
+    "title": "Objeto inserido por arrastar e soltar",
+    "url": "https://vdmax.zendesk.com/hc/article_attachments/115008452867/Screenshot_1.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/115004427847-Inserindo-Objetos-na-Cena-Arrastar-e-Soltar",
+    "observe": "Resultado do drop dentro do ambiente."
+  },
+  {
+    "id": "TEX-01",
+    "category": "materials",
+    "title": "Tela Texturas das Faixas",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/211801347/Screenshot_2.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/227094687-Textura-em-Paredes-Conceito",
+    "observe": "Controle de cinco faixas, altura, tamanho e orientação das texturas."
+  },
+  {
+    "id": "TEX-02",
+    "category": "materials",
+    "title": "Biblioteca de acabamento antes do drop",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/211801267/Screenshot_1.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/227094687-Textura-em-Paredes-Conceito",
+    "observe": "Fluxo biblioteca de Texturas → parede."
+  },
+  {
+    "id": "TEX-03",
+    "category": "materials",
+    "title": "Aplicar textura a todas as faixas",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/211801987/Screenshot_5.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/227094687-Textura-em-Paredes-Conceito",
+    "observe": "Diálogo e comando Substituir Todas."
+  },
+  {
+    "id": "TEX-04",
+    "category": "materials",
+    "title": "Aplicação de pastilha em faixa",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/211655268/Screenshot_4.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/227094687-Textura-em-Paredes-Conceito",
+    "observe": "Seleção de acabamento para faixa individual."
+  },
+  {
+    "id": "TEX-05",
+    "category": "materials",
+    "title": "Configuração de faixa central",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/211655308/Screenshot_6.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/227094687-Textura-em-Paredes-Conceito",
+    "observe": "Altura 150 mm, escala e orientação por faixa."
+  },
+  {
+    "id": "TEX-06",
+    "category": "materials",
+    "title": "Resultado final de revestimentos por faixa",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/211655368/Screenshot_7.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/227094687-Textura-em-Paredes-Conceito",
+    "observe": "Resultado visual com base + faixa central distinta."
+  },
+  {
+    "id": "LIGHT-01",
+    "category": "lighting",
+    "title": "Biblioteca de luzes",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/210100387/Screenshot_7.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/223829347-Tipos-de-Luz-Luz-Spot",
+    "observe": "Localização da iluminação na biblioteca Utilitário > Luz."
+  },
+  {
+    "id": "LIGHT-02",
+    "category": "lighting",
+    "title": "Configuração de luz Spot",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/210008208/Screenshot_8.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/223829347-Tipos-de-Luz-Luz-Spot",
+    "observe": "Ângulo, abertura, dispersão e cor da luz."
+  },
+  {
+    "id": "LIGHT-03",
+    "category": "lighting",
+    "title": "Resultado renderizado da luz Spot",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/214395188/luz_spot_kerky.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/223829347-Tipos-de-Luz-Luz-Spot",
+    "observe": "Resultado esperado do feixe focal no render."
+  },
+  {
+    "id": "GEO-01",
+    "category": "geometry",
+    "title": "Editor de geometria — retângulo do tampo",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/208446347/Screenshot_11.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/221078568-Criando-um-tampo-de-geometria",
+    "observe": "Fluxo dedicado de geometria para criar tampo."
+  },
+  {
+    "id": "GEO-02",
+    "category": "geometry",
+    "title": "Recorte da cuba",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/208431128/Screenshot_12.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/221078568-Criando-um-tampo-de-geometria",
+    "observe": "Desenho interno para subtração/recorte."
+  },
+  {
+    "id": "GEO-03",
+    "category": "geometry",
+    "title": "Arredondamento do recorte",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/208446667/Screenshot_13.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/221078568-Criando-um-tampo-de-geometria",
+    "observe": "Ferramenta de arredondar cantos e edição de contorno."
+  },
+  {
+    "id": "GEO-04",
+    "category": "geometry",
+    "title": "Resultado do contorno do tampo",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/208446747/Screenshot_14.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/221078568-Criando-um-tampo-de-geometria",
+    "observe": "Geometria após recorte/arredondamento."
+  },
+  {
+    "id": "GEO-05",
+    "category": "geometry",
+    "title": "Propriedades altura e elevação",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/208430508/Screenshot_8.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/221078568-Criando-um-tampo-de-geometria",
+    "observe": "Inspector à direita com Altura e Elevação em mm."
+  },
+  {
+    "id": "GEO-06",
+    "category": "geometry",
+    "title": "Tampo salvo no projeto",
+    "url": "https://vdmax.zendesk.com/hc/pt-br/article_attachments/208446767/Screenshot_15.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/221078568-Criando-um-tampo-de-geometria",
+    "observe": "Resultado de retorno do editor de geometria para a cena principal."
+  },
+  {
+    "id": "RENDER-01",
+    "category": "render",
+    "title": "Cena usada no exemplo de render",
+    "url": "https://vdmax.zendesk.com/hc/article_attachments/215315487/img.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/230889988-Tipos-de-Render",
+    "observe": "Cena-base para comparar os presets de render."
+  },
+  {
+    "id": "RENDER-02",
+    "category": "render",
+    "title": "Menu de tipos de render",
+    "url": "https://vdmax.zendesk.com/hc/article_attachments/215315587/Sem_t_tulo.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/230889988-Tipos-de-Render",
+    "observe": "Acesso rápido a Rápido, Normal, Final e Personalizado."
+  },
+  {
+    "id": "RENDER-03",
+    "category": "render",
+    "title": "Render Rápido",
+    "url": "https://vdmax.zendesk.com/hc/article_attachments/215246208/render_rapido.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/230889988-Tipos-de-Render",
+    "observe": "Preset de preview rápido."
+  },
+  {
+    "id": "RENDER-04",
+    "category": "render",
+    "title": "Render Normal",
+    "url": "https://vdmax.zendesk.com/hc/article_attachments/215317387/render_normal.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/230889988-Tipos-de-Render",
+    "observe": "Preset intermediário com suavização de iluminação."
+  },
+  {
+    "id": "RENDER-05",
+    "category": "render",
+    "title": "Render Final",
+    "url": "https://vdmax.zendesk.com/hc/article_attachments/215251988/render_final.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/230889988-Tipos-de-Render",
+    "observe": "Referência de qualidade final/radiosidade."
+  },
+  {
+    "id": "RENDER-06",
+    "category": "render",
+    "title": "Tela de Render Personalizado",
+    "url": "https://vdmax.zendesk.com/hc/article_attachments/215342227/Sem_t_tulo2.png",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/230889988-Tipos-de-Render",
+    "observe": "Quais controles avançados o VDMax expõe ao usuário."
+  },
+  {
+    "id": "RENDER-07",
+    "category": "render",
+    "title": "Configuração de render personalizado",
+    "url": "https://vdmax.zendesk.com/hc/article_attachments/215292128/Screenshot_4.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/230889988-Tipos-de-Render",
+    "observe": "Exemplo de configuração avançada aplicada."
+  },
+  {
+    "id": "RENDER-08",
+    "category": "render",
+    "title": "Resultado do Render Personalizado",
+    "url": "https://vdmax.zendesk.com/hc/article_attachments/215340387/render_personalizado.jpg",
+    "source": "https://vdmax.zendesk.com/hc/pt-br/articles/230889988-Tipos-de-Render",
+    "observe": "Resultado esperado do preset configurável."
+  },
+  {
+    "id": "VISUAL-01",
+    "category": "render-reference",
+    "title": "Detalhe de iluminação — galeria oficial",
+    "url": "https://static.wixstatic.com/media/d67187_1dc7627dcbee4a92b17e1aef1782aafe.jpg/v1/fill/w_960%2Ch_591%2Cal_c%2Cq_85%2Cenc_avif%2Cquality_auto/d67187_1dc7627dcbee4a92b17e1aef1782aafe.jpg",
+    "source": "https://www.vdmax.com/",
+    "observe": "Referência oficial de iluminação/render do VDMax Arquitetos e Decoradores."
+  },
+  {
+    "id": "VISUAL-02",
+    "category": "render-reference",
+    "title": "Texturas e reflexos — galeria oficial",
+    "url": "https://static.wixstatic.com/media/d67187_2f4fcf48fe90429d9b54aff81aa35772.png/v1/fill/w_980%2Ch_456%2Cal_c%2Cq_90%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/d67187_2f4fcf48fe90429d9b54aff81aa35772.png",
+    "source": "https://www.vdmax.com/",
+    "observe": "Referência oficial de brilho/reflexo de acabamentos."
+  },
+  {
+    "id": "VISUAL-03",
+    "category": "render-reference",
+    "title": "Objetos emissivos — galeria oficial",
+    "url": "https://static.wixstatic.com/media/d67187_ab42941d413949369a3cdc23ded79b55.png/v1/fill/w_980%2Ch_456%2Cal_c%2Cq_90%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/d67187_ab42941d413949369a3cdc23ded79b55.png",
+    "source": "https://www.vdmax.com/",
+    "observe": "Referência oficial de texturas/objetos que emitem luz."
+  }
+]

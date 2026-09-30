@@ -4,6 +4,7 @@
 #include "geometry/geometry.h"
 #include "import/dxf.h"
 #include "library/library.h"
+#include "library/thumbnails.h"
 #include "materials/texture.h"
 #include "persistence/project_store.h"
 #include "persistence/recovery_store.h"
@@ -378,4 +379,65 @@ TEST_CASE("every shipped starter recipe creates valid solids; invalid edits pres
     auto badMaterial = sofa;
     badMaterial.materials[0].erase("name");
     REQUIRE_THROWS(badMaterial.validate());
+}
+TEST_CASE("render camera exposure environment survive ZIP and camera removal undo", "[render][persistence]") {
+    application();
+    QTemporaryDir dir;
+    auto document = simple();
+    auto first = entity("Camera", "Principal"), second = entity("Camera", "Detalhe");
+    document.entities.push_back(first);
+    document.entities.push_back(second);
+    document.renderSettings = {
+        {"camera", second.id}, {"exposure", -1.2}, {"environmentStrength", 0.08}, {"denoise", false}};
+    auto path = dir.filePath("presentation.lmx");
+    ProjectStore::save(path, document);
+    auto reopened = ProjectStore::open(path);
+    REQUIRE(reopened.serialize() == document.serialize());
+    REQUIRE(meshSnapshot(reopened)["renderSettings"] == document.renderSettings);
+    auto legacy = document.serialize();
+    legacy.erase("renderSettings");
+    REQUIRE(Document::deserialize(legacy).renderSettings["camera"] == "");
+    Editor editor;
+    editor.load(document);
+    editor.apply("Delete selected camera", [&](Document &d) { eraseCascade(d, {second.id}); });
+    REQUIRE(editor.document().renderSettings["camera"] == "");
+    editor.history.undo();
+    REQUIRE(editor.document().serialize() == document.serialize());
+    REQUIRE_THROWS(editor.apply("Invalid exposure", [](Document &d) { d.renderSettings["exposure"] = 20; }));
+    REQUIRE_THROWS(editor.apply("Invalid camera", [](Document &d) { d.renderSettings["camera"] = uuid(); }));
+    auto light = entity("Light", "Spot");
+    light.parameters = {{"kind", "spot"}, {"angle", 50}, {"blend", 0.4}, {"color", {1.0, 0.9, 0.8}}};
+    reopened.entities.push_back(light);
+    REQUIRE_NOTHROW(reopened.validate());
+    reopened.entities.back().parameters["color"] = {2.0, 0.9, 0.8};
+    REQUIRE_THROWS(reopened.validate());
+}
+TEST_CASE("library thumbnails show real furniture geometry and distinct decorative shapes",
+          "[library][thumbnails]") {
+    application();
+    Asset cabinet{"cabinet",
+                  "Armário",
+                  "Cozinha",
+                  800,
+                  720,
+                  550,
+                  {{"type", "FurnitureModule"}, {"parameters", {{"family", "cabinet"}}}},
+                  false};
+    Asset vase{"vase",
+               "Vaso",
+               "Decoração",
+               200,
+               450,
+               200,
+               {{"type", "DecorativeObject"}, {"parameters", {{"family", "vase"}}}},
+               false};
+    auto first = renderAssetThumbnail(cabinet), second = renderAssetThumbnail(vase);
+    REQUIRE(first.size() == QSize(192, 144));
+    REQUIRE(second.size() == first.size());
+    REQUIRE(first != second);
+    int geometryPixels = 0;
+    for (int y = 0; y < first.height(); ++y)
+        for (int x = 0; x < first.width(); ++x)
+            geometryPixels += first.pixelColor(x, y) != QColor("#111a22");
+    REQUIRE(geometryPixels > 1000);
 }

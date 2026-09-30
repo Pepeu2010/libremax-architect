@@ -4,9 +4,11 @@
 #include "import/dxf.h"
 #include "materials/texture.h"
 #include "persistence/project_store.h"
+#include "studio_theme.h"
 #include <QActionGroup>
 #include <QApplication>
 #include <QCloseEvent>
+#include <QColorDialog>
 #include <QDateTime>
 #include <QDialogButtonBox>
 #include <QDir>
@@ -22,9 +24,11 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QSettings>
+#include <QSignalBlocker>
 #include <QStandardPaths>
 #include <QStatusBar>
 #include <QToolBar>
+#include <QToolButton>
 #include <QVBoxLayout>
 #include <QtConcurrent>
 #include <algorithm>
@@ -107,6 +111,20 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory)
         throw std::runtime_error("Starter Library não encontrada");
     library->seed(Json::parse(catalog.readAll().toStdString()));
     createShell();
+    connect(&thumbnails, &AssetThumbnails::ready, this, [this](const QString &, const QImage &) {
+        for (int i = 0; i < assets->count(); ++i) {
+            auto *item = assets->item(i);
+            for (const auto &asset : visibleAssets)
+                if (asset.id == item->data(Qt::UserRole).toString()) {
+                    auto image = thumbnails.request(asset);
+                    if (!image.isNull()) {
+                        item->setIcon(QIcon(QPixmap::fromImage(image)));
+                        item->setData(Qt::UserRole + 2, true);
+                    }
+                    break;
+                }
+        }
+    });
     connect(&editor_, &Editor::changed, this, &MainWindow::refreshScene);
     connect(&editor_.history, &QUndoStack::cleanChanged, this,
             [this] { setWindowModified(!editor_.history.isClean()); });
@@ -134,18 +152,19 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory)
         return std::nullopt;
     });
     connect(&render, &RenderJob::state, this, [this](const QString &state) {
+        renderState->setText(state);
+        const bool busy = render.busy();
+        renderStart->setEnabled(!busy && renderCamera->count() > 0);
+        renderCancel->setEnabled(busy);
+        renderProgress->setRange(0, busy ? 0 : 100);
+        renderProgress->setValue(state == tr("Concluído") ? 100 : 0);
         renderLog->appendPlainText(state);
         statusBar()->showMessage(tr("Render: %1").arg(state));
     });
     connect(&render, &RenderJob::log, renderLog, &QPlainTextEdit::appendPlainText);
     connect(&render, &RenderJob::completed, this, [this](const QString &file) {
         renderLog->appendPlainText(tr("Imagem salva: %1").arg(file));
-        auto *dock = new QDockWidget(tr("Imagem renderizada"), this);
-        auto *image = new QLabel;
-        image->setPixmap(QPixmap(file).scaled(640, 360, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        image->setAlignment(Qt::AlignCenter);
-        dock->setWidget(image);
-        addDockWidget(Qt::BottomDockWidgetArea, dock);
+        protect([&] { showRenderImage(file); });
     });
     connect(&autosaveTimer, &QTimer::timeout, this, [this] { protect([&] { autosave(); }); });
     auto interval = std::clamp(QSettings().value("autosaveMinutes", 5).toInt(), 1, 60);
@@ -165,7 +184,9 @@ void MainWindow::protect(const std::function<void()> &operation) {
 }
 void MainWindow::createShell() {
     viewport = new CadView;
-    setCentralWidget(viewport);
+    workspace = new QStackedWidget;
+    workspace->addWidget(viewport);
+    setCentralWidget(workspace);
     auto action = [this](QMenu *menu, const QString &name, const QKeySequence &shortcut,
                          std::function<void()> callback) {
         auto *a = menu->addAction(name);
@@ -275,24 +296,52 @@ void MainWindow::createShell() {
     auto *help = menuBar()->addMenu(tr("A&juda"));
     action(help, tr("Sobre LibreMax"), {}, [this] {
         QMessageBox::about(this, tr("LibreMax Architect"),
-                           tr("LibreMax Architect 0.1.0 — desenvolvimento\nEditor nativo C++20 / Qt / "
+                           tr("LibreMax Architect 0.2.0 — desenvolvimento\nEditor nativo C++20 / Qt / "
                               "OpenCASCADE\nCódigo GPL-3.0-or-later · Biblioteca procedural CC0\nA paridade "
                               "completa e os pacotes Linux ainda estão em desenvolvimento."));
     });
+    auto *projectBar = addToolBar(tr("Projeto"));
+    projectBar->setMovable(false);
+    projectBar->setIconSize({18, 18});
+    projectBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    auto *brand = new QLabel(tr("  LIBREMAX  /  ARCHITECT  "));
+    brand->setObjectName("studioBrand");
+    projectBar->addWidget(brand);
+    projectBar->addSeparator();
+    projectTitle = new QLabel;
+    projectTitle->setObjectName("projectTitle");
+    projectTitle->setMinimumWidth(100);
+    projectTitle->setMaximumWidth(240);
+    projectTitle->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    projectBar->addWidget(projectTitle);
+    auto *spacer = new QWidget;
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    spacer->setStyleSheet("background:transparent");
+    projectBar->addWidget(spacer);
+    for (const auto &[item, icon] : std::vector<std::pair<QAction *, QString>>{{newAction, "new"},
+                                                                               {openAction, "open"},
+                                                                               {saveAction, "save"},
+                                                                               {undo, "undo"},
+                                                                               {redo, "redo"}}) {
+        item->setIcon(studioIcon(icon));
+        projectBar->addAction(item);
+    }
+    auto *renderShortcut = projectBar->addAction(studioIcon("render"), tr("Render"));
+    connect(renderShortcut, &QAction::triggered, this, [this] {
+        auto *dock = findChild<QDockWidget *>("renderDock");
+        dock->show();
+        dock->raise();
+    });
+    addToolBarBreak();
     auto *toolbar = addToolBar(tr("Projeto e desenho"));
     toolbar->setMovable(false);
     toolbar->setIconSize({20, 20});
-    toolbar->addAction(newAction);
-    toolbar->addAction(openAction);
-    toolbar->addAction(saveAction);
-    toolbar->addSeparator();
-    toolbar->addAction(undo);
-    toolbar->addAction(redo);
-    toolbar->addSeparator();
+    toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     auto *modes = new QActionGroup(this);
     for (const auto &[label, mode] : std::vector<std::pair<QString, QString>>{
              {tr("Selecionar"), "select"}, {tr("Parede"), "wall"}, {tr("Mureta"), "half"}}) {
         auto *a = toolbar->addAction(label);
+        a->setIcon(studioIcon(mode));
         a->setCheckable(true);
         a->setToolTip(label + tr(" · Esc encerra a cadeia"));
         modes->addAction(a);
@@ -301,18 +350,47 @@ void MainWindow::createShell() {
         connect(a, &QAction::triggered, this, [this, mode] { viewport->setTool(mode); });
     }
     toolbar->addSeparator();
+    auto *insertMenu = new QToolButton;
+    insertMenu->setText(tr("Ambiente"));
+    insertMenu->setIcon(studioIcon("plan"));
+    insertMenu->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    insertMenu->setPopupMode(QToolButton::InstantPopup);
+    insertMenu->setMenu(environment);
+    toolbar->addWidget(insertMenu);
+    auto *automations = new QToolButton;
+    automations->setText(tr("Automação"));
+    automations->setPopupMode(QToolButton::InstantPopup);
+    automations->setMenu(automationMenu);
+    toolbar->addWidget(automations);
+    toolbar->addSeparator();
     auto *cutaway = new QCheckBox(tr("Abrir vista"));
     cutaway->setChecked(true);
     cutaway->setToolTip(tr("Oculta paredes próximas somente na vista 3D; projeto e render são preservados."));
     toolbar->addWidget(cutaway);
     connect(cutaway, &QCheckBox::toggled, viewport, &CadView::setCutaway);
-    auto *top = toolbar->addAction(tr("Planta"));
-    connect(top, &QAction::triggered, this, [this] { viewport->setTop(true); });
-    auto *iso = toolbar->addAction(tr("3D"));
-    connect(iso, &QAction::triggered, this, [this] { viewport->setTop(false); });
-    auto *frame = toolbar->addAction(tr("Enquadrar"));
+    auto *top = toolbar->addAction(studioIcon("plan"), tr("Planta"));
+    connect(top, &QAction::triggered, this, [this] {
+        workspace->setCurrentWidget(viewport);
+        viewport->setTop(true);
+    });
+    auto *iso = toolbar->addAction(studioIcon("cube"), tr("3D"));
+    connect(iso, &QAction::triggered, this, [this] {
+        workspace->setCurrentWidget(viewport);
+        viewport->setTop(false);
+    });
+    auto *frame = toolbar->addAction(studioIcon("frame"), tr("Enquadrar"));
     connect(frame, &QAction::triggered, viewport, &CadView::frame);
-    auto *libraryDock = new QDockWidget(tr("BIBLIOTECA LOCAL"), this);
+    toolbar->addSeparator();
+    previewAction = toolbar->addAction(studioIcon("render"), tr("Imagem"));
+    previewAction->setObjectName("showRenderPreview");
+    previewAction->setEnabled(false);
+    viewMenu->addAction(previewAction);
+    previewAction->setToolTip(tr("Exibir a última imagem renderizada, com zoom e navegação."));
+    connect(previewAction, &QAction::triggered, this, [this] {
+        if (preview)
+            workspace->setCurrentWidget(preview);
+    });
+    auto *libraryDock = new QDockWidget(tr("Biblioteca"), this);
     libraryDock->setObjectName("libraryDock");
     auto *libraryPanel = new QWidget;
     auto *libraryLayout = new QVBoxLayout(libraryPanel);
@@ -333,9 +411,16 @@ void MainWindow::createShell() {
     libraryLayout->addLayout(filters);
     assets = new AssetList;
     assets->setObjectName("assetList");
+    assets->setItemDelegate(new AssetDelegate(assets));
+    assets->setMouseTracking(true);
+    assets->setIconSize({76, 58});
     assets->setDragEnabled(true);
     assets->setAccessibleName(tr("Móveis disponíveis"));
     libraryLayout->addWidget(assets);
+    libraryCount = new QLabel;
+    libraryCount->setObjectName("libraryCount");
+    libraryCount->setProperty("role", "muted");
+    libraryLayout->addWidget(libraryCount);
     auto *favorite = new QPushButton(tr("Alternar favorito"));
     libraryLayout->addWidget(favorite);
     auto *instruction = new QLabel(tr("Arraste um item para a planta.\nDuplo clique insere na origem."));
@@ -363,7 +448,7 @@ void MainWindow::createShell() {
     connect(assets, &QListWidget::itemDoubleClicked, this, [this](QListWidgetItem *item) {
         protect([&] { insertAsset(item->data(Qt::UserRole).toString(), 0, 0); });
     });
-    auto *sceneDock = new QDockWidget(tr("OBJETOS DO PROJETO"), this);
+    auto *sceneDock = new QDockWidget(tr("Cena"), this);
     sceneDock->setObjectName("sceneDock");
     tree = new QTreeWidget;
     tree->setObjectName("sceneTree");
@@ -381,12 +466,16 @@ void MainWindow::createShell() {
         selectIds(list);
         viewport->select(ids(list));
     });
-    auto *propertyDock = new QDockWidget(tr("PROPRIEDADES"), this);
+    auto *propertyDock = new QDockWidget(tr("Propriedades"), this);
     propertyDock->setObjectName("propertiesDock");
     auto *scroll = new QScrollArea;
+    scroll->setObjectName("inspectorScroll");
     scroll->setWidgetResizable(true);
     inspector = new QWidget;
     auto *propertyLayout = new QFormLayout(inspector);
+    propertyLayout->setContentsMargins(16, 12, 16, 16);
+    propertyLayout->setVerticalSpacing(9);
+    propertyLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
     selectionTitle = new QLabel(tr("Nenhum objeto selecionado"));
     selectionTitle->setWordWrap(true);
     selectionTitle->setStyleSheet("font-size:16px;font-weight:600;padding:8px 0");
@@ -397,13 +486,16 @@ void MainWindow::createShell() {
                                                   {"y", tr("Y (mm)")},
                                                   {"z", tr("Z (mm)")},
                                                   {"yaw", tr("Rotação (°)")},
-                                                  {"width", tr("Largura / comprimento (mm)")},
+                                                  {"width", tr("Largura (mm)")},
                                                   {"height", tr("Altura (mm)")},
-                                                  {"depth", tr("Profundidade / espessura (mm)")},
+                                                  {"depth", tr("Profundidade (mm)")},
                                                   {"offset", tr("Offset da abertura (mm)")},
                                                   {"sill", tr("Peitoril (mm)")},
                                                   {"openAngle", tr("Abertura da porta (°)")},
                                                   {"power", tr("Potência (W)")},
+                                                  {"size", tr("Área de luz (mm)")},
+                                                  {"angle", tr("Feixe spot (°)")},
+                                                  {"blend", tr("Suavidade (0–1)")},
                                                   {"targetX", tr("Alvo X (mm)")},
                                                   {"targetY", tr("Alvo Y (mm)")},
                                                   {"targetZ", tr("Alvo Z (mm)")},
@@ -411,7 +503,12 @@ void MainWindow::createShell() {
         auto *field = new QLineEdit;
         field->setObjectName(key + "Field");
         field->setAccessibleName(label);
+        field->setMinimumWidth(76);
+        field->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
         propertyLayout->addRow(label, field);
+        auto *rowLabel = qobject_cast<QLabel *>(propertyLayout->labelForField(field));
+        rowLabel->setWordWrap(true);
+        rowLabel->setMaximumWidth(124);
         fields[key] = field;
     }
     material = new QComboBox;
@@ -427,8 +524,20 @@ void MainWindow::createShell() {
     propertyLayout->addRow(tr("Puxador"), handle);
     glass = new QCheckBox(tr("Frentes com vidro"));
     propertyLayout->addRow(glass);
+    lightColor = new QPushButton(tr("Escolher cor…"));
+    lightColor->setObjectName("lightColor");
+    propertyLayout->addRow(tr("Cor da luz"), lightColor);
+    connect(lightColor, &QPushButton::clicked, this, [this] {
+        auto color = QColorDialog::getColor(selectedLightColor, this, tr("Cor da luz"),
+                                            QColorDialog::DontUseNativeDialog);
+        if (color.isValid()) {
+            selectedLightColor = color;
+            lightColor->setText(color.name());
+        }
+    });
     auto *apply = new QPushButton(tr("Aplicar alterações"));
     apply->setObjectName("applyProperties");
+    apply->setProperty("role", "primary");
     propertyLayout->addRow(apply);
     connect(apply, &QPushButton::clicked, this, [this] { protect([&] { applyInspector(); }); });
     hint = new QLabel(
@@ -438,53 +547,144 @@ void MainWindow::createShell() {
     scroll->setWidget(inspector);
     propertyDock->setWidget(scroll);
     addDockWidget(Qt::RightDockWidgetArea, propertyDock);
-    auto *renderDock = new QDockWidget(tr("RENDER · CYCLES"), this);
+    auto *renderDock = new QDockWidget(tr("Render"), this);
     renderDock->setObjectName("renderDock");
+    auto *renderScroll = new QScrollArea;
+    renderScroll->setObjectName("renderScroll");
+    renderScroll->setWidgetResizable(true);
     auto *renderPanel = new QWidget;
     auto *renderLayout = new QFormLayout(renderPanel);
+    renderLayout->setContentsMargins(16, 12, 16, 16);
+    renderLayout->setVerticalSpacing(12);
+    renderLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+    auto *heading = new QLabel(tr("Apresentação"));
+    heading->setProperty("role", "heading");
+    renderLayout->addRow(heading);
+    auto *description = new QLabel(tr("Componha a câmera, equilibre a luz e gere sua imagem."));
+    description->setWordWrap(true);
+    description->setProperty("role", "muted");
+    renderLayout->addRow(description);
+    renderCamera = new QComboBox;
+    renderCamera->setObjectName("renderCamera");
+    renderCamera->setAccessibleName(tr("Câmera para renderizar"));
+    renderLayout->addRow(tr("Câmera"), renderCamera);
+    renderQuality = new QComboBox;
+    renderQuality->setObjectName("renderQuality");
+    renderQuality->addItem(tr("Rascunho · 640 × 360"), 16);
+    renderQuality->addItem(tr("Prévia · 1280 × 720"), 64);
+    renderQuality->addItem(tr("Alta · 1920 × 1080"), 256);
+    renderQuality->addItem(tr("Final · 3840 × 2160"), 512);
+    renderQuality->setCurrentIndex(1);
+    renderLayout->addRow(tr("Qualidade"), renderQuality);
+    renderExposure = new QDoubleSpinBox;
+    renderExposure->setObjectName("renderExposure");
+    renderExposure->setRange(-8, 8);
+    renderExposure->setDecimals(1);
+    renderExposure->setSingleStep(0.1);
+    renderExposure->setSuffix(tr(" EV"));
+    renderExposure->setAccessibleName(tr("Exposição da imagem"));
+    renderLayout->addRow(tr("Exposição"), renderExposure);
+    renderEnvironment = new QDoubleSpinBox;
+    renderEnvironment->setObjectName("renderEnvironment");
+    renderEnvironment->setRange(0, 5);
+    renderEnvironment->setSingleStep(0.05);
+    renderEnvironment->setDecimals(2);
+    renderEnvironment->setAccessibleName(tr("Intensidade da iluminação ambiente"));
+    renderEnvironment->setToolTip(tr("Complementa as luzes do projeto. Não altera sua potência."));
+    renderLayout->addRow(tr("Luz ambiente"), renderEnvironment);
+    renderDevice = new QComboBox;
+    renderDevice->addItem(tr("GPU / CPU automático"), "AUTO");
+    renderDevice->addItem(tr("CPU"), "CPU");
+    renderLayout->addRow(tr("Dispositivo"), renderDevice);
+    renderDenoise = new QCheckBox(tr("Reduzir ruído (denoise)"));
+    renderDenoise->setObjectName("renderDenoise");
+    renderDenoise->setChecked(true);
+    renderLayout->addRow(renderDenoise);
+    auto *engineToggle = new QPushButton(tr("Configurar Blender…"));
+    engineToggle->setProperty("role", "quiet");
+    engineToggle->setCheckable(true);
+    renderLayout->addRow(engineToggle);
+    auto *enginePanel = new QWidget;
+    auto *engineLayout = new QVBoxLayout(enginePanel);
+    engineLayout->setContentsMargins(0, 0, 0, 0);
     blenderPath =
         new QLineEdit(QSettings().value("blender", QStandardPaths::findExecutable("blender")).toString());
+    blenderPath->setAccessibleName(tr("Executável Blender"));
 #ifdef Q_OS_WIN
     if (blenderPath->text().isEmpty() &&
         QFileInfo::exists("C:/Program Files/Blender Foundation/Blender 5.2/blender.exe"))
         blenderPath->setText("C:/Program Files/Blender Foundation/Blender 5.2/blender.exe");
 #endif
-    renderLayout->addRow(tr("Blender"), blenderPath);
+    engineLayout->addWidget(blenderPath);
     auto *browse = new QPushButton(tr("Escolher executável…"));
-    renderLayout->addRow(browse);
+    engineLayout->addWidget(browse);
     connect(browse, &QPushButton::clicked, this, [this] {
-        auto f = QFileDialog::getOpenFileName(this, tr("Executável Blender"));
-        if (!f.isEmpty())
-            blenderPath->setText(f);
+        auto file = QFileDialog::getOpenFileName(this, tr("Executável Blender"));
+        if (!file.isEmpty())
+            blenderPath->setText(file);
     });
-    renderQuality = new QComboBox;
-    renderQuality->addItem(tr("Rascunho · 640×360 · 16 samples"), 16);
-    renderQuality->addItem(tr("Preview · 1280×720 · 64 samples"), 64);
-    renderQuality->addItem(tr("Alta · 1920×1080 · 256 samples"), 256);
-    renderQuality->addItem(tr("Final · 3840×2160 · 512 samples"), 512);
-    renderLayout->addRow(tr("Qualidade"), renderQuality);
-    renderDevice = new QComboBox;
-    renderDevice->addItem(tr("GPU disponível / CPU automático"), "AUTO");
-    renderDevice->addItem(tr("CPU"), "CPU");
-    renderLayout->addRow(tr("Dispositivo"), renderDevice);
-    auto *start = new QPushButton(tr("Renderizar e salvar imagem…"));
-    auto *cancel = new QPushButton(tr("Cancelar render"));
-    renderLayout->addRow(start);
-    renderLayout->addRow(cancel);
-    connect(start, &QPushButton::clicked, this, [this] { protect([&] { renderScene(); }); });
-    connect(cancel, &QPushButton::clicked, &render, &RenderJob::cancel);
+    renderLayout->addRow(enginePanel);
+    enginePanel->setVisible(blenderPath->text().isEmpty());
+    engineToggle->setChecked(enginePanel->isVisibleTo(renderPanel));
+    connect(engineToggle, &QPushButton::toggled, enginePanel, &QWidget::setVisible);
+    renderState = new QLabel(tr("Pronto para renderizar"));
+    renderState->setObjectName("renderState");
+    renderState->setProperty("role", "muted");
+    renderState->setWordWrap(true);
+    renderLayout->addRow(renderState);
+    renderProgress = new QProgressBar;
+    renderProgress->setObjectName("renderProgress");
+    renderProgress->setTextVisible(false);
+    renderProgress->setRange(0, 100);
+    renderProgress->setValue(0);
+    renderProgress->setAccessibleName(tr("Estado do render"));
+    renderLayout->addRow(renderProgress);
+    renderStart = new QPushButton(tr("Renderizar imagem…"));
+    renderStart->setObjectName("startRender");
+    renderStart->setProperty("role", "primary");
+    renderCancel = new QPushButton(tr("Cancelar"));
+    renderCancel->setEnabled(false);
+    renderLayout->addRow(renderStart);
+    renderLayout->addRow(renderCancel);
+    connect(renderStart, &QPushButton::clicked, this, [this] { protect([&] { renderScene(); }); });
+    connect(renderCancel, &QPushButton::clicked, &render, &RenderJob::cancel);
+    auto *details = new QPushButton(tr("Detalhes do processo"));
+    details->setProperty("role", "quiet");
+    details->setCheckable(true);
+    renderLayout->addRow(details);
     renderLog = new QPlainTextEdit;
     renderLog->setReadOnly(true);
     renderLog->setMaximumBlockCount(1000);
     renderLog->setMaximumHeight(130);
+    renderLog->setVisible(false);
     renderLayout->addRow(renderLog);
-    renderDock->setWidget(renderPanel);
+    connect(details, &QPushButton::toggled, renderLog, &QWidget::setVisible);
+    connect(renderCamera, &QComboBox::currentIndexChanged, this, [this] {
+        if (!refreshing)
+            protect([&] { applyRenderSettings(); });
+    });
+    connect(renderExposure, &QDoubleSpinBox::editingFinished, this,
+            [this] { protect([&] { applyRenderSettings(); }); });
+    connect(renderEnvironment, &QDoubleSpinBox::editingFinished, this,
+            [this] { protect([&] { applyRenderSettings(); }); });
+    connect(renderDenoise, &QCheckBox::toggled, this, [this] {
+        if (!refreshing)
+            protect([&] { applyRenderSettings(); });
+    });
+    for (auto *field : {static_cast<QWidget *>(renderCamera), static_cast<QWidget *>(renderQuality),
+                        static_cast<QWidget *>(renderExposure), static_cast<QWidget *>(renderEnvironment),
+                        static_cast<QWidget *>(renderDevice)}) {
+        field->setMinimumWidth(76);
+        field->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+    }
+    renderScroll->setWidget(renderPanel);
+    renderDock->setWidget(renderScroll);
     addDockWidget(Qt::RightDockWidgetArea, renderDock);
     tabifyDockWidget(propertyDock, renderDock);
     propertyDock->raise();
     for (auto *dock : {libraryDock, sceneDock, propertyDock, renderDock})
         viewMenu->addAction(dock->toggleViewAction());
-    resizeDocks({libraryDock, propertyDock}, {270, 330}, Qt::Horizontal);
+    resizeDocks({libraryDock, propertyDock}, {300, 320}, Qt::Horizontal);
     auto *snapBox = new QCheckBox(tr("Snap"));
     snapBox->setChecked(true);
     statusBar()->addPermanentWidget(snapBox);
@@ -500,6 +700,28 @@ void MainWindow::createShell() {
 }
 void MainWindow::refreshScene() {
     refreshing = true;
+    projectTitle->setText(q(editor_.document().name));
+    projectTitle->setToolTip(q(editor_.document().name));
+    {
+        QSignalBlocker blockCamera(renderCamera), blockExposure(renderExposure),
+            blockEnvironment(renderEnvironment), blockDenoise(renderDenoise);
+        auto cameraId = q(editor_.document().renderSettings.at("camera").get<std::string>());
+        renderCamera->clear();
+        for (const auto &e : editor_.document().entities)
+            if (e.type == "Camera" && e.visible)
+                renderCamera->addItem(q(e.name), q(e.id));
+        const auto cameraIndex = renderCamera->findData(cameraId);
+        if (cameraIndex >= 0)
+            renderCamera->setCurrentIndex(cameraIndex);
+        renderExposure->setValue(editor_.document().renderSettings.at("exposure").get<double>());
+        renderEnvironment->setValue(
+            editor_.document().renderSettings.at("environmentStrength").get<double>());
+        renderDenoise->setChecked(editor_.document().renderSettings.at("denoise").get<bool>());
+        renderStart->setEnabled(!render.busy() && renderCamera->count() > 0);
+        if (!render.busy())
+            renderState->setText(renderCamera->count() ? tr("Pronto para renderizar")
+                                                       : tr("Crie uma câmera no menu Câmeras para começar."));
+    }
     viewport->scene(editor_.document());
     material->clear();
     for (const auto &m : editor_.document().materials)
@@ -511,6 +733,10 @@ void MainWindow::refreshScene() {
                                                      : e.visible ? QString{}
                                                                  : tr("Oculto")});
         item->setData(0, Qt::UserRole, q(e.id));
+        item->setIcon(0, studioIcon(e.type == "Camera"                         ? "render"
+                                    : e.type == "Light"                        ? "light"
+                                    : e.type == "Wall" || e.type == "HalfWall" ? "wall"
+                                                                               : "cube"));
         items[e.id] = item;
     }
     for (const auto &e : editor_.document().entities) {
@@ -539,9 +765,17 @@ void MainWindow::refreshLibrary() {
                                     QString("\n%1 × %2 × %3 mm").arg(a.width).arg(a.height).arg(a.depth),
                                 assets);
         item->setData(Qt::UserRole, a.id);
+        item->setData(Qt::UserRole + 1, a.category);
+        auto thumbnail = thumbnails.request(a);
+        item->setIcon(thumbnail.isNull() ? studioIcon("cube") : QIcon(QPixmap::fromImage(thumbnail)));
+        item->setData(Qt::UserRole + 2, !thumbnail.isNull());
         item->setToolTip(a.category + " · CC0 · " + tr("Arraste para inserir"));
-        item->setSizeHint({220, 58});
+        item->setSizeHint({270, 88});
     }
+    libraryCount->setText(visibleAssets.empty()
+                              ? tr("Nenhum item encontrado. Ajuste a busca ou os filtros.")
+                              : tr("%1 itens · biblioteca local").arg(visibleAssets.size()));
+    libraryCount->setWordWrap(true);
 }
 void MainWindow::selectIds(const QStringList &list) {
     selectedIds = list;
@@ -555,6 +789,7 @@ void MainWindow::refreshInspector() {
     form->setRowVisible(material, e != nullptr);
     form->setRowVisible(handle, e && e->type == "FurnitureModule");
     form->setRowVisible(glass, e && e->type == "FurnitureModule");
+    form->setRowVisible(lightColor, e && e->type == "Light");
     selectionTitle->setText(e                       ? q(e->name)
                             : selectedIds.isEmpty() ? tr("Selecione um objeto")
                                                     : tr("%1 objetos selecionados").arg(selectedIds.size()));
@@ -564,6 +799,10 @@ void MainWindow::refreshInspector() {
             visible = e && (e->type == "Door" || e->type == "Window");
         if (key == "power")
             visible = e && e->type == "Light";
+        if (key == "size")
+            visible = e && e->type == "Light" && e->parameters.value("kind", std::string("area")) == "area";
+        if (key == "angle" || key == "blend")
+            visible = e && e->type == "Light" && e->parameters.value("kind", std::string("area")) == "spot";
         if (key == "lens")
             visible = e && e->type == "Camera";
         if (key.startsWith("target"))
@@ -603,6 +842,17 @@ void MainWindow::refreshInspector() {
     glass->setChecked(e->parameters.value("glass", false));
     fields["power"]->setEnabled(e->type == "Light" && !e->locked);
     set("power", e->parameters.value("power", 500.0));
+    for (const auto &key : {"size", "angle", "blend"})
+        fields[key]->setEnabled(e->type == "Light" && !e->locked && fields[key]->isVisibleTo(inspector));
+    set("size", e->parameters.value("size", 1000.0));
+    set("angle", e->parameters.value("angle", 45.0));
+    set("blend", e->parameters.value("blend", 0.3));
+    auto color = e->type == "Light" ? e->parameters.value("color", Json::array({1.0, 0.89, 0.73}))
+                                    : Json::array({1.0, 0.89, 0.73});
+    selectedLightColor =
+        QColor::fromRgbF(color[0].get<double>(), color[1].get<double>(), color[2].get<double>());
+    lightColor->setText(selectedLightColor.name());
+    lightColor->setEnabled(e->type == "Light" && !e->locked);
     fields["lens"]->setEnabled(e->type == "Camera" && !e->locked);
     set("lens", e->parameters.value("lens", 28.0));
     auto target = e->parameters.value("target", Json::array({2000, 1500, 1000}));
@@ -631,11 +881,14 @@ void MainWindow::applyInspector() {
         e.height = value("height", e.height);
         e.depth = value("depth", e.depth);
         e.material = material->currentData().toString().toStdString();
-        for (const auto *key : {"offset", "sill", "openAngle", "power", "lens"})
+        for (const auto *key : {"offset", "sill", "openAngle", "power", "lens", "size", "angle", "blend"})
             if (fields[key]->isEnabled())
                 e.parameters[key] = value(key, 0);
         if (e.type == "Light" || e.type == "Camera")
             e.parameters["target"] = {value("targetX", 2000), value("targetY", 1500), value("targetZ", 1000)};
+        if (e.type == "Light")
+            e.parameters["color"] = {selectedLightColor.redF(), selectedLightColor.greenF(),
+                                     selectedLightColor.blueF()};
         if (e.type == "FurnitureModule") {
             e.parameters["handle"] = handle->currentData().toString().toStdString();
             e.parameters["glass"] = glass->isChecked();
@@ -803,12 +1056,31 @@ void MainWindow::renderScene() {
                                                tr("Imagem PNG (*.png);;Imagem JPEG (*.jpg)"));
     if (output.isEmpty())
         return;
-    QSettings().setValue("blender", blenderPath->text());
+    if (!testing)
+        QSettings().setValue("blender", blenderPath->text());
+    applyRenderSettings();
     int index = renderQuality->currentIndex();
     const int widths[] = {640, 1280, 1920, 3840}, heights[] = {360, 720, 1080, 2160};
     render.start(editor_.document(), blenderPath->text(), resourceFile("scripts/cycles_render.py"), output,
                  widths[index], heights[index], renderQuality->currentData().toInt(),
                  renderDevice->currentData().toString());
+}
+void MainWindow::applyRenderSettings() {
+    editor_.apply(tr("Configurar render"), [&](Document &d) {
+        d.renderSettings = {{"camera", renderCamera->currentData().toString().toStdString()},
+                            {"exposure", renderExposure->value()},
+                            {"environmentStrength", renderEnvironment->value()},
+                            {"denoise", renderDenoise->isChecked()}};
+    });
+}
+void MainWindow::showRenderImage(const QString &filename) {
+    if (!preview) {
+        preview = new RenderPreview;
+        workspace->addWidget(preview);
+    }
+    preview->open(filename);
+    previewAction->setEnabled(true);
+    workspace->setCurrentWidget(preview);
 }
 bool MainWindow::discardOrSave() {
     if (editor_.history.isClean())

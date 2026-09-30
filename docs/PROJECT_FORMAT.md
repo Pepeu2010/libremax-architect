@@ -2,7 +2,7 @@
 
 ZIP com `manifest.json`, `project.json`, `scene.json`, `materials.json`, `lighting.json`, `cameras.json` e opcionais `custom-assets/<sha256>.png`.
 
-Manifest: `format=LibreMax`, `version=1`, UUID do projeto e lista ordenada de hashes incorporados. Project: UUID/nome/unidade/versão. Scene: entidades e filhos derivados. Lighting/cameras são índices redundantes validados contra scene. Materiais referenciam hashes; bytes essenciais de texturas estão dentro do ZIP. Não armazenar apenas o caminho original.
+Manifest: `format=LibreMax`, `version=1`, UUID do projeto e lista ordenada de hashes incorporados. Project: UUID/nome/unidade/versão e `renderSettings` opcional no formato v1: câmera por UUID, exposição EV, intensidade ambiente e denoise. Projetos v1 anteriores usam valores padrão quando o campo está ausente. Câmera removida limpa a referência; undo restaura. Valores fora dos limites ou câmera inexistente são recusados. Scene: entidades e filhos derivados. Lighting/cameras são índices redundantes validados contra scene. Materiais referenciam hashes; bytes essenciais de texturas estão dentro do ZIP. Não armazenar apenas o caminho original.
 
 Geometria interna em mm, entrada numérica arredondada para 0,1 mm. Ângulos em graus. Estado completo de comandos também inclui assets incorporados. Essas cópias podem consumir memória em projetos com muitas imagens.
 

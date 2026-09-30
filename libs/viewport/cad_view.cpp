@@ -56,7 +56,8 @@ void CadView::initialize() {
         view->SetWindow(window);
         if (!window->IsMapped())
             window->Map();
-        view->SetBackgroundColor(Quantity_Color(0.10, 0.13, 0.14, Quantity_TOC_RGB));
+        view->SetBackgroundColor(Quantity_Color(0.008, 0.014, 0.022, Quantity_TOC_RGB));
+        view->ChangeRenderingParams().NbMsaaSamples = 4;
         view->SetProj(V3d_Zpos);
         view->SetScale(6000);
         viewer->SetRectangularGridValues(0, 0, 100, 100, 0);
@@ -88,6 +89,8 @@ void CadView::scene(const Document &d) {
         owners.clear();
         for (const auto &part : buildScene(d)) {
             const auto &owner = d.at(part.owner);
+            if (cutaway && owner.type == "Ceiling")
+                continue;
             const Entity *wall = &owner;
             if (owner.type == "Door" || owner.type == "Window")
                 wall = &d.at(owner.parent);

@@ -2,16 +2,23 @@
 #include "commands/editor.h"
 #include "document/examples.h"
 #include "library/library.h"
+#include "library/thumbnails.h"
 #include "persistence/recovery_store.h"
+#include "render_preview.h"
 #include "rendering/render_job.h"
 #include "viewport/cad_view.h"
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDockWidget>
+#include <QDoubleSpinBox>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
 #include <QMainWindow>
 #include <QPlainTextEdit>
+#include <QProgressBar>
+#include <QPushButton>
+#include <QStackedWidget>
 #include <QTimer>
 #include <QTreeWidget>
 #include <map>
@@ -22,6 +29,7 @@ class MainWindow final : public QMainWindow {
     Q_OBJECT
     Editor editor_;
     std::unique_ptr<Library> library;
+    AssetThumbnails thumbnails;
     RenderJob render;
     CadView *viewport;
     QTreeWidget *tree;
@@ -41,6 +49,21 @@ class MainWindow final : public QMainWindow {
     QComboBox *renderQuality;
     QLineEdit *blenderPath;
     QPlainTextEdit *renderLog;
+    QComboBox *renderCamera;
+    QDoubleSpinBox *renderExposure;
+    QDoubleSpinBox *renderEnvironment;
+    QCheckBox *renderDenoise;
+    QPushButton *renderStart;
+    QPushButton *renderCancel;
+    QProgressBar *renderProgress;
+    QLabel *renderState;
+    QLabel *projectTitle;
+    QLabel *libraryCount;
+    QPushButton *lightColor;
+    QColor selectedLightColor;
+    QStackedWidget *workspace;
+    QAction *previewAction;
+    RenderPreview *preview = nullptr;
     QString path;
     QStringList selectedIds;
     std::vector<Asset> visibleAssets;
@@ -65,6 +88,7 @@ class MainWindow final : public QMainWindow {
     void importDxf();
     void importTexture();
     void renderScene();
+    void applyRenderSettings();
     Q_INVOKABLE void recover();
 
   protected:
@@ -78,5 +102,6 @@ class MainWindow final : public QMainWindow {
     bool saveProject(bool saveAs = false);
     void autosave();
     void selectIds(const QStringList &ids);
+    void showRenderImage(const QString &filename);
 };
 } // namespace lmx

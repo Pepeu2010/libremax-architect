@@ -255,8 +255,8 @@ std::vector<Part> buildEntity(const Document &doc, const Entity &e) {
                 block(145 + i * (w - 290) / 3, 170, 260, (w - 300) / 3, d - 180, 140);
         } else if (family == "fridge") {
             block(0, 0, 0, w, d, h, "metal");
-            block(3, d, 3, w - 6, 30, h * 0.65 - 6, "white");
-            block(3, d, h * 0.65, w - 6, 30, h * 0.35 - 3, "white");
+            block(3, d, 3, w - 6, 30, h * 0.65 - 6);
+            block(3, d, h * 0.65, w - 6, 30, h * 0.35 - 3);
             block(w - 60, d + 30, h * 0.2, 12, 25, 350, "metal");
             block(w - 60, d + 30, h * 0.75, 12, 25, 250, "metal");
         } else if (family == "oven") {
@@ -379,7 +379,12 @@ Json meshSnapshot(const Document &d) {
                       {"parameters", e.parameters}};
             (e.type == "Light" ? lights : cameras).push_back(j);
         }
-    return {{"schema", 1},      {"materials", d.materials}, {"meshes", meshes},
-            {"lights", lights}, {"cameras", cameras},       {"assets", d.serialize()["embeddedAssets"]}};
+    return {{"schema", 1},
+            {"materials", d.materials},
+            {"meshes", meshes},
+            {"lights", lights},
+            {"cameras", cameras},
+            {"assets", d.serialize()["embeddedAssets"]},
+            {"renderSettings", d.renderSettings}};
 }
 } // namespace lmx

@@ -1,4 +1,4 @@
-param([ValidatePattern('^[A-Za-z0-9][A-Za-z0-9._-]*$')][string]$Version = '0.1.0-dev')
+param([ValidatePattern('^[A-Za-z0-9][A-Za-z0-9._-]*$')][string]$Version = '0.2.0-dev')
 $ErrorActionPreference = 'Stop'
 $sourceRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 Push-Location $sourceRoot

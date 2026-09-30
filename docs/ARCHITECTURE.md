@@ -13,3 +13,5 @@
 Importação de imagens/DXF e preparação/render ocorrem em workers/processo separado. A recomposição de viewport ainda é síncrona e reconstrói a cena. Dirty flags, cache incremental, instancing/LOD e benchmark da cena de 100/500/5.000 objetos são trabalho pendente. O core ainda depende de Qt Gui/Widgets para QUndoStack; isolamento puro de Qt não é objetivo atual.
 
 ADRs: [engine/interface](ADRs/0001-native-cad.md), [persistência/licenças](ADRs/0002-persistence-and-licenses.md).
+
+O tema nativo e os ícones ficam em `studio_theme`/`resources/style.qss`. `AssetThumbnails` tessela receitas em QThreadPool limitado e publica QImages; QPixmap/delegate são usados somente na UI. `RenderPreview` reutiliza uma cena QGraphicsView para a imagem completa, sem criar uma nova dock a cada render. `Document::renderSettings` é validado, persistido e exportado no mesmo snapshot.

@@ -5,6 +5,12 @@ Document kitchenExample() {
     Document d;
     d.name = "Cozinha de referência";
     addRectangularRoom(d, 4000, 3000, 2700, 120);
+    for (auto &e : d.entities) {
+        if (e.type == "Floor")
+            e.material = "porcelain";
+        if (e.type == "Ceiling")
+            e.visible = true;
+    }
     auto wallId = d.entities[3].id;
     auto door = entity("Door", "Porta 800 × 2100");
     door.parent = wallId;
@@ -23,6 +29,7 @@ Document kitchenExample() {
     for (double width : {600.0, 947.0, 600.0, 800.0}) {
         auto e = entity("FurnitureModule", width == 947 ? "Balcão redimensionado 947 mm" : "Balcão");
         e.width = width;
+        e.material = "graphite";
         e.transform = {x, 80, 0, 0, false};
         e.parameters = {{"family", bases.size() == 2 ? "drawer" : "cabinet"},
                         {"doors", 2},
@@ -35,6 +42,7 @@ Document kitchenExample() {
         x += width;
     }
     d.entities.push_back(automation(d, bases, "countertop"));
+    d.entities.back().material = "porcelain";
     d.entities.push_back(automation(d, bases, "plinth"));
     auto upper = entity("FurnitureModule", "Aéreo com vidro");
     upper.width = 1200;
@@ -50,6 +58,7 @@ Document kitchenExample() {
     fridge.depth = 650;
     fridge.transform = {3250, 80, 0, 0, false};
     fridge.parameters = {{"family", "fridge"}};
+    fridge.material = "graphite";
     d.entities.push_back(fridge);
     auto plant = entity("DecorativeObject", "Planta");
     plant.width = 350;
@@ -60,12 +69,39 @@ Document kitchenExample() {
     d.entities.push_back(plant);
     auto light = entity("Light", "Luz de área");
     light.transform = {1800, 1700, 2450, 0, false};
-    light.parameters = {{"kind", "area"}, {"power", 300}, {"size", 1500}, {"target", {1800, 600, 700}}};
+    light.parameters = {{"kind", "area"},
+                        {"power", 180},
+                        {"size", 1500},
+                        {"target", {1800, 600, 700}},
+                        {"color", {1.0, 0.9, 0.77}}};
     d.entities.push_back(light);
+    auto fill = entity("Light", "Luz da janela");
+    fill.transform = {3700, 1800, 2000, 0, false};
+    fill.parameters = {{"kind", "area"},
+                       {"power", 100},
+                       {"size", 1200},
+                       {"target", {1800, 300, 900}},
+                       {"color", {0.8, 0.89, 1.0}}};
+    d.entities.push_back(fill);
+    auto vase = entity("DecorativeObject", "Cerâmica da bancada");
+    vase.width = 140;
+    vase.depth = 140;
+    vase.height = 230;
+    vase.transform = {700, 400, 750, 0, false};
+    vase.parameters = {{"family", "vase"}};
+    d.entities.push_back(vase);
     auto camera = entity("Camera", "Vista da cozinha");
-    camera.transform = {1900, 2800, 1800, 0, false};
-    camera.parameters = {{"target", {1950, 300, 1150}}, {"lens", 20}};
+    camera.transform = {1200, 2900, 1600, 0, false};
+    camera.parameters = {{"target", {1950, 350, 1250}}, {"lens", 19.5}};
     d.entities.push_back(camera);
+    d.renderSettings = {
+        {"camera", camera.id}, {"exposure", -0.3}, {"environmentStrength", 0.15}, {"denoise", true}};
+    auto detail = camera;
+    detail.id = uuid();
+    detail.name = "Detalhe de materiais";
+    detail.transform = {2400, 1700, 1400, 0, false};
+    detail.parameters = {{"target", {1700, 500, 1000}}, {"lens", 35}};
+    d.entities.push_back(detail);
     d.validate();
     return d;
 }
