@@ -31,11 +31,7 @@
 
 namespace {
 QApplication &application() {
-    static int argc = 1;
-    static char name[] = "lmx-tests";
-    static char *argv[] = {name, nullptr};
-    static QApplication app(argc, argv);
-    return app;
+    return *qApp;
 }
 using namespace lmx;
 Document simple() {
