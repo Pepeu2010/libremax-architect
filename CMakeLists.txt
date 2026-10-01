@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(LibreMaxArchitect VERSION 0.3.0 LANGUAGES CXX)
+project(LibreMaxArchitect VERSION 0.4.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
@@ -10,6 +10,8 @@ find_package(nlohmann_json 3.10 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(libzip CONFIG REQUIRED)
 add_library(lmx_core
+  libs/placement/placement.cpp libs/placement/placement.h
+  libs/library/model.cpp libs/library/model.h
   libs/document/document.cpp libs/document/document.h
   libs/document/examples.cpp libs/document/examples.h
   libs/core/expression.cpp libs/core/expression.h
@@ -58,6 +60,7 @@ install(FILES resources/libremax-architect.desktop DESTINATION share/application
 install(FILES resources/libremax.svg DESTINATION share/icons/hicolor/scalable/apps)
 install(DIRECTORY starter-library/ DESTINATION share/libremax/starter-library)
 install(DIRECTORY starter-materials/ DESTINATION share/libremax/starter-materials)
+install(DIRECTORY starter-models/ DESTINATION share/libremax/starter-models)
 install(FILES scripts/cycles_render.py DESTINATION share/libremax/scripts)
 install(FILES resources/style.qss DESTINATION share/libremax/resources)
 install(FILES LICENSE README.md docs/THIRD_PARTY.md DESTINATION share/doc/libremax-architect)

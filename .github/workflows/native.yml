@@ -14,11 +14,14 @@ jobs:
       - name: Core geometry persistence library import
         run: bash scripts/test.sh
       - name: Format
-        run: find apps libs tests -type f \( -name '*.cpp' -o -name '*.h' \) -print0 | xargs -0 clang-format --dry-run --Werror
+        run: |
+          python3 -m pip install --user --break-system-packages clang-format==23.1.1
+          find apps libs tests -type f \( -name '*.cpp' -o -name '*.h' \) -print0 | xargs -0 "$HOME/.local/bin/clang-format" --dry-run --Werror
       - name: Native UI with Mesa / Xvfb
         run: |
           sudo apt-get install -y xvfb libgl1-mesa-dri
           xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build/libremax-architect --ui-smoke build/evidence
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build/libremax-architect --assembly-smoke build/assembly-evidence
           xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build/libremax-architect --recovery-smoke
       - name: Debian package
         run: cpack --config build/CPackConfig.cmake -G DEB -B dist
@@ -27,4 +30,5 @@ jobs:
           name: linux-evidence-and-deb
           path: |
             build/evidence
+            build/assembly-evidence
             dist/*.deb

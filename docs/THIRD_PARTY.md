@@ -18,3 +18,7 @@ As dependências são vinculadas dinamicamente onde distribuídas, exceto core p
 ## Texturas distribuídas
 
 `starter-materials`: seis mapas CC0-1.0, Oak Veneer 03 (Jenelle van Heerden) e Marble 01 (Rob Tuytel), Poly Haven. Proveniência, escala e hashes em [catálogo](../starter-materials/catalog.json) e [avisos](../starter-materials/README.md). Licença dos assets: [Poly Haven](https://polyhaven.com/license). Não incluem renders promocionais, logotipos ou imagens do VDMax.
+
+## Modelos distribuídos
+
+`starter-models`: seleção de 52 modelos do [Furniture Kit / Kenney](https://kenney.nl/assets/furniture-kit), CC0-1.0. [Licença original](../starter-models/LICENSE.txt), [procedência e conversão](../starter-models/README.md), hashes no catálogo. Modelos estilizados, sem assets VDMax. Os fontes JSON preparados são incluídos na distribuição e os modelos utilizados ficam no projeto .lmx.

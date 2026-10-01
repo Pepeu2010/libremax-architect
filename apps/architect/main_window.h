@@ -45,6 +45,7 @@ class MainWindow final : public QMainWindow {
     QComboBox *material;
     QComboBox *handle;
     QCheckBox *glass;
+    QCheckBox *originalModelColors;
     QComboBox *renderDevice;
     QComboBox *renderQuality;
     QLineEdit *blenderPath;
@@ -62,6 +63,9 @@ class MainWindow final : public QMainWindow {
     QLabel *renderState;
     QLabel *projectTitle;
     QLabel *libraryCount;
+    QLabel *placementBanner;
+    QComboBox *roomPicker;
+    QCheckBox *advancedProperties;
     QPushButton *lightColor;
     QColor selectedLightColor;
     QStackedWidget *workspace;
@@ -83,11 +87,14 @@ class MainWindow final : public QMainWindow {
     bool discardOrSave();
     void newRoom();
     void opening(bool window);
-    void insertAsset(const QString &id, double x, double y);
+    void insertAsset(const QString &id, const Entity &object);
+    Q_INVOKABLE void apartmentStarter();
+    void focusRoom();
     void transform(const QString &mode);
     void automate(const std::string &kind);
     void createLight();
     void createCamera();
+    void simpleCamera();
     void importDxf();
     void importTexture();
     Q_INVOKABLE void activatePbrMaterials();

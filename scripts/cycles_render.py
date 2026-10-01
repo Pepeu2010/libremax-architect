@@ -163,10 +163,14 @@ def main():
     print('LIBREMAX_RENDER_DEVICE', scene.cycles.device, flush=True)
     materials = {}
     texture_paths = {}
+    texture_hashes = {entry[channel] for entry in package['materials']
+                      for channel in ('baseColorTexture', 'roughnessTexture', 'normalTexture') if channel in entry}
     for digest, encoded in package.get('assets', {}).items():
         data = base64.b64decode(encoded, validate=True)
         if hashlib.sha256(data).hexdigest() != digest or len(digest) != 64 or any(c not in '0123456789abcdef' for c in digest):
             raise ValueError('Invalid asset hash')
+        if digest not in texture_hashes:
+            continue
         texture_path = os.path.join(os.path.dirname(args.scene), digest + '.png')
         with open(texture_path, 'wb') as stream:
             stream.write(data)

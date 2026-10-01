@@ -1,5 +1,8 @@
 #include "library.h"
+#include "model.h"
+#include <QCryptographicHash>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QRegularExpression>
 #include <QSqlError>
@@ -19,7 +22,8 @@ void exec(QSqlDatabase &db, const QString &sql) {
     check(q);
 }
 } // namespace
-Library::Library(const QString &path) : connection(QString::fromStdString(uuid())) {
+Library::Library(const QString &path, const QString &models)
+    : connection(QString::fromStdString(uuid())), modelDirectory(models) {
     QDir().mkpath(QFileInfo(path).absolutePath());
     db = QSqlDatabase::addDatabase("QSQLITE", connection);
     db.setDatabaseName(path);
@@ -58,7 +62,11 @@ void Library::seed(const Json &entries) {
     try {
         for (const auto &j : entries) {
             QSqlQuery q(db);
-            q.prepare("INSERT OR IGNORE INTO assets VALUES(?,?,?,?,?,?,?,?,?,?,?)");
+            q.prepare(
+                "INSERT INTO assets VALUES(?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET "
+                "name=excluded.name,category=excluded.category,width=excluded.width,height=excluded.height,"
+                "depth=excluded.depth,recipe=excluded.recipe,license=excluded.license,author=excluded.author,"
+                "origin=excluded.origin,created=excluded.created");
             for (const auto *key : {"id", "name", "category"})
                 q.addBindValue(QString::fromStdString(j.at(key).get<std::string>()));
             q.addBindValue(j.at("width").get<double>());
@@ -70,6 +78,11 @@ void Library::seed(const Json &entries) {
             q.exec();
             check(q);
             if (q.numRowsAffected() > 0) {
+                QSqlQuery remove(db);
+                remove.prepare("DELETE FROM asset_search WHERE id=?");
+                remove.addBindValue(QString::fromStdString(j.at("id").get<std::string>()));
+                remove.exec();
+                check(remove);
                 QSqlQuery index(db);
                 index.prepare("INSERT INTO asset_search VALUES(?,?,?,?)");
                 for (const auto *key : {"id", "name", "category", "tags"})
@@ -100,7 +113,7 @@ std::vector<Asset> Library::search(const QString &text, const QString &category,
         sql += " AND a.category=?";
     if (favorites)
         sql += " AND EXISTS(SELECT 1 FROM favorites f WHERE f.asset_id=a.id)";
-    sql += recent ? " ORDER BY r.used DESC LIMIT 100" : " ORDER BY a.name LIMIT 100";
+    sql += recent ? " ORDER BY r.used DESC LIMIT 200" : " ORDER BY a.name LIMIT 200";
     QSqlQuery q(db);
     q.prepare(sql);
     if (!text.trimmed().isEmpty()) {
@@ -116,10 +129,32 @@ std::vector<Asset> Library::search(const QString &text, const QString &category,
     q.exec();
     check(q);
     std::vector<Asset> result;
-    while (q.next())
-        result.push_back({q.value(0).toString(), q.value(1).toString(), q.value(2).toString(),
-                          q.value(3).toDouble(), q.value(4).toDouble(), q.value(5).toDouble(),
-                          Json::parse(q.value(6).toString().toStdString()), q.value(7).toBool()});
+    while (q.next()) {
+        result.push_back({q.value(0).toString(),
+                          q.value(1).toString(),
+                          q.value(2).toString(),
+                          q.value(3).toDouble(),
+                          q.value(4).toDouble(),
+                          q.value(5).toDouble(),
+                          Json::parse(q.value(6).toString().toStdString()),
+                          q.value(7).toBool(),
+                          {}});
+        auto &asset = result.back();
+        if (asset.recipe.contains("modelFile")) {
+            const auto name = QString::fromStdString(asset.recipe.at("modelFile").get<std::string>());
+            if (modelDirectory.isEmpty() ||
+                !QRegularExpression("^[A-Za-z0-9_-]+\\.json$").match(name).hasMatch())
+                throw std::invalid_argument("Caminho do modelo 3D inválido");
+            QFile file(QDir(modelDirectory).filePath(name));
+            if (!file.open(QIODevice::ReadOnly) || file.size() > 4 * 1024 * 1024)
+                throw std::runtime_error("Modelo 3D indisponível");
+            asset.model = file.readAll();
+            const auto hash =
+                QCryptographicHash::hash(asset.model, QCryptographicHash::Sha256).toHex().toStdString();
+            if (hash != asset.recipe.at("parameters").at("meshAsset").get<std::string>())
+                throw std::runtime_error("Integridade do modelo 3D inválida");
+        }
+    }
     return result;
 }
 void Library::favorite(const QString &id, bool enabled) {
@@ -147,7 +182,21 @@ Entity Library::instantiate(const Asset &a, double x, double y) {
     e.material = a.recipe.value("material", std::string("white"));
     e.transform.x = millimeters(x);
     e.transform.y = millimeters(y);
+    e.transform.z = e.parameters.value("defaultElevation", 0.0);
     e.metadata = {{"asset", a.id.toStdString()}, {"license", "CC0-1.0"}, {"author", "LibreMax contributors"}};
+    if (a.recipe.contains("source")) {
+        e.metadata["source"] = a.recipe.at("source");
+        e.metadata["author"] = "Kenney";
+    }
     return e;
+}
+void Library::attachModel(Document &d, const Asset &a) {
+    if (a.model.isEmpty())
+        return;
+    readModel(a.model);
+    const auto hash = QCryptographicHash::hash(a.model, QCryptographicHash::Sha256).toHex().toStdString();
+    if (hash != a.recipe.at("parameters").at("meshAsset").get<std::string>())
+        throw std::invalid_argument("Modelo 3D adulterado");
+    d.embeddedAssets[hash] = a.model;
 }
 } // namespace lmx

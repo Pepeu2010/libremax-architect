@@ -21,6 +21,12 @@ namespace lmx {
 QImage renderAssetThumbnail(const Asset &asset) {
     Document document;
     auto object = Library::instantiate(asset, 0, 0);
+    if (object.type == "Door" || object.type == "Window") {
+        auto supporting = wall(0, 0, 5000, 0);
+        object.parent = supporting.id;
+        document.entities.push_back(supporting);
+    }
+    Library::attachModel(document, asset);
     document.entities.push_back(object);
     document.validate();
     struct Triangle {
@@ -32,9 +38,11 @@ QImage renderAssetThumbnail(const Asset &asset) {
     QRectF bounds;
     bool first = true;
     for (const auto &part : buildEntity(document, object)) {
-        BRepMesh_IncrementalMesh mesh(part.shape, 3.0, false, 0.5, false);
-        if (!mesh.IsDone())
-            throw std::runtime_error("Falha ao gerar miniatura");
+        if (object.type != "MeshObject") {
+            BRepMesh_IncrementalMesh mesh(part.shape, 3.0, false, 0.5, false);
+            if (!mesh.IsDone())
+                throw std::runtime_error("Falha ao gerar miniatura");
+        }
         auto material = std::find_if(document.materials.begin(), document.materials.end(),
                                      [&](const auto &m) { return m.at("id") == part.material; });
         for (TopExp_Explorer faces(part.shape, TopAbs_FACE); faces.More(); faces.Next()) {

@@ -16,6 +16,7 @@
 #include <QImageReader>
 #include <QMessageBox>
 #include <QMimeData>
+#include <QMouseEvent>
 #include <QProcess>
 #include <QPushButton>
 #include <QScreen>
@@ -35,16 +36,19 @@ int main(int argc, char **argv) {
     QApplication app(argc, argv);
     QApplication::setApplicationName("libremax");
     QApplication::setOrganizationName("LibreMax");
-    QApplication::setApplicationVersion("0.3.0");
+    QApplication::setApplicationVersion("0.4.0");
     QCommandLineParser parser;
     parser.setApplicationDescription("LibreMax Architect — native interior design");
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addOption({"ui-smoke", "Run native UI acceptance and save real screenshots", "directory"});
+    parser.addOption(
+        {"assembly-smoke", "Verify native apartment mounting and real furniture placement", "directory"});
     parser.addOption({"examples", "Generate valid sample .lmx projects", "directory"});
     parser.addOption({"render-smoke", "Run real Cycles through asynchronous QProcess pipeline", "directory"});
     parser.addOption({"render-size", "Acceptance render size WxH", "size", "320x180"});
     parser.addOption({"render-samples", "Acceptance Cycles samples", "samples", "16"});
+    parser.addOption({"render-project", "Use a saved .lmx for render acceptance", "project"});
     parser.addOption({"preview-image", "Exercise native image viewer with an existing real render", "image"});
     parser.addOption({"recovery-smoke", "Kill a child process and verify recovery in a fresh process"});
     parser.addOption({"recovery-fixture", "Internal crash acceptance writer", "directory"});
@@ -52,9 +56,9 @@ int main(int argc, char **argv) {
     parser.addOption({"blender", "Blender executable for render acceptance", "executable"});
     parser.addPositionalArgument("project", ".lmx project to open");
     parser.process(app);
-    bool test = parser.isSet("ui-smoke") || parser.isSet("examples") || parser.isSet("render-smoke") ||
-                parser.isSet("recovery-smoke") || parser.isSet("recovery-fixture") ||
-                parser.isSet("recovery-verify");
+    bool test = parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") || parser.isSet("examples") ||
+                parser.isSet("render-smoke") || parser.isSet("recovery-smoke") ||
+                parser.isSet("recovery-fixture") || parser.isSet("recovery-verify");
     if (test)
         QStandardPaths::setTestModeEnabled(true);
 #if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
@@ -127,7 +131,9 @@ int main(int argc, char **argv) {
                       renderSamples = parser.value("render-samples").toInt();
             const auto directory = QDir(parser.value("render-smoke")).absolutePath();
             QDir().mkpath(directory);
-            auto document = lmx::kitchenExample();
+            auto document = parser.isSet("render-project")
+                                ? lmx::ProjectStore::open(parser.value("render-project"))
+                                : lmx::kitchenExample();
             lmx::attachPbrMaterials(
                 document, lmx::readPbrMaterials(QStringLiteral(LMX_SOURCE_DIR) + "/starter-materials"));
             lmx::ProjectStore::save(directory + "/render-project.lmx", document, false);
@@ -197,6 +203,144 @@ int main(int argc, char **argv) {
         if (!parser.positionalArguments().isEmpty())
             window.loadProject(parser.positionalArguments().first());
         window.show();
+        if (parser.isSet("assembly-smoke")) {
+            const auto directory = QDir(parser.value("assembly-smoke")).absolutePath();
+            QDir().mkpath(directory);
+            QTimer::singleShot(1500, &window, [&window, directory, &app] {
+                try {
+                    auto ensure = [](bool value, const char *message) {
+                        if (!value)
+                            throw std::runtime_error(message);
+                    };
+                    auto *cad = window.cad();
+                    auto *assets = window.findChild<QListWidget *>("assetList");
+                    ensure(assets && assets->count() == 79, "Ready model catalog missing");
+                    int ready = 0;
+                    for (int attempt = 0; attempt < 300; ++attempt) {
+                        ready = 0;
+                        for (int i = 0; i < assets->count(); ++i)
+                            ready += assets->item(i)->data(Qt::UserRole + 2).toBool();
+                        if (ready == assets->count())
+                            break;
+                        QTest::qWait(100);
+                    }
+                    ensure(ready == 79, "Native thumbnails missing for real models");
+                    lmx::Document d;
+                    lmx::addRectangularRoom(d, 4000, 3000, 2700, 120);
+                    window.editor().load(d);
+                    cad->setTop(true);
+                    cad->frame();
+                    QTest::qWait(100);
+                    auto drop = [&](const QString &id, double x, double y, bool expected, double z = 0) {
+                        QMimeData mime;
+                        mime.setData("application/x-libremax-asset", id.toUtf8());
+                        auto point = cad->project(x, y, z);
+                        QDragEnterEvent enter(point, Qt::CopyAction, &mime, Qt::LeftButton, Qt::NoModifier);
+                        QApplication::sendEvent(cad, &enter);
+                        QDragMoveEvent move(point, Qt::CopyAction, &mime, Qt::LeftButton, Qt::NoModifier);
+                        QApplication::sendEvent(cad, &move);
+                        QTest::qWait(30);
+                        if (id == "base-1")
+                            ensure(window.screen()
+                                       ->grabWindow(window.winId())
+                                       .save(directory + "/wall-placement.png"),
+                                   "Ghost screenshot failed");
+                        QDropEvent event(QPointF(point), Qt::CopyAction, &mime, Qt::LeftButton,
+                                         Qt::NoModifier);
+                        QApplication::sendEvent(cad, &event);
+                        ensure(event.isAccepted() == expected,
+                               "Drop acceptance differs from available space");
+                    };
+                    drop("base-1", 1000, 90, true);
+                    auto placed = window.editor().document().entities.back();
+                    ensure(std::abs(placed.transform.y - 62) < 0.2 && std::abs(placed.transform.yaw) < 0.2,
+                           "Wall alignment failed");
+                    const auto beforeOutside = window.editor().document().entities.size();
+                    drop("base-1", 8000, 8000, false);
+                    ensure(window.editor().document().entities.size() == beforeOutside,
+                           "Outside drop inserted a floating object");
+                    // Move the actual detected furniture through native mouse events, one undo command.
+                    const auto press =
+                        cad->project(placed.transform.x + 300, placed.transform.y + 275, placed.height);
+                    const auto destination = cad->project(1300, 1500);
+                    const auto history = window.editor().history.count();
+                    QTest::mousePress(cad, Qt::LeftButton, Qt::NoModifier, press);
+                    QMouseEvent moveEvent(QEvent::MouseMove, QPointF(destination),
+                                          QPointF(cad->mapToGlobal(destination)), Qt::NoButton,
+                                          Qt::LeftButton, Qt::NoModifier);
+                    QApplication::sendEvent(cad, &moveEvent);
+                    QTest::mouseRelease(cad, Qt::LeftButton, Qt::NoModifier, destination);
+                    ensure(window.editor().history.count() == history + 1,
+                           "Direct furniture drag did not make one command");
+                    ensure(window.editor().document().at(placed.id).transform.y > 1000,
+                           "Furniture drag did not move into room");
+                    window.editor().history.undo();
+                    ensure(window.editor().document().at(placed.id).transform.y == placed.transform.y,
+                           "Direct drag undo failed");
+                    window.editor().history.redo();
+                    drop("window-ready", 3500, 90, true);
+                    ensure(window.editor().document().entities.back().type == "Window",
+                           "Window drop did not attach to a wall");
+                    window.editor().history.undo();
+                    window.editor().history.setClean();
+                    cad->setTop(false);
+                    cad->frame();
+                    QTest::qWait(150);
+                    drop("base-1", 2500, 0, true, 1400);
+                    ensure(std::abs(window.editor().document().entities.back().transform.y - 62) < 0.2,
+                           "3D wall ray placement failed");
+                    window.editor().history.undo();
+                    cad->setTop(true);
+                    cad->frame();
+                    ensure(QMetaObject::invokeMethod(&window, "apartmentStarter", Qt::DirectConnection),
+                           "Apartment template action unavailable");
+                    ensure(std::count_if(window.editor().document().entities.begin(),
+                                         window.editor().document().entities.end(),
+                                         [](const auto &e) { return e.type == "Room"; }) == 3,
+                           "Apartment template rooms missing");
+                    ensure(window.editor().document().embeddedAssets.size() >= 8,
+                           "Ready meshes were not embedded in apartment");
+                    ensure(std::count_if(window.editor().document().entities.begin(),
+                                         window.editor().document().entities.end(),
+                                         [](const auto &e) { return e.type == "Ceiling" && e.visible; }) == 3,
+                           "Apartment ceilings missing from render");
+                    lmx::ProjectStore::save(directory + "/apartamento.lmx", window.editor().document(),
+                                            false);
+                    auto reopened = lmx::ProjectStore::open(directory + "/apartamento.lmx");
+                    ensure(reopened.entities.size() == window.editor().document().entities.size(),
+                           "Apartment save/open differs");
+                    cad->setTop(true);
+                    cad->frame();
+                    QTest::qWait(300);
+                    ensure(
+                        window.screen()->grabWindow(window.winId()).save(directory + "/apartment-plan.png"),
+                        "Plan screenshot failed");
+                    cad->setTop(false);
+                    cad->frame();
+                    QTest::qWait(300);
+                    ensure(window.screen()->grabWindow(window.winId()).save(directory + "/apartment-3d.png"),
+                           "3D screenshot failed");
+                    cad->capture(directory + "/apartment-viewport.png");
+                    window.resize(900, 700);
+                    QTest::qWait(300);
+                    cad->frame();
+                    QTest::qWait(150);
+                    auto *scroll = window.findChild<QScrollArea *>("inspectorScroll");
+                    ensure(scroll && scroll->horizontalScrollBar()->maximum() == 0,
+                           "Compact inspector overflows");
+                    ensure(assets->horizontalScrollBar()->maximum() == 0, "Compact catalog overflows");
+                    ensure(window.screen()->grabWindow(window.winId()).save(directory + "/apartment-900.png"),
+                           "Compact screenshot failed");
+                    std::cout << "ASSEMBLY_PASS: 79 thumbnails, wall ghost/drop, outside rejection, mouse "
+                                 "move undo/redo, window wall attachment, 52 ready meshes, 3-room apartment "
+                                 "save/open, 900 px panels\n";
+                    app.exit(0);
+                } catch (const std::exception &e) {
+                    std::cerr << "ASSEMBLY_FAIL: " << e.what() << '\n';
+                    app.exit(1);
+                }
+            });
+        }
         if (parser.isSet("recovery-fixture")) {
             QTimer::singleShot(500, &window, [&] {
                 auto document = lmx::kitchenExample();
@@ -272,14 +416,22 @@ int main(int argc, char **argv) {
                             break;
                         QTest::qWait(100);
                     }
-                    ensure(ready == 25, "Shipped asset geometry thumbnails were not generated");
-                    std::cout << "THUMBNAILS_PASS: 25 actual geometry previews\n";
-                    auto *asset = assets->item(0);
+                    ensure(ready == 79, "Shipped asset geometry thumbnails were not generated");
+                    std::cout << "THUMBNAILS_PASS: 79 actual geometry previews\n";
+                    QListWidgetItem *asset = nullptr;
+                    for (int i = 0; i < assets->count(); ++i)
+                        if (assets->item(i)->data(Qt::UserRole).toString() == "base-1")
+                            asset = assets->item(i);
+                    ensure(asset, "Missing cabinet asset");
+                    assets->scrollToItem(asset);
                     auto assetId = asset->data(Qt::UserRole).toString();
                     QTest::mouseClick(assets->viewport(), Qt::LeftButton, Qt::NoModifier,
                                       assets->visualItemRect(asset).center());
                     QTest::mouseDClick(assets->viewport(), Qt::LeftButton, Qt::NoModifier,
                                        assets->visualItemRect(asset).center());
+                    ensure(window.editor().document().entities.size() == 1,
+                           "Double-click should await a placement point");
+                    QTest::mouseClick(cad, Qt::LeftButton, Qt::NoModifier, cad->project(1000, 1000));
                     ensure(window.editor().document().entities.size() == 2,
                            "Library double-click insertion failed");
                     window.editor().history.undo();
@@ -300,7 +452,8 @@ int main(int argc, char **argv) {
                            "Library drop insertion failed");
                     const auto &dropped = window.editor().document().entities.back();
                     ensure(dropped.metadata.at("asset") == assetId.toStdString() &&
-                               dropped.transform.x == 1000 && dropped.transform.y == 1000,
+                               std::abs(dropped.transform.x - 700) < 10 &&
+                               std::abs(dropped.transform.y - 725) < 10,
                            "Dropped asset identity or snapped position differs");
                     window.editor().history.undo();
                     ensure(window.editor().document().entities.size() == 1, "Drop undo failed");
@@ -316,7 +469,7 @@ int main(int argc, char **argv) {
                     ensure(field, "Missing width editor");
                     field->setFocus();
                     field->clear();
-                    QTest::keyClicks(field, "753+59,5");
+                    QTest::keyClicks(field, "75,3+5,95");
                     auto *button = window.findChild<QPushButton *>("applyProperties");
                     ensure(button, "Missing apply button");
                     QTest::mouseClick(button, Qt::LeftButton);
@@ -465,7 +618,7 @@ int main(int argc, char **argv) {
                                      "pixels\n";
                     }
                     std::cout << "UI_SMOKE_PASS: wall draw, library double-click and drop/ghost, "
-                                 "undo/redo, millimetric expression edit, "
+                                 "undo/redo, centimeter expression edit, "
                                  "save/open, native CAD screenshots\n";
                     app.exit(0);
                 } catch (const std::exception &e) {

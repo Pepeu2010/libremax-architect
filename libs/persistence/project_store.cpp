@@ -116,7 +116,7 @@ Document ProjectStore::open(const QString &path) {
         zip_stat_init(&st);
         if (zip_stat_index(raw, i, 0, &st) != 0 || !st.name || !names.insert(st.name).second)
             throw std::runtime_error("Nome ZIP não permitido");
-        bool asset = QRegularExpression("^custom-assets/[a-f0-9]{64}\\.png$")
+        bool asset = QRegularExpression("^custom-(assets/[a-f0-9]{64}\\.png|models/[a-f0-9]{64}\\.json)$")
                          .match(QString::fromUtf8(st.name))
                          .hasMatch();
         if (!asset && !required.contains(st.name))
@@ -197,8 +197,14 @@ void ProjectStore::save(const QString &path, const Document &d, bool backup) {
         {"materials.json", d.materials.dump()},
         {"lighting.json", lights.dump()},
         {"cameras.json", cameras.dump()}};
-    for (const auto &[hash, bytes] : d.embeddedAssets)
-        entries["custom-assets/" + hash + ".png"] = bytes.toStdString();
+    for (const auto &[hash, bytes] : d.embeddedAssets) {
+        bool model = false;
+        for (const auto &object : d.entities)
+            if (object.type == "MeshObject" && object.parameters.at("meshAsset").get<std::string>() == hash)
+                model = true;
+        entries[(model ? "custom-models/" : "custom-assets/") + hash + (model ? ".json" : ".png")] =
+            bytes.toStdString();
+    }
     QTemporaryDir temp(info.absolutePath() + "/.libremax-XXXXXX");
     if (!temp.isValid())
         throw std::runtime_error("Não foi possível criar temporário");

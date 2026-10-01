@@ -22,6 +22,7 @@
 #include <QMimeData>
 #include <QPlainTextEdit>
 #include <QPushButton>
+#include <QResizeEvent>
 #include <QScrollArea>
 #include <QSettings>
 #include <QSignalBlocker>
@@ -32,6 +33,8 @@
 #include <QVBoxLayout>
 #include <QtConcurrent>
 #include <algorithm>
+#include <cmath>
+#include <numbers>
 #include <set>
 #include <spdlog/spdlog.h>
 
@@ -48,6 +51,11 @@ std::vector<std::string> ids(const QStringList &list) {
 }
 class AssetList final : public QListWidget {
   protected:
+    void resizeEvent(QResizeEvent *event) override {
+        QListWidget::resizeEvent(event);
+        const int columns = viewport()->width() >= 240 ? 2 : 1;
+        setGridSize(QSize(std::max(110, viewport()->width() / columns - 5), 174));
+    }
     void startDrag(Qt::DropActions) override {
         if (!currentItem())
             return;
@@ -105,11 +113,15 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory)
     setWindowTitle(tr("LibreMax Architect"));
     resize(1440, 900);
     setMinimumSize(900, 600);
-    library = std::make_unique<Library>(dataRoot() + "/library.db");
+    library = std::make_unique<Library>(dataRoot() + "/library.db", resourceFile("starter-models"));
     QFile catalog(resourceFile("starter-library/catalog.json"));
     if (!catalog.open(QIODevice::ReadOnly))
         throw std::runtime_error("Starter Library não encontrada");
     library->seed(Json::parse(catalog.readAll().toStdString()));
+    QFile models(resourceFile("starter-models/catalog.json"));
+    if (!models.open(QIODevice::ReadOnly))
+        throw std::runtime_error("Catálogo de móveis prontos não encontrado");
+    library->seed(Json::parse(models.readAll().toStdString()));
     createShell();
     connect(&thumbnails, &AssetThumbnails::ready, this, [this](const QString &, const QImage &) {
         for (int i = 0; i < assets->count(); ++i) {
@@ -138,7 +150,21 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory)
         });
     connect(viewport, &CadView::selected, this, &MainWindow::selectIds);
     connect(viewport, &CadView::assetDropped, this,
-            [this](const QString &id, double x, double y) { protect([&] { insertAsset(id, x, y); }); });
+            [this](const QString &id, const Entity &object) { protect([&] { insertAsset(id, object); }); });
+    connect(viewport, &CadView::objectMoved, this, [this](const Entity &object) {
+        protect([&] {
+            editor_.apply(tr("Mover %1").arg(q(object.name)), [&](Document &d) { d.at(object.id) = object; });
+            selectIds({q(object.id)});
+            viewport->select({object.id});
+        });
+    });
+    connect(
+        viewport, &CadView::placementStatus, this, [this](const QString &text, bool active, bool allowed) {
+            placementBanner->setText(
+                active ? text : tr("Arraste um móvel para o cômodo. Perto da parede, ele encaixa sozinho."));
+            placementBanner->setStyleSheet(allowed ? "color:#a9e5d0;background:#172c29;padding:10px;"
+                                                   : "color:#ffc1b6;background:#392420;padding:10px;");
+        });
     connect(viewport, &CadView::coordinates, this,
             [this](const QString &text) { statusBar()->showMessage(text); });
     connect(viewport, &CadView::failure, this, [this](const QString &text) {
@@ -186,7 +212,55 @@ void MainWindow::createShell() {
     viewport = new CadView;
     workspace = new QStackedWidget;
     workspace->addWidget(viewport);
-    setCentralWidget(workspace);
+    auto *studio = new QWidget;
+    auto *studioLayout = new QVBoxLayout(studio);
+    studioLayout->setContentsMargins(0, 0, 0, 0);
+    studioLayout->setSpacing(0);
+    auto *steps = new QWidget;
+    steps->setObjectName("workflowSteps");
+    auto *stepLayout = new QHBoxLayout(steps);
+    stepLayout->setContentsMargins(10, 7, 10, 7);
+    auto *roomButton = new QPushButton(tr("1  Cômodo"));
+    roomButton->setObjectName("createRoomButton");
+    roomButton->setToolTip(tr("Criar um cômodo com suas medidas"));
+    auto *furnitureButton = new QPushButton(tr("2  Móveis"));
+    furnitureButton->setToolTip(tr("Escolher móveis e decoração"));
+    auto *finishButton = new QPushButton(tr("3  Cor"));
+    finishButton->setToolTip(tr("Mudar cor e acabamento do item selecionado"));
+    auto *photoButton = new QPushButton(tr("4  Foto"));
+    photoButton->setToolTip(tr("Criar uma imagem do ambiente"));
+    for (auto *button : {roomButton, furnitureButton, finishButton, photoButton}) {
+        button->setProperty("role", "quiet");
+        button->setStyleSheet("font-size:11px;padding:7px 2px;");
+        button->setMinimumWidth(0);
+        button->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+        stepLayout->addWidget(button);
+    }
+    connect(roomButton, &QPushButton::clicked, this, [this] { protect([&] { newRoom(); }); });
+    connect(furnitureButton, &QPushButton::clicked, this, [this] {
+        auto *dock = findChild<QDockWidget *>("libraryDock");
+        dock->show();
+        search->setFocus();
+    });
+    connect(finishButton, &QPushButton::clicked, this, [this] {
+        auto *dock = findChild<QDockWidget *>("propertiesDock");
+        dock->show();
+        dock->raise();
+        material->setFocus();
+    });
+    connect(photoButton, &QPushButton::clicked, this, [this] {
+        auto *dock = findChild<QDockWidget *>("renderDock");
+        dock->show();
+        dock->raise();
+    });
+    studioLayout->addWidget(steps);
+    studioLayout->addWidget(workspace, 1);
+    placementBanner = new QLabel(tr("Arraste um móvel para o cômodo. Perto da parede, ele encaixa sozinho."));
+    placementBanner->setObjectName("placementBanner");
+    placementBanner->setWordWrap(true);
+    placementBanner->setStyleSheet("color:#a9e5d0;background:#172c29;padding:10px;");
+    studioLayout->addWidget(placementBanner);
+    setCentralWidget(studio);
     auto action = [this](QMenu *menu, const QString &name, const QKeySequence &shortcut,
                          std::function<void()> callback) {
         auto *a = menu->addAction(name);
@@ -248,7 +322,10 @@ void MainWindow::createShell() {
     action(edit, tr("Ocultar / mostrar"), {}, [this] { transform("visibility"); });
     action(edit, tr("Bloquear / desbloquear"), {}, [this] { transform("lock"); });
     auto *environment = menuBar()->addMenu(tr("&Ambiente"));
-    action(environment, tr("Ambiente retangular…"), {}, [this] { newRoom(); });
+    action(environment, tr("Adicionar cômodo…"), {}, [this] { newRoom(); });
+    auto *apartmentAction =
+        action(environment, tr("Começar com apartamento de exemplo"), {}, [this] { apartmentStarter(); });
+    apartmentAction->setObjectName("apartmentStarter");
     action(environment, tr("Inserir porta na parede…"), {}, [this] { opening(false); });
     action(environment, tr("Inserir janela na parede…"), {}, [this] { opening(true); });
     action(environment, tr("Escada reta…"), {}, [this] {
@@ -264,7 +341,7 @@ void MainWindow::createShell() {
                 d.entities.push_back(e);
             });
     });
-    auto *automationMenu = menuBar()->addMenu(tr("A&utomação"));
+    auto *automationMenu = menuBar()->addMenu(tr("&Finalizar móveis"));
     for (const auto &[label, kind] :
          std::vector<std::pair<QString, std::string>>{{tr("Tampo"), "countertop"},
                                                       {tr("Rodatampo"), "backsplash"},
@@ -273,7 +350,7 @@ void MainWindow::createShell() {
                                                       {tr("Fechamento lateral"), "closure"},
                                                       {tr("Envelopamento"), "envelope"}})
         action(automationMenu, label + "…", {}, [this, kind] { automate(kind); });
-    auto *geometryMenu = menuBar()->addMenu(tr("&Geometria"));
+    auto *geometryMenu = menuBar()->addMenu(tr("&Peças extras"));
     action(geometryMenu, tr("Volume retangular…"), {}, [this] {
         std::vector<double> v{1000, 30, 500};
         if (numericDialog(this, tr("Volume personalizado"),
@@ -292,12 +369,12 @@ void MainWindow::createShell() {
     action(cameraMenu, tr("Nova câmera…"), {}, [this] { createCamera(); });
     auto *viewMenu = menuBar()->addMenu(tr("&Vista"));
     action(viewMenu, tr("Planta superior"), QKeySequence("1"), [this] { viewport->setTop(true); });
-    action(viewMenu, tr("Isométrica 3D"), QKeySequence("3"), [this] { viewport->setTop(false); });
+    action(viewMenu, tr("Ver em 3D"), QKeySequence("3"), [this] { viewport->setTop(false); });
     action(viewMenu, tr("Enquadrar projeto"), QKeySequence("F"), [this] { viewport->frame(); });
     auto *help = menuBar()->addMenu(tr("A&juda"));
     action(help, tr("Sobre LibreMax"), {}, [this] {
         QMessageBox::about(this, tr("LibreMax Architect"),
-                           tr("LibreMax Architect 0.3.0 — desenvolvimento\nEditor nativo C++20 / Qt / "
+                           tr("LibreMax Architect 0.4.0 — desenvolvimento\nEditor nativo C++20 / Qt / "
                               "OpenCASCADE\nCódigo GPL-3.0-or-later · Biblioteca procedural CC0\nA paridade "
                               "completa e os pacotes Linux ainda estão em desenvolvimento."));
     });
@@ -327,7 +404,7 @@ void MainWindow::createShell() {
         item->setIcon(studioIcon(icon));
         projectBar->addAction(item);
     }
-    auto *renderShortcut = projectBar->addAction(studioIcon("render"), tr("Render"));
+    auto *renderShortcut = projectBar->addAction(studioIcon("render"), tr("Criar imagem"));
     connect(renderShortcut, &QAction::triggered, this, [this] {
         auto *dock = findChild<QDockWidget *>("renderDock");
         dock->show();
@@ -359,12 +436,12 @@ void MainWindow::createShell() {
     insertMenu->setMenu(environment);
     toolbar->addWidget(insertMenu);
     auto *automations = new QToolButton;
-    automations->setText(tr("Automação"));
+    automations->setText(tr("Finalizar"));
     automations->setPopupMode(QToolButton::InstantPopup);
     automations->setMenu(automationMenu);
     toolbar->addWidget(automations);
     toolbar->addSeparator();
-    auto *cutaway = new QCheckBox(tr("Abrir vista"));
+    auto *cutaway = new QCheckBox(tr("Ver por dentro"));
     cutaway->setChecked(true);
     cutaway->setToolTip(tr("Oculta paredes próximas somente na vista 3D; projeto e render são preservados."));
     toolbar->addWidget(cutaway);
@@ -379,7 +456,7 @@ void MainWindow::createShell() {
         workspace->setCurrentWidget(viewport);
         viewport->setTop(false);
     });
-    auto *frame = toolbar->addAction(studioIcon("frame"), tr("Enquadrar"));
+    auto *frame = toolbar->addAction(studioIcon("frame"), tr("Ver tudo"));
     connect(frame, &QAction::triggered, viewport, &CadView::frame);
     toolbar->addSeparator();
     previewAction = toolbar->addAction(studioIcon("render"), tr("Imagem"));
@@ -391,7 +468,29 @@ void MainWindow::createShell() {
         if (preview)
             workspace->setCurrentWidget(preview);
     });
-    auto *libraryDock = new QDockWidget(tr("Biblioteca"), this);
+    addToolBarBreak();
+    auto *placementBar = addToolBar(tr("Montagem"));
+    placementBar->setMovable(false);
+    auto *assistance = new QCheckBox(tr("Encaixar nas paredes"));
+    assistance->setChecked(true);
+    assistance->setObjectName("wallAssistance");
+    assistance->setToolTip(
+        tr("Ao aproximar o móvel, ajusta posição e direção. Vermelho indica que não cabe."));
+    placementBar->addWidget(assistance);
+    connect(assistance, &QCheckBox::toggled, this, [this](bool enabled) { viewport->assist = enabled; });
+    roomPicker = new QComboBox;
+    roomPicker->setObjectName("roomPicker");
+    roomPicker->setMinimumWidth(110);
+    roomPicker->setMaximumWidth(200);
+    placementBar->addSeparator();
+    placementBar->addWidget(new QLabel(tr(" Cômodo ")));
+    placementBar->addWidget(roomPicker);
+    connect(roomPicker, &QComboBox::activated, this, [this] { focusRoom(); });
+    auto *rotate = placementBar->addAction(tr("Girar móvel"));
+    rotate->setObjectName("rotateFurniture");
+    rotate->setShortcut(QKeySequence("Ctrl+R"));
+    connect(rotate, &QAction::triggered, this, [this] { protect([&] { transform("rotate"); }); });
+    auto *libraryDock = new QDockWidget(tr("Móveis e decoração"), this);
     libraryDock->setObjectName("libraryDock");
     auto *libraryPanel = new QWidget;
     auto *libraryLayout = new QVBoxLayout(libraryPanel);
@@ -401,7 +500,8 @@ void MainWindow::createShell() {
     libraryLayout->addWidget(search);
     category = new QComboBox;
     category->addItem(tr("Todos os ambientes"), "");
-    for (const auto &cat : {"Cozinha", "Dormitório", "Sala", "Escritório", "Decoração", "Eletrodomésticos"})
+    for (const auto &cat : {"Cozinha", "Dormitório", "Sala", "Banheiro", "Escritório", "Decoração",
+                            "Eletrodomésticos", "Portas e janelas"})
         category->addItem(QString::fromUtf8(cat), QString::fromUtf8(cat));
     libraryLayout->addWidget(category);
     favoriteOnly = new QCheckBox(tr("Favoritos"));
@@ -413,6 +513,13 @@ void MainWindow::createShell() {
     assets = new AssetList;
     assets->setObjectName("assetList");
     assets->setItemDelegate(new AssetDelegate(assets));
+    assets->setViewMode(QListView::IconMode);
+    assets->setResizeMode(QListView::Adjust);
+    assets->setMovement(QListView::Static);
+    assets->setSpacing(2);
+    assets->setUniformItemSizes(true);
+    assets->setWordWrap(true);
+    assets->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     assets->setMouseTracking(true);
     assets->setIconSize({76, 58});
     assets->setDragEnabled(true);
@@ -422,11 +529,22 @@ void MainWindow::createShell() {
     libraryCount->setObjectName("libraryCount");
     libraryCount->setProperty("role", "muted");
     libraryLayout->addWidget(libraryCount);
-    auto *favorite = new QPushButton(tr("Alternar favorito"));
-    libraryLayout->addWidget(favorite);
-    auto *instruction = new QLabel(tr("Arraste um item para a planta.\nDuplo clique insere na origem."));
-    instruction->setWordWrap(true);
-    libraryLayout->addWidget(instruction);
+    auto *place = new QPushButton(tr("Colocar"));
+    place->setToolTip(tr("Clique e escolha onde colocar este item"));
+    place->setObjectName("placeFurniture");
+    place->setProperty("role", "primary");
+    auto *libraryActions = new QHBoxLayout;
+    libraryActions->addWidget(place, 1);
+    libraryLayout->addLayout(libraryActions);
+    connect(place, &QPushButton::clicked, this, [this] {
+        if (assets->currentItem()) {
+            workspace->setCurrentWidget(viewport);
+            viewport->beginPlacement(assets->currentItem()->data(Qt::UserRole).toString());
+        }
+    });
+    auto *favorite = new QPushButton(tr("Favoritar"));
+    favorite->setToolTip(tr("Guardar ou remover dos favoritos"));
+    libraryActions->addWidget(favorite);
     libraryDock->setWidget(libraryPanel);
     addDockWidget(Qt::LeftDockWidgetArea, libraryDock);
     connect(search, &QLineEdit::textChanged, this, [this] { protect([&] { refreshLibrary(); }); });
@@ -447,9 +565,10 @@ void MainWindow::createShell() {
         });
     });
     connect(assets, &QListWidget::itemDoubleClicked, this, [this](QListWidgetItem *item) {
-        protect([&] { insertAsset(item->data(Qt::UserRole).toString(), 0, 0); });
+        workspace->setCurrentWidget(viewport);
+        viewport->beginPlacement(item->data(Qt::UserRole).toString());
     });
-    auto *sceneDock = new QDockWidget(tr("Cena"), this);
+    auto *sceneDock = new QDockWidget(tr("O que está no projeto"), this);
     sceneDock->setObjectName("sceneDock");
     tree = new QTreeWidget;
     tree->setObjectName("sceneTree");
@@ -457,7 +576,8 @@ void MainWindow::createShell() {
     tree->setSelectionMode(QAbstractItemView::ExtendedSelection);
     sceneDock->setWidget(tree);
     addDockWidget(Qt::LeftDockWidgetArea, sceneDock);
-    splitDockWidget(libraryDock, sceneDock, Qt::Vertical);
+    tabifyDockWidget(libraryDock, sceneDock);
+    libraryDock->raise();
     connect(tree, &QTreeWidget::itemSelectionChanged, this, [this] {
         if (refreshing)
             return;
@@ -467,7 +587,7 @@ void MainWindow::createShell() {
         selectIds(list);
         viewport->select(ids(list));
     });
-    auto *propertyDock = new QDockWidget(tr("Propriedades"), this);
+    auto *propertyDock = new QDockWidget(tr("Ajustar este item"), this);
     propertyDock->setObjectName("propertiesDock");
     auto *scroll = new QScrollArea;
     scroll->setObjectName("inspectorScroll");
@@ -481,17 +601,21 @@ void MainWindow::createShell() {
     selectionTitle->setWordWrap(true);
     selectionTitle->setStyleSheet("font-size:16px;font-weight:600;padding:8px 0");
     propertyLayout->addRow(selectionTitle);
+    advancedProperties = new QCheckBox(tr("Mostrar ajustes de posição e câmera"));
+    advancedProperties->setObjectName("advancedProperties");
+    propertyLayout->addRow(advancedProperties);
+    connect(advancedProperties, &QCheckBox::toggled, this, [this] { refreshInspector(); });
     for (const auto &[key, label] :
          std::vector<std::pair<QString, QString>>{{"name", tr("Nome")},
-                                                  {"x", tr("X (mm)")},
-                                                  {"y", tr("Y (mm)")},
-                                                  {"z", tr("Z (mm)")},
+                                                  {"x", tr("Posição lateral (mm)")},
+                                                  {"y", tr("Posição no cômodo (mm)")},
+                                                  {"z", tr("Distância do piso (cm)")},
                                                   {"yaw", tr("Rotação (°)")},
-                                                  {"width", tr("Largura (mm)")},
-                                                  {"height", tr("Altura (mm)")},
-                                                  {"depth", tr("Profundidade (mm)")},
-                                                  {"offset", tr("Offset da abertura (mm)")},
-                                                  {"sill", tr("Peitoril (mm)")},
+                                                  {"width", tr("Largura (cm)")},
+                                                  {"height", tr("Altura (cm)")},
+                                                  {"depth", tr("Profundidade (cm)")},
+                                                  {"offset", tr("Distância do canto (cm)")},
+                                                  {"sill", tr("Altura do piso (cm)")},
                                                   {"openAngle", tr("Abertura da porta (°)")},
                                                   {"power", tr("Potência (W)")},
                                                   {"size", tr("Área de luz (mm)")},
@@ -527,6 +651,9 @@ void MainWindow::createShell() {
     propertyLayout->addRow(tr("Puxador"), handle);
     glass = new QCheckBox(tr("Frentes com vidro"));
     propertyLayout->addRow(glass);
+    originalModelColors = new QCheckBox(tr("Usar cores originais deste modelo"));
+    propertyLayout->addRow(originalModelColors);
+    connect(material, &QComboBox::activated, this, [this] { originalModelColors->setChecked(false); });
     lightColor = new QPushButton(tr("Escolher cor…"));
     lightColor->setObjectName("lightColor");
     propertyLayout->addRow(tr("Cor da luz"), lightColor);
@@ -543,14 +670,14 @@ void MainWindow::createShell() {
     apply->setProperty("role", "primary");
     propertyLayout->addRow(apply);
     connect(apply, &QPushButton::clicked, this, [this] { protect([&] { applyInspector(); }); });
-    hint = new QLabel(
-        tr("Valores aceitam expressões: 800+20, 1200/2.\nCtrl+clique permite selecionar vários objetos."));
+    hint = new QLabel(tr(
+        "Arraste para mover. Use centímetros para ajustar o tamanho. Ctrl+clique seleciona vários itens."));
     hint->setWordWrap(true);
     propertyLayout->addRow(hint);
     scroll->setWidget(inspector);
     propertyDock->setWidget(scroll);
     addDockWidget(Qt::RightDockWidgetArea, propertyDock);
-    auto *renderDock = new QDockWidget(tr("Render"), this);
+    auto *renderDock = new QDockWidget(tr("Criar imagem"), this);
     renderDock->setObjectName("renderDock");
     auto *renderScroll = new QScrollArea;
     renderScroll->setObjectName("renderScroll");
@@ -567,6 +694,10 @@ void MainWindow::createShell() {
     description->setWordWrap(true);
     description->setProperty("role", "muted");
     renderLayout->addRow(description);
+    auto *automaticCamera = new QPushButton(tr("Preparar câmera do cômodo"));
+    automaticCamera->setObjectName("simpleCamera");
+    renderLayout->addRow(automaticCamera);
+    connect(automaticCamera, &QPushButton::clicked, this, [this] { protect([&] { simpleCamera(); }); });
     renderCamera = new QComboBox;
     renderCamera->setObjectName("renderCamera");
     renderCamera->setAccessibleName(tr("Câmera para renderizar"));
@@ -721,20 +852,32 @@ void MainWindow::createShell() {
     for (auto *dock : {libraryDock, sceneDock, propertyDock, renderDock})
         viewMenu->addAction(dock->toggleViewAction());
     resizeDocks({libraryDock, propertyDock}, {300, 320}, Qt::Horizontal);
-    auto *snapBox = new QCheckBox(tr("Snap"));
+    auto *snapBox = new QCheckBox(tr("Alinhar desenho"));
     snapBox->setChecked(true);
     statusBar()->addPermanentWidget(snapBox);
     connect(snapBox, &QCheckBox::toggled, this, [this](bool on) { viewport->snap = on; });
     auto *gridBox = new QComboBox;
     for (int step : {5, 10, 50, 100, 500})
-        gridBox->addItem(tr("Grid %1 mm").arg(step), step);
+        gridBox->addItem(tr("Grade %1 cm").arg(step / 10.0), step);
     gridBox->setCurrentIndex(3);
     statusBar()->addPermanentWidget(gridBox);
     connect(gridBox, &QComboBox::currentIndexChanged, this,
             [this, gridBox] { viewport->setGrid(gridBox->currentData().toDouble()); });
-    statusBar()->addPermanentWidget(new QLabel(tr("mm · Offline")));
+    statusBar()->addPermanentWidget(new QLabel(tr("No seu computador")));
 }
 void MainWindow::refreshScene() {
+    {
+        QSignalBlocker blocker(roomPicker);
+        auto selected = roomPicker->currentData();
+        roomPicker->clear();
+        roomPicker->addItem(tr("Apartamento inteiro"), "");
+        for (const auto &object : editor_.document().entities)
+            if (object.type == "Room")
+                roomPicker->addItem(q(object.name), q(object.id));
+        auto index = roomPicker->findData(selected);
+        if (index >= 0)
+            roomPicker->setCurrentIndex(index);
+    }
     refreshing = true;
     projectTitle->setText(q(editor_.document().name));
     projectTitle->setToolTip(q(editor_.document().name));
@@ -806,17 +949,17 @@ void MainWindow::refreshLibrary() {
                                     favoriteOnly->isChecked(), recentOnly->isChecked());
     assets->clear();
     for (const auto &a : visibleAssets) {
-        auto *item =
-            new QListWidgetItem((a.favorite ? "★ " : "") + a.name +
-                                    QString("\n%1 × %2 × %3 mm").arg(a.width).arg(a.height).arg(a.depth),
-                                assets);
+        auto *item = new QListWidgetItem(
+            (a.favorite ? "★ " : "") + a.name +
+                QString("\n%1 × %2 × %3 cm").arg(a.width / 10).arg(a.depth / 10).arg(a.height / 10),
+            assets);
         item->setData(Qt::UserRole, a.id);
         item->setData(Qt::UserRole + 1, a.category);
         auto thumbnail = thumbnails.request(a);
         item->setIcon(thumbnail.isNull() ? studioIcon("cube") : QIcon(QPixmap::fromImage(thumbnail)));
         item->setData(Qt::UserRole + 2, !thumbnail.isNull());
         item->setToolTip(a.category + " · CC0 · " + tr("Arraste para inserir"));
-        item->setSizeHint({270, 88});
+        item->setSizeHint({114, 174});
     }
     libraryCount->setText(visibleAssets.empty()
                               ? tr("Nenhum item encontrado. Ajuste a busca ou os filtros.")
@@ -832,9 +975,13 @@ void MainWindow::refreshInspector() {
     if (selectedIds.size() == 1 && editor_.document().contains(selectedIds.first().toStdString()))
         e = &editor_.document().at(selectedIds.first().toStdString());
     auto *form = qobject_cast<QFormLayout *>(inspector->layout());
+    advancedProperties->setVisible(e != nullptr);
+    findChild<QPushButton *>("applyProperties")->setEnabled(e && !e->locked);
     form->setRowVisible(material, e != nullptr);
     form->setRowVisible(handle, e && e->type == "FurnitureModule");
     form->setRowVisible(glass, e && e->type == "FurnitureModule");
+    form->setRowVisible(originalModelColors, e && e->type == "MeshObject");
+    originalModelColors->setChecked(e && e->parameters.value("originalMaterials", true));
     form->setRowVisible(lightColor, e && e->type == "Light");
     selectionTitle->setText(e                       ? q(e->name)
                             : selectedIds.isEmpty() ? tr("Selecione um objeto")
@@ -853,6 +1000,9 @@ void MainWindow::refreshInspector() {
             visible = e && e->type == "Camera";
         if (key.startsWith("target"))
             visible = e && (e->type == "Camera" || e->type == "Light");
+        if (key == "x" || key == "y" || key == "yaw" || key.startsWith("target") || key == "lens" ||
+            key == "fstop" || key == "focusDistance")
+            visible = visible && advancedProperties->isChecked();
         form->setRowVisible(field, visible);
         field->setEnabled(e && !e->locked);
         field->clear();
@@ -863,7 +1013,12 @@ void MainWindow::refreshInspector() {
     glass->setEnabled(handle->isEnabled());
     if (!e)
         return;
-    auto set = [&](const QString &key, double v) { fields[key]->setText(QString::number(v, 'f', 1)); };
+    auto set = [&](const QString &key, double v) {
+        if (key == "width" || key == "height" || key == "depth" || key == "z" || key == "offset" ||
+            key == "sill")
+            v /= 10;
+        fields[key]->setText(QString::number(v, 'f', 2));
+    };
     fields["name"]->setText(q(e->name));
     set("x", e->transform.x);
     set("y", e->transform.y);
@@ -926,7 +1081,12 @@ void MainWindow::applyInspector() {
             throw std::invalid_argument("Desbloqueie o objeto antes de editar");
         e.name = fields["name"]->text().toStdString();
         auto value = [&](const char *key, double previous) {
-            return fields[key]->isEnabled() ? millimeters(evaluate(fields[key]->text().toStdString()))
+            const QString name = key;
+            const double unit = (name == "width" || name == "height" || name == "depth" || name == "z" ||
+                                 name == "offset" || name == "sill")
+                                    ? 10
+                                    : 1;
+            return fields[key]->isEnabled() ? millimeters(evaluate(fields[key]->text().toStdString()) * unit)
                                             : previous;
         };
         e.transform = {value("x", e.transform.x), value("y", e.transform.y), value("z", e.transform.z),
@@ -935,6 +1095,8 @@ void MainWindow::applyInspector() {
         e.height = value("height", e.height);
         e.depth = value("depth", e.depth);
         e.material = material->currentData().toString().toStdString();
+        if (e.type == "MeshObject")
+            e.parameters["originalMaterials"] = originalModelColors->isChecked();
         for (const auto *key : {"offset", "sill", "openAngle", "power", "lens", "size", "angle", "blend",
                                 "fstop", "focusDistance"})
             if (fields[key]->isEnabled())
@@ -952,14 +1114,168 @@ void MainWindow::applyInspector() {
     viewport->select({id});
 }
 void MainWindow::newRoom() {
-    std::vector<double> v{4000, 3000, 2700, 120};
-    if (numericDialog(this, tr("Criar ambiente"),
-                      {tr("Largura (mm)"), tr("Profundidade (mm)"), tr("Pé-direito (mm)"), tr("Parede (mm)")},
-                      v)) {
-        editor_.apply(tr("Criar ambiente"),
-                      [&](Document &d) { addRectangularRoom(d, v[0], v[1], v[2], v[3]); });
-        viewport->frame();
+    QDialog dialog(this);
+    dialog.setWindowTitle(tr("Adicionar um cômodo"));
+    auto *layout = new QFormLayout(&dialog);
+    auto *name = new QComboBox;
+    name->setEditable(true);
+    name->addItems({tr("Sala e cozinha"), tr("Quarto"), tr("Banheiro"), tr("Escritório"), tr("Varanda")});
+    layout->addRow(tr("Nome"), name);
+    auto *width = new QDoubleSpinBox, *depth = new QDoubleSpinBox;
+    for (auto *input : {width, depth}) {
+        input->setRange(1, 50);
+        input->setDecimals(2);
+        input->setSuffix(tr(" m"));
+        input->setSingleStep(0.1);
     }
+    width->setValue(4);
+    depth->setValue(3);
+    layout->addRow(tr("Largura"), width);
+    layout->addRow(tr("Comprimento"), depth);
+    auto *neighbor = new QComboBox;
+    neighbor->addItem(tr("Primeiro cômodo"), "");
+    for (const auto &e : editor_.document().entities)
+        if (e.type == "Room")
+            neighbor->addItem(q(e.name), q(e.id));
+    if (neighbor->count() > 1) {
+        neighbor->removeItem(0);
+    }
+    auto *side = new QComboBox;
+    side->addItems({tr("À direita"), tr("Acima"), tr("À esquerda"), tr("Abaixo")});
+    layout->addRow(tr("Ao lado de"), neighbor);
+    layout->addRow(tr("Posição"), side);
+    side->setEnabled(neighbor->count() > 0 && !neighbor->currentData().toString().isEmpty());
+    auto *help = new QLabel(tr("As medidas são em metros. Os móveis usam centímetros no catálogo. Você pode "
+                               "ajustar detalhes depois."));
+    help->setWordWrap(true);
+    help->setMaximumWidth(360);
+    layout->addRow(help);
+    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    buttons->button(QDialogButtonBox::Ok)->setText(tr("Criar cômodo"));
+    layout->addRow(buttons);
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    if (dialog.exec() != QDialog::Accepted)
+        return;
+    double x = 0, y = 0;
+    const auto roomId = neighbor->currentData().toString().toStdString();
+    if (!roomId.empty()) {
+        const auto &r = editor_.document().at(roomId);
+        x = r.transform.x;
+        y = r.transform.y;
+        if (side->currentIndex() == 0)
+            x += r.width;
+        else if (side->currentIndex() == 1)
+            y += r.depth;
+        else if (side->currentIndex() == 2)
+            x -= width->value() * 1000;
+        else
+            y -= depth->value() * 1000;
+    }
+    editor_.apply(tr("Adicionar %1").arg(name->currentText()), [&](Document &d) {
+        addRectangularRoom(d, width->value() * 1000, depth->value() * 1000, 2700, 120, x, y,
+                           name->currentText().toStdString());
+    });
+    viewport->setTool("select");
+    viewport->frame();
+}
+void MainWindow::focusRoom() {
+    workspace->setCurrentWidget(viewport);
+    const auto id = roomPicker->currentData().toString().toStdString();
+    if (id.empty())
+        viewport->frame();
+    else
+        viewport->frameRoom(id);
+}
+void MainWindow::apartmentStarter() {
+    if (!discardOrSave())
+        return;
+    Document apartment;
+    apartment.name = "Meu apartamento";
+    addRectangularRoom(apartment, 5000, 6000, 2700, 120, 0, 0, "Sala e cozinha");
+    std::erase_if(apartment.entities, [](const auto &e) {
+        return e.type == "Wall" && std::abs(e.transform.x - 5000) < 1 && std::abs(e.width - 6000) < 1;
+    });
+    addRectangularRoom(apartment, 3000, 3500, 2700, 120, 5000, 0, "Quarto");
+    addRectangularRoom(apartment, 3000, 2500, 2700, 120, 5000, 3500, "Banheiro");
+    for (auto &object : apartment.entities)
+        if (object.type == "Floor")
+            object.material = "porcelain";
+        else if (object.type == "Ceiling")
+            object.visible = true;
+    auto all = library->search();
+    auto add = [&](const char *id, double x, double y, double yaw = 0) {
+        auto asset = std::find_if(all.begin(), all.end(), [&](const auto &a) { return a.id == id; });
+        if (asset == all.end())
+            throw std::runtime_error("Móvel pronto indisponível");
+        auto object = Library::instantiate(*asset, x, y);
+        object.transform.yaw = yaw;
+        Library::attachModel(apartment, *asset);
+        apartment.entities.push_back(object);
+    };
+    add("ready-loungeSofa", 180, 1000, 0);
+    add("ready-tableCoffee", 2050, 1600);
+    add("ready-tableRound", 1000, 3700);
+    add("ready-chair", 1850, 5400, 180);
+    add("ready-kitchenFridge", 4300, 5938, 180);
+    add("base-2", 1000, 5938, 180);
+    add("drawer", 1600, 5938, 180);
+    add("ready-bedDouble", 7800, 3350, 180);
+    add("ready-cabinetBedDrawer", 5550, 2900);
+    add("ready-toilet", 6750, 5350, 180);
+    add("ready-bathroomSink", 7938, 3800, 90);
+    add("ready-shower", 5200, 5000);
+    std::vector<Entity> doors;
+    for (const auto &wall : apartment.entities)
+        if (wall.type == "Wall" && std::abs(wall.transform.x - 5000) < 1 &&
+            std::abs(std::fmod(std::abs(wall.transform.yaw), 180) - 90) < 1 && wall.width >= 2500) {
+            auto door = entity("Door", "Porta interna");
+            door.parent = wall.id;
+            door.width = 800;
+            door.height = 2100;
+            door.depth = wall.depth;
+            door.parameters = {{"offset", 500}, {"sill", 0}, {"openAngle", 0}, {"hinge", "left"}};
+            doors.push_back(door);
+        }
+    apartment.entities.insert(apartment.entities.end(), doors.begin(), doors.end());
+    auto livingWindow = entity("Window", "Janela da sala");
+    auto southWall = std::find_if(apartment.entities.begin(), apartment.entities.end(), [](const auto &e) {
+        return e.type == "Wall" && e.transform.y == 0 && e.transform.x == 0;
+    });
+    livingWindow.parent = southWall->id;
+    livingWindow.width = 1400;
+    livingWindow.height = 1100;
+    livingWindow.depth = 120;
+    livingWindow.parameters = {{"offset", 2200}, {"sill", 900}};
+    apartment.entities.push_back(livingWindow);
+    std::vector<Entity> lights;
+    for (const auto &room : apartment.entities)
+        if (room.type == "Room") {
+            auto light = entity("Light", "Luz de " + room.name);
+            const auto x = room.transform.x + room.width / 2, y = room.transform.y + room.depth / 2;
+            light.transform = {x, y, 2600, 0, false};
+            light.parameters = {{"kind", "area"},
+                                {"power", room.width * room.depth / 200000},
+                                {"size", 1800},
+                                {"target", {x, y, 0}},
+                                {"color", {1.0, 0.94, 0.85}}};
+            lights.push_back(light);
+        }
+    apartment.entities.insert(apartment.entities.end(), lights.begin(), lights.end());
+    auto camera = entity("Camera", "Foto da sala");
+    camera.transform = {2400, 5500, 1500, 0, false};
+    camera.parameters = {{"target", {2000, 1800, 1100}}, {"lens", 20}, {"fstop", 8}};
+    apartment.entities.push_back(camera);
+    apartment.renderSettings["camera"] = camera.id;
+    apartment.renderSettings["environmentMode"] = "sky";
+    apartment.renderSettings["environmentStrength"] = 0.15;
+    apartment.renderSettings["exposure"] = 0.6;
+    apartment.validate();
+    path.clear();
+    selectedIds.clear();
+    editor_.load(apartment);
+    viewport->setTop(true);
+    viewport->frame();
 }
 void MainWindow::opening(bool window) {
     if (selectedIds.size() != 1)
@@ -983,13 +1299,15 @@ void MainWindow::opening(bool window) {
             d.entities.push_back(e);
         });
 }
-void MainWindow::insertAsset(const QString &id, double x, double y) {
+void MainWindow::insertAsset(const QString &id, const Entity &e) {
     auto all = library->search();
     auto found = std::find_if(all.begin(), all.end(), [&](const auto &a) { return a.id == id; });
     if (found == all.end())
         throw std::invalid_argument("Asset não encontrado");
-    auto e = Library::instantiate(*found, x, y);
-    editor_.apply(tr("Inserir %1").arg(found->name), [&](Document &d) { d.entities.push_back(e); });
+    editor_.apply(tr("Inserir %1").arg(found->name), [&](Document &d) {
+        Library::attachModel(d, *found);
+        d.entities.push_back(e);
+    });
     library->used(id);
     selectIds({q(e.id)});
     viewport->select({e.id});
@@ -1004,6 +1322,22 @@ void MainWindow::transform(const QString &mode) {
                 throw std::invalid_argument("A seleção contém objetos bloqueados");
         if (mode == "delete") {
             eraseCascade(d, selected);
+            return;
+        }
+        if (mode == "rotate") {
+            for (const auto &id : selected) {
+                auto &e = d.at(id);
+                if (!movable(e))
+                    continue;
+                const double angle = e.transform.yaw * std::numbers::pi / 180;
+                const double x = e.transform.x + (e.width * std::cos(angle) - e.depth * std::sin(angle)) / 2;
+                const double y = e.transform.y + (e.width * std::sin(angle) + e.depth * std::cos(angle)) / 2;
+                e.transform.yaw = std::fmod(e.transform.yaw + 90, 360);
+                auto placement = placeObject(d, e, x, y, false);
+                if (!placement.allowed)
+                    throw std::invalid_argument(placement.message);
+                e = placement.object;
+            }
             return;
         }
         if (mode == "duplicate") {
@@ -1100,6 +1434,33 @@ void MainWindow::createCamera() {
             e.parameters = {{"target", {v[3], v[4], v[5]}}, {"lens", v[6]}};
             d.entities.push_back(e);
         });
+}
+void MainWindow::simpleCamera() {
+    const auto &document = editor_.document();
+    auto id = roomPicker->currentData().toString().toStdString();
+    const Entity *room = nullptr;
+    if (!id.empty() && document.contains(id))
+        room = &document.at(id);
+    if (!room)
+        for (const auto &object : document.entities)
+            if (object.type == "Room") {
+                room = &object;
+                break;
+            }
+    if (!room)
+        throw std::invalid_argument("Crie um cômodo primeiro. Depois prepare a câmera.");
+    auto camera = entity("Camera", "Foto de " + room->name);
+    camera.transform = {room->transform.x + room->width * 0.5, room->transform.y + room->depth * 0.88, 1500,
+                        0, false};
+    camera.parameters = {
+        {"target", {room->transform.x + room->width * 0.5, room->transform.y + room->depth * 0.24, 1100}},
+        {"lens", 20},
+        {"fstop", 8}};
+    editor_.apply(tr("Preparar câmera do cômodo"), [&](Document &d) {
+        d.entities.push_back(camera);
+        d.renderSettings["camera"] = camera.id;
+    });
+    statusBar()->showMessage(tr("Câmera preparada. Escolha a qualidade e clique em Criar imagem."), 8000);
 }
 void MainWindow::renderScene() {
     if (render.busy())

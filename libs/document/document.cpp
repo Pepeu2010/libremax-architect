@@ -1,4 +1,5 @@
 #include "document.h"
+#include "library/model.h"
 #include <QCryptographicHash>
 #include <QRegularExpression>
 #include <QUuid>
@@ -74,20 +75,10 @@ bool Document::contains(const std::string &target) const {
     return std::any_of(entities.begin(), entities.end(), [&](const auto &e) { return e.id == target; });
 }
 void Document::validate() const {
-    static const std::set<std::string> types = {"Wall",
-                                                "HalfWall",
-                                                "Room",
-                                                "Floor",
-                                                "Ceiling",
-                                                "Door",
-                                                "Window",
-                                                "Stair",
-                                                "FurnitureModule",
-                                                "DecorativeObject",
-                                                "GeometryObject",
-                                                "Light",
-                                                "Camera",
-                                                "Group"};
+    static const std::set<std::string> types = {
+        "Wall",           "HalfWall",   "Room",  "Floor",           "Ceiling",
+        "Door",           "Window",     "Stair", "FurnitureModule", "DecorativeObject",
+        "GeometryObject", "MeshObject", "Light", "Camera",          "Group"};
     if (version != 1 || QUuid(QString::fromStdString(id)).isNull() || name.empty() || name.size() > 512 ||
         entities.size() > 10000)
         throw std::invalid_argument("Documento inválido ou versão não suportada");
@@ -163,6 +154,15 @@ void Document::validate() const {
         if (!e.parameters.is_object() || !e.metadata.is_object() || e.parameters.dump().size() > 65536 ||
             e.metadata.dump().size() > 65536)
             throw std::invalid_argument("Parâmetros inválidos");
+        if (e.type == "MeshObject") {
+            const auto hash = e.parameters.at("meshAsset").get<std::string>();
+            if (!embeddedAssets.contains(hash))
+                throw std::invalid_argument("Modelo 3D incorporado ausente");
+            const auto model = readModel(embeddedAssets.at(hash));
+            for (const auto &part : model.at("parts"))
+                if (!materialIds.contains(part.at("material").get<std::string>()))
+                    throw std::invalid_argument("Acabamento do modelo 3D ausente");
+        }
         if (e.metadata.value("format", std::string{}) == "DXF") {
             const auto &primitives = e.parameters.at("primitives");
             if (!primitives.is_array() || primitives.empty() || primitives.size() > 20000)
@@ -416,26 +416,79 @@ Entity wall(double x1, double y1, double x2, double y2, double height, double th
     e.material = "paint";
     return e;
 }
-void addRectangularRoom(Document &d, double w, double depth, double h, double t) {
+void addRectangularRoom(Document &d, double w, double depth, double h, double t, double x, double y,
+                        const std::string &name) {
     if (w < 500 || depth < 500 || h < 100 || t < 10 || t > w / 4 || t > depth / 4)
         throw std::invalid_argument("Medidas do ambiente inválidas");
-    auto r = entity("Room", "Ambiente");
+    for (const auto &room : d.entities)
+        if (room.type == "Room" && std::abs(room.transform.yaw) < 0.001 &&
+            x < room.transform.x + room.width - 0.1 && room.transform.x < x + w - 0.1 &&
+            y < room.transform.y + room.depth - 0.1 && room.transform.y < y + depth - 0.1)
+            throw std::invalid_argument(
+                "Este cômodo ocupa o espaço de outro. Escolha outro lado ou ajuste as medidas.");
+    auto r = entity("Room", name);
+    r.transform.x = millimeters(x);
+    r.transform.y = millimeters(y);
     r.width = w;
     r.depth = depth;
     r.height = h;
     d.entities.push_back(r);
     const double points[4][2] = {{0, 0}, {w, 0}, {w, depth}, {0, depth}};
     for (int i = 0; i < 4; ++i) {
-        auto e = wall(points[i][0], points[i][1], points[(i + 1) % 4][0], points[(i + 1) % 4][1], h, t);
+        auto e = wall(points[i][0] + x, points[i][1] + y, points[(i + 1) % 4][0] + x,
+                      points[(i + 1) % 4][1] + y, h, t);
+        std::vector<std::pair<double, double>> segments{{0, e.width}};
+        const double newAngle = e.transform.yaw * std::numbers::pi / 180;
+        for (const auto &existing : d.entities)
+            if (existing.type == "Wall" && std::abs(existing.depth - t) < 0.1 &&
+                std::abs(existing.height - h) < 0.1) {
+                const double a = existing.transform.yaw * std::numbers::pi / 180;
+                const double ex = existing.transform.x + existing.width * std::cos(a),
+                             ey = existing.transform.y + existing.width * std::sin(a);
+                auto cross = [&](double px, double py) {
+                    return -(px - e.transform.x) * std::sin(newAngle) +
+                           (py - e.transform.y) * std::cos(newAngle);
+                };
+                if (std::abs(cross(existing.transform.x, existing.transform.y)) > 0.1 ||
+                    std::abs(cross(ex, ey)) > 0.1)
+                    continue;
+                auto along = [&](double px, double py) {
+                    return (px - e.transform.x) * std::cos(newAngle) +
+                           (py - e.transform.y) * std::sin(newAngle);
+                };
+                const double left =
+                    std::min(along(existing.transform.x, existing.transform.y), along(ex, ey));
+                const double right =
+                    std::max(along(existing.transform.x, existing.transform.y), along(ex, ey));
+                std::vector<std::pair<double, double>> remaining;
+                for (const auto &[start, end] : segments) {
+                    if (right <= start + 0.1 || left >= end - 0.1)
+                        remaining.emplace_back(start, end);
+                    else {
+                        if (left > start + 0.1)
+                            remaining.emplace_back(start, left);
+                        if (right < end - 0.1)
+                            remaining.emplace_back(right, end);
+                    }
+                }
+                segments = std::move(remaining);
+            }
         e.name = "Parede " + std::to_string(i + 1);
         e.parent = r.id;
-        d.entities.push_back(e);
+        for (const auto &[start, end] : segments) {
+            auto piece = e;
+            piece.id = uuid();
+            piece.transform.x += start * std::cos(newAngle);
+            piece.transform.y += start * std::sin(newAngle);
+            piece.width = millimeters(end - start);
+            d.entities.push_back(piece);
+        }
     }
     auto floor = entity("Floor", "Piso");
     floor.width = w - t;
     floor.depth = depth - t;
     floor.height = 25;
-    floor.transform = {t / 2, t / 2, -25, 0, false};
+    floor.transform = {x + t / 2, y + t / 2, -25, 0, false};
     floor.material = "oak";
     floor.parent = r.id;
     d.entities.push_back(floor);

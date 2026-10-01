@@ -41,7 +41,8 @@ double millimeters(double value);
 Entity entity(std::string type, std::string name);
 Entity wall(double x1, double y1, double x2, double y2, double height = 2700, double thickness = 120,
             bool half = false);
-void addRectangularRoom(Document &document, double width, double depth, double height, double thickness);
+void addRectangularRoom(Document &document, double width, double depth, double height, double thickness,
+                        double x = 0, double y = 0, const std::string &name = "Ambiente");
 void eraseCascade(Document &document, const std::vector<std::string> &ids);
 Json materialPresets();
 } // namespace lmx

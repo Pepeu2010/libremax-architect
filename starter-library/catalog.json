@@ -16,7 +16,9 @@
         "legs": 100,
         "carcass": "oak",
         "handle": "bar",
-        "glass": false
+        "glass": false,
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -41,7 +43,9 @@
         "legs": 100,
         "carcass": "oak",
         "handle": "bar",
-        "glass": false
+        "glass": false,
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -66,7 +70,9 @@
         "legs": 100,
         "carcass": "oak",
         "handle": "bar",
-        "glass": false
+        "glass": false,
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -91,7 +97,9 @@
         "legs": 100,
         "carcass": "oak",
         "handle": "bar",
-        "glass": false
+        "glass": false,
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -116,7 +124,9 @@
         "legs": 0,
         "carcass": "oak",
         "handle": "bar",
-        "glass": false
+        "glass": false,
+        "placement": "wall",
+        "defaultElevation": 1400
       }
     },
     "license": "CC0-1.0",
@@ -141,7 +151,9 @@
         "legs": 0,
         "carcass": "oak",
         "handle": "bar",
-        "glass": false
+        "glass": false,
+        "placement": "wall",
+        "defaultElevation": 1400
       }
     },
     "license": "CC0-1.0",
@@ -166,7 +178,9 @@
         "legs": 100,
         "carcass": "oak",
         "handle": "bar",
-        "glass": false
+        "glass": false,
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -191,7 +205,9 @@
         "legs": 0,
         "carcass": "oak",
         "handle": "bar",
-        "glass": false
+        "glass": false,
+        "placement": "wall",
+        "defaultElevation": 1200
       }
     },
     "license": "CC0-1.0",
@@ -216,7 +232,9 @@
         "legs": 100,
         "carcass": "oak",
         "handle": "bar",
-        "glass": false
+        "glass": false,
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -241,7 +259,9 @@
         "legs": 80,
         "carcass": "oak",
         "handle": "point",
-        "glass": false
+        "glass": false,
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -266,7 +286,9 @@
         "legs": 80,
         "carcass": "oak",
         "handle": "point",
-        "glass": false
+        "glass": false,
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -291,7 +313,9 @@
         "legs": 80,
         "carcass": "oak",
         "handle": "point",
-        "glass": false
+        "glass": false,
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -316,7 +340,9 @@
         "legs": 80,
         "carcass": "oak",
         "handle": "point",
-        "glass": false
+        "glass": false,
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -341,7 +367,9 @@
         "legs": 80,
         "carcass": "oak",
         "handle": "point",
-        "glass": false
+        "glass": false,
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -361,7 +389,9 @@
       "type": "DecorativeObject",
       "material": "white",
       "parameters": {
-        "family": "bed"
+        "family": "bed",
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -381,7 +411,9 @@
       "type": "DecorativeObject",
       "material": "fabric",
       "parameters": {
-        "family": "sofa"
+        "family": "sofa",
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -401,7 +433,9 @@
       "type": "DecorativeObject",
       "material": "fabric",
       "parameters": {
-        "family": "chair"
+        "family": "chair",
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -421,7 +455,9 @@
       "type": "DecorativeObject",
       "material": "white",
       "parameters": {
-        "family": "table"
+        "family": "table",
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -441,7 +477,9 @@
       "type": "DecorativeObject",
       "material": "white",
       "parameters": {
-        "family": "desk"
+        "family": "desk",
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -461,7 +499,9 @@
       "type": "DecorativeObject",
       "material": "white",
       "parameters": {
-        "family": "fridge"
+        "family": "fridge",
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -481,7 +521,9 @@
       "type": "DecorativeObject",
       "material": "white",
       "parameters": {
-        "family": "oven"
+        "family": "oven",
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -501,7 +543,9 @@
       "type": "DecorativeObject",
       "material": "white",
       "parameters": {
-        "family": "vase"
+        "family": "vase",
+        "placement": "surface",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -521,7 +565,9 @@
       "type": "DecorativeObject",
       "material": "white",
       "parameters": {
-        "family": "plant"
+        "family": "plant",
+        "placement": "floor",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -541,7 +587,9 @@
       "type": "DecorativeObject",
       "material": "fabric",
       "parameters": {
-        "family": "rug"
+        "family": "rug",
+        "placement": "rug",
+        "defaultElevation": 0
       }
     },
     "license": "CC0-1.0",
@@ -561,12 +609,62 @@
       "type": "DecorativeObject",
       "material": "white",
       "parameters": {
-        "family": "picture"
+        "family": "picture",
+        "placement": "wall",
+        "defaultElevation": 1200
       }
     },
     "license": "CC0-1.0",
     "author": "LibreMax contributors",
     "origin": "LibreMax procedural generators",
     "date": "2026-09-29"
+  },
+  {
+    "id": "door-ready",
+    "name": "Porta de madeira",
+    "category": "Portas e janelas",
+    "width": 800,
+    "height": 2100,
+    "depth": 120,
+    "tags": "Porta de madeira",
+    "recipe": {
+      "type": "Door",
+      "material": "oak",
+      "parameters": {
+        "placement": "wall",
+        "sill": 0,
+        "offset": 0,
+        "openAngle": 0,
+        "hinge": "left"
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-30"
+  },
+  {
+    "id": "window-ready",
+    "name": "Janela com vidro",
+    "category": "Portas e janelas",
+    "width": 1200,
+    "height": 1000,
+    "depth": 120,
+    "tags": "Janela com vidro",
+    "recipe": {
+      "type": "Window",
+      "material": "oak",
+      "parameters": {
+        "placement": "wall",
+        "sill": 1000,
+        "offset": 0,
+        "openAngle": 0,
+        "hinge": "left"
+      }
+    },
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax procedural generators",
+    "date": "2026-09-30"
   }
 ]

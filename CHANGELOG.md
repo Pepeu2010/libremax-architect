@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.0 — 2026-10-01 — montagem de apartamento, em desenvolvimento
+
+- Pesquisa do manual e suporte oficiais VDMax para montagem contextual.
+- Prévia na parede/piso, cantos e vizinhos, recusa de colisão/espaço externo, portas/janelas vinculadas e apoio de pequenos objetos.
+- Arrasto de móveis existentes com undo/redo; duplo clique espera escolher o lugar; giro da prévia e do móvel.
+- Catálogo offline com 52 malhas Kenney CC0, 25 receitas próprias e duas aberturas; 79 miniaturas reais.
+- Malhas com cores por parte incorporadas no .lmx, validadas por SHA256, compartilhadas entre viewport e Cycles.
+- Cômodos adjacentes, paredes compartilhadas, apartamento pronto e câmera por cômodo.
+- Catálogo em galeria, árvore em outra aba, medidas comuns em cm, ajustes técnicos recolhidos e comandos curtos.
+- Testes nativos de montagem em planta/3D e telas de 900 px; correção de dependências libzip e versão do formatador no CI.
+
 ## 0.3.0 — 2026-09-30 — desenvolvimento, sem release
 
 - Materiais PBR locais CC0 com albedo/roughness/normal, hashes, escala e incorporação em .lmx.

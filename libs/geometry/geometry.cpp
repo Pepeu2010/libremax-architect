@@ -1,4 +1,5 @@
 #include "geometry.h"
+#include "library/model.h"
 #include <BRepAlgoAPI_Cut.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -83,6 +84,42 @@ std::vector<Part> buildEntity(const Document &doc, const Entity &e) {
     auto block = [&](double x, double y, double z, double w, double d, double h,
                      const std::string &mat = "") { add(box(x, y, z, w, d, h), mat); };
     const double w = e.width, h = e.height, d = e.depth;
+    if (e.type == "MeshObject") {
+        const auto model = readModel(doc.embeddedAssets.at(e.parameters.at("meshAsset").get<std::string>()));
+        const double angle = e.transform.yaw * std::numbers::pi / 180;
+        for (const auto &part : model.at("parts")) {
+            const auto &vertices = part.at("vertices"), &triangles = part.at("triangles");
+            Handle(Poly_Triangulation) mesh = new Poly_Triangulation(
+                static_cast<int>(vertices.size()), static_cast<int>(triangles.size()), false);
+            for (std::size_t i = 0; i < vertices.size(); ++i) {
+                double x = vertices[i][0].get<double>() * w, y = vertices[i][1].get<double>() * d,
+                       z = vertices[i][2].get<double>() * h;
+                if (e.transform.mirrored)
+                    x = w - x;
+                mesh->SetNode(static_cast<int>(i) + 1,
+                              gp_Pnt(e.transform.x + x * std::cos(angle) - y * std::sin(angle),
+                                     e.transform.y + x * std::sin(angle) + y * std::cos(angle),
+                                     e.transform.z + z));
+            }
+            for (std::size_t i = 0; i < triangles.size(); ++i) {
+                int a = triangles[i][0].get<int>() + 1, b = triangles[i][1].get<int>() + 1,
+                    c = triangles[i][2].get<int>() + 1;
+                if (e.transform.mirrored)
+                    std::swap(b, c);
+                mesh->SetTriangle(static_cast<int>(i) + 1, Poly_Triangle(a, b, c));
+            }
+            mesh->ComputeNormals();
+            TopoDS_Face face;
+            BRep_Builder builder;
+            builder.MakeFace(face, mesh);
+            out.push_back({face,
+                           e.parameters.value("originalMaterials", true)
+                               ? part.at("material").get<std::string>()
+                               : e.material,
+                           e.id});
+        }
+        return out;
+    }
     if (e.type == "Room" || e.type == "Group" || e.type == "Camera" || e.type == "Light")
         return out;
     if (e.type == "Wall" || e.type == "HalfWall") {
@@ -352,9 +389,11 @@ Json meshSnapshot(const Document &d) {
     d.validate();
     Json meshes = Json::array();
     for (const auto &part : buildScene(d)) {
-        BRepMesh_IncrementalMesh mesher(part.shape, 1.0, false, 0.35, true);
-        if (!mesher.IsDone())
-            throw std::runtime_error("Falha de tesselação");
+        if (d.at(part.owner).type != "MeshObject") {
+            BRepMesh_IncrementalMesh mesher(part.shape, 1.0, false, 0.35, true);
+            if (!mesher.IsDone())
+                throw std::runtime_error("Falha de tesselação");
+        }
         Json vertices = Json::array(), triangles = Json::array();
         for (TopExp_Explorer it(part.shape, TopAbs_FACE); it.More(); it.Next()) {
             auto face = TopoDS::Face(it.Current());

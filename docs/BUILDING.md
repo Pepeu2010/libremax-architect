@@ -26,3 +26,5 @@ ctest --test-dir build --output-on-failure
 Para reproduzir as capturas e render da interface 0.2, use os comandos de [CYCLE_02](CYCLE_02.md): `--render-size 960x540 --render-samples 64` e UI smoke com `--preview-image`. O smoke padrão continua pequeno para integração rápida.
 
 No ciclo 0.3, `starter-materials` é instalado com os recursos. `package-source.ps1` inclui `starter-materials.tar.gz`; exemplos incorporam seis mapas PBR e têm aproximadamente 14,5 MB por .lmx. Render 1280×720/128 e controles de céu/PBR estão em [CYCLE_03](CYCLE_03.md).
+
+0.4 instala também `starter-models` e o pacote de fontes inclui `starter-models.tar.gz`. Rode `--assembly-smoke build/assembly-evidence` para a montagem nativa; abra `examples/apartamento.lmx` para experimentar. O bootstrap instala os utilitários zipcmp/zipmerge/ziptool exigidos pelo config CMake libzip da distribuição. O CI fixa clang-format 23.1.1, igual ao formatador usado localmente.

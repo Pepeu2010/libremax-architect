@@ -1,3 +1,11 @@
+# Test report — ciclo 0.4.0
+
+Executado em 30/09–01/10/2026 no host Windows: **22 casos / 1.054 assertions** aprovados. Build Release, 79 miniaturas reais, encaixe na parede em planta e 3D, bloqueio de área externa, arrasto de móvel existente com undo/redo, janela associada, apartamento com três cômodos e modelos incorporados, save/open e painéis em 900 px passaram no executável nativo. Regressão de UI/PBR/expressões em cm e recuperação após encerramento forçado também passaram.
+
+Render real do apartamento no Cycles CPU: 640×360 / 32 samples; falha posterior por remoção deliberada da câmera preserva o hash da imagem anterior. Modelos preparados não contêm faces geométricas duplicadas. Relatório, reprodução e limites: [CYCLE_04](CYCLE_04.md). Screenshots [3D](screenshots/apartment-3d.png), [900 px](screenshots/apartment-900.png), [render](screenshots/apartment-render.png). Linux/GPU/1080p/4K e catálogo fotográfico extenso não são comprovados por esses resultados. Os relatórios abaixo são históricos.
+
+---
+
 # Test report — ciclo 0.3.0
 
 Executado em 2026-09-30 no mesmo host Windows/toolchain descrito abaixo: **18 casos/463 assertions**, CTest 6,30 s; FTS5/10.000 fixtures 1,7564 ms em concorrência. Build Release, ativação PBR/sol e persistência pela UI, inspeção de render Cycles CPU 1280×720/128, exportação PNG e recuperação passaram. Fonte e hashes dos seis mapas verificados; nenhum download em runtime.

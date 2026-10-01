@@ -134,30 +134,29 @@ void AssetDelegate::paint(QPainter *p, const QStyleOptionViewItem &option, const
     p->save();
     const bool selected = option.state & QStyle::State_Selected;
     const bool hover = option.state & QStyle::State_MouseOver;
-    auto rect = option.rect.adjusted(0, 1, 0, -1);
+    auto rect = option.rect.adjusted(2, 2, -2, -2);
     p->fillRect(rect, QColor(selected ? "#223e43" : hover ? "#23313c" : "#172129"));
     if (selected)
         p->fillRect(QRect(rect.left(), rect.top(), 3, rect.height()), QColor("#7dd9c2"));
     auto icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
-    icon.paint(p, QRect(rect.left() + 10, rect.top() + 12, 76, 58));
+    icon.paint(p, QRect(rect.left() + 7, rect.top() + 8, rect.width() - 14, 96));
     auto font = option.font;
-    font.setPixelSize(13);
+    font.setPixelSize(12);
     font.setWeight(QFont::DemiBold);
     p->setFont(font);
     p->setPen(QColor("#e8eff4"));
-    const int x = rect.left() + 96, width = std::max(0, rect.width() - 106);
-    p->drawText(
-        QRect(x, rect.top() + 11, width, 22), Qt::AlignVCenter,
-        p->fontMetrics().elidedText(index.data().toString().section('\n', 0, 0), Qt::ElideRight, width));
+    const int x = rect.left() + 8, width = std::max(0, rect.width() - 16);
+    p->drawText(QRect(x, rect.top() + 105, width, 32), Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap,
+                index.data().toString().section('\n', 0, 0));
     font.setPixelSize(11);
     font.setWeight(QFont::Normal);
     p->setFont(font);
     p->setPen(QColor("#a7b9c5"));
     p->drawText(
-        QRect(x, rect.top() + 35, width, 18), Qt::AlignVCenter,
+        QRect(x, rect.top() + 137, width, 16), Qt::AlignVCenter,
         p->fontMetrics().elidedText(index.data().toString().section('\n', 1, 1), Qt::ElideRight, width));
     p->setPen(QColor("#7dd9c2"));
-    p->drawText(QRect(x, rect.top() + 57, width, 18), Qt::AlignVCenter,
+    p->drawText(QRect(x, rect.top() + 153, width, 16), Qt::AlignVCenter,
                 index.data(Qt::UserRole + 1).toString());
     if (option.state & QStyle::State_HasFocus) {
         p->setPen(QColor("#7dd9c2"));

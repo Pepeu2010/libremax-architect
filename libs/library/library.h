@@ -8,13 +8,15 @@ struct Asset {
     double width, height, depth;
     Json recipe;
     bool favorite = false;
+    QByteArray model;
 };
 class Library {
     QString connection;
     QSqlDatabase db;
+    QString modelDirectory;
 
   public:
-    explicit Library(const QString &path);
+    explicit Library(const QString &path, const QString &models = {});
     ~Library();
     Library(const Library &) = delete;
     Library &operator=(const Library &) = delete;
@@ -24,5 +26,6 @@ class Library {
     void favorite(const QString &id, bool enabled);
     void used(const QString &id);
     static Entity instantiate(const Asset &asset, double x, double y);
+    static void attachModel(Document &document, const Asset &asset);
 };
 } // namespace lmx

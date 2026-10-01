@@ -1,0 +1,1302 @@
+[
+  {
+    "id": "ready-chair",
+    "name": "Cadeira de madeira",
+    "category": "Sala",
+    "width": 450,
+    "height": 850,
+    "depth": 450,
+    "tags": "Sala Cadeira de madeira pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "chair.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "1f9dc80bfeae2dc941e89866e3c180961c882f1b07c67b3f7dbf4bb9277d10ed",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-chairCushion",
+    "name": "Cadeira estofada",
+    "category": "Sala",
+    "width": 480,
+    "height": 850,
+    "depth": 480,
+    "tags": "Sala Cadeira estofada pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "chairCushion.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "f04a70fc0b219cac5f11c3f85aa4f958037a42eaf132496cccf790e24ed06b7e",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-chairModernCushion",
+    "name": "Cadeira moderna",
+    "category": "Sala",
+    "width": 480,
+    "height": 800,
+    "depth": 480,
+    "tags": "Sala Cadeira moderna pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "chairModernCushion.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "6c228dcd6f4791c359ee69eb927ad5f0e0da66de563c03f23158b9aa9534e209",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-chairRounded",
+    "name": "Cadeira com encosto curvo",
+    "category": "Sala",
+    "width": 480,
+    "height": 820,
+    "depth": 480,
+    "tags": "Sala Cadeira com encosto curvo pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "chairRounded.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "0e6dc11b573ae5fd7bb0c82dbae74b144c377a1b3070657319d6946b651efa8c",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-stoolBar",
+    "name": "Banqueta alta",
+    "category": "Sala",
+    "width": 420,
+    "height": 1050,
+    "depth": 420,
+    "tags": "Sala Banqueta alta pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "stoolBar.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "6c04554227e796eb0cb9bffb67ba8e5b30e1d6facabc0380a880c895d57509cb",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-loungeChair",
+    "name": "Poltrona confortável",
+    "category": "Sala",
+    "width": 850,
+    "height": 850,
+    "depth": 850,
+    "tags": "Sala Poltrona confortável pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "loungeChair.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "2c20d0ceb4d513002eceef508e34a2922ffa7fe7703fd3e1009f3aab7ad736f5",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-loungeChairRelax",
+    "name": "Poltrona de descanso",
+    "category": "Sala",
+    "width": 850,
+    "height": 900,
+    "depth": 950,
+    "tags": "Sala Poltrona de descanso pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "loungeChairRelax.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "83f6ffc144ad3c71f3ce605bccd9f2bee1f93e54f3349dcd36a8917c57ee3737",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-loungeDesignChair",
+    "name": "Poltrona de design",
+    "category": "Sala",
+    "width": 850,
+    "height": 800,
+    "depth": 850,
+    "tags": "Sala Poltrona de design pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "loungeDesignChair.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "de38a56e5be4f713ed3e3a70aff35f4b829231deb7e49905e41eaba3278adc85",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-loungeSofa",
+    "name": "Sofá compacto pronto",
+    "category": "Sala",
+    "width": 1700,
+    "height": 850,
+    "depth": 850,
+    "tags": "Sala Sofá compacto pronto pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "loungeSofa.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "f6be3b4306e220a81eec0e19eb74da3766aa9c2a143daf09e8f27c8d137afdd3",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-loungeSofaLong",
+    "name": "Sofá amplo pronto",
+    "category": "Sala",
+    "width": 2300,
+    "height": 850,
+    "depth": 900,
+    "tags": "Sala Sofá amplo pronto pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "loungeSofaLong.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "18c9e96dee9647b9160241cfa6bdc25cd3141a056519cb7744dce1918f881a79",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-loungeSofaCorner",
+    "name": "Sofá de canto pronto",
+    "category": "Sala",
+    "width": 2300,
+    "height": 850,
+    "depth": 1650,
+    "tags": "Sala Sofá de canto pronto pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "loungeSofaCorner.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "7655cc43f4450e712a60e7b92644d33246ebb4e545788469a15bcdbfb3250269",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-loungeDesignSofa",
+    "name": "Sofá moderno pronto",
+    "category": "Sala",
+    "width": 2100,
+    "height": 800,
+    "depth": 900,
+    "tags": "Sala Sofá moderno pronto pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "loungeDesignSofa.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "558004a64700908ba37508182c106b5ba6f070844e81f6ed588970f85f2bea06",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-loungeSofaOttoman",
+    "name": "Pufe estofado",
+    "category": "Sala",
+    "width": 700,
+    "height": 420,
+    "depth": 700,
+    "tags": "Sala Pufe estofado pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "loungeSofaOttoman.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "c9d2ccc5cd84e5673e69b8891faa360814e64ccd641287b28822faf793790456",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-table",
+    "name": "Mesa de jantar pronta",
+    "category": "Sala",
+    "width": 1600,
+    "height": 750,
+    "depth": 850,
+    "tags": "Sala Mesa de jantar pronta pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "table.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "3bba470a89d63e37efac24a632b38dc21337309dc97887521ae0cee56093ee09",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-tableRound",
+    "name": "Mesa redonda",
+    "category": "Sala",
+    "width": 1100,
+    "height": 750,
+    "depth": 1100,
+    "tags": "Sala Mesa redonda pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "tableRound.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "135c3e4bbb352582035d65321d06873d4d6d4be2e0d5c1cb916a02970ac64c34",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-tableGlass",
+    "name": "Mesa com tampo de vidro",
+    "category": "Sala",
+    "width": 1600,
+    "height": 750,
+    "depth": 850,
+    "tags": "Sala Mesa com tampo de vidro pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "tableGlass.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "8a20f386494e8f93bab915d8da2e96f70a6a6f7b14888a2f9bd38a92c8974730",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-tableCoffee",
+    "name": "Mesa de centro",
+    "category": "Sala",
+    "width": 1000,
+    "height": 420,
+    "depth": 600,
+    "tags": "Sala Mesa de centro pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "tableCoffee.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "30fd0c88728755803216ee77a36eefa20d19a02999e5ac8657fd3693be176410",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-tableCoffeeGlassSquare",
+    "name": "Mesa de centro com vidro",
+    "category": "Sala",
+    "width": 700,
+    "height": 420,
+    "depth": 700,
+    "tags": "Sala Mesa de centro com vidro pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "tableCoffeeGlassSquare.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "af24d63a136e5a8b805f4331a8e05ba09a943c2618e58abe08a54637d02c9d02",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-cabinetTelevision",
+    "name": "Rack para televisão",
+    "category": "Sala",
+    "width": 1600,
+    "height": 450,
+    "depth": 450,
+    "tags": "Sala Rack para televisão pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "cabinetTelevision.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "2843708794716a0b932f700200044b170d1eedf423b8b26587126c3ffe0a33c6",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-bookcaseOpen",
+    "name": "Estante de livros",
+    "category": "Sala",
+    "width": 900,
+    "height": 1800,
+    "depth": 350,
+    "tags": "Sala Estante de livros pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "bookcaseOpen.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "ef7395b3e1df5a247f5ab9e7e08b06e80965ef6086b9df7209a3a4f696972433",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-bedDouble",
+    "name": "Cama de casal pronta",
+    "category": "Dormitório",
+    "width": 1600,
+    "height": 950,
+    "depth": 2100,
+    "tags": "Dormitório Cama de casal pronta pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "bedDouble.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "e3f2c4a0114fbbc53096dd3a41c2fdb53b4638681c36905f81669c18e27b0e24",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-bedSingle",
+    "name": "Cama de solteiro pronta",
+    "category": "Dormitório",
+    "width": 950,
+    "height": 950,
+    "depth": 2100,
+    "tags": "Dormitório Cama de solteiro pronta pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "bedSingle.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "40791b9b98996083eb16ed502313f251a4681724fb237a1ecc4f609a91490a4c",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-bedBunk",
+    "name": "Beliche",
+    "category": "Dormitório",
+    "width": 950,
+    "height": 1800,
+    "depth": 2100,
+    "tags": "Dormitório Beliche pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "bedBunk.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "bb5b192a35320f52bf8a9eb67a45e1813e7c25db18b69c9183c878574d16565b",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-cabinetBedDrawer",
+    "name": "Mesa de cabeceira pronta",
+    "category": "Dormitório",
+    "width": 500,
+    "height": 550,
+    "depth": 450,
+    "tags": "Dormitório Mesa de cabeceira pronta pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "cabinetBedDrawer.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "9decaf5aa7aefdb03a18a63762afba7226f48d43222560ddc9562c4911caa191",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-desk",
+    "name": "Escrivaninha pronta",
+    "category": "Escritório",
+    "width": 1400,
+    "height": 750,
+    "depth": 650,
+    "tags": "Escritório Escrivaninha pronta pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "desk.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "5a8573778773fb90f6afa77a5c902343973d1562645a564138f4b56159550c45",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-deskCorner",
+    "name": "Escrivaninha de canto",
+    "category": "Escritório",
+    "width": 1500,
+    "height": 750,
+    "depth": 1200,
+    "tags": "Escritório Escrivaninha de canto pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "deskCorner.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "97c0a476e486da87348b9cb3a3bc280adb4220bb89ff115c92f5ee569f587104",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-chairDesk",
+    "name": "Cadeira de escritório",
+    "category": "Escritório",
+    "width": 650,
+    "height": 1100,
+    "depth": 650,
+    "tags": "Escritório Cadeira de escritório pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "chairDesk.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "3001f4f08743263a00ae9b7c81d1b94becd74b9ffc62797329b51a19c005d316",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-laptop",
+    "name": "Notebook aberto",
+    "category": "Escritório",
+    "width": 340,
+    "height": 260,
+    "depth": 280,
+    "tags": "Escritório Notebook aberto pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "laptop.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "2f962258b006a4f771e6b4f9c6e14418291f68bef135571a325e9f35312fb9d9",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-computerScreen",
+    "name": "Monitor",
+    "category": "Escritório",
+    "width": 550,
+    "height": 420,
+    "depth": 200,
+    "tags": "Escritório Monitor pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "computerScreen.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "ebb3ef0f4cee215ec6b09e6e47a5522ad0b251459fc945e7a08d1958f985365b",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-computerKeyboard",
+    "name": "Teclado",
+    "category": "Escritório",
+    "width": 450,
+    "height": 25,
+    "depth": 160,
+    "tags": "Escritório Teclado pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "computerKeyboard.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "184ab48f1a0e1d43a33a13c0351cf53fb501ef6483ae391a9644218abda629d3",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-kitchenCoffeeMachine",
+    "name": "Cafeteira",
+    "category": "Cozinha",
+    "width": 300,
+    "height": 400,
+    "depth": 350,
+    "tags": "Cozinha Cafeteira pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kitchenCoffeeMachine.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "4203e5cd4b4ca2b48921ad43efd50a9546cadf416128c59959735e31996f3d6a",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-kitchenBlender",
+    "name": "Liquidificador",
+    "category": "Cozinha",
+    "width": 220,
+    "height": 420,
+    "depth": 200,
+    "tags": "Cozinha Liquidificador pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kitchenBlender.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "47d05938bfa34f5221006f55ae6cae32bb6e394e4b5c92f0d9b640a1aea27307",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-toaster",
+    "name": "Torradeira",
+    "category": "Cozinha",
+    "width": 300,
+    "height": 200,
+    "depth": 180,
+    "tags": "Cozinha Torradeira pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "toaster.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "f59cbc99b2ff8061c5710ce371bd09f5ebf03a636cb88f39b86369b1f5750357",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-kitchenMicrowave",
+    "name": "Micro-ondas",
+    "category": "Eletrodomésticos",
+    "width": 550,
+    "height": 350,
+    "depth": 420,
+    "tags": "Eletrodomésticos Micro-ondas pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kitchenMicrowave.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "71ba6202bb0721a30e6a3c5f7ffdcd2fdbfa02c83924b7fdccdeabc941ba1984",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-kitchenFridge",
+    "name": "Geladeira pronta",
+    "category": "Eletrodomésticos",
+    "width": 700,
+    "height": 1800,
+    "depth": 650,
+    "tags": "Eletrodomésticos Geladeira pronta pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kitchenFridge.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "6d09482a0ce84fa5a73e4fcbf09c5be3f11ea6fdfb6306952f83d31750dc7cd1",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-kitchenStove",
+    "name": "Fogão pronto",
+    "category": "Eletrodomésticos",
+    "width": 600,
+    "height": 850,
+    "depth": 600,
+    "tags": "Eletrodomésticos Fogão pronto pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kitchenStove.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "50503265af5a05b19f2126718a526282b352ffc9926a13e087bb19f625e2a0e9",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-washer",
+    "name": "Máquina de lavar",
+    "category": "Eletrodomésticos",
+    "width": 600,
+    "height": 850,
+    "depth": 600,
+    "tags": "Eletrodomésticos Máquina de lavar pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "washer.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "a27679ca461f277cfb9c8549b8749f59e69808017e5a90543a76e90f77ab3954",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-dryer",
+    "name": "Secadora",
+    "category": "Eletrodomésticos",
+    "width": 600,
+    "height": 850,
+    "depth": 600,
+    "tags": "Eletrodomésticos Secadora pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "dryer.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "137fa350fef7a5d6477f1fb56f924692e2ef083e940a197a2cfd2fe418bcd9af",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-bathtub",
+    "name": "Banheira",
+    "category": "Banheiro",
+    "width": 1700,
+    "height": 600,
+    "depth": 750,
+    "tags": "Banheiro Banheira pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "bathtub.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "02ffc3d04899804c75db6295fb89543ba812e79228e3d5481f6fd8e0359d158a",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-toilet",
+    "name": "Vaso sanitário",
+    "category": "Banheiro",
+    "width": 400,
+    "height": 800,
+    "depth": 650,
+    "tags": "Banheiro Vaso sanitário pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "toilet.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "721b29ad6e99a0612e338a095dbe12cf3f0663ab739b95cf143eb3ddc5bfd59b",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-bathroomSink",
+    "name": "Pia com bancada",
+    "category": "Banheiro",
+    "width": 800,
+    "height": 850,
+    "depth": 550,
+    "tags": "Banheiro Pia com bancada pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "bathroomSink.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "49c408288fb4e7e028ae14fe8ccbb38c2e5b13933610442da8cbd12b099de053",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-shower",
+    "name": "Box de banho",
+    "category": "Banheiro",
+    "width": 900,
+    "height": 2100,
+    "depth": 900,
+    "tags": "Banheiro Box de banho pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "shower.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "990fd605cd4800e7cf4c19abc5871ab019f76ea14389c14b4b378cb1dee3efe3",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-bathroomMirror",
+    "name": "Espelho de banheiro",
+    "category": "Banheiro",
+    "width": 700,
+    "height": 800,
+    "depth": 50,
+    "tags": "Banheiro Espelho de banheiro pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "bathroomMirror.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "34412c47d01fc2be23c54b4965f539396a06c7463df6692988a2ef5d444da934",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1200
+      }
+    }
+  },
+  {
+    "id": "ready-pottedPlant",
+    "name": "Planta decorativa pronta",
+    "category": "Decoração",
+    "width": 500,
+    "height": 1300,
+    "depth": 500,
+    "tags": "Decoração Planta decorativa pronta pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "pottedPlant.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "586badca56afe077a431947df6257c177fe1ab3dc4a6bfca116a77175742c347",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-plantSmall1",
+    "name": "Planta pequena",
+    "category": "Decoração",
+    "width": 220,
+    "height": 300,
+    "depth": 220,
+    "tags": "Decoração Planta pequena pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "plantSmall1.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "b6daff360b4e5b0eedc717d77785f270b60062ae1bdc7662b8bf26a6d44bad86",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-plantSmall2",
+    "name": "Suculenta",
+    "category": "Decoração",
+    "width": 200,
+    "height": 250,
+    "depth": 200,
+    "tags": "Decoração Suculenta pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "plantSmall2.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "b87bf252561c9b78298ac71cad571c150c8d489e8570cbce20bd11f938e0b18c",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-books",
+    "name": "Conjunto de livros",
+    "category": "Decoração",
+    "width": 300,
+    "height": 250,
+    "depth": 200,
+    "tags": "Decoração Conjunto de livros pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "books.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "06f3193bb055665d4588288b41091b5e99757ab6b8c6be959d6dd011d61b2ece",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-lampRoundFloor",
+    "name": "Luminária de piso",
+    "category": "Decoração",
+    "width": 500,
+    "height": 1700,
+    "depth": 500,
+    "tags": "Decoração Luminária de piso pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "lampRoundFloor.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "67d430229a3d669115f5acbb0fbdc289f1bee678f8b994e7dc9843d9a046bb27",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-lampRoundTable",
+    "name": "Abajur",
+    "category": "Decoração",
+    "width": 300,
+    "height": 500,
+    "depth": 300,
+    "tags": "Decoração Abajur pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "lampRoundTable.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "17566b02175505c9bdc52f104ca2717c3a30252bc787e51ee1e8cd7f6c9dbf85",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-televisionModern",
+    "name": "Televisão",
+    "category": "Decoração",
+    "width": 1200,
+    "height": 720,
+    "depth": 180,
+    "tags": "Decoração Televisão pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "televisionModern.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "a9bffde096deb3781b0d076cc63c5b6de377c7eace555dd1ec2e21cee510e5d3",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-rugRectangle",
+    "name": "Tapete de sala pronto",
+    "category": "Decoração",
+    "width": 2400,
+    "height": 8,
+    "depth": 1700,
+    "tags": "Decoração Tapete de sala pronto pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "rugRectangle.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "41b547a7c84982f48c7688ae6ede681910809c6101b69ecdc53b30a75a64e529",
+        "originalMaterials": true,
+        "placement": "rug",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "ready-rugRound",
+    "name": "Tapete redondo",
+    "category": "Decoração",
+    "width": 1800,
+    "height": 8,
+    "depth": 1800,
+    "tags": "Decoração Tapete redondo pronto Kenney",
+    "license": "CC0-1.0",
+    "author": "Kenney",
+    "origin": "https://kenney.nl/assets/furniture-kit",
+    "date": "2026-09-30",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "rugRound.json",
+      "source": "https://kenney.nl/assets/furniture-kit",
+      "parameters": {
+        "meshAsset": "df1d763289a03f1bddea89bea526bd5e786834cf21a8f072057d7cae44ca938e",
+        "originalMaterials": true,
+        "placement": "rug",
+        "defaultElevation": 0
+      }
+    }
+  }
+]

@@ -1,4 +1,4 @@
-param([ValidatePattern('^[A-Za-z0-9][A-Za-z0-9._-]*$')][string]$Version = '0.3.0-dev')
+param([ValidatePattern('^[A-Za-z0-9][A-Za-z0-9._-]*$')][string]$Version = '0.4.0-dev')
 $ErrorActionPreference = 'Stop'
 $sourceRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 Push-Location $sourceRoot
@@ -10,6 +10,7 @@ try {
         @{ Name = 'source.tar.gz'; Paths = @(); Prefix = "LibreMax-Architect-$Version/" },
         @{ Name = 'starter-library.tar.gz'; Paths = @('starter-library'); Prefix = '' },
         @{ Name = 'starter-materials.tar.gz'; Paths = @('starter-materials'); Prefix = '' },
+        @{ Name = 'starter-models.tar.gz'; Paths = @('starter-models'); Prefix = '' },
         @{ Name = 'sample-projects.tar.gz'; Paths = @('examples'); Prefix = '' }
     )
     foreach ($archive in $archives) {

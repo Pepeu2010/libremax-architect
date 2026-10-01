@@ -1,8 +1,8 @@
-# Render de apresentação — 0.3.0
+# Render de apresentação — 0.4.0
 
 O objetivo atual é uma aparência fotográfica com a geometria do projeto. Cycles calcula iluminação indireta, sombras, reflexos e transmissão; a qualidade depende da cena, materiais, iluminação e resolução. Um projeto com modelos simples continua mostrando esses limites.
 
-**Preparar:** abra a cozinha de exemplo (já com seis mapas PBR incorporados) ou clique Render → Ativar texturas reais. Isso atualiza carvalho e pedra em placas no projeto. Selecione a câmera por UUID; escolha Luz neutra ou Céu natural. No céu, altura e direção do sol controlam entrada de luz pelas aberturas. Intensidade ambiente (0–5), exposição (-8 a +8 EV) e denoise entram no histórico/arquivo `.lmx`, junto ao modo de ambiente e sol. Arquivos antigos continuam usando Luz neutra quando os campos novos estão ausentes.
+**Preparar:** o apartamento de exemplo tem câmera e luzes de teto prontas; **Preparar câmera do cômodo** cria uma câmera para o cômodo escolhido. Para texturas PBR, abra a cozinha de exemplo (já com seis mapas PBR incorporados) ou clique Render → Ativar texturas reais. Isso atualiza carvalho e pedra em placas no projeto. Selecione a câmera por UUID; escolha Luz neutra ou Céu natural. No céu, altura e direção do sol controlam entrada de luz pelas aberturas. Intensidade ambiente (0–5), exposição (-8 a +8 EV) e denoise entram no histórico/arquivo `.lmx`, junto ao modo de ambiente e sol. Arquivos antigos continuam usando Luz neutra quando os campos novos estão ausentes.
 
 **Câmera:** posição, alvo e lente, abertura f/ (1–64) e foco em mm (100–10.000.000) no inspector. Quando o arquivo antigo não especifica foco, o renderer foca no alvo. Sensor 36 mm, DOF e diafragma de sete lâminas; exemplo em f/8 para manter o ambiente legível. A câmera principal foi nivelada para linhas verticais naturais.
 
@@ -16,4 +16,6 @@ Snapshot validado → worker de tesselação → JSON/PNGs → QProcess `blender
 
 O resultado ocupa a área central: Ajustar/1:1, zoom/pan e Salvar cópia PNG/JPEG. Planta/3D mantêm o último resultado em Imagem. Fila e galeria persistente continuam pendentes, assim como QA GPU, Linux, Foto 1080p/Final 4K. Blender executado neste host: 5.2.1 LTS; o céu usa Multiple Scattering. Compatibilidade com versões anteriores e com Blender 6 não foi validada; 5.2 ainda informa depreciação de use_nodes.
 
-[Resultado real](screenshots/photoreal-kitchen.png), [evidência do ciclo](CYCLE_03.md), [fontes/licenças dos mapas](../starter-materials/README.md).
+[Apartamento / Cycles CPU 640×360](screenshots/apartment-render.png), [cozinha / 1280×720](screenshots/photoreal-kitchen.png), [evidência do ciclo](CYCLE_03.md), [fontes/licenças dos mapas](../starter-materials/README.md).
+
+Malhas prontas são as mesmas no viewport e no render, com materiais separados. O render valida hashes de todos os assets e extrai como PNG apenas hashes realmente usados pelos mapas de materiais; modelos JSON não viram texturas. O catálogo Kenney estilizado limita realismo mesmo com iluminação física. O teste do apartamento é uma prévia funcional de 640×360/32 samples, sem alegação de equivalência a fotografia.

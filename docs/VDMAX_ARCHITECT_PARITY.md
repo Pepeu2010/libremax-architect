@@ -1,6 +1,6 @@
 # Matriz de paridade — VDMax 3.0 Arquitetos e Decoradores
 
-Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. Versão LibreMax: 0.3.0 em desenvolvimento. **Não há paridade completa nem release 1.0.**
+Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. Versão LibreMax: 0.4.0 em desenvolvimento. **Não há paridade completa nem release 1.0.**
 
 Complemento visual em 2026-09-30: [auditoria](VISUAL_REFERENCE_AUDIT.md), 11 imagens inspecionadas de 47 referências indexadas. `visual_refs` indica somente essas imagens consultadas; não promove paridade funcional automaticamente.
 
@@ -17,11 +17,11 @@ Fontes oficiais consultadas:
 
 | ID | Área | Funcionalidade VDMax | Comportamento observado/documentado | Implementação LibreMax | Teste | Status | Fonte | Observações | visual_refs |
 |---|---|---|---|---|---|---|---|---|---|
-| A01 | Ambiente | Criação de ambientes | Desenhar ambiente com paredes | Ambiente retangular, piso e forro | Core + UI smoke | IN_PROGRESS | P,V | Falta detectar regiões arbitrárias e atualizar área/perímetro | — |
+| A01 | Ambiente | Criação de ambientes | Desenhar ambiente com paredes | Cômodos retangulares adjacentes, piso/forro e paredes compartilhadas | Core + assembly-smoke | IN_PROGRESS | P,V | Falta detectar regiões arbitrárias e atualizar área/perímetro | — |
 | A02 | Ambiente | Paredes | Desenho de paredes | Cadeia de cliques, sólidos, inspector, histórico e .lmx | `[geometry]` + UI smoke | IN_PROGRESS | P,V | Faltam junções L/T/X robustas, entrada comprimento/ângulo durante preview | — |
 | A03 | Ambiente | Muretas | Altura reduzida | Mesma engine da parede, ferramenta dedicada | `[geometry]` | FUNCTIONAL | P | QA dedicado de UI pendente | — |
 | A04 | Ambiente | Portas | Itens de ambientação | Recorte real, folha articulada, associação à parede | `[geometry]` | IN_PROGRESS | P | Faltam arco em planta e catálogo de modelos | — |
-| A05 | Ambiente | Janelas | Itens de ambientação | Recorte real, vidro e caixilho associados | `[geometry]` | FUNCTIONAL | P | QA de inserção pela UI pendente | ENV-06 |
+| A05 | Ambiente | Janelas | Itens de ambientação | Recorte real, vidro e caixilho associados | `[geometry]` | FUNCTIONAL | P | Drop pela UI testado; múltiplas plataformas pendentes | ENV-06 |
 | A06 | Ambiente | Escadas | Biblioteca de escadas | Escada reta procedural | — | IN_PROGRESS | P | L e U ausentes | — |
 | A07 | Ambiente | Pisos | Geometria pode criar pisos | Piso retangular com material por entidade | — | IN_PROGRESS | S,SPEC | Sem polígonos de ambientes ou UV | — |
 | A08 | Ambiente | Forros | Geometria pode criar forros | Forro retangular ocultável | — | IN_PROGRESS | S,SPEC | Sem perfis/sancas | — |
@@ -33,11 +33,11 @@ Fontes oficiais consultadas:
 | G04 | Geometria | Rodatetos | Tutorial oficial dedicado | — | — | NOT_STARTED | V | Falta varredura de perímetro | — |
 | I01 | Importação | DXF | Tabela e tutorial dedicados | DXF ASCII, cinco tipos 2D, unidade/layers bloqueados persistentes | `[dxf]` | FUNCTIONAL | C,V | Sem malhas, bulge, conversão de linhas ou QA do diálogo | — |
 | I02 | Importação | Modelos externos | Formatos exigidos pela spec | — | — | NOT_STARTED | SPEC | GLB/OBJ/STL/DAE/STEP/IGES | — |
-| L01 | Biblioteca | Biblioteca de módulos | Módulos cozinha/dormitório | SQLite WAL/FTS5 + 25 receitas originais | `[library]` | IN_PROGRESS | P,C | Miniaturas reais assíncronas implementadas; faltam coleções, packs e catálogo extenso | LIB-01 |
+| L01 | Biblioteca | Biblioteca de módulos | Módulos cozinha/dormitório | SQLite WAL/FTS5 + 25 receitas, duas aberturas e 52 malhas Kenney | `[library]` | IN_PROGRESS | P,C | Miniaturas reais assíncronas implementadas; faltam coleções, packs e catálogo extenso | LIB-01 |
 | L02 | Biblioteca | Pesquisa local | Biblioteca categorizada | Busca sem acentos, filtros, favoritos, recentes | `[library]` | FUNCTIONAL | C,SPEC | Benchmark usa 10.000 fixtures, não 10.000 assets distribuídos | LIB-01 |
-| L03 | Biblioteca | Arrastar e soltar | Workflow exigido pela spec | MIME, preview da geometria real, drop com snap | UI smoke: eventos MIME/ghost/drop + undo | FUNCTIONAL | SPEC | Arraste manual e múltiplas plataformas pendentes | LIB-01 |
+| L03 | Biblioteca | Arrastar e soltar | Workflow exigido pela spec | MIME, prévia real, parede/piso/cantos/vizinhos, colisão e posição externa recusadas | assembly-smoke: planta/3D, MIME/ghost/drop + undo | FUNCTIONAL | manual oficial | Arraste manual e múltiplas plataformas pendentes | LIB-01 |
 | L04 | Biblioteca | Importar .lmaxpack | Formato LibreMax | — | — | NOT_STARTED | SPEC | Segurança antes de extração obrigatória | — |
-| L05 | Biblioteca | Biblioteca decorativa extensa | Mais de 3.000 itens | 11 famílias decorativas originais dentro dos 25 assets | — | IN_PROGRESS | P,B | Não atende meta de 3.000 | — |
+| L05 | Biblioteca | Biblioteca decorativa extensa | Mais de 3.000 itens | 79 itens: 25 receitas próprias, duas aberturas e 52 modelos prontos | — | IN_PROGRESS | P,B | Não atende meta de 3.000 | — |
 | M01 | Módulos | Cozinha | Largura/altura/profundidade editáveis | Balcões, gaveteiro, aéreos, torre, nicho, ilha | `[modules]` + UI smoke | IN_PROGRESS | P,C | Cantos e famílias complexas ausentes | — |
 | M02 | Módulos | Dormitório | Modulação própria da categoria | Roupeiros 2/3/4 portas, criado, cama | `[modules]` | IN_PROGRESS | P,C | Correr/canto/espelho frontal faltam | — |
 | M03 | Módulos | Redimensionamento milimétrico | Editar dimensões sem trocar módulo | Recomposição de painéis/frentes/prateleiras/puxadores a 0,1 mm | `[modules]` + UI smoke | FUNCTIONAL | P | Sem scale destrutivo; limites por família precisam ampliar | — |
@@ -55,14 +55,14 @@ Fontes oficiais consultadas:
 | U06 | Automação | Envelopamento | Envolver módulos | Laterais e topo por fonte | — | IN_PROGRESS | P | União de grupo e controles adicionais faltam | — |
 | U07 | Automação | Associação | Requisito da spec | UUIDs de fontes, recálculo e exclusão em cascata | `[automation]` | FUNCTIONAL | SPEC | Snapshot/undo integrado; maior cobertura pendente | — |
 | V01 | Editor | Seleção e hierarquia | Requisito da spec | Clique/Ctrl+clique, hover AIS e árvore | UI smoke | IN_PROGRESS | SPEC | Box selection/isolar/grupos ausentes | — |
-| V02 | Editor | Mover/rotacionar | Workflow de edição | Inspector numérico | UI smoke | FUNCTIONAL | SPEC | Gizmo e arraste de objetos existentes faltam | — |
+| V02 | Editor | Mover/rotacionar | Workflow de edição | Inspector em cm, arrasto direto e giro centrado | assembly-smoke + UI smoke | FUNCTIONAL | SPEC | Gizmo, seleção em grupo e QA amplo faltam | — |
 | V03 | Editor | Duplicação | Workflow de edição | Cópia com novos UUIDs e associação de filhos | — | FUNCTIONAL | SPEC | UI QA pendente | — |
 | V04 | Editor | Espelhamento | Workflow de edição | Móveis e geometria independente | — | FUNCTIONAL | SPEC | Não é espelhamento completo de conjuntos | — |
 | V05 | Editor | Alinhamento/distribuição | Requisito da spec | — | — | NOT_STARTED | SPEC | — | — |
 | V06 | Editor | Visualização 3D | Apresentação de ambientes | AIS/V3d sobre B-rep, ortográfica superior/isométrica, orbit/pan/zoom | UI smoke | IN_PROGRESS | P | Dividida, perspectiva/walk e outras vistas faltam | VIEW-01,SCENE-01 |
 | V07 | Editor | Undo/redo | Requisito da spec | QUndoStack + Command Pattern validado | `[commands]` | FUNCTIONAL | SPEC | UI smoke amplia cobertura | — |
 | R01 | Luz | Iluminação | Render calcula iluminação | Point/spot/area persistentes; cor/tamanho/ângulo/suavidade no inspector | `[render]` | IN_PROGRESS | P,SPEC | Céu natural/sol editáveis integrados; LED/HDRI/emissivo e QA amplo pendentes | LIGHT-02,LIGHT-03 |
-| R02 | Câmeras | Câmeras | Requisito da spec | Posição/alvo/lente, abertura/foco e seleção por UUID; exposição/ambiente/denoise persistentes | `[render]` | IN_PROGRESS | SPEC | Seletor integrado e roundtrip testados; presets e posicionamento interativo faltam | RENDER-06 |
+| R02 | Câmeras | Câmeras | Requisito da spec | Posição/alvo/lente, abertura/foco e seleção por UUID; exposição/ambiente/denoise persistentes | `[render]` | IN_PROGRESS | SPEC | Seletor integrado e roundtrip testados; preset por cômodo implementado; posicionamento interativo completo falta | RENDER-06 |
 | R03 | Render | Ray tracing | Ray-trace com qualidade variável | QProcess + snapshot + Cycles + denoise, exposição/ambiente, GPU/CPU | Smoke QProcess/Cycles CPU | IN_PROGRESS | P | Sem fila multi-job e galeria persistente | RENDER-06,RENDER-08 |
 | R04 | Render | Exportar imagens | Resultado de apresentação | PNG/JPEG via Blender e visualizador central com exportação de cópia | Smoke 1280×720/128 CPU + inspeção visual | FUNCTIONAL | P,SPEC | PNG 1280×720 e cópia pela UI testados; JPEG pela UI e 1080p/4K pendentes | RENDER-08,VISUAL-03 |
 | P01 | Projetos | Salvar/abrir | Requisito da spec | Container ZIP v1, UUIDs, backup, validação e atomic replace | `[persistence]` + UI smoke | IN_PROGRESS | SPEC | Texturas incorporadas; modelos 3D/renders/migrations futuros faltam | — |
@@ -73,3 +73,5 @@ Fontes oficiais consultadas:
 | X02 | Produto | Pacotes Linux | Exigência LibreMax | CMake install/CPack; CI a preparar | Runner Linux a executar | BLOCKED | SPEC | Host atual Windows sem WSL | — |
 
 Fora de escopo: plano de corte, nesting, BOM industrial, ERP/MRP, CNC, custos de matéria-prima, etiquetas e produção. Nenhuma dessas funções é incluída no roadmap.
+
+Pesquisa adicional de arrasto/encaixe, catálogo e comparação de limites: [VDMAX_RESEARCH_04](VDMAX_RESEARCH_04.md). Testes executados neste ciclo: [CYCLE_04](CYCLE_04.md).

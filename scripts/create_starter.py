@@ -42,6 +42,16 @@ for id,name,category,w,h,d,family in [
     ('picture','Quadro com moldura','Decoração',700,900,33,'picture')]:
     add(id,name,category,w,h,d,'DecorativeObject',family)
 target = Path(__file__).resolve().parents[1] / 'starter-library' / 'catalog.json'
+for item in entries:
+    p = item['recipe']['parameters']
+    item_id = item['id']
+    p['placement'] = ('wall' if item_id in ('upper-1', 'upper-2', 'niche', 'picture') else
+                      'surface' if item_id == 'vase' else 'rug' if item_id == 'rug' else 'floor')
+    p['defaultElevation'] = 1400 if item_id.startswith('upper-') else 1200 if item_id in ('niche', 'picture') else 0
+for kind, name, w, h, sill in [('Door','Porta de madeira',800,2100,0), ('Window','Janela com vidro',1200,1000,1000)]:
+    entries.append(dict(id=kind.lower()+'-ready', name=name, category='Portas e janelas', width=w,height=h,depth=120,tags=name,
+                        recipe=dict(type=kind,material='oak',parameters=dict(placement='wall',sill=sill,offset=0,openAngle=0,hinge='left')),
+                        license='CC0-1.0',author='LibreMax contributors',origin='LibreMax procedural generators',date='2026-09-30'))
 target.parent.mkdir(exist_ok=True)
 target.write_text(json.dumps(entries, ensure_ascii=False, indent=2), encoding='utf-8')
 print(f'{len(entries)} assets written')

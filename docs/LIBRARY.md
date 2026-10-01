@@ -1,9 +1,11 @@
-# Biblioteca local
+# Biblioteca local — 0.4
 
-`QStandardPaths::AppLocalDataLocation/library.db`; em Linux normalmente `~/.local/share/LibreMax/libremax/`. Esse caminho ainda difere do literal `~/.local/share/libremax/` da spec e será normalizado antes da distribuição.
+`QStandardPaths::AppLocalDataLocation/library.db`; em Linux normalmente `~/.local/share/LibreMax/libremax/`. Esse caminho ainda difere do literal `~/.local/share/libremax/` da spec.
 
-SQLite WAL, foreign_keys, busy_timeout e FTS5 `unicode61 remove_diacritics 2`. Schema v1: assets (receita/dimensões/licença/autor/origem/data), asset_search, favorites, recent_assets. Categoria e tags ficam no índice. Biblioteca com versão futura é recusada; não migrar silenciosamente.
+SQLite WAL, foreign_keys, busy_timeout e FTS5 `unicode61 remove_diacritics 2`. Schema v1: assets, asset_search, favorites, recent_assets. Receitas existentes são atualizadas por ID sem apagar favoritos/recentes; a busca usa argumentos SQL, termos FTS escapados e limite de 200 resultados. Biblioteca de versão futura é recusada.
 
-`starter-library/catalog.json` contém 25 receitas próprias que geram geometria localmente. São famílias distintas, não milhares de duplicatas para atingir meta. Atualização de receitas existentes, coleções, dependências entre assets, packs e backup completo ainda não estão implementados.
+O catálogo reúne 79 itens: 25 receitas originais, porta e janela associativas e 52 malhas abertas Kenney. Os modelos são distribuídos em `starter-models`, validados por hash e incorporados ao projeto somente ao inserir. Não precisam de rede. Não há importação livre de OBJ/GLB pela interface nem atualização remota de packs.
 
-Busca usa argumentos SQL e termos FTS escapados, limita resultados a 100. A UI oferece categoria, favoritos e recentes. O teste de 10.000 registros é sintético e mede busca; não comprova 10.000 modelos carregados ou thumbnails. A lista exibe miniaturas 192×144 geradas da tesselação da geometria original em até dois workers. Um hash de receita, dimensões e presets identifica cache PNG atômico e cache de memória. A UI não carrega meshes por item na thread principal. As 25 miniaturas foram verificadas pelo smoke; receitas inválidas não recebem uma imagem fictícia. Cache, footprint e latência com milhares de modelos reais ainda precisam de benchmark.
+As miniaturas 192×144 usam a geometria real, em até dois workers, com cache PNG atômico e memória. O hash inclui receita, dimensões, presets e hash do modelo. A galeria adapta uma ou duas colunas e mostra nome, categoria e dimensões em cm. Receitas inválidas não recebem miniatura fictícia. Os 79 itens foram verificados pelo smoke nativo.
+
+O teste de busca com 10.000 registros é sintético; não comprova 10.000 modelos carregados. Cache, memória e latência com milhares de malhas detalhadas permanecem sem benchmark. [Uso e limites de montagem](ASSEMBLY.md), [procedência](ASSETS.md).

@@ -5,10 +5,12 @@
 #include "geometry/geometry.h"
 #include "import/dxf.h"
 #include "library/library.h"
+#include "library/model.h"
 #include "library/thumbnails.h"
 #include "materials/texture.h"
 #include "persistence/project_store.h"
 #include "persistence/recovery_store.h"
+#include "placement/placement.h"
 #include <BRepBndLib.hxx>
 #include <BRepCheck_Analyzer.hxx>
 #include <Bnd_Box.hxx>
@@ -51,6 +53,201 @@ void maliciousZip(const QString &path, const std::string &name, const std::strin
     REQUIRE(zip_close(z) == 0);
 }
 } // namespace
+
+TEST_CASE("Furniture placement fits wall faces, corners and free gaps", "[placement]") {
+    Document d;
+    auto w = wall(0, 0, 3000, 0);
+    d.entities.push_back(w);
+    auto e = entity("DecorativeObject", "Mesa");
+    e.width = 600;
+    e.depth = 500;
+    e.height = 700;
+    e.parameters = {{"family", "table"}};
+    auto north = placeObject(d, e, 1000, 100);
+    REQUIRE(north.allowed);
+    REQUIRE(north.wall == w.id);
+    REQUIRE(north.object.transform.x == Catch::Approx(700));
+    REQUIRE(north.object.transform.y == Catch::Approx(62));
+    REQUIRE(north.object.transform.yaw == 0);
+    auto south = placeObject(d, e, 1000, -100);
+    REQUIRE(south.allowed);
+    REQUIRE(south.object.transform.y == Catch::Approx(-62));
+    REQUIRE(south.object.transform.x == Catch::Approx(1300));
+    REQUIRE(south.object.transform.yaw == 180);
+    auto corner = placeObject(d, e, 320, 100);
+    REQUIRE(corner.allowed);
+    REQUIRE(corner.object.transform.x == 0);
+    d.entities.push_back(north.object);
+    auto next = e;
+    next.id = uuid();
+    auto adjacent = placeObject(d, next, 1420, 100);
+    REQUIRE(adjacent.allowed);
+    REQUIRE(adjacent.object.transform.x == Catch::Approx(1302));
+    auto tooWide = e;
+    tooWide.width = 4000;
+    REQUIRE_FALSE(placeObject(d, tooWide, 1000, 100).allowed);
+    auto blocked = next;
+    blocked.width = 3000;
+    REQUIRE_FALSE(placeObject(d, blocked, 1000, 100).allowed);
+    auto rotated = d;
+    rotated.entities.clear();
+    auto angle = wall(1000, 1000, 1000, 4000);
+    rotated.entities.push_back(angle);
+    auto vertical = placeObject(rotated, e, 900, 2000);
+    REQUIRE(vertical.allowed);
+    REQUIRE(vertical.object.transform.yaw == Catch::Approx(90));
+    REQUIRE(vertical.object.transform.x == Catch::Approx(938));
+    angle.locked = true;
+    rotated.entities[0] = angle;
+    REQUIRE(placeObject(rotated, e, 900, 2000).wall.empty());
+}
+
+TEST_CASE("Apartment placement stays inside, preserves height and reserves openings", "[placement]") {
+    Document d;
+    addRectangularRoom(d, 4000, 3000, 2700, 120, 1000, 2000, "Sala");
+    auto e = entity("FurnitureModule", "Balcão");
+    e.width = 600;
+    e.depth = 500;
+    e.height = 700;
+    auto floor = placeObject(d, e, 2600, 3500);
+    REQUIRE(floor.allowed);
+    REQUIRE(floor.object.transform.x == Catch::Approx(2300));
+    REQUIRE(floor.object.transform.y == Catch::Approx(3250));
+    REQUIRE_FALSE(placeObject(d, e, 10000, 10000).allowed);
+    auto wallPlace = placeObject(d, e, 2500, 2100);
+    REQUIRE(wallPlace.allowed);
+    REQUIRE(wallPlace.object.transform.y == 2062);
+    d.entities.push_back(wallPlace.object);
+    auto upper = e;
+    upper.id = uuid();
+    upper.transform.z = 1400;
+    upper.parameters = {{"placement", "wall"}};
+    auto over = placeObject(d, upper, 2500, 2100);
+    REQUIRE(over.allowed);
+    REQUIRE(over.object.transform.z == 1400);
+    auto door = entity("Door", "Porta");
+    door.width = 800;
+    door.height = 2100;
+    door.parameters = {{"placement", "wall"}, {"sill", 0}, {"openAngle", 0}};
+    REQUIRE_FALSE(placeObject(d, door, 2800, 3500).allowed);
+    auto opening = placeObject(d, door, 3900, 2100);
+    REQUIRE(opening.allowed);
+    REQUIRE(opening.object.parent == opening.wall);
+    d.entities.push_back(opening.object);
+    REQUIRE_NOTHROW(d.validate());
+    auto reserved = placeObject(d, e, 3900, 2100);
+    REQUIRE_FALSE(reserved.allowed);
+    auto vase = entity("DecorativeObject", "Vaso");
+    vase.width = 200;
+    vase.depth = 200;
+    vase.height = 250;
+    vase.parameters = {{"family", "vase"}, {"placement", "surface"}};
+    auto onTop = placeObject(d, vase, wallPlace.object.transform.x + 300, wallPlace.object.transform.y + 250);
+    REQUIRE(onTop.allowed);
+    REQUIRE(onTop.object.transform.z == 702);
+    auto turning = e;
+    turning.transform.yaw = 90;
+    auto free = placeObject(d, turning, 3600, 3800, false);
+    REQUIRE(free.allowed);
+    REQUIRE(free.object.transform.x == 3850);
+    REQUIRE(free.object.transform.y == 3500);
+    Editor editor;
+    editor.load(d);
+    auto count = d.entities.size();
+    editor.apply("Place vase", [&](Document &next) { next.entities.push_back(onTop.object); });
+    REQUIRE(editor.document().entities.size() == count + 1);
+    editor.history.undo();
+    REQUIRE(editor.document().entities.size() == count);
+    editor.history.redo();
+    REQUIRE(editor.document().entities.back().transform.z == 702);
+    auto rug = entity("MeshObject", "Tapete pronto");
+    rug.width = 1600;
+    rug.depth = 1200;
+    rug.height = 8;
+    rug.transform = {1800, 2900, 0, 0, false};
+    rug.parameters = {{"placement", "rug"}};
+    d.entities.push_back(rug);
+    auto onRug = placeObject(d, e, 2600, 3500, false);
+    REQUIRE(onRug.allowed);
+    REQUIRE(onRug.object.transform.z == 0);
+}
+
+TEST_CASE("Adjacent named rooms have distinct floors and share matching walls", "[placement][document]") {
+    Document d;
+    addRectangularRoom(d, 4000, 3000, 2700, 120, 0, 0, "Sala");
+    addRectangularRoom(d, 2000, 3000, 2700, 120, 4000, 0, "Quarto");
+    d.validate();
+    REQUIRE(std::count_if(d.entities.begin(), d.entities.end(),
+                          [](const auto &e) { return e.type == "Wall"; }) == 7);
+    auto room =
+        std::find_if(d.entities.begin(), d.entities.end(), [](const auto &e) { return e.name == "Quarto"; });
+    REQUIRE(room->transform.x == 4000);
+    auto sofa = entity("DecorativeObject", "Sofá");
+    sofa.parameters = {{"family", "sofa"}};
+    sofa.width = 1500;
+    sofa.depth = 800;
+    sofa.height = 850;
+    auto placed = placeObject(d, sofa, 4100, 1500);
+    REQUIRE(placed.allowed);
+    REQUIRE(placed.object.transform.x == 4062);
+    addRectangularRoom(d, 1000, 1500, 2700, 120, 6000, 0, "Banheiro");
+    REQUIRE(std::count_if(d.entities.begin(), d.entities.end(),
+                          [](const auto &e) { return e.type == "Wall"; }) == 10);
+    auto count = d.entities.size();
+    REQUIRE_THROWS(addRectangularRoom(d, 1000, 1000, 2700, 120, 4500, 500, "Sobreposto"));
+    REQUIRE(d.entities.size() == count);
+}
+
+TEST_CASE("All 52 ready furniture meshes embed, persist and render independently", "[models][library]") {
+    application();
+    QTemporaryDir dir;
+    Library library(dir.filePath("models.db"), QStringLiteral(LMX_SOURCE_DIR) + "/starter-models");
+    QFile file(QStringLiteral(LMX_SOURCE_DIR) + "/starter-models/catalog.json");
+    REQUIRE(file.open(QIODevice::ReadOnly));
+    auto entries = Json::parse(file.readAll().toStdString());
+    REQUIRE(entries.size() == 52);
+    library.seed(entries);
+    auto all = library.search();
+    REQUIRE(all.size() == 52);
+    for (const auto &asset : all) {
+        INFO(asset.name.toStdString());
+        REQUIRE_FALSE(asset.model.isEmpty());
+        auto model = readModel(asset.model);
+        REQUIRE_FALSE(model.at("parts").empty());
+        Document d;
+        Library::attachModel(d, asset);
+        auto object = Library::instantiate(asset, 100, 200);
+        d.entities.push_back(object);
+        REQUIRE_NOTHROW(d.validate());
+        auto snapshot = meshSnapshot(d);
+        REQUIRE_FALSE(snapshot.at("meshes").empty());
+        for (const auto &mesh : snapshot.at("meshes")) {
+            REQUIRE_FALSE(mesh.at("vertices").empty());
+            REQUIRE_FALSE(mesh.at("triangles").empty());
+        }
+        REQUIRE_FALSE(renderAssetThumbnail(asset).isNull());
+    }
+    Document persisted;
+    Library::attachModel(persisted, all[0]);
+    persisted.entities.push_back(Library::instantiate(all[0], 100, 200));
+    auto filename = dir.filePath("model.lmx");
+    ProjectStore::save(filename, persisted, false);
+    auto restored = ProjectStore::open(filename);
+    REQUIRE(restored.embeddedAssets == persisted.embeddedAssets);
+    REQUIRE(meshSnapshot(restored).at("meshes").size() == meshSnapshot(persisted).at("meshes").size());
+    auto bad = all[0];
+    bad.model.append('x');
+    REQUIRE_THROWS(Library::attachModel(persisted, bad));
+    auto invalid = readModel(all[0].model);
+    invalid["parts"][0]["triangles"][0][0] = 999999;
+    REQUIRE_THROWS(readModel(QByteArray::fromStdString(invalid.dump())));
+    library.favorite(all[0].id, true);
+    auto changed = entries;
+    changed[0]["name"] = "Novo nome do catálogo";
+    library.seed(changed);
+    REQUIRE(library.search("Novo nome").size() == 1);
+    REQUIRE(library.search({}, {}, true).size() == 1);
+}
 TEST_CASE("numeric expressions are bounded and do not execute code", "[units]") {
     REQUIRE(evaluate("800+20") == 820);
     REQUIRE(evaluate("1200/2") == 600);
@@ -349,14 +546,20 @@ TEST_CASE("every shipped starter recipe creates valid solids; invalid edits pres
     QFile catalog(QStringLiteral(LMX_SOURCE_DIR) + "/starter-library/catalog.json");
     REQUIRE(catalog.open(QIODevice::ReadOnly));
     auto entries = Json::parse(catalog.readAll().toStdString());
-    REQUIRE(entries.size() == 25);
+    REQUIRE(entries.size() == 27);
     library.seed(entries);
     auto assets = library.search({});
-    REQUIRE(assets.size() == 25);
+    REQUIRE(assets.size() == 27);
     for (const auto &asset : assets) {
         INFO(asset.name.toStdString());
         Document document;
-        document.entities.push_back(Library::instantiate(asset, 0, 0));
+        auto object = Library::instantiate(asset, 0, 0);
+        if (object.type == "Door" || object.type == "Window") {
+            auto supporting = wall(0, 0, 5000, 0);
+            object.parent = supporting.id;
+            document.entities.push_back(supporting);
+        }
+        document.entities.push_back(object);
         REQUIRE_NOTHROW(document.validate());
         const auto parts = buildScene(document);
         REQUIRE_FALSE(parts.empty());

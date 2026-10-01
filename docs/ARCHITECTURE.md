@@ -17,3 +17,9 @@ ADRs: [engine/interface](ADRs/0001-native-cad.md), [persistência/licenças](ADR
 O tema nativo e os ícones ficam em `studio_theme`/`resources/style.qss`. `AssetThumbnails` tessela receitas em QThreadPool limitado e publica QImages; QPixmap/delegate são usados somente na UI. `RenderPreview` reutiliza uma cena QGraphicsView para a imagem completa, sem criar uma nova dock a cada render. `Document::renderSettings` é validado, persistido e exportado no mesmo snapshot.
 
 `PbrMaterialPack` carrega/verifica/normaliza os mapas em worker e os combina ao documento atual por comando, protegendo a identidade do projeto entre início e conclusão. O snapshot exporta mapas, parâmetros de céu/câmera e tipo de entidade para o renderer fixo. A malha de apresentação tem bevel/UV/normais; o B-rep original permanece no projeto.
+
+## Montagem e malhas — 0.4
+
+`libs/placement` calcula colocação em coordenadas do documento: cursor centrado, parede em sistema local, orientação, cantos/vizinhos, contenção no cômodo, sobreposição de retângulos orientados e alturas. `libs/viewport` projeta o cursor sobre a face da parede no 3D e mostra a geometria final verde/vermelha antes de confirmar. Mover um objeto existente mantém o ponto de pega e confirma um único comando. A engine não calcula colisão exata das malhas.
+
+`libs/library/model` valida o JSON normalizado. `MeshObject` referencia bytes incorporados por SHA256. `libs/geometry` cria faces com Poly_Triangulation por acabamento e aplica dimensões/transformação; o snapshot usa diretamente essa triangulação no Cycles. São malhas de apresentação, não sólidos editáveis B-rep. OBJ é convertido somente na preparação do pacote; o runtime lê o formato limitado, sem executar arquivos do asset.

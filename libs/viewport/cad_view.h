@@ -1,6 +1,7 @@
 #pragma once
 #include "document/document.h"
 #include "library/library.h"
+#include "placement/placement.h"
 #include <AIS_InteractiveContext.hxx>
 #include <AIS_Shape.hxx>
 #include <QTemporaryDir>
@@ -24,7 +25,17 @@ class CadView final : public QWidget {
     bool cutaway = true;
     QString tool = "select";
     std::function<std::optional<Asset>(const QString &)> findAsset;
-    gp_Pnt position(const QPoint &pixel) const;
+    std::optional<Asset> placingAsset;
+    std::optional<Entity> movingObject;
+    std::optional<Placement> pendingPlacement;
+    QPoint pressed;
+    QPointF grabOffset;
+    bool moved = false;
+    double placementYaw = 0;
+    gp_Pnt position(const QPoint &pixel, bool applySnap = true) const;
+    std::pair<gp_Pnt, std::string> surfacePosition(const QPoint &pixel);
+    void showPlacement(Placement placement, const Asset *asset = nullptr);
+    void previewAsset(const Asset &asset, const QPoint &pixel);
     void initialize();
     void clearPreview();
     void selection();
@@ -47,6 +58,8 @@ class CadView final : public QWidget {
     explicit CadView(QWidget *parent = nullptr);
     double grid = 100;
     bool snap = true;
+    bool assist = true;
+    void beginPlacement(const QString &assetId);
     void scene(const Document &d);
     void setTool(const QString &mode);
     void setTop(bool enabled);
@@ -56,6 +69,7 @@ class CadView final : public QWidget {
     }
     void setGrid(double step);
     void frame();
+    void frameRoom(const std::string &id);
     void select(const std::vector<std::string> &ids);
     void assetResolver(std::function<std::optional<Asset>(const QString &)> resolver) {
         findAsset = std::move(resolver);
@@ -65,7 +79,9 @@ class CadView final : public QWidget {
   signals:
     void selected(const QStringList &ids);
     void wallCreated(double x1, double y1, double x2, double y2, bool half);
-    void assetDropped(const QString &id, double x, double y);
+    void assetDropped(const QString &id, const lmx::Entity &object);
+    void objectMoved(const lmx::Entity &object);
+    void placementStatus(const QString &text, bool active, bool allowed);
     void coordinates(const QString &text);
     void failure(const QString &message);
 };
