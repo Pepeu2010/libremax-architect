@@ -27,6 +27,7 @@
 #include <QResizeEvent>
 #include <QSaveFile>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QSettings>
 #include <QSignalBlocker>
 #include <QStandardPaths>
