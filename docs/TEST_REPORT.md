@@ -4,7 +4,11 @@ Verificado no host Windows em 02/10/2026: **31 casos / 1.737 assertions** aprova
 
 Também passaram a regressão de UI/montagem, tutorial de 15 capítulos e projeto único, render real 320 × 180 e preservação da imagem anterior após erro. PowerShell, script Python, formatador e diff foram conferidos. [Arquitetura, capturas e limites](RENDER_PIPELINE.md). Relatórios locais: `build-render/queue-report.txt`, `build-render/render-report.txt` e `build-render/Testing/Temporary/LastTest.log`.
 
-A [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37018691178) passou com build, núcleo, interface compacta, tutorial/montagem/recuperação, pacote Debian e fila com Blender/Cycles CPU real. No Windows, a RX 7600 gerou o apartamento em 640 × 360/32 com HIP confirmado, sem fallback, e preservou a imagem após falha. Os novos instaladores têm verificações próprias. O resultado de uma build não substitui esses gates nem QA em GPUs físicas, 4K ou apartamentos grandes. Os resultados abaixo são históricos.
+A [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37019798505) passou com build, núcleo, interface compacta, tutorial/montagem/recuperação, pacote Debian e fila com Blender/Cycles CPU real. No Windows, a RX 7600 gerou o apartamento em 640 × 360/32 com HIP confirmado, sem fallback, e preservou a imagem após falha. Os novos instaladores têm verificações próprias. O resultado de uma build não substitui esses gates nem QA em GPUs físicas, 4K ou apartamentos grandes. A [Release 0.7.0-preview.1](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.7.0-preview.1) foi publicada a partir de `8f59f37`. A [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37019803477) passou com Windows, Cycles CPU no Linux, instalação Ubuntu em runner novo e publicação. O `.deb` publicado foi baixado e seu SHA256 conferido: `d6684f019bb6e0778c443e64d3f4c77ee1fa1f8af986147b16983a3214420cad`.
+
+No host Windows, o pacote final também passou com PATH limpo, interface/tutorial/recuperação, render CPU, desinstalação preservando projeto e render HIP usando os recursos e DLLs empacotados, sem SDK no PATH. Imagem HIP: 640 × 360/32, sem fallback; falha posterior preservou a imagem. Logs locais em `build-render-package/installer-release-report.txt` e `build-render-package/gpu-release-report.txt`.
+
+Os resultados abaixo são históricos.
 
 ---
 
