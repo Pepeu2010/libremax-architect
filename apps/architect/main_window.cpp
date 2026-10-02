@@ -752,6 +752,7 @@ void MainWindow::createShell() {
     renderLayout->setContentsMargins(16, 12, 16, 16);
     renderLayout->setVerticalSpacing(12);
     renderLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+    renderLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);
     auto *heading = new QLabel(tr("Apresentação"));
     heading->setProperty("role", "heading");
     renderLayout->addRow(heading);
@@ -791,6 +792,8 @@ void MainWindow::createShell() {
     customRender->setObjectName("customRender");
     auto *customLayout = new QFormLayout(customRender);
     customLayout->setContentsMargins(0, 0, 0, 0);
+    customLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);
+    customLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
     const auto defaults = renderPreset("normal");
     for (const auto &[key, label] : std::map<QString, QString>{{"width", tr("Largura (pixels)")},
                                                                {"height", tr("Altura (pixels)")},

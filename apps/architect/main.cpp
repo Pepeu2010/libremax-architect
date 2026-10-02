@@ -854,6 +854,11 @@ int main(int argc, char **argv) {
                     ensure(window.screen()->grabWindow(window.winId()).save(directory + "/native-ui-900.png"),
                            "Small desktop screenshot failed");
                     auto *inspector = window.findChild<QScrollArea *>("inspectorScroll");
+                    if (inspector)
+                        std::cout << "INSPECTOR_COMPACT_GEOMETRY: viewport " << inspector->viewport()->width()
+                                  << " content " << inspector->widget()->width() << " minimum "
+                                  << inspector->widget()->minimumSizeHint().width() << " horizontal "
+                                  << inspector->horizontalScrollBar()->maximum() << '\n';
                     ensure(inspector && inspector->horizontalScrollBar()->maximum() == 0,
                            "Inspector requires horizontal scrolling at 900 px");
                     inspector->verticalScrollBar()->setValue(inspector->verticalScrollBar()->maximum());
