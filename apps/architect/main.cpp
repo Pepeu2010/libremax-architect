@@ -18,6 +18,7 @@
 #include <QFileInfo>
 #include <QImage>
 #include <QImageReader>
+#include <QLineEdit>
 #include <QMessageBox>
 #include <QMimeData>
 #include <QMouseEvent>
@@ -285,6 +286,17 @@ int main(int argc, char **argv) {
         if (parser.isSet("experience-smoke")) {
             const auto directory = QDir(parser.value("experience-smoke")).absolutePath();
             QDir().mkpath(directory);
+            QTimer::singleShot(60000, &window, [&app, directory] {
+                for (auto *top : QApplication::topLevelWidgets())
+                    if (top->isVisible()) {
+                        std::cerr << "EXPERIENCE_TIMEOUT_WINDOW: " << top->metaObject()->className() << " "
+                                  << top->windowTitle().toStdString() << '\n';
+                        top->screen()
+                            ->grabWindow(top->winId())
+                            .save(directory + "/timeout-" + top->metaObject()->className() + ".png");
+                    }
+                app.exit(1);
+            });
             QTimer::singleShot(300, &window, [directory] {
                 for (auto *top : QApplication::topLevelWidgets())
                     if (top->objectName() == "openingLogo")
@@ -324,7 +336,9 @@ int main(int argc, char **argv) {
                     acceptRoom.start(50);
                     auto *create = window.findChild<QPushButton *>("homeNewProject");
                     ensure(create, "New project home action missing");
+                    std::cout << "EXPERIENCE_STEP: new project\n" << std::flush;
                     QTest::mouseClick(create, Qt::LeftButton);
+                    std::cout << "EXPERIENCE_STEP: room created\n" << std::flush;
                     acceptRoom.stop();
                     ensure(std::count_if(window.editor().document().entities.begin(),
                                          window.editor().document().entities.end(),
@@ -334,11 +348,23 @@ int main(int argc, char **argv) {
                     QObject::connect(&acceptFile, &QTimer::timeout, &window, [directory] {
                         if (auto *dialog = qobject_cast<QFileDialog *>(QApplication::activeModalWidget())) {
                             dialog->setOption(QFileDialog::DontConfirmOverwrite, true);
-                            dialog->selectFile(directory + "/Meu apartamento.lmx");
+                            // Changing directories resets selection while the file model loads.
+                            // Let that complete before entering a filename and accepting.
+                            if (dialog->directory().absolutePath() != directory) {
+                                dialog->setDirectory(directory);
+                                return;
+                            }
+                            auto *filename = dialog->findChild<QLineEdit *>("fileNameEdit");
+                            if (!filename)
+                                return;
+                            filename->setFocus();
+                            filename->selectAll();
+                            QTest::keyClicks(filename, "Meu apartamento.lmx");
                             QMetaObject::invokeMethod(dialog, "accept", Qt::QueuedConnection);
                         }
                     });
                     acceptFile.start(50);
+                    std::cout << "EXPERIENCE_STEP: saving project\n" << std::flush;
                     ensure(window.saveProject(), "Save from first project failed");
                     acceptFile.stop();
                     auto restored = lmx::ProjectStore::open(directory + "/Meu apartamento.lmx");

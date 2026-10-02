@@ -8,7 +8,7 @@ Editor desktop open source de interiores, com C++20, Qt 6 e OpenCASCADE. Linux �
 
 A direção visual atual usa grafite neutro, violeta e cobre, com logo próprio, abertura breve e opção para desativar animações. A tela inicial reúne projetos recentes e ações para criar, abrir ou experimentar um apartamento.
 
-A imagem acima é uma captura do programa compilado no Windows, com viewport OpenCASCADE; não é um mockup. Build, testes, interface nativa com Xvfb/Mesa e pacote Debian passaram na [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/36951914174); hardware gráfico físico e instalação limpa permanecem sem validação.
+A imagem acima é uma captura do programa compilado no Windows, com viewport OpenCASCADE; não é um mockup. Build, testes, interface nativa com Xvfb/Mesa e pacote Debian passaram na [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/36951914174); hardware gráfico físico permanece sem validação. A instalação do pacote Ubuntu 24.04 em um runner novo passou na [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37010283076).
 
 Ampliação atual: [18 novos modelos contemporâneos e evidência](docs/CATALOG_EXPANSION.md). No host de desenvolvimento, `Abrir LibreMax.cmd` abre a build atualizada.
 
