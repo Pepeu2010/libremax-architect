@@ -1275,6 +1275,11 @@ void MainWindow::refreshInspector() {
         field->clear();
         (void)key;
     }
+    // Reserve the visible form's minimum width plus its vertical scrollbar. Qt 6.4 otherwise
+    // lets the tabbed dock shrink below the form's width on small Linux desktops.
+    auto *scroll = findChild<QScrollArea *>("inspectorScroll");
+    scroll->setMinimumWidth(inspector->minimumSizeHint().width() +
+                            scroll->verticalScrollBar()->sizeHint().width() + 2 * scroll->frameWidth());
     material->setEnabled(e && !e->locked);
     handle->setEnabled(e && !e->locked && e->type == "FurnitureModule");
     glass->setEnabled(handle->isEnabled());
