@@ -52,6 +52,8 @@ ctest --test-dir build-modern --output-on-failure -V
 
 Logs são locais em `build-modern/*-report.txt`. A CI Linux executa core, formatador, smokes de interface/montagem/modelos/primeira abertura/recuperação e empacotamento Debian. Configurar CI não prova aprovação; verificar o resultado do commit antes de declarar suporte Linux.
 
+**CI Linux aprovada:** implementação `34c3f80a96211b15c847522f513ad469b6137a57`, [execução 36947008639](https://github.com/Pepeu2010/libremax-architect/actions/runs/36947008639), Ubuntu 24.04, Xvfb/Mesa. Build, core, formatador, UI, montagem, coleção moderna, primeira abertura e recuperação passaram; CPack gerou `libremax-architect-0.6.0-Linux.deb`. A criação do pacote não testa instalação em máquina limpa nem drivers físicos. A correção mantém o construtor de textura compatível com OpenCASCADE 7.6 e 7.9.
+
 ## Gates ainda abertos
 
 Catálogo extenso, importação de modelos pela interface, avaliação de memória/FPS em cenas grandes, arraste manual prolongado e QA com diferentes monitores/hardware. A arquitetura completa de render pedida continua em desenvolvimento: fila serial/galeria persistente, presets Rápido/Normal/Final/Personalizado com bounces próprios, diagnóstico/versionamento completo, fallback de falha GPU, HDRI, LED, emissão, EXR e recuperação de jobs não estão concluídos nesta entrega. Não há prova de HIP/RX7600 Linux, NVIDIA OptiX, Intel oneAPI ou equivalência ao enquadramento fotográfico da viewport.

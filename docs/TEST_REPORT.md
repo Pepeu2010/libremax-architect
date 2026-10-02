@@ -2,6 +2,8 @@
 
 Executado em 01/10/2026 no host Windows: **26 casos / 1.461 assertions** aprovados. Build Release, coleção de 18 modelos detalhados, hashes/UVs/normais/mapas, catálogo de 97 itens, montagem, undo/redo, arquivo único `.lmx`, home/tutorial de 15 capítulos e telas a 900 px passaram. Render real Cycles CPU 960×540/64 e preservação da imagem anterior após falha também passaram. Evidência, reprodução e limites: [CYCLE_06](CYCLE_06.md). GPU, cenas grandes e arquitetura completa de fila/galeria continuam pendentes. Os relatórios abaixo são históricos.
 
+CI Linux da implementação `34c3f80` também aprovada: build/core/formatador, smokes nativos com Xvfb/Mesa e criação de `.deb` em Ubuntu 24.04. [Execução verificada](https://github.com/Pepeu2010/libremax-architect/actions/runs/36947008639). Instalação limpa, hardware gráfico físico e render Cycles no Linux não foram validados por esse job.
+
 ---
 
 # Test report — ciclo 0.4.0
