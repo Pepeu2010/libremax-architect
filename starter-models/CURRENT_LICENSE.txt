@@ -1,0 +1,10 @@
+Original LibreMax apartment furniture assets
+Author: LibreMax contributors
+
+The meshes in current-*.json (excluding catalog/provenance metadata) and their
+original material definitions are dedicated to the public domain under CC0 1.0
+Universal. No manufacturer affiliation or certified product measurements are
+claimed. These are original suggested furniture designs for interior planning.
+
+CC0 legal code: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+Generator source: scripts/create-apartment-models.py (repository software license).

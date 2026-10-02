@@ -20,6 +20,7 @@
 #include <QMessageBox>
 #include <QMimeData>
 #include <QMouseEvent>
+#include <QPainter>
 #include <QProcess>
 #include <QPushButton>
 #include <QScreen>
@@ -331,13 +332,13 @@ int main(int argc, char **argv) {
                     if (!QMetaObject::invokeMethod(&window, "modernApartmentStarter", Qt::DirectConnection))
                         throw std::runtime_error("Modern apartment unavailable");
                     auto *list = window.findChild<QListWidget *>("assetList");
-                    if (!list || list->count() != 18)
+                    if (!list || list->count() != 36)
                         throw std::runtime_error("Modern collection filter failed");
                     for (int attempt = 0; attempt < 300; ++attempt) {
                         int ready = 0;
                         for (int i = 0; i < list->count(); ++i)
                             ready += list->item(i)->data(Qt::UserRole + 2).toBool();
-                        if (ready == 18)
+                        if (ready == 36)
                             break;
                         if (attempt == 299)
                             throw std::runtime_error("Modern geometry thumbnails missing");
@@ -345,7 +346,7 @@ int main(int argc, char **argv) {
                     }
                     // Exercise detailed meshes through the actual viewport drop path.
                     lmx::Document placementDocument;
-                    lmx::addRectangularRoom(placementDocument, 4000, 4000, 2700, 120);
+                    lmx::addRectangularRoom(placementDocument, 7000, 6000, 2700, 120);
                     window.editor().load(placementDocument);
                     auto *cad = window.cad();
                     cad->setTop(true);
@@ -383,6 +384,37 @@ int main(int argc, char **argv) {
                     window.editor().history.redo();
                     if (window.editor().document().serialize() != mounted)
                         throw std::runtime_error("Modern insertion redo lost materials or textures");
+                    const auto sofa = drop("current-sofa-compact", 5000, 1500);
+                    const auto bed = drop("current-bed-queen", 5000, 3900);
+                    const auto mirror = drop("current-oval-mirror", 5000, 90);
+                    const auto nightstand = drop("current-nightstand", 6200, 90);
+                    if (sofa.width != 2050 || bed.width != 1820 || mirror.transform.z != 950 ||
+                        nightstand.transform.z != 450 || mirror.metadata.value("placementWall", "").empty())
+                        throw std::runtime_error("Contemporary sofa, bed or wall mounting failed");
+                    const auto assembled = directory + "/current-assembly.lmx";
+                    lmx::ProjectStore::save(assembled, window.editor().document(), false);
+                    if (lmx::ProjectStore::open(assembled).serialize() !=
+                        window.editor().document().serialize())
+                        throw std::runtime_error("Contemporary placed models lost during round trip");
+                    QImage overview(1024, 684, QImage::Format_ARGB32_Premultiplied);
+                    overview.fill(QColor("#17171f"));
+                    QPainter painter(&overview);
+                    painter.setPen(QColor("#eeeaf5"));
+                    painter.setFont(QFont("Segoe UI", 10));
+                    int index = 0;
+                    for (int i = 0; i < list->count(); ++i) {
+                        auto *item = list->item(i);
+                        if (!item->data(Qt::UserRole).toString().startsWith("current-"))
+                            continue;
+                        const int x = (index % 4) * 256, y = (index / 4) * 228;
+                        painter.drawPixmap(x + 32, y + 12, item->icon().pixmap(192, 144));
+                        painter.drawText(QRect(x + 12, y + 164, 232, 52), Qt::AlignHCenter | Qt::TextWordWrap,
+                                         item->text());
+                        ++index;
+                    }
+                    painter.end();
+                    if (index != 12 || !overview.save(directory + "/current-models.png"))
+                        throw std::runtime_error("Contemporary model overview failed");
                     window.editor().history.setClean();
                     if (!QMetaObject::invokeMethod(&window, "modernApartmentStarter", Qt::DirectConnection))
                         throw std::runtime_error("Modern apartment unavailable after placement");
@@ -399,7 +431,7 @@ int main(int argc, char **argv) {
                         throw std::runtime_error("Modern viewport reported a geometry or texture failure");
                     if (!window.screen()->grabWindow(window.winId()).save(directory + "/modern-catalog.png"))
                         throw std::runtime_error("Modern screenshot failed");
-                    std::cout << "MODERN_PASS: 18 models, thumbnails, wall/table/ceiling drop, undo/redo, "
+                    std::cout << "MODERN_PASS: 36 models, thumbnails, wall/table/ceiling drop, undo/redo, "
                                  "embedded textures, reopen\n";
                     app.exit(0);
                 } catch (const std::exception &e) {
@@ -419,7 +451,7 @@ int main(int argc, char **argv) {
                     };
                     auto *cad = window.cad();
                     auto *assets = window.findChild<QListWidget *>("assetList");
-                    ensure(assets && assets->count() == 97, "Ready model catalog missing");
+                    ensure(assets && assets->count() == 115, "Ready model catalog missing");
                     int ready = 0;
                     for (int attempt = 0; attempt < 300; ++attempt) {
                         ready = 0;
@@ -429,7 +461,7 @@ int main(int argc, char **argv) {
                             break;
                         QTest::qWait(100);
                     }
-                    ensure(ready == 97, "Native thumbnails missing for real models");
+                    ensure(ready == 115, "Native thumbnails missing for real models");
                     lmx::Document d;
                     lmx::addRectangularRoom(d, 4000, 3000, 2700, 120);
                     window.editor().load(d);
@@ -536,8 +568,8 @@ int main(int argc, char **argv) {
                     ensure(assets->horizontalScrollBar()->maximum() == 0, "Compact catalog overflows");
                     ensure(window.screen()->grabWindow(window.winId()).save(directory + "/apartment-900.png"),
                            "Compact screenshot failed");
-                    std::cout << "ASSEMBLY_PASS: 97 thumbnails, wall ghost/drop, outside rejection, mouse "
-                                 "move undo/redo, window wall attachment, 70 ready meshes, 3-room apartment "
+                    std::cout << "ASSEMBLY_PASS: 115 thumbnails, wall ghost/drop, outside rejection, mouse "
+                                 "move undo/redo, window wall attachment, 88 ready meshes, 3-room apartment "
                                  "save/open, 900 px panels\n";
                     app.exit(0);
                 } catch (const std::exception &e) {
@@ -621,8 +653,8 @@ int main(int argc, char **argv) {
                             break;
                         QTest::qWait(100);
                     }
-                    ensure(ready == 97, "Shipped asset geometry thumbnails were not generated");
-                    std::cout << "THUMBNAILS_PASS: 97 actual geometry previews\n";
+                    ensure(ready == 115, "Shipped asset geometry thumbnails were not generated");
+                    std::cout << "THUMBNAILS_PASS: 115 actual geometry previews\n";
                     QListWidgetItem *asset = nullptr;
                     for (int i = 0; i < assets->count(); ++i)
                         if (assets->item(i)->data(Qt::UserRole).toString() == "base-1")

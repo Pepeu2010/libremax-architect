@@ -10,11 +10,13 @@ A direção visual atual usa grafite neutro, violeta e cobre, com logo próprio,
 
 A imagem acima é uma captura do programa compilado no Windows, com viewport OpenCASCADE; não é um mockup. Validação Linux permanece pendente.
 
+Ampliação atual: [18 novos modelos contemporâneos e evidência](docs/CATALOG_EXPANSION.md). No host de desenvolvimento, `Abrir LibreMax.cmd` abre a build atualizada.
+
 Já disponível neste ciclo:
 
 - Desenhar cadeias de paredes e muretas; criar ambiente retangular com piso e forro.
 - Inserir portas e janelas com recortes booleanos reais, vinculadas à parede.
-- Biblioteca local SQLite/FTS5 com busca sem acentos, filtros, favoritos e recentes; 97 itens: 25 receitas próprias, porta/janela, 52 modelos 3D Kenney e 18 modelos detalhados Poly Haven CC0. O filtro **Apartamento atual** reúne poltronas, estantes, mesas, aparador, luminárias e decoração com UVs, normais e texturas originais.
+- Biblioteca local SQLite/FTS5 com busca sem acentos, filtros, favoritos e recentes; 115 itens: 25 receitas próprias, porta/janela, 52 modelos 3D Kenney, 24 Poly Haven e 12 designs contemporâneos LibreMax CC0. O filtro **Apartamento atual** reúne 36 modelos, incluindo sofás, cama queen, móveis ripados, espelho, banquetas e decoração. Os modelos Poly Haven preservam mapas/UVs; os designs originais usam acabamentos procedurais no Cycles.
 - Tutorial de 15 capítulos na primeira abertura, reaberto em Ajuda ou na tela inicial. Biblioteca de projetos locais com imagem, nome, data e aviso de arquivo movido.
 - Catálogo carregado ao entrar no editor; busca sem carregar todas as malhas, miniaturas em dois workers e cache de geometria para evitar reconstruir sólidos inalterados. Essas melhorias não constituem benchmark de apartamentos grandes.
 - Arrastar móveis em planta/3D com orientação pela parede, encaixe em cantos/vizinhos, prévia verde/vermelha e bloqueio de posição ocupada. Objetos pequenos acompanham o topo do móvel e o novo pendente acompanha a altura do cômodo. Arrastar itens existentes confirma uma alteração reversível.

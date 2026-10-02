@@ -33,7 +33,16 @@ SELECTION = [
     ('ceramic_vase_02', 'Vaso de cerâmica natural', 'Decoração', 'surface'),
     ('ceramic_vase_03', 'Vaso de cerâmica contemporâneo', 'Decoração', 'surface'),
     ('throw_pillows_01', 'Almofadas decorativas detalhadas', 'Decoração', 'surface'),
+    ('potted_plant_04', 'Suculenta em vaso de cerâmica', 'Decoração', 'surface'),
+    ('round_wooden_table_02', 'Mesa de jantar redonda de madeira', 'Sala', 'floor'),
+    ('metal_stool_02', 'Banqueta de metal com assento redondo', 'Cozinha', 'floor'),
+    ('metal_stool_03', 'Banqueta industrial compacta', 'Cozinha', 'floor'),
+    ('wicker_basket_02', 'Cesto de fibras naturais', 'Decoração', 'floor'),
+    ('side_table_tall_01', 'Mesa de apoio alta de madeira', 'Sala', 'floor'),
 ]
+# Some source exports use scene units larger than meters. These are explicit
+# suggested apartment dimensions, not certified manufacturer specifications.
+DIMENSION_OVERRIDES = {'steel_frame_shelves_01': [900, 411.8, 1755.4]}
 ROOT = Path(__file__).resolve().parents[1]
 TARGET = ROOT / 'starter-models'
 
@@ -199,7 +208,8 @@ def main():
     catalog,provenance=[],[]
     for row,(path,files) in zip(SELECTION,sources):
         asset_id,name,category,placement=row
-        payload,dimensions=prepare_model(path,asset_id)
+        payload,source_dimensions=prepare_model(path,asset_id)
+        dimensions=DIMENSION_OVERRIDES.get(asset_id,source_dimensions)
         filename='modern-'+asset_id+'.json'
         (TARGET/filename).write_bytes(payload)
         width,depth,height=dimensions
@@ -214,7 +224,9 @@ def main():
                                         originalMaterials=True,placement=placement,defaultElevation=0))))
         provenance.append(dict(id=asset_id,author=author,license='CC0-1.0',
                                source='https://polyhaven.com/a/'+asset_id,sources=files,
-                               preparedSha256=digest,dimensionsMillimeters=dimensions))
+                               preparedSha256=digest,dimensionsMillimeters=dimensions,
+                               sourceDimensionsMillimeters=source_dimensions,
+                               dimensionBasis='suggested' if asset_id in DIMENSION_OVERRIDES else 'source'))
         print(f'{asset_id}: {dimensions}, {len(payload)} bytes',flush=True)
     (TARGET/'modern-catalog.json').write_text(json.dumps(catalog,ensure_ascii=False,indent=2),encoding='utf-8')
     (TARGET/'modern-provenance.json').write_text(json.dumps(provenance,ensure_ascii=False,indent=2),encoding='utf-8')

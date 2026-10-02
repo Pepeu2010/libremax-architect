@@ -1,3 +1,9 @@
+# Test report — ampliação contemporânea 0.6.0
+
+Windows: **28 casos / 1.702 assertions** aprovados. Catálogo de 115 itens, filtro com 36 modelos, 18 acréscimos, ocultação correta das miniaturas, arraste de sofá/cama/peças suspensas, arquivo único, UI a 900 px, tutorial/home e recuperação passaram. Render real Cycles CPU com o novo sofá também passou. [Evidência e limites](CATALOG_EXPANSION.md). Verificação Linux desta ampliação ainda pendente; o resultado abaixo refere-se ao commit anterior.
+
+---
+
 # Test report — ciclo 0.6.0
 
 Executado em 01/10/2026 no host Windows: **26 casos / 1.461 assertions** aprovados. Build Release, coleção de 18 modelos detalhados, hashes/UVs/normais/mapas, catálogo de 97 itens, montagem, undo/redo, arquivo único `.lmx`, home/tutorial de 15 capítulos e telas a 900 px passaram. Render real Cycles CPU 960×540/64 e preservação da imagem anterior após falha também passaram. Evidência, reprodução e limites: [CYCLE_06](CYCLE_06.md). GPU, cenas grandes e arquitetura completa de fila/galeria continuam pendentes. Os relatórios abaixo são históricos.

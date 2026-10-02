@@ -17,6 +17,7 @@
 #include <BRepCheck_Analyzer.hxx>
 #include <Bnd_Box.hxx>
 #include <QApplication>
+#include <QCryptographicHash>
 #include <QElapsedTimer>
 #include <QFile>
 #include <QImage>
@@ -253,7 +254,11 @@ TEST_CASE("Modern CC0 furniture retains authored UVs, normals, textures and prov
     REQUIRE(catalog.open(QIODevice::ReadOnly));
     library.seed(Json::parse(catalog.readAll().toStdString()));
     const auto all = library.search();
-    REQUIRE(all.size() == 18);
+    REQUIRE(all.size() == 24);
+    const auto shelf = library.search("Estante de madeira e metal");
+    REQUIRE(shelf.size() == 1);
+    REQUIRE(shelf.front().width == 900);
+    REQUIRE(shelf.front().height < 2000);
     for (const auto &asset : all) {
         INFO(asset.id.toStdString());
         REQUIRE_FALSE(asset.textures.empty());
@@ -307,6 +312,91 @@ TEST_CASE("Modern CC0 furniture retains authored UVs, normals, textures and prov
     invalid = readModel(all.front().model);
     invalid["parts"][0]["uvs"][0] = {1e20, 0};
     REQUIRE_THROWS(readModel(QByteArray::fromStdString(invalid.dump())));
+}
+TEST_CASE("Thumbnails resolve crossing surfaces per pixel", "[thumbnails][occlusion]") {
+    auto red = materialPresets().front();
+    red["id"] = "thumbnail-red";
+    red["baseColor"] = {1, 0, 0};
+    auto blue = red;
+    blue["id"] = "thumbnail-blue";
+    blue["baseColor"] = {0, 0, 1};
+    // Identical projected triangles cross along the depth axis. Sorting their
+    // average depths incorrectly hides the whole blue triangle behind the red.
+    Json model = {{"schema", 1},
+                  {"materials", {red, blue}},
+                  {"parts",
+                   {{{"material", "thumbnail-red"},
+                     {"vertices", {{.2, .3, .3}, {.6, .3, .3}, {.2, .7, .3}}},
+                     {"triangles", {{0, 1, 2}}}},
+                    {{"material", "thumbnail-blue"},
+                     {"vertices", {{.1, .4, .372}, {.5, .4, .372}, {.5, .4, .084}}},
+                     {"triangles", {{0, 1, 2}}}}}}};
+    Asset asset;
+    asset.id = "crossing-surfaces";
+    asset.name = "Crossing surfaces";
+    asset.category = "Decoração";
+    asset.width = asset.height = asset.depth = 1000;
+    asset.model = QByteArray::fromStdString(model.dump());
+    asset.recipe = {
+        {"type", "MeshObject"},
+        {"material", "white"},
+        {"parameters",
+         {{"meshAsset",
+           QCryptographicHash::hash(asset.model, QCryptographicHash::Sha256).toHex().toStdString()},
+          {"originalMaterials", true}}}};
+    const auto image = renderAssetThumbnail(asset);
+    REQUIRE(image.pixelColor(83, 60).blue() > 100);
+    REQUIRE(image.pixelColor(83, 60).red() == 0);
+    REQUIRE(image.pixelColor(150, 113).red() > 100);
+    REQUIRE(image.pixelColor(150, 113).blue() == 0);
+}
+TEST_CASE("Original contemporary furniture remains portable and follows mounting rules",
+          "[current][models]") {
+    QTemporaryDir dir;
+    Library library(dir.filePath("current.db"), QStringLiteral(LMX_SOURCE_DIR) + "/starter-models");
+    QFile catalog(QStringLiteral(LMX_SOURCE_DIR) + "/starter-models/current-catalog.json");
+    REQUIRE(catalog.open(QIODevice::ReadOnly));
+    library.seed(Json::parse(catalog.readAll().toStdString()));
+    const auto assets = library.search();
+    REQUIRE(assets.size() == 12);
+    for (const auto &asset : assets) {
+        INFO(asset.id.toStdString());
+        REQUIRE(asset.width > 100);
+        REQUIRE(asset.width <= 2800);
+        REQUIRE(asset.height < 2000);
+        Document d;
+        addRectangularRoom(d, 7000, 6000, 2700, 120);
+        Library::attachModel(d, asset);
+        auto object = Library::instantiate(asset, 0, 0);
+        const bool mounted = object.parameters.at("placement") == "wall";
+        auto result = placeObject(d, object, 3500, mounted ? 90 : 3000, true);
+        REQUIRE(result.allowed);
+        if (mounted) {
+            REQUIRE_FALSE(result.wall.empty());
+            REQUIRE(result.object.transform.z == object.parameters.at("defaultElevation").get<double>());
+            REQUIRE_FALSE(placeObject(d, object, 3500, 3000, true).allowed);
+        }
+        d.entities.push_back(result.object);
+        REQUIRE_NOTHROW(d.validate());
+        const auto model = readModel(asset.model);
+        std::size_t triangles = 0;
+        for (const auto &part : model.at("parts")) {
+            triangles += part.at("triangles").size();
+            REQUIRE(part.at("normals").size() == part.at("vertices").size());
+        }
+        REQUIRE(triangles > 100);
+        REQUIRE_FALSE(renderAssetThumbnail(asset).isNull());
+        const auto snapshot = meshSnapshot(d);
+        const auto path = dir.filePath("portable.lmx");
+        ProjectStore::save(path, d, false);
+        const auto restored = ProjectStore::open(path);
+        REQUIRE(restored.serialize() == d.serialize());
+        REQUIRE(meshSnapshot(restored) == snapshot);
+    }
+    REQUIRE(library.search("sofa").size() == 2);
+    REQUIRE(library.search("cama queen").size() == 1);
+    REQUIRE(library.search({}, "Dormitório").size() == 3);
+    REQUIRE(library.search("ripad").size() == 3);
 }
 TEST_CASE("Ceiling fixtures follow room height and reject outside or obstructed placement",
           "[modern][placement]") {

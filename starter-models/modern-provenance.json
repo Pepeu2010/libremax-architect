@@ -59,7 +59,13 @@
       820.3,
       986.6,
       1022.9
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      820.3,
+      986.6,
+      1022.9
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "mid_century_lounge_chair",
@@ -103,7 +109,13 @@
       1008.6,
       1190.3,
       1169.1
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      1008.6,
+      1190.3,
+      1169.1
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "steel_frame_shelves_01",
@@ -144,10 +156,16 @@
     ],
     "preparedSha256": "c812911c70d6d36bc9ad7977302be71cb5916b56d57f5501bdac132bf096aa8c",
     "dimensionsMillimeters": [
+      900,
+      411.8,
+      1755.4
+    ],
+    "sourceDimensionsMillimeters": [
       10974.1,
       5021.2,
       21405.0
-    ]
+    ],
+    "dimensionBasis": "suggested"
   },
   {
     "id": "steel_frame_shelves_03",
@@ -209,7 +227,13 @@
       2351.1,
       721.2,
       2311.8
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      2351.1,
+      721.2,
+      2311.8
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "modern_coffee_table_01",
@@ -253,7 +277,13 @@
       600.0,
       1201.8,
       390.0
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      600.0,
+      1201.8,
+      390.0
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "modern_coffee_table_02",
@@ -315,7 +345,13 @@
       1199.1,
       1199.7,
       369.2
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      1199.1,
+      1199.7,
+      369.2
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "modern_wooden_cabinet",
@@ -359,7 +395,13 @@
       2440.0,
       520.0,
       680.1
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      2440.0,
+      520.0,
+      680.1
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "outdoor_table_chair_set_01",
@@ -421,7 +463,13 @@
       741.7,
       1717.3,
       858.6
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      741.7,
+      1717.3,
+      858.6
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "dining_chair_02",
@@ -465,7 +513,13 @@
       433.6,
       576.4,
       973.4
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      433.6,
+      576.4,
+      973.4
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "coffee_table_round_01",
@@ -509,7 +563,13 @@
       1301.3,
       1301.3,
       491.0
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      1301.3,
+      1301.3,
+      491.0
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "side_table_01",
@@ -553,7 +613,13 @@
       550.0,
       450.0,
       550.7
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      550.0,
+      450.0,
+      550.7
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "drawer_cabinet",
@@ -597,7 +663,13 @@
       1141.1,
       488.1,
       1881.3
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      1141.1,
+      488.1,
+      1881.3
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "metal_office_desk",
@@ -641,7 +713,13 @@
       2000.0,
       947.2,
       787.5
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      2000.0,
+      947.2,
+      787.5
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "modern_ceiling_lamp_01",
@@ -685,7 +763,13 @@
       431.6,
       431.7,
       951.6
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      431.6,
+      431.7,
+      951.6
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "desk_lamp_arm_01",
@@ -729,7 +813,13 @@
       201.7,
       613.9,
       892.6
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      201.7,
+      613.9,
+      892.6
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "ceramic_vase_02",
@@ -773,7 +863,13 @@
       218.4,
       218.4,
       309.2
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      218.4,
+      218.4,
+      309.2
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "ceramic_vase_03",
@@ -817,7 +913,13 @@
       112.2,
       112.2,
       414.4
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      112.2,
+      112.2,
+      414.4
+    ],
+    "dimensionBasis": "source"
   },
   {
     "id": "throw_pillows_01",
@@ -861,6 +963,312 @@
       940.1,
       451.9,
       450.2
-    ]
+    ],
+    "sourceDimensionsMillimeters": [
+      940.1,
+      451.9,
+      450.2
+    ],
+    "dimensionBasis": "source"
+  },
+  {
+    "id": "potted_plant_04",
+    "author": "James Ray Cock",
+    "license": "CC0-1.0",
+    "source": "https://polyhaven.com/a/potted_plant_04",
+    "sources": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/potted_plant_04/potted_plant_04_1k.gltf",
+        "bytes": 7081,
+        "md5": "077d481764145f6e5e256593aab427bb",
+        "sha256": "b3a3bc3e97da75844999c4da07b7104b6c023f729a7c045979929b9504184339"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/potted_plant_04/potted_plant_04.bin",
+        "bytes": 241800,
+        "md5": "03774ca8e28e2aa30fb26cb68d5e0093",
+        "sha256": "158c1d27503d4845eb3573f00c01ae3f4f77f1d6ca8754c67bf1762745946f7f"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_04/potted_plant_04_nor_gl_1k.jpg",
+        "bytes": 817786,
+        "md5": "1c0b87906fd92c7b7ce5508110976474",
+        "sha256": "66e4627f6691a2d8104a6c53a39b41daddbd5bad8103e73f372c39166a3dcb07"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_04/potted_plant_04_arm_1k.jpg",
+        "bytes": 478413,
+        "md5": "ed0030c6085bba45b6f63f3043b0b237",
+        "sha256": "7f3288345570ef700c851ea382ed267490ffc8c901ccc31f2ec5507e4d098e48"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_04/potted_plant_04_diff_1k.jpg",
+        "bytes": 577545,
+        "md5": "4a72fb3667fd3686ca4014f6676f59c4",
+        "sha256": "8693a971557fbafb12a24a2e23c1a04ab6b04ecdc4d26808c5ad3516a4971f24"
+      }
+    ],
+    "preparedSha256": "ff5653b317fdab4e10bdc7c653959fda8c2154c195e5919f92ec918de7eaff2b",
+    "dimensionsMillimeters": [
+      167.9,
+      184.8,
+      267.5
+    ],
+    "sourceDimensionsMillimeters": [
+      167.9,
+      184.8,
+      267.5
+    ],
+    "dimensionBasis": "source"
+  },
+  {
+    "id": "round_wooden_table_02",
+    "author": "Ulan Cabanilla",
+    "license": "CC0-1.0",
+    "source": "https://polyhaven.com/a/round_wooden_table_02",
+    "sources": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/round_wooden_table_02/round_wooden_table_02_1k.gltf",
+        "bytes": 2851,
+        "md5": "d0d30c21d878a5f1f36a96b33458aba0",
+        "sha256": "df65c35148280a06efcc06bfa75432bb13f29318e869597fc94f364ce2b55974"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/round_wooden_table_02/round_wooden_table_02_nor_gl_1k.jpg",
+        "bytes": 635637,
+        "md5": "0f04a60c2f59f09808b26eb594732eed",
+        "sha256": "34989b9a15753b964a4d9d6b2673c048ff2c14feedbe4e6adbeb4bf32be8bc8c"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/round_wooden_table_02/round_wooden_table_02_diff_1k.jpg",
+        "bytes": 470007,
+        "md5": "2f16277bfd0ff661de3245c11d0b556e",
+        "sha256": "9872acedc6be92ef232c581c8e9ce435e4aa0d8f5c4b75e4ce445995a3ef8c28"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/round_wooden_table_02/round_wooden_table_02_arm_1k.jpg",
+        "bytes": 677385,
+        "md5": "bd5ba146734d7aa0acdfcae0c66b727f",
+        "sha256": "613d051b4c4e093c5e65eec37d39f6f48ac5476e2cb1b59c4b034f308ef1a7ee"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/round_wooden_table_02/round_wooden_table_02.bin",
+        "bytes": 135412,
+        "md5": "026ad1fd824b6eb38a4a260565471243",
+        "sha256": "fa9a0ed80be31d9160207913762cedc5de21d1cb37b01a5ae6caa23ce7a741b6"
+      }
+    ],
+    "preparedSha256": "4de9f0c0a5c8d6f0933ed6c5efae6dd21aa3e284d2989e803638898883b199c1",
+    "dimensionsMillimeters": [
+      796.2,
+      796.2,
+      746.0
+    ],
+    "sourceDimensionsMillimeters": [
+      796.2,
+      796.2,
+      746.0
+    ],
+    "dimensionBasis": "source"
+  },
+  {
+    "id": "metal_stool_02",
+    "author": "Ulan Cabanilla",
+    "license": "CC0-1.0",
+    "source": "https://polyhaven.com/a/metal_stool_02",
+    "sources": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/metal_stool_02/metal_stool_02_1k.gltf",
+        "bytes": 2897,
+        "md5": "52bc62d1b46276ef64133151d2388385",
+        "sha256": "de8d603993443294b8a0aed48ea631ac38f2b15872491ea929551f72be726fcb"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/metal_stool_02/metal_stool_02_nor_gl_1k.jpg",
+        "bytes": 724830,
+        "md5": "7871114c94f3b795bc08346e3a57c9f6",
+        "sha256": "65d0a8be725f094222ca5badf388042d76f24e374398fc0cfb579bc03a29a8c6"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/metal_stool_02/metal_stool_02_diff_1k.jpg",
+        "bytes": 776056,
+        "md5": "b470e8320de149ba7e6561c173efbeae",
+        "sha256": "6dd23ca9932da71c37eb537e7d996e1cc7fc8752c566cec0f7e18690c06f07af"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/metal_stool_02/metal_stool_02_arm_1k.jpg",
+        "bytes": 854331,
+        "md5": "dc4ddb00b46b843a8236f7488d5117e0",
+        "sha256": "dff17b725379af449dae2af9f5224d8b3e863d2dbd645f13d5f4c8b2c9aa1999"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/metal_stool_02/metal_stool_02.bin",
+        "bytes": 182872,
+        "md5": "e2e2cc4b51e8311ac936430e5f51afc2",
+        "sha256": "17127317d391eb90ce3446739463b1067cc490210db821769b7a46bd1ff02e1c"
+      }
+    ],
+    "preparedSha256": "548dc345a04f5e63528d613ad3bf48d149e9143f5cd5be3dba978937fd14a906",
+    "dimensionsMillimeters": [
+      448.1,
+      473.1,
+      458.1
+    ],
+    "sourceDimensionsMillimeters": [
+      448.1,
+      473.1,
+      458.1
+    ],
+    "dimensionBasis": "source"
+  },
+  {
+    "id": "metal_stool_03",
+    "author": "Flo Tasser",
+    "license": "CC0-1.0",
+    "source": "https://polyhaven.com/a/metal_stool_03",
+    "sources": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/metal_stool_03/metal_stool_03_1k.gltf",
+        "bytes": 2784,
+        "md5": "3761c9a4450c944e64feeaa972691db4",
+        "sha256": "97d7b64c170f6c91982be77beab1c994743ca3d9dc90525e8d3618d402597516"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/metal_stool_03/metal_stool_03_nor_gl_1k.jpg",
+        "bytes": 518434,
+        "md5": "e03c3edcdccd21aca85a33d6c3a31199",
+        "sha256": "dfa87bb714c4af869a375f1a12a872649017dcdba9b23c3fe5d34904b5d60096"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/metal_stool_03/metal_stool_03_diff_1k.jpg",
+        "bytes": 690251,
+        "md5": "033c1aa50ec983c3669f568f479d2705",
+        "sha256": "94c961f96343c780cc6cc0f4d6b045ea62ba9ff04ba52d30c60d933a9b650d98"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/metal_stool_03/metal_stool_03_arm_1k.jpg",
+        "bytes": 892710,
+        "md5": "9cc4ef774fff1fd20a3318bd0face703",
+        "sha256": "4919d3aa81a6657db8d5d52f077c0a687f29595b6a1177f53305a89354c9b527"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/metal_stool_03/metal_stool_03.bin",
+        "bytes": 185440,
+        "md5": "4bd497c67ec4922051177bf055fcac3c",
+        "sha256": "77319f207db1d63ecf8775dad6dce37809967685a73489613a9f2c67b63c9228"
+      }
+    ],
+    "preparedSha256": "1cd3fcbd03d8a40c34570f973dcef000aa664d9164ba6e3c58a1ed58ec9d39c9",
+    "dimensionsMillimeters": [
+      460.6,
+      470.6,
+      1023.1
+    ],
+    "sourceDimensionsMillimeters": [
+      460.6,
+      470.6,
+      1023.1
+    ],
+    "dimensionBasis": "source"
+  },
+  {
+    "id": "wicker_basket_02",
+    "author": "Kuutti Siitonen",
+    "license": "CC0-1.0",
+    "source": "https://polyhaven.com/a/wicker_basket_02",
+    "sources": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wicker_basket_02/wicker_basket_02_1k.gltf",
+        "bytes": 4497,
+        "md5": "aed62a99730dec42ef32e51c36187f37",
+        "sha256": "78c7a3bdd7025eb092b3ac744e9d83e9a75fbb242696b5dce87ec215af617768"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wicker_basket_02/wicker_basket_02_nor_gl_1k.jpg",
+        "bytes": 1041220,
+        "md5": "502447f7dc5687b386f8c417c31feb07",
+        "sha256": "d3de9d9ec34955ed866a819763eb323a0dee571f55b02f5b4c44b0fc34cf2376"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/wicker_basket_02/wicker_basket_02.bin",
+        "bytes": 432572,
+        "md5": "32a855c75791b16826530611f9199e82",
+        "sha256": "bd92d61a377879fa28c2bdb18fd0b0a42c42c7333c04e324f346b68689655fdb"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wicker_basket_02/wicker_basket_02_arm_1k.jpg",
+        "bytes": 718943,
+        "md5": "2967de2f99b85ee52d6bab63978c003a",
+        "sha256": "641013be798757f4bf2c82cf335b80db2b6d2b52f8fbf0b1f1e2e22196bc60ee"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wicker_basket_02/wicker_basket_02_diff_1k.jpg",
+        "bytes": 867277,
+        "md5": "61471823114f02ca04197e7e2af13e8f",
+        "sha256": "c03525c27579160bcd71054aa17796570a074ff4cdd560bfed3fb9770c9ba975"
+      }
+    ],
+    "preparedSha256": "c447187aa0e64309668bb9a809378f52fa0c25da0e3d9fc14d177b18cbc3bc1e",
+    "dimensionsMillimeters": [
+      346.9,
+      254.5,
+      200.5
+    ],
+    "sourceDimensionsMillimeters": [
+      346.9,
+      254.5,
+      200.5
+    ],
+    "dimensionBasis": "source"
+  },
+  {
+    "id": "side_table_tall_01",
+    "author": "James Ray Cock",
+    "license": "CC0-1.0",
+    "source": "https://polyhaven.com/a/side_table_tall_01",
+    "sources": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/side_table_tall_01/side_table_tall_01_1k.gltf",
+        "bytes": 2755,
+        "md5": "0a5779815988c299d15386b5935b58dd",
+        "sha256": "f532f78677adb5c3858d5db7fa8a77e897339f606766b3f1468dc0651a2060ec"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/side_table_tall_01/side_table_tall_01_nor_gl_1k.jpg",
+        "bytes": 72421,
+        "md5": "042b3bfee2d3b3f9c8244a65527b061a",
+        "sha256": "001625c84713fb4ad3396578f74bd81ad837575259244a917473bc2d23149972"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/side_table_tall_01/side_table_tall_01.bin",
+        "bytes": 204400,
+        "md5": "a7d0f3e80744524b1a40162590d65350",
+        "sha256": "904d46ccf1653483298378c5032da99c081d9c8bb5e853015db833d5602ee15f"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/side_table_tall_01/side_table_tall_01_arm_1k.jpg",
+        "bytes": 173279,
+        "md5": "626728e8f8946b3e2efffea22cdfe84e",
+        "sha256": "c38106446d9b0a59f056946effa80325f805c523d87173cf65c7239809015639"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/side_table_tall_01/side_table_tall_01_diff_1k.jpg",
+        "bytes": 111040,
+        "md5": "180b612ad88a0edefe8d00c73f8a3761",
+        "sha256": "b32fd9f1506a80c04ae86b8cc73a875f3e024eafc8cc4df4371cb29176ec38d6"
+      }
+    ],
+    "preparedSha256": "14246ef6a8f2d0e5c06316e9b152d63163298df7cad912e33c61c36fa1974441",
+    "dimensionsMillimeters": [
+      384.0,
+      384.0,
+      761.2
+    ],
+    "sourceDimensionsMillimeters": [
+      384.0,
+      384.0,
+      761.2
+    ],
+    "dimensionBasis": "source"
   }
 ]

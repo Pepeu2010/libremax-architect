@@ -57,9 +57,9 @@
     "id": "modern-steel_frame_shelves_01",
     "name": "Estante de madeira e metal",
     "category": "Sala",
-    "width": 10974.1,
-    "height": 21405.0,
-    "depth": 5021.2,
+    "width": 900,
+    "height": 1755.4,
+    "depth": 411.8,
     "tags": "apartamento atual moderno contemporâneo detalhado Estante de madeira e metal",
     "license": "CC0-1.0",
     "author": "James Ray Cock",
@@ -481,6 +481,168 @@
         "meshAsset": "10fca2b8d57fa75730e51f6895d29b6dc72bd0d7e3c1ccefd5602e2de77a85b1",
         "originalMaterials": true,
         "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-potted_plant_04",
+    "name": "Suculenta em vaso de cerâmica",
+    "category": "Decoração",
+    "width": 167.9,
+    "height": 267.5,
+    "depth": 184.8,
+    "tags": "apartamento atual moderno contemporâneo detalhado Suculenta em vaso de cerâmica",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "origin": "https://polyhaven.com/a/potted_plant_04",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-potted_plant_04.json",
+      "source": "https://polyhaven.com/a/potted_plant_04",
+      "author": "James Ray Cock",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "ff5653b317fdab4e10bdc7c653959fda8c2154c195e5919f92ec918de7eaff2b",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-round_wooden_table_02",
+    "name": "Mesa de jantar redonda de madeira",
+    "category": "Sala",
+    "width": 796.2,
+    "height": 746.0,
+    "depth": 796.2,
+    "tags": "apartamento atual moderno contemporâneo detalhado Mesa de jantar redonda de madeira",
+    "license": "CC0-1.0",
+    "author": "Ulan Cabanilla",
+    "origin": "https://polyhaven.com/a/round_wooden_table_02",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-round_wooden_table_02.json",
+      "source": "https://polyhaven.com/a/round_wooden_table_02",
+      "author": "Ulan Cabanilla",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "4de9f0c0a5c8d6f0933ed6c5efae6dd21aa3e284d2989e803638898883b199c1",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-metal_stool_02",
+    "name": "Banqueta de metal com assento redondo",
+    "category": "Cozinha",
+    "width": 448.1,
+    "height": 458.1,
+    "depth": 473.1,
+    "tags": "apartamento atual moderno contemporâneo detalhado Banqueta de metal com assento redondo",
+    "license": "CC0-1.0",
+    "author": "Ulan Cabanilla",
+    "origin": "https://polyhaven.com/a/metal_stool_02",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-metal_stool_02.json",
+      "source": "https://polyhaven.com/a/metal_stool_02",
+      "author": "Ulan Cabanilla",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "548dc345a04f5e63528d613ad3bf48d149e9143f5cd5be3dba978937fd14a906",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-metal_stool_03",
+    "name": "Banqueta industrial compacta",
+    "category": "Cozinha",
+    "width": 460.6,
+    "height": 1023.1,
+    "depth": 470.6,
+    "tags": "apartamento atual moderno contemporâneo detalhado Banqueta industrial compacta",
+    "license": "CC0-1.0",
+    "author": "Flo Tasser",
+    "origin": "https://polyhaven.com/a/metal_stool_03",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-metal_stool_03.json",
+      "source": "https://polyhaven.com/a/metal_stool_03",
+      "author": "Flo Tasser",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "1cd3fcbd03d8a40c34570f973dcef000aa664d9164ba6e3c58a1ed58ec9d39c9",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-wicker_basket_02",
+    "name": "Cesto de fibras naturais",
+    "category": "Decoração",
+    "width": 346.9,
+    "height": 200.5,
+    "depth": 254.5,
+    "tags": "apartamento atual moderno contemporâneo detalhado Cesto de fibras naturais",
+    "license": "CC0-1.0",
+    "author": "Kuutti Siitonen",
+    "origin": "https://polyhaven.com/a/wicker_basket_02",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-wicker_basket_02.json",
+      "source": "https://polyhaven.com/a/wicker_basket_02",
+      "author": "Kuutti Siitonen",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "c447187aa0e64309668bb9a809378f52fa0c25da0e3d9fc14d177b18cbc3bc1e",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-side_table_tall_01",
+    "name": "Mesa de apoio alta de madeira",
+    "category": "Sala",
+    "width": 384.0,
+    "height": 761.2,
+    "depth": 384.0,
+    "tags": "apartamento atual moderno contemporâneo detalhado Mesa de apoio alta de madeira",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "origin": "https://polyhaven.com/a/side_table_tall_01",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-side_table_tall_01.json",
+      "source": "https://polyhaven.com/a/side_table_tall_01",
+      "author": "James Ray Cock",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "14246ef6a8f2d0e5c06316e9b152d63163298df7cad912e33c61c36fa1974441",
+        "originalMaterials": true,
+        "placement": "floor",
         "defaultElevation": 0
       }
     }

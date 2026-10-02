@@ -1,0 +1,326 @@
+[
+  {
+    "id": "current-sofa-compact",
+    "name": "SofÃ¡ compacto de linho e bouclÃ©",
+    "category": "Sala",
+    "width": 2050.0,
+    "depth": 925.0,
+    "height": 905.2,
+    "tags": "apartamento atual moderno contemporÃ¢neo compacto original SofÃ¡ compacto de linho e bouclÃ©",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "current-sofa-compact.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "716b4a786c1007b2405e4d18d33bbe3b560dc4f793297ed8fa1a38bcca26ab1b",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "current-sofa-chaise",
+    "name": "SofÃ¡ com chaise e almofadas",
+    "category": "Sala",
+    "width": 2600.0,
+    "depth": 1590.0,
+    "height": 905.2,
+    "tags": "apartamento atual moderno contemporÃ¢neo compacto original SofÃ¡ com chaise e almofadas",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "current-sofa-chaise.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "1ebad7b89ad1a3b0351e196e725e145573aea641f65b5508f60d9061f86822e7",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "current-bed-queen",
+    "name": "Cama queen estofada com roupa de cama",
+    "category": "Dormitório",
+    "width": 1820.0,
+    "depth": 2120.0,
+    "height": 1280.0,
+    "tags": "apartamento atual moderno contemporÃ¢neo compacto original Cama queen estofada com roupa de cama",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "current-bed-queen.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "2b40a39597878b68caa0a8d5e6735dea5225f31d39db3efb9623fbdfcaf385e6",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "current-headboard",
+    "name": "Cabeceira de madeira ripada",
+    "category": "Dormitório",
+    "width": 2800.0,
+    "depth": 112.5,
+    "height": 1500.0,
+    "tags": "apartamento atual moderno contemporÃ¢neo compacto original Cabeceira de madeira ripada",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "current-headboard.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "87c726211212c217d37d60e577419d1022dba61bd37d6776b7495f73a62632f0",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "current-nightstand",
+    "name": "Mesa de cabeceira suspensa",
+    "category": "Dormitório",
+    "width": 500.0,
+    "depth": 444.0,
+    "height": 230.0,
+    "tags": "apartamento atual moderno contemporÃ¢neo compacto original Mesa de cabeceira suspensa",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "current-nightstand.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "1f098d635cd160dfe43325d25ecd367f3465cbb7d40a95e7874965f260c798b2",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 450
+      }
+    }
+  },
+  {
+    "id": "current-sideboard",
+    "name": "Aparador compacto com portas ripadas",
+    "category": "Sala",
+    "width": 1420.0,
+    "depth": 463.0,
+    "height": 817.5,
+    "tags": "apartamento atual moderno contemporÃ¢neo compacto original Aparador compacto com portas ripadas",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "current-sideboard.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "64f53b19b5eaf16638d5014ce569ac32e67d2362e6ecf9f69002a591485d63ea",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "current-tv-console",
+    "name": "Rack baixo de madeira e pedra",
+    "category": "Sala",
+    "width": 1820.0,
+    "depth": 423.0,
+    "height": 537.5,
+    "tags": "apartamento atual moderno contemporÃ¢neo compacto original Rack baixo de madeira e pedra",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "current-tv-console.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "b0ce814f0b0e8991abd034aadd9196b8ce5cfbb55b9c00d2d788c069f85a8fba",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "current-dining-table",
+    "name": "Mesa redonda com base ripada",
+    "category": "Sala",
+    "width": 1050.0,
+    "depth": 1050.0,
+    "height": 770.0,
+    "tags": "apartamento atual moderno contemporÃ¢neo compacto original Mesa redonda com base ripada",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "current-dining-table.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "00ce35a6425b081c42a75ebd91f49280655fea72ea2b7bf84bf9167b6c28b094",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "current-bar-stool",
+    "name": "Banqueta estofada para bancada",
+    "category": "Cozinha",
+    "width": 440.0,
+    "depth": 440.0,
+    "height": 1040.0,
+    "tags": "apartamento atual moderno contemporÃ¢neo compacto original Banqueta estofada para bancada",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "current-bar-stool.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "78b2c16027a7de9ff4e51ee68773bc7bc877bf588e1d2085a6c19702bb47ca3f",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "current-pouf",
+    "name": "Pufe redondo de bouclÃ©",
+    "category": "Sala",
+    "width": 560.0,
+    "depth": 560.0,
+    "height": 485.0,
+    "tags": "apartamento atual moderno contemporÃ¢neo compacto original Pufe redondo de bouclÃ©",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "current-pouf.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "0cf7abe4472f78042d4f052f012ac3b9fa7dbff8d2c33a2d9c93002488bb559b",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "current-oval-mirror",
+    "name": "Espelho oval com moldura champanhe",
+    "category": "DecoraÃ§Ã£o",
+    "width": 620.0,
+    "depth": 59.0,
+    "height": 980.0,
+    "tags": "apartamento atual moderno contemporÃ¢neo compacto original Espelho oval com moldura champanhe",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "current-oval-mirror.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "ef501358384039a1f66e40a07ca49021a955345b504b58096e022039edc245a4",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 950
+      }
+    }
+  },
+  {
+    "id": "current-floor-lamp",
+    "name": "LuminÃ¡ria de piso com arco",
+    "category": "DecoraÃ§Ã£o",
+    "width": 1230.0,
+    "depth": 400.0,
+    "height": 1845.3,
+    "tags": "apartamento atual moderno contemporÃ¢neo compacto original LuminÃ¡ria de piso com arco",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "current-floor-lamp.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "f1a210d3fb8e18ad07646f94246ec9b489cd48b6b781cac339ec0961473fbe95",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  }
+]

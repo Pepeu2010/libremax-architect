@@ -132,6 +132,10 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory, bool welcome
     if (!modern.open(QIODevice::ReadOnly))
         throw std::runtime_error("Coleção de apartamentos atuais não encontrada");
     library->seed(Json::parse(modern.readAll().toStdString()));
+    QFile current(resourceFile("starter-models/current-catalog.json"));
+    if (!current.open(QIODevice::ReadOnly))
+        throw std::runtime_error("Coleção contemporânea não encontrada");
+    library->seed(Json::parse(current.readAll().toStdString()));
     createShell();
     connect(&thumbnails, &AssetThumbnails::ready, this, [this](const QString &, const QImage &) {
         for (int i = 0; i < assets->count(); ++i) {
@@ -1269,7 +1273,9 @@ void MainWindow::modernApartmentStarter() {
         d.name = "Apartamento moderno";
         std::erase_if(d.entities, [](const auto &e) {
             const auto asset = e.metadata.value("asset", std::string{});
-            return asset == "ready-loungeSofa" || asset == "ready-tableCoffee" || asset == "ready-tableRound";
+            return asset == "ready-loungeSofa" || asset == "ready-tableCoffee" ||
+                   asset == "ready-tableRound" || asset == "ready-bedDouble" ||
+                   asset == "ready-cabinetBedDrawer";
         });
         auto add = [&](const char *id, double x, double y, double yaw = 0, double z = 0) {
             auto asset = std::find_if(all.begin(), all.end(), [&](const auto &a) { return a.id == id; });
@@ -1281,7 +1287,9 @@ void MainWindow::modernApartmentStarter() {
             object.transform.z = z;
             d.entities.push_back(object);
         };
-        add("ready-loungeDesignSofa", 180, 1000);
+        add("current-sofa-compact", 180, 1000);
+        add("current-bed-queen", 7800, 3350, 180);
+        add("current-nightstand", 5780, 3438, 180, 450);
         add("modern-modern_coffee_table_01", 3000, 2500, 90);
         add("modern-modern_arm_chair_01", 4250, 1750, 180);
         add("modern-coffee_table_round_01", 900, 4000);

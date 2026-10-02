@@ -6,7 +6,6 @@
 #include <QCryptographicHash>
 #include <QDir>
 #include <QFutureWatcher>
-#include <QPainter>
 #include <QSaveFile>
 #include <QStandardPaths>
 #include <QtConcurrent>
@@ -15,7 +14,9 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Face.hxx>
 #include <algorithm>
+#include <array>
 #include <cmath>
+#include <limits>
 
 namespace lmx {
 QImage renderAssetThumbnail(const Asset &asset) {
@@ -30,9 +31,9 @@ QImage renderAssetThumbnail(const Asset &asset) {
     document.entities.push_back(object);
     document.validate();
     struct Triangle {
-        QPolygonF points;
-        QColor color;
-        double depth;
+        std::array<QPointF, 3> points;
+        std::array<QColor, 3> colors;
+        std::array<double, 3> depths;
     };
     std::vector<Triangle> triangles;
     QRectF bounds;
@@ -60,19 +61,32 @@ QImage renderAssetThumbnail(const Asset &asset) {
                 auto q = meshData->Node(b).Transformed(location.Transformation());
                 auto r = meshData->Node(c).Transformed(location.Transformation());
                 auto normal = gp_Vec(p, q).Crossed(gp_Vec(p, r));
-                double shade = 0.55;
-                if (normal.Magnitude() > 1e-8)
-                    shade += 0.45 * std::max(0.0, normal.Normalized().Dot(gp_Vec(-0.4, 0.5, 1).Normalized()));
                 const auto &color = material->at("baseColor");
-                QColor tint;
-                tint.setRgbF(std::pow(color[0].get<double>() * shade, 1 / 2.2),
-                             std::pow(color[1].get<double>() * shade, 1 / 2.2),
-                             std::pow(color[2].get<double>() * shade, 1 / 2.2));
-                QPolygonF polygon;
-                for (const auto &point : {p, q, r}) {
+                Triangle triangle;
+                const std::array<int, 3> nodes{a, b, c};
+                const std::array<gp_Pnt, 3> points{p, q, r};
+                for (std::size_t vertex = 0; vertex < points.size(); ++vertex) {
+                    const auto &point = points[vertex];
+                    auto shadingNormal = normal;
+                    if (meshData->HasNormals()) {
+                        shadingNormal = gp_Vec(meshData->Normal(nodes[vertex]));
+                        shadingNormal.Transform(location.Transformation());
+                        if (face.Orientation() == TopAbs_REVERSED)
+                            shadingNormal.Reverse();
+                    }
+                    double shade = 0.55;
+                    if (shadingNormal.Magnitude() > 1e-8)
+                        shade +=
+                            0.45 *
+                            std::max(0.0, shadingNormal.Normalized().Dot(gp_Vec(-0.4, 0.5, 1).Normalized()));
+                    triangle.colors[vertex].setRgbF(std::pow(color[0].get<double>() * shade, 1 / 2.2),
+                                                    std::pow(color[1].get<double>() * shade, 1 / 2.2),
+                                                    std::pow(color[2].get<double>() * shade, 1 / 2.2));
                     QPointF projected((point.X() + point.Y()) * 0.82,
                                       (point.Y() - point.X()) * 0.36 - point.Z());
-                    polygon << projected;
+                    triangle.points[vertex] = projected;
+                    // Depth axis is orthogonal to both orthographic projection axes.
+                    triangle.depths[vertex] = point.Y() - point.X() + 0.72 * point.Z();
                     if (first) {
                         bounds = QRectF(projected, QSizeF(0, 0));
                         first = false;
@@ -84,34 +98,59 @@ QImage renderAssetThumbnail(const Asset &asset) {
                         bounds = QRectF(QPointF(left, top), QPointF(right, bottom));
                     }
                 }
-                auto depth = [](const gp_Pnt &point) { return point.Y() - point.X() + point.Z(); };
-                triangles.push_back({polygon, tint, depth(p) + depth(q) + depth(r)});
+                triangles.push_back(triangle);
             }
         }
     }
     if (triangles.empty())
         throw std::runtime_error("Miniatura sem geometria");
-    std::sort(triangles.begin(), triangles.end(),
-              [](const auto &a, const auto &b) { return a.depth < b.depth; });
-    QImage result(192, 144, QImage::Format_ARGB32_Premultiplied);
+    // A depth buffer resolves intersecting triangles and the backs of broad surfaces.
+    // Two-times supersampling keeps curved edges clean without a GPU context per worker.
+    constexpr int width = 384, height = 288;
+    QImage result(width, height, QImage::Format_RGB32);
     result.fill(QColor("#17171f"));
-    QPainter painter(&result);
-    painter.setRenderHint(QPainter::Antialiasing);
+    std::vector<double> depths(width * height, -std::numeric_limits<double>::infinity());
     const double scale =
-        std::min(166.0 / std::max(bounds.width(), 1.0), 118.0 / std::max(bounds.height(), 1.0));
-    painter.translate(96, 72);
-    painter.scale(scale, scale);
-    painter.translate(-bounds.center());
-    for (const auto &triangle : triangles) {
-        painter.setPen(QPen(triangle.color, 0.4 / scale));
-        painter.setBrush(triangle.color);
-        painter.drawPolygon(triangle.points);
+        std::min(332.0 / std::max(bounds.width(), 1.0), 236.0 / std::max(bounds.height(), 1.0));
+    for (auto &triangle : triangles) {
+        for (auto &point : triangle.points)
+            point = (point - bounds.center()) * scale + QPointF(width / 2, height / 2);
+        const auto &a = triangle.points[0], &b = triangle.points[1], &c = triangle.points[2];
+        const double denominator = (b.y() - c.y()) * (a.x() - c.x()) + (c.x() - b.x()) * (a.y() - c.y());
+        if (std::abs(denominator) < 1e-8)
+            continue;
+        const int left = std::max(0, static_cast<int>(std::floor(std::min({a.x(), b.x(), c.x()}))));
+        const int right = std::min(width - 1, static_cast<int>(std::ceil(std::max({a.x(), b.x(), c.x()}))));
+        const int top = std::max(0, static_cast<int>(std::floor(std::min({a.y(), b.y(), c.y()}))));
+        const int bottom = std::min(height - 1, static_cast<int>(std::ceil(std::max({a.y(), b.y(), c.y()}))));
+        for (int y = top; y <= bottom; ++y) {
+            auto *pixels = reinterpret_cast<QRgb *>(result.scanLine(y));
+            for (int x = left; x <= right; ++x) {
+                const double u =
+                    ((b.y() - c.y()) * (x + .5 - c.x()) + (c.x() - b.x()) * (y + .5 - c.y())) / denominator;
+                const double v =
+                    ((c.y() - a.y()) * (x + .5 - c.x()) + (a.x() - c.x()) * (y + .5 - c.y())) / denominator;
+                const double w = 1 - u - v;
+                if (u < -1e-8 || v < -1e-8 || w < -1e-8)
+                    continue;
+                const double depth = u * triangle.depths[0] + v * triangle.depths[1] + w * triangle.depths[2];
+                auto &previous = depths[y * width + x];
+                if (depth <= previous)
+                    continue;
+                previous = depth;
+                const auto &first = triangle.colors[0], &second = triangle.colors[1],
+                           &third = triangle.colors[2];
+                pixels[x] = qRgb(static_cast<int>(u * first.red() + v * second.red() + w * third.red()),
+                                 static_cast<int>(u * first.green() + v * second.green() + w * third.green()),
+                                 static_cast<int>(u * first.blue() + v * second.blue() + w * third.blue()));
+            }
+        }
     }
-    return result;
+    return result.scaled(192, 144, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 }
 AssetThumbnails::AssetThumbnails(QObject *parent) : QObject(parent) {
     pool.setMaxThreadCount(2);
-    cacheDirectory = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/thumbnails-v3";
+    cacheDirectory = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/thumbnails-v4";
     QDir().mkpath(cacheDirectory);
 }
 AssetThumbnails::~AssetThumbnails() {
