@@ -8,6 +8,7 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QVariant>
+#include <algorithm>
 #include <stdexcept>
 
 namespace lmx {
@@ -98,8 +99,8 @@ void Library::seed(const Json &entries) {
         throw;
     }
 }
-std::vector<Asset> Library::search(const QString &text, const QString &category, bool favorites,
-                                   bool recent) const {
+std::vector<Asset> Library::search(const QString &text, const QString &category, bool favorites, bool recent,
+                                   bool includePayload) const {
     QString sql = "SELECT a.id,a.name,a.category,a.width,a.height,a.depth,a.recipe,EXISTS(SELECT 1 FROM "
                   "favorites f WHERE f.asset_id=a.id) FROM assets a";
     if (!text.trimmed().isEmpty())
@@ -138,24 +139,70 @@ std::vector<Asset> Library::search(const QString &text, const QString &category,
                           q.value(5).toDouble(),
                           Json::parse(q.value(6).toString().toStdString()),
                           q.value(7).toBool(),
+                          {},
                           {}});
         auto &asset = result.back();
-        if (asset.recipe.contains("modelFile")) {
-            const auto name = QString::fromStdString(asset.recipe.at("modelFile").get<std::string>());
-            if (modelDirectory.isEmpty() ||
-                !QRegularExpression("^[A-Za-z0-9_-]+\\.json$").match(name).hasMatch())
-                throw std::invalid_argument("Caminho do modelo 3D inválido");
-            QFile file(QDir(modelDirectory).filePath(name));
-            if (!file.open(QIODevice::ReadOnly) || file.size() > 4 * 1024 * 1024)
-                throw std::runtime_error("Modelo 3D indisponível");
-            asset.model = file.readAll();
-            const auto hash =
-                QCryptographicHash::hash(asset.model, QCryptographicHash::Sha256).toHex().toStdString();
-            if (hash != asset.recipe.at("parameters").at("meshAsset").get<std::string>())
-                throw std::runtime_error("Integridade do modelo 3D inválida");
-        }
+        if (includePayload)
+            asset = withPayload(std::move(asset));
     }
     return result;
+}
+Asset Library::withPayload(Asset asset) const {
+    if (asset.recipe.contains("modelFile") && asset.model.isEmpty()) {
+        const auto expected = asset.recipe.at("parameters").at("meshAsset").get<std::string>();
+        {
+            QMutexLocker lock(&payloadMutex);
+            auto found = payloadCache.find(expected);
+            if (found != payloadCache.end()) {
+                asset.model = found->second.model;
+                asset.textures = found->second.textures;
+                return asset;
+            }
+        }
+        const auto name = QString::fromStdString(asset.recipe.at("modelFile").get<std::string>());
+        if (modelDirectory.isEmpty() || !QRegularExpression("^[A-Za-z0-9_-]+\\.json$").match(name).hasMatch())
+            throw std::invalid_argument("Caminho do modelo 3D inválido");
+        QFile file(QDir(modelDirectory).filePath(name));
+        if (!file.open(QIODevice::ReadOnly) || file.size() > 4 * 1024 * 1024)
+            throw std::runtime_error("Modelo 3D indisponível");
+        asset.model = file.readAll();
+        const auto hash =
+            QCryptographicHash::hash(asset.model, QCryptographicHash::Sha256).toHex().toStdString();
+        if (hash != asset.recipe.at("parameters").at("meshAsset").get<std::string>())
+            throw std::runtime_error("Integridade do modelo 3D inválida");
+        const auto model = readModel(asset.model);
+        for (const auto &material : model.value("materials", Json::array()))
+            for (const auto *channel : {"baseColorTexture", "roughnessTexture", "normalTexture"}) {
+                if (!material.contains(channel))
+                    continue;
+                const auto textureHash = material.at(channel).get<std::string>();
+                if (!QRegularExpression("^[a-f0-9]{64}$")
+                         .match(QString::fromStdString(textureHash))
+                         .hasMatch())
+                    throw std::invalid_argument("Referência de textura inválida");
+                QFile texture(QDir(modelDirectory).filePath(QString::fromStdString(textureHash) + ".png"));
+                if (!texture.open(QIODevice::ReadOnly) || texture.size() > 4 * 1024 * 1024)
+                    throw std::runtime_error("Textura do modelo indisponível");
+                auto bytes = texture.readAll();
+                if (QCryptographicHash::hash(bytes, QCryptographicHash::Sha256).toHex().toStdString() !=
+                    textureHash)
+                    throw std::runtime_error("Integridade da textura inválida");
+                asset.textures[textureHash] = bytes;
+            }
+        qint64 size = asset.model.size();
+        for (const auto &[key, bytes] : asset.textures)
+            size += bytes.size();
+        QMutexLocker lock(&payloadMutex);
+        if (!payloadCache.contains(expected)) {
+            if (payloadBytes + size > 48 * 1024 * 1024) {
+                payloadCache.clear();
+                payloadBytes = 0;
+            }
+            payloadCache[expected] = {asset.model, asset.textures};
+            payloadBytes += size;
+        }
+    }
+    return asset;
 }
 void Library::favorite(const QString &id, bool enabled) {
     QSqlQuery q(db);
@@ -186,17 +233,33 @@ Entity Library::instantiate(const Asset &a, double x, double y) {
     e.metadata = {{"asset", a.id.toStdString()}, {"license", "CC0-1.0"}, {"author", "LibreMax contributors"}};
     if (a.recipe.contains("source")) {
         e.metadata["source"] = a.recipe.at("source");
-        e.metadata["author"] = "Kenney";
+        e.metadata["author"] = a.recipe.value("author", std::string("Kenney"));
     }
     return e;
 }
 void Library::attachModel(Document &d, const Asset &a) {
     if (a.model.isEmpty())
         return;
-    readModel(a.model);
+    const auto model = readModel(a.model);
     const auto hash = QCryptographicHash::hash(a.model, QCryptographicHash::Sha256).toHex().toStdString();
     if (hash != a.recipe.at("parameters").at("meshAsset").get<std::string>())
         throw std::invalid_argument("Modelo 3D adulterado");
-    d.embeddedAssets[hash] = a.model;
+    // Validate in a candidate first: corrupt maps must never partially modify a project.
+    auto candidate = d;
+    candidate.embeddedAssets[hash] = a.model;
+    for (const auto &[textureHash, bytes] : a.textures) {
+        if (QCryptographicHash::hash(bytes, QCryptographicHash::Sha256).toHex().toStdString() != textureHash)
+            throw std::invalid_argument("Textura do modelo adulterada");
+        candidate.embeddedAssets[textureHash] = bytes;
+    }
+    for (const auto &material : model.value("materials", Json::array())) {
+        const auto id = material.at("id");
+        const auto found = std::find_if(candidate.materials.begin(), candidate.materials.end(),
+                                        [&](const auto &entry) { return entry.at("id") == id; });
+        if (found == candidate.materials.end())
+            candidate.materials.push_back(material);
+    }
+    candidate.validate();
+    d = std::move(candidate);
 }
 } // namespace lmx

@@ -1,0 +1,488 @@
+[
+  {
+    "id": "modern-modern_arm_chair_01",
+    "name": "Poltrona de madeira e couro",
+    "category": "Sala",
+    "width": 820.3,
+    "height": 1022.9,
+    "depth": 986.6,
+    "tags": "apartamento atual moderno contemporâneo detalhado Poltrona de madeira e couro",
+    "license": "CC0-1.0",
+    "author": "Vibrant Nordic",
+    "origin": "https://polyhaven.com/a/modern_arm_chair_01",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-modern_arm_chair_01.json",
+      "source": "https://polyhaven.com/a/modern_arm_chair_01",
+      "author": "Vibrant Nordic",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "b353e17d8bd97344becec0bf54e723b145b9f7cd71f20a1919a3c263a2164d4f",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-mid_century_lounge_chair",
+    "name": "Poltrona de descanso contemporânea",
+    "category": "Sala",
+    "width": 1008.6,
+    "height": 1169.1,
+    "depth": 1190.3,
+    "tags": "apartamento atual moderno contemporâneo detalhado Poltrona de descanso contemporânea",
+    "license": "CC0-1.0",
+    "author": "Kuutti Siitonen",
+    "origin": "https://polyhaven.com/a/mid_century_lounge_chair",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-mid_century_lounge_chair.json",
+      "source": "https://polyhaven.com/a/mid_century_lounge_chair",
+      "author": "Kuutti Siitonen",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "bfea9597682983ec1f3c106cd7559f054e68487089663a5864866d6610b3214a",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-steel_frame_shelves_01",
+    "name": "Estante de madeira e metal",
+    "category": "Sala",
+    "width": 10974.1,
+    "height": 21405.0,
+    "depth": 5021.2,
+    "tags": "apartamento atual moderno contemporâneo detalhado Estante de madeira e metal",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "origin": "https://polyhaven.com/a/steel_frame_shelves_01",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-steel_frame_shelves_01.json",
+      "source": "https://polyhaven.com/a/steel_frame_shelves_01",
+      "author": "James Ray Cock",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "c812911c70d6d36bc9ad7977302be71cb5916b56d57f5501bdac132bf096aa8c",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-steel_frame_shelves_03",
+    "name": "Estante contemporânea com gavetas",
+    "category": "Sala",
+    "width": 2351.1,
+    "height": 2311.8,
+    "depth": 721.2,
+    "tags": "apartamento atual moderno contemporâneo detalhado Estante contemporânea com gavetas",
+    "license": "CC0-1.0",
+    "author": "Ulan Cabanilla",
+    "origin": "https://polyhaven.com/a/steel_frame_shelves_03",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-steel_frame_shelves_03.json",
+      "source": "https://polyhaven.com/a/steel_frame_shelves_03",
+      "author": "Ulan Cabanilla",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "91dfdb9deb079769066c8a7027b67202cc584c2508bbbe9b833ed27c0ddf1590",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-modern_coffee_table_01",
+    "name": "Mesa de centro em madeira e pedra",
+    "category": "Sala",
+    "width": 600.0,
+    "height": 390.0,
+    "depth": 1201.8,
+    "tags": "apartamento atual moderno contemporâneo detalhado Mesa de centro em madeira e pedra",
+    "license": "CC0-1.0",
+    "author": "Amin",
+    "origin": "https://polyhaven.com/a/modern_coffee_table_01",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-modern_coffee_table_01.json",
+      "source": "https://polyhaven.com/a/modern_coffee_table_01",
+      "author": "Amin",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "e1905053fe59232849c151b36e7a748b95901cd4c3cdc53686e8f0b8fa5dc8f1",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-modern_coffee_table_02",
+    "name": "Mesa de centro com tampo claro",
+    "category": "Sala",
+    "width": 1199.1,
+    "height": 369.2,
+    "depth": 1199.7,
+    "tags": "apartamento atual moderno contemporâneo detalhado Mesa de centro com tampo claro",
+    "license": "CC0-1.0",
+    "author": "Amin",
+    "origin": "https://polyhaven.com/a/modern_coffee_table_02",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-modern_coffee_table_02.json",
+      "source": "https://polyhaven.com/a/modern_coffee_table_02",
+      "author": "Amin",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "94da352d64852c0754f617bdd36653e8525e95ef2e5d71b10185735e105edf32",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-modern_wooden_cabinet",
+    "name": "Aparador de madeira contemporâneo",
+    "category": "Sala",
+    "width": 2440.0,
+    "height": 680.1,
+    "depth": 520.0,
+    "tags": "apartamento atual moderno contemporâneo detalhado Aparador de madeira contemporâneo",
+    "license": "CC0-1.0",
+    "author": "Patrik Pangerl",
+    "origin": "https://polyhaven.com/a/modern_wooden_cabinet",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-modern_wooden_cabinet.json",
+      "source": "https://polyhaven.com/a/modern_wooden_cabinet",
+      "author": "Patrik Pangerl",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "30b0e05030c1beabf629d66493097c6d8a8cf3b380938a9e42cbc99a1ef689d0",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-outdoor_table_chair_set_01",
+    "name": "Mesa e cadeiras para varanda",
+    "category": "Decoração",
+    "width": 741.7,
+    "height": 858.6,
+    "depth": 1717.3,
+    "tags": "apartamento atual moderno contemporâneo detalhado Mesa e cadeiras para varanda",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "origin": "https://polyhaven.com/a/outdoor_table_chair_set_01",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-outdoor_table_chair_set_01.json",
+      "source": "https://polyhaven.com/a/outdoor_table_chair_set_01",
+      "author": "James Ray Cock",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "7c704135c020a8a5114320c9227938b8164e30f01593e332d743550219c34c42",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-dining_chair_02",
+    "name": "Cadeira de jantar detalhada",
+    "category": "Sala",
+    "width": 433.6,
+    "height": 973.4,
+    "depth": 576.4,
+    "tags": "apartamento atual moderno contemporâneo detalhado Cadeira de jantar detalhada",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "origin": "https://polyhaven.com/a/dining_chair_02",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-dining_chair_02.json",
+      "source": "https://polyhaven.com/a/dining_chair_02",
+      "author": "James Ray Cock",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "ccd7572248db54074cce434370125290ce3864ecc4478de8ed930d8e8685aadf",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-coffee_table_round_01",
+    "name": "Mesa redonda de mármore e metal",
+    "category": "Sala",
+    "width": 1301.3,
+    "height": 491.0,
+    "depth": 1301.3,
+    "tags": "apartamento atual moderno contemporâneo detalhado Mesa redonda de mármore e metal",
+    "license": "CC0-1.0",
+    "author": "Ulan Cabanilla",
+    "origin": "https://polyhaven.com/a/coffee_table_round_01",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-coffee_table_round_01.json",
+      "source": "https://polyhaven.com/a/coffee_table_round_01",
+      "author": "Ulan Cabanilla",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "78b874186cb86b868379a48f562f2799cde6f7c7aa2fef66e8059b8efd00561d",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-side_table_01",
+    "name": "Mesa lateral compacta",
+    "category": "Sala",
+    "width": 550.0,
+    "height": 550.7,
+    "depth": 450.0,
+    "tags": "apartamento atual moderno contemporâneo detalhado Mesa lateral compacta",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "origin": "https://polyhaven.com/a/side_table_01",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-side_table_01.json",
+      "source": "https://polyhaven.com/a/side_table_01",
+      "author": "James Ray Cock",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "504ef7b045e5198ab7a43df99923fa4c24fbbd76c520b507944f8c9be74299af",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-drawer_cabinet",
+    "name": "Gaveteiro de madeira e metal",
+    "category": "Escritório",
+    "width": 1141.1,
+    "height": 1881.3,
+    "depth": 488.1,
+    "tags": "apartamento atual moderno contemporâneo detalhado Gaveteiro de madeira e metal",
+    "license": "CC0-1.0",
+    "author": "Ulan Cabanilla",
+    "origin": "https://polyhaven.com/a/drawer_cabinet",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-drawer_cabinet.json",
+      "source": "https://polyhaven.com/a/drawer_cabinet",
+      "author": "Ulan Cabanilla",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "3a646dde1fedd2aac01af85f810c14f0f0248a87e56df786553009b8e3f37eae",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-metal_office_desk",
+    "name": "Escrivaninha de estilo industrial",
+    "category": "Escritório",
+    "width": 2000.0,
+    "height": 787.5,
+    "depth": 947.2,
+    "tags": "apartamento atual moderno contemporâneo detalhado Escrivaninha de estilo industrial",
+    "license": "CC0-1.0",
+    "author": "Ulan Cabanilla",
+    "origin": "https://polyhaven.com/a/metal_office_desk",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-metal_office_desk.json",
+      "source": "https://polyhaven.com/a/metal_office_desk",
+      "author": "Ulan Cabanilla",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "7809a777a741b39ccf5b8ea22d6f0dbe5722d92c91f0a085c9bc7a8341dbbcc6",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-modern_ceiling_lamp_01",
+    "name": "Luminária de teto contemporânea",
+    "category": "Decoração",
+    "width": 431.6,
+    "height": 951.6,
+    "depth": 431.7,
+    "tags": "apartamento atual moderno contemporâneo detalhado Luminária de teto contemporânea",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "origin": "https://polyhaven.com/a/modern_ceiling_lamp_01",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-modern_ceiling_lamp_01.json",
+      "source": "https://polyhaven.com/a/modern_ceiling_lamp_01",
+      "author": "James Ray Cock",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "46269222b352a2421afbd54b70d0d49a7568570b7703e3dfe02ec0abad347784",
+        "originalMaterials": true,
+        "placement": "ceiling",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-desk_lamp_arm_01",
+    "name": "Luminária articulada de mesa",
+    "category": "Escritório",
+    "width": 201.7,
+    "height": 892.6,
+    "depth": 613.9,
+    "tags": "apartamento atual moderno contemporâneo detalhado Luminária articulada de mesa",
+    "license": "CC0-1.0",
+    "author": "Yann Kervran, Kuutti Siitonen",
+    "origin": "https://polyhaven.com/a/desk_lamp_arm_01",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-desk_lamp_arm_01.json",
+      "source": "https://polyhaven.com/a/desk_lamp_arm_01",
+      "author": "Yann Kervran, Kuutti Siitonen",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "4c51c9d07b0b0cc4b2a53410a9fdb6a1d381cb1767dd096a2ab9601e941c4f7e",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-ceramic_vase_02",
+    "name": "Vaso de cerâmica natural",
+    "category": "Decoração",
+    "width": 218.4,
+    "height": 309.2,
+    "depth": 218.4,
+    "tags": "apartamento atual moderno contemporâneo detalhado Vaso de cerâmica natural",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "origin": "https://polyhaven.com/a/ceramic_vase_02",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-ceramic_vase_02.json",
+      "source": "https://polyhaven.com/a/ceramic_vase_02",
+      "author": "James Ray Cock",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "3334ccb1ac5b985f6ec1f4d864158153826eb8172085f27d9d9ef5357a2a922a",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-ceramic_vase_03",
+    "name": "Vaso de cerâmica contemporâneo",
+    "category": "Decoração",
+    "width": 112.2,
+    "height": 414.4,
+    "depth": 112.2,
+    "tags": "apartamento atual moderno contemporâneo detalhado Vaso de cerâmica contemporâneo",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "origin": "https://polyhaven.com/a/ceramic_vase_03",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-ceramic_vase_03.json",
+      "source": "https://polyhaven.com/a/ceramic_vase_03",
+      "author": "James Ray Cock",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "f526b67483ba65caf50f99fde3eec65c2d30d598cc5dff5da6b1dd0a7202a829",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "modern-throw_pillows_01",
+    "name": "Almofadas decorativas detalhadas",
+    "category": "Decoração",
+    "width": 940.1,
+    "height": 450.2,
+    "depth": 451.9,
+    "tags": "apartamento atual moderno contemporâneo detalhado Almofadas decorativas detalhadas",
+    "license": "CC0-1.0",
+    "author": "Serhii Khromov",
+    "origin": "https://polyhaven.com/a/throw_pillows_01",
+    "date": "2026-10-01",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "modern-throw_pillows_01.json",
+      "source": "https://polyhaven.com/a/throw_pillows_01",
+      "author": "Serhii Khromov",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "10fca2b8d57fa75730e51f6895d29b6dc72bd0d7e3c1ccefd5602e2de77a85b1",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  }
+]

@@ -118,7 +118,7 @@ Placement placeObject(const Document &d, Entity object, double x, double y, bool
     const Entity *nearest = nullptr;
     Point hit{};
     double best = std::numeric_limits<double>::max();
-    if (assist || wallOnly) {
+    if ((assist || wallOnly) && mode != "ceiling") {
         for (const auto &wall : d.entities) {
             if ((wall.type != "Wall" && wall.type != "HalfWall") || !wall.visible || wall.locked)
                 continue;
@@ -226,6 +226,23 @@ Placement placeObject(const Document &d, Entity object, double x, double y, bool
         result.message = "Aproxime o mouse de uma parede para colocar este item.";
         return result;
     }
+    if (mode == "ceiling") {
+        const Entity *room = nullptr;
+        for (const auto &other : d.entities) {
+            if (other.type != "Room")
+                continue;
+            auto p = local(other.transform, x, y);
+            if (p.x >= 0 && p.y >= 0 && p.x <= other.width && p.y <= other.depth) {
+                room = &other;
+                break;
+            }
+        }
+        if (!room || e.height + 20 >= room->height) {
+            result.message = "Coloque esta luminária dentro de um cômodo com altura suficiente.";
+            return result;
+        }
+        e.transform.z = room->transform.z + room->height - e.height - 20;
+    }
     if (mode == "surface") {
         const Entity *support = nullptr;
         for (const auto &other : d.entities) {
@@ -252,8 +269,9 @@ Placement placeObject(const Document &d, Entity object, double x, double y, bool
     if (!result.message.empty())
         return result;
     result.allowed = true;
-    result.message = mode == "surface" && e.transform.z > 0 ? "Sobre o móvel · solte para colocar"
-                                                            : "No piso · solte para colocar";
+    result.message = mode == "ceiling"                        ? "No teto · solte para colocar"
+                     : mode == "surface" && e.transform.z > 0 ? "Sobre o móvel · solte para colocar"
+                                                              : "No piso · solte para colocar";
     return result;
 }
 } // namespace lmx

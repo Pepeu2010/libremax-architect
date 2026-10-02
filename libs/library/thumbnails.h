@@ -3,6 +3,7 @@
 #include <QImage>
 #include <QObject>
 #include <QThreadPool>
+#include <functional>
 #include <map>
 #include <set>
 
@@ -18,7 +19,7 @@ class AssetThumbnails final : public QObject {
   public:
     explicit AssetThumbnails(QObject *parent = nullptr);
     ~AssetThumbnails() override;
-    QImage request(const Asset &asset);
+    QImage request(const Asset &asset, std::function<Asset(const Asset &)> loader = {});
   signals:
     void ready(const QString &id, const QImage &image);
 };

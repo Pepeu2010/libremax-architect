@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(LibreMaxArchitect VERSION 0.4.0 LANGUAGES CXX)
+project(LibreMaxArchitect VERSION 0.6.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
@@ -10,6 +10,8 @@ find_package(nlohmann_json 3.10 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(libzip CONFIG REQUIRED)
 add_library(lmx_core
+  libs/geometry/scene_cache.cpp libs/geometry/scene_cache.h
+  libs/persistence/project_library.cpp libs/persistence/project_library.h
   libs/placement/placement.cpp libs/placement/placement.h
   libs/library/model.cpp libs/library/model.h
   libs/document/document.cpp libs/document/document.h
@@ -36,8 +38,9 @@ endif()
 add_executable(libremax-architect apps/architect/main.cpp apps/architect/main_window.cpp apps/architect/main_window.h
   apps/architect/studio_theme.cpp apps/architect/studio_theme.h libs/viewport/cad_view.cpp libs/viewport/cad_view.h)
 target_sources(libremax-architect PRIVATE apps/architect/render_preview.cpp apps/architect/render_preview.h)
+target_sources(libremax-architect PRIVATE apps/architect/project_home.cpp apps/architect/project_home.h apps/architect/first_run.cpp apps/architect/first_run.h)
 qt_add_resources(libremax-architect studio_icons PREFIX "/studio" BASE resources
-  FILES resources/arrow-down.png resources/arrow-up.png resources/check.png)
+  FILES resources/arrow-down.png resources/arrow-up.png resources/check.png resources/brand/libremax-mark.png resources/brand/apartment-preview.png)
 target_link_libraries(libremax-architect PRIVATE lmx_core Qt6::Test)
 if(NOT MSVC)
   target_compile_options(libremax-architect PRIVATE -Wall -Wextra -Wpedantic)

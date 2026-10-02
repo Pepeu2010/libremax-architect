@@ -3,7 +3,9 @@
 #include "document/examples.h"
 #include "library/library.h"
 #include "library/thumbnails.h"
+#include "persistence/project_library.h"
 #include "persistence/recovery_store.h"
+#include "project_home.h"
 #include "render_preview.h"
 #include "rendering/render_job.h"
 #include "viewport/cad_view.h"
@@ -19,6 +21,7 @@
 #include <QProgressBar>
 #include <QPushButton>
 #include <QStackedWidget>
+#include <QTemporaryDir>
 #include <QTimer>
 #include <QTreeWidget>
 #include <map>
@@ -28,6 +31,7 @@ namespace lmx {
 class MainWindow final : public QMainWindow {
     Q_OBJECT
     Editor editor_;
+    std::unique_ptr<QTemporaryDir> testLibraryDirectory;
     std::unique_ptr<Library> library;
     AssetThumbnails thumbnails;
     RenderJob render;
@@ -69,12 +73,17 @@ class MainWindow final : public QMainWindow {
     QPushButton *lightColor;
     QColor selectedLightColor;
     QStackedWidget *workspace;
+    QStackedWidget *rootPages;
+    QWidget *editorPage;
+    ProjectHome *home;
+    std::unique_ptr<ProjectLibrary> projects;
     QAction *previewAction;
     RenderPreview *preview = nullptr;
     QString path;
     QStringList selectedIds;
     std::vector<Asset> visibleAssets;
     QTimer autosaveTimer;
+    QTimer searchTimer;
     RecoveryStore recovery;
     bool refreshing = false;
     bool testing = false;
@@ -89,6 +98,7 @@ class MainWindow final : public QMainWindow {
     void opening(bool window);
     void insertAsset(const QString &id, const Entity &object);
     Q_INVOKABLE void apartmentStarter();
+    Q_INVOKABLE void modernApartmentStarter();
     void focusRoom();
     void transform(const QString &mode);
     void automate(const std::string &kind);
@@ -101,12 +111,16 @@ class MainWindow final : public QMainWindow {
     void renderScene();
     void applyRenderSettings();
     Q_INVOKABLE void recover();
+    Q_INVOKABLE void showHome();
+    void enterEditor();
+    void rememberProject();
 
   protected:
     void closeEvent(QCloseEvent *) override;
 
   public:
-    explicit MainWindow(bool test = false, const QString &recoveryDirectory = {});
+    explicit MainWindow(bool test = false, const QString &recoveryDirectory = {}, bool welcome = false,
+                        const QString &testRoot = {});
     Editor &editor() { return editor_; }
     CadView *cad() { return viewport; }
     void loadProject(const QString &filename);

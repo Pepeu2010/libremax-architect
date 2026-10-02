@@ -1,3 +1,4 @@
+#include "first_run.h"
 #include "main_window.h"
 #include "materials/texture.h"
 #include "persistence/project_store.h"
@@ -5,10 +6,12 @@
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QCryptographicHash>
+#include <QDialogButtonBox>
 #include <QDir>
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
 #include <QDropEvent>
+#include <QElapsedTimer>
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -22,11 +25,13 @@
 #include <QScreen>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QSettings>
 #include <QSignalSpy>
 #include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QTest>
 #include <QTimer>
+#include <QWizard>
 #include <iostream>
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/spdlog.h>
@@ -36,12 +41,17 @@ int main(int argc, char **argv) {
     QApplication app(argc, argv);
     QApplication::setApplicationName("libremax");
     QApplication::setOrganizationName("LibreMax");
-    QApplication::setApplicationVersion("0.4.0");
+    QApplication::setApplicationVersion("0.6.0");
+    QApplication::setWindowIcon(QIcon(":/studio/brand/libremax-mark.png"));
     QCommandLineParser parser;
     parser.setApplicationDescription("LibreMax Architect — native interior design");
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addOption({"ui-smoke", "Run native UI acceptance and save real screenshots", "directory"});
+    parser.addOption(
+        {"modern-smoke", "Verify modern models, filter and self-contained apartment", "directory"});
+    parser.addOption({"experience-smoke", "Verify first run, tutorial, new project, save and recent projects",
+                      "directory"});
     parser.addOption(
         {"assembly-smoke", "Verify native apartment mounting and real furniture placement", "directory"});
     parser.addOption({"examples", "Generate valid sample .lmx projects", "directory"});
@@ -56,11 +66,17 @@ int main(int argc, char **argv) {
     parser.addOption({"blender", "Blender executable for render acceptance", "executable"});
     parser.addPositionalArgument("project", ".lmx project to open");
     parser.process(app);
-    bool test = parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") || parser.isSet("examples") ||
+    bool test = parser.isSet("experience-smoke") || parser.isSet("modern-smoke") ||
+                parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") || parser.isSet("examples") ||
                 parser.isSet("render-smoke") || parser.isSet("recovery-smoke") ||
                 parser.isSet("recovery-fixture") || parser.isSet("recovery-verify");
     if (test)
         QStandardPaths::setTestModeEnabled(true);
+    QTemporaryDir settingsDirectory;
+    if (test) {
+        QSettings::setDefaultFormat(QSettings::IniFormat);
+        QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, settingsDirectory.path());
+    }
 #if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
     auto logs = QStandardPaths::writableLocation(QStandardPaths::StateLocation) + "/logs";
 #else
@@ -199,10 +215,199 @@ int main(int argc, char **argv) {
         auto recoveryDirectory = parser.isSet("recovery-fixture")  ? parser.value("recovery-fixture")
                                  : parser.isSet("recovery-verify") ? parser.value("recovery-verify")
                                                                    : QString{};
-        lmx::MainWindow window(test, recoveryDirectory);
+        const auto experienceRoot =
+            parser.isSet("experience-smoke")
+                ? QDir(parser.value("experience-smoke"))
+                      .absoluteFilePath("state-" + QString::fromStdString(lmx::uuid()))
+                : QString{};
+        QElapsedTimer startup;
+        startup.start();
+        lmx::MainWindow window(test, recoveryDirectory, parser.isSet("experience-smoke"), experienceRoot);
+        std::cout << "STARTUP_SHELL_MS: " << startup.elapsed() << '\n';
         if (!parser.positionalArguments().isEmpty())
             window.loadProject(parser.positionalArguments().first());
         window.show();
+        if (!test || parser.isSet("experience-smoke"))
+            lmx::showOpening(&window);
+        if (parser.isSet("experience-smoke")) {
+            const auto directory = QDir(parser.value("experience-smoke")).absolutePath();
+            QDir().mkpath(directory);
+            QTimer::singleShot(300, &window, [directory] {
+                for (auto *top : QApplication::topLevelWidgets())
+                    if (top->objectName() == "openingLogo")
+                        top->screen()->grabWindow(top->winId()).save(directory + "/opening-logo.png");
+            });
+            QTimer::singleShot(1500, &window, [&window, &app, directory, experienceRoot] {
+                try {
+                    auto ensure = [](bool condition, const char *message) {
+                        if (!condition)
+                            throw std::runtime_error(message);
+                    };
+                    auto *tutorial = window.findChild<QWizard *>("firstRunTutorial");
+                    ensure(tutorial && tutorial->isVisible(), "First opening tutorial missing");
+                    ensure(tutorial->pageIds().size() == 15, "Complete tutorial chapters missing");
+                    auto *assets = window.findChild<QListWidget *>("assetList");
+                    ensure(assets && assets->count() == 0, "Home eagerly loaded the furniture catalog");
+                    ensure(
+                        tutorial->screen()->grabWindow(tutorial->winId()).save(directory + "/tutorial.png"),
+                        "Tutorial capture failed");
+                    for (int i = 0; i < 14; ++i) {
+                        QTest::mouseClick(tutorial->button(QWizard::NextButton), Qt::LeftButton);
+                        QTest::qWait(20);
+                        ensure(tutorial->currentId() == i + 1, "Tutorial keyboard/button navigation failed");
+                    }
+                    QTest::mouseClick(tutorial->button(QWizard::FinishButton), Qt::LeftButton);
+                    QTest::qWait(50);
+                    ensure(QSettings().value("onboarding/completed").toBool(),
+                           "Tutorial completion was not persisted");
+                    ensure(window.screen()->grabWindow(window.winId()).save(directory + "/home-empty.png"),
+                           "Home capture failed");
+                    QTimer acceptRoom;
+                    QObject::connect(&acceptRoom, &QTimer::timeout, &window, [] {
+                        if (auto *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()))
+                            if (auto *buttons = dialog->findChild<QDialogButtonBox *>())
+                                QTest::mouseClick(buttons->button(QDialogButtonBox::Ok), Qt::LeftButton);
+                    });
+                    acceptRoom.start(50);
+                    auto *create = window.findChild<QPushButton *>("homeNewProject");
+                    ensure(create, "New project home action missing");
+                    QTest::mouseClick(create, Qt::LeftButton);
+                    acceptRoom.stop();
+                    ensure(std::count_if(window.editor().document().entities.begin(),
+                                         window.editor().document().entities.end(),
+                                         [](const auto &e) { return e.type == "Room"; }) == 1,
+                           "Home new project did not create a real room");
+                    QTimer acceptFile;
+                    QObject::connect(&acceptFile, &QTimer::timeout, &window, [directory] {
+                        if (auto *dialog = qobject_cast<QFileDialog *>(QApplication::activeModalWidget())) {
+                            dialog->setOption(QFileDialog::DontConfirmOverwrite, true);
+                            dialog->selectFile(directory + "/Meu apartamento.lmx");
+                            QMetaObject::invokeMethod(dialog, "accept", Qt::QueuedConnection);
+                        }
+                    });
+                    acceptFile.start(50);
+                    ensure(window.saveProject(), "Save from first project failed");
+                    acceptFile.stop();
+                    auto restored = lmx::ProjectStore::open(directory + "/Meu apartamento.lmx");
+                    ensure(restored.serialize() == window.editor().document().serialize(),
+                           "Single file project changed after reopening");
+                    ensure(restored.name == "Meu apartamento", "Saved project name missing");
+                    QMetaObject::invokeMethod(&window, "showHome", Qt::DirectConnection);
+                    auto *cards = window.findChild<QListWidget *>("projectCards");
+                    ensure(cards && cards->count() == 1, "Saved project did not appear at home");
+                    ensure(window.screen()->grabWindow(window.winId()).save(directory + "/home-projects.png"),
+                           "Recent projects capture failed");
+                    lmx::MainWindow restarted(true, {}, true, experienceRoot);
+                    restarted.resize(900, 650);
+                    restarted.show();
+                    QTest::qWait(1100);
+                    auto *restartedCards = restarted.findChild<QListWidget *>("projectCards");
+                    ensure(restartedCards && restartedCards->count() == 1,
+                           "Project library did not survive a fresh window");
+                    ensure(!restarted.findChild<QWizard *>("firstRunTutorial"),
+                           "Completed first-run tutorial reopened automatically");
+                    ensure(
+                        restarted.screen()->grabWindow(restarted.winId()).save(directory + "/home-900.png"),
+                        "Compact home capture failed");
+                    auto *help = restarted.findChild<QPushButton *>("homeTutorial");
+                    QTest::mouseClick(help, Qt::LeftButton);
+                    ensure(restarted.findChild<QWizard *>("firstRunTutorial"),
+                           "Tutorial cannot be reopened from home");
+                    std::cout << "EXPERIENCE_PASS: logo opening, 15 tutorial chapters, lazy home, new room, "
+                                 "single .lmx save/open, durable project cards, 900 px home\n";
+                    app.exit(0);
+                } catch (const std::exception &error) {
+                    std::cerr << "EXPERIENCE_FAIL: " << error.what() << '\n';
+                    app.exit(1);
+                }
+            });
+        }
+        if (parser.isSet("modern-smoke")) {
+            const auto directory = QDir(parser.value("modern-smoke")).absolutePath();
+            QDir().mkpath(directory);
+            QTimer::singleShot(1500, &window, [&window, directory, &app] {
+                try {
+                    QSignalSpy failures(window.cad(), &lmx::CadView::failure);
+                    if (!QMetaObject::invokeMethod(&window, "modernApartmentStarter", Qt::DirectConnection))
+                        throw std::runtime_error("Modern apartment unavailable");
+                    auto *list = window.findChild<QListWidget *>("assetList");
+                    if (!list || list->count() != 18)
+                        throw std::runtime_error("Modern collection filter failed");
+                    for (int attempt = 0; attempt < 300; ++attempt) {
+                        int ready = 0;
+                        for (int i = 0; i < list->count(); ++i)
+                            ready += list->item(i)->data(Qt::UserRole + 2).toBool();
+                        if (ready == 18)
+                            break;
+                        if (attempt == 299)
+                            throw std::runtime_error("Modern geometry thumbnails missing");
+                        QTest::qWait(100);
+                    }
+                    // Exercise detailed meshes through the actual viewport drop path.
+                    lmx::Document placementDocument;
+                    lmx::addRectangularRoom(placementDocument, 4000, 4000, 2700, 120);
+                    window.editor().load(placementDocument);
+                    auto *cad = window.cad();
+                    cad->setTop(true);
+                    cad->frame();
+                    QTest::qWait(100);
+                    auto drop = [&](const QString &id, double x, double y) {
+                        QMimeData mime;
+                        mime.setData("application/x-libremax-asset", id.toUtf8());
+                        auto point = cad->project(x, y);
+                        QDragEnterEvent enter(point, Qt::CopyAction, &mime, Qt::LeftButton, Qt::NoModifier);
+                        QApplication::sendEvent(cad, &enter);
+                        QDragMoveEvent move(point, Qt::CopyAction, &mime, Qt::LeftButton, Qt::NoModifier);
+                        QApplication::sendEvent(cad, &move);
+                        QDropEvent event(QPointF(point), Qt::CopyAction, &mime, Qt::LeftButton,
+                                         Qt::NoModifier);
+                        QApplication::sendEvent(cad, &event);
+                        if (!event.isAccepted())
+                            throw std::runtime_error("Detailed mesh drop rejected available space");
+                        return window.editor().document().entities.back();
+                    };
+                    const auto cabinet = drop("modern-modern_wooden_cabinet", 2000, 90);
+                    if (std::abs(cabinet.transform.y - 62) > 0.2)
+                        throw std::runtime_error("Modern cabinet did not attach to wall");
+                    const auto table = drop("modern-side_table_01", 2000, 2200);
+                    const auto vase = drop("modern-ceramic_vase_02", 2000, 2200);
+                    if (std::abs(vase.transform.z - table.height - 2) > 0.2)
+                        throw std::runtime_error("Modern vase did not follow table height");
+                    const auto lamp = drop("modern-modern_ceiling_lamp_01", 3000, 3000);
+                    if (std::abs(lamp.transform.z + lamp.height - 2680) > 0.2)
+                        throw std::runtime_error("Modern pendant did not follow ceiling height");
+                    const auto mounted = window.editor().document().serialize();
+                    window.editor().history.undo();
+                    if (window.editor().document().contains(lamp.id))
+                        throw std::runtime_error("Modern insertion undo failed");
+                    window.editor().history.redo();
+                    if (window.editor().document().serialize() != mounted)
+                        throw std::runtime_error("Modern insertion redo lost materials or textures");
+                    window.editor().history.setClean();
+                    if (!QMetaObject::invokeMethod(&window, "modernApartmentStarter", Qt::DirectConnection))
+                        throw std::runtime_error("Modern apartment unavailable after placement");
+                    auto filename = directory + "/apartamento-moderno.lmx";
+                    lmx::ProjectStore::save(filename, window.editor().document(), false);
+                    auto reopened = lmx::ProjectStore::open(filename);
+                    if (reopened.serialize() != window.editor().document().serialize())
+                        throw std::runtime_error("Modern apartment round trip failed");
+                    window.editor().load(reopened);
+                    window.cad()->setTop(false);
+                    window.cad()->frame();
+                    QTest::qWait(400);
+                    if (failures.count() != 0)
+                        throw std::runtime_error("Modern viewport reported a geometry or texture failure");
+                    if (!window.screen()->grabWindow(window.winId()).save(directory + "/modern-catalog.png"))
+                        throw std::runtime_error("Modern screenshot failed");
+                    std::cout << "MODERN_PASS: 18 models, thumbnails, wall/table/ceiling drop, undo/redo, "
+                                 "embedded textures, reopen\n";
+                    app.exit(0);
+                } catch (const std::exception &e) {
+                    std::cerr << "MODERN_FAIL: " << e.what() << '\n';
+                    app.exit(1);
+                }
+            });
+        }
         if (parser.isSet("assembly-smoke")) {
             const auto directory = QDir(parser.value("assembly-smoke")).absolutePath();
             QDir().mkpath(directory);
@@ -214,7 +419,7 @@ int main(int argc, char **argv) {
                     };
                     auto *cad = window.cad();
                     auto *assets = window.findChild<QListWidget *>("assetList");
-                    ensure(assets && assets->count() == 79, "Ready model catalog missing");
+                    ensure(assets && assets->count() == 97, "Ready model catalog missing");
                     int ready = 0;
                     for (int attempt = 0; attempt < 300; ++attempt) {
                         ready = 0;
@@ -224,7 +429,7 @@ int main(int argc, char **argv) {
                             break;
                         QTest::qWait(100);
                     }
-                    ensure(ready == 79, "Native thumbnails missing for real models");
+                    ensure(ready == 97, "Native thumbnails missing for real models");
                     lmx::Document d;
                     lmx::addRectangularRoom(d, 4000, 3000, 2700, 120);
                     window.editor().load(d);
@@ -331,8 +536,8 @@ int main(int argc, char **argv) {
                     ensure(assets->horizontalScrollBar()->maximum() == 0, "Compact catalog overflows");
                     ensure(window.screen()->grabWindow(window.winId()).save(directory + "/apartment-900.png"),
                            "Compact screenshot failed");
-                    std::cout << "ASSEMBLY_PASS: 79 thumbnails, wall ghost/drop, outside rejection, mouse "
-                                 "move undo/redo, window wall attachment, 52 ready meshes, 3-room apartment "
+                    std::cout << "ASSEMBLY_PASS: 97 thumbnails, wall ghost/drop, outside rejection, mouse "
+                                 "move undo/redo, window wall attachment, 70 ready meshes, 3-room apartment "
                                  "save/open, 900 px panels\n";
                     app.exit(0);
                 } catch (const std::exception &e) {
@@ -416,8 +621,8 @@ int main(int argc, char **argv) {
                             break;
                         QTest::qWait(100);
                     }
-                    ensure(ready == 79, "Shipped asset geometry thumbnails were not generated");
-                    std::cout << "THUMBNAILS_PASS: 79 actual geometry previews\n";
+                    ensure(ready == 97, "Shipped asset geometry thumbnails were not generated");
+                    std::cout << "THUMBNAILS_PASS: 97 actual geometry previews\n";
                     QListWidgetItem *asset = nullptr;
                     for (int i = 0; i < assets->count(); ++i)
                         if (assets->item(i)->data(Qt::UserRole).toString() == "base-1")

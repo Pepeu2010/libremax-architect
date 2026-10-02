@@ -4,10 +4,23 @@
 #include <QFileInfo>
 #include <QImageReader>
 #include <QSaveFile>
+#include <QThread>
 #include <QtConcurrent>
+#ifdef Q_OS_WIN
+#include <windows.h>
+#else
+#include <sys/resource.h>
+#endif
 
 namespace lmx {
 RenderJob::RenderJob(QObject *parent) : QObject(parent) {
+#ifdef Q_OS_WIN
+    process.setCreateProcessArgumentsModifier([](QProcess::CreateProcessArguments *arguments) {
+        arguments->flags |= CREATE_NO_WINDOW | BELOW_NORMAL_PRIORITY_CLASS;
+    });
+#else
+    process.setChildProcessModifier([] { setpriority(PRIO_PROCESS, 0, 10); });
+#endif
     connect(&process, &QProcess::readyReadStandardOutput, this,
             [this] { emit log(QString::fromUtf8(process.readAllStandardOutput())); });
     connect(&process, &QProcess::readyReadStandardError, this,
@@ -98,11 +111,28 @@ void RenderJob::start(const Document &snapshot, const QString &blender, const QS
                 }
                 emit state(tr("Renderizando"));
                 process.setProgram(blender);
-                process.setArguments({"--background", "--factory-startup", "--python-exit-code", "1",
-                                      "--python", script, "--", "--scene", work->filePath("scene.json"),
-                                      "--output", renderedFile, "--width", QString::number(width), "--height",
-                                      QString::number(height), "--samples", QString::number(samples),
-                                      "--device", device});
+                const int threads = std::clamp(QThread::idealThreadCount() - 2, 1, 8);
+                process.setArguments({"--background",
+                                      "--factory-startup",
+                                      "--threads",
+                                      QString::number(threads),
+                                      "--python-exit-code",
+                                      "1",
+                                      "--python",
+                                      script,
+                                      "--",
+                                      "--scene",
+                                      work->filePath("scene.json"),
+                                      "--output",
+                                      renderedFile,
+                                      "--width",
+                                      QString::number(width),
+                                      "--height",
+                                      QString::number(height),
+                                      "--samples",
+                                      QString::number(samples),
+                                      "--device",
+                                      device});
                 process.start();
             });
     auto directory = work;

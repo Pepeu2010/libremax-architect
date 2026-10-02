@@ -63,6 +63,12 @@ def surface_maps(entry, material, shader, texture_paths):
         tree.links.new(uv.outputs['UV'], texture.inputs['Vector'])
         if socket:
             tree.links.new(texture.outputs['Color'], shader.inputs[socket])
+            if channel == 'baseColorTexture' and 'alphaCutoff' in entry:
+                cutoff = tree.nodes.new('ShaderNodeMath')
+                cutoff.operation = 'GREATER_THAN'
+                cutoff.inputs[1].default_value = entry['alphaCutoff']
+                tree.links.new(texture.outputs['Alpha'], cutoff.inputs[0])
+                tree.links.new(cutoff.outputs[0], shader.inputs['Alpha'])
         else:
             normal = tree.nodes.new('ShaderNodeNormalMap')
             normal.inputs['Strength'].default_value = entry.get('normalStrength', 1)
@@ -76,15 +82,17 @@ def photographic_mesh(part, entry, material):
     mesh = bpy.data.meshes.new(part['owner'])
     mesh.from_pydata(part['vertices'], [], part['triangles'])
     mesh.update()
-    # OCC faces have separate vertices. Weld topology before beveling real edges.
-    bm = bmesh.new()
-    bm.from_mesh(mesh)
-    bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=1e-7)
-    bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
-    bmesh.ops.dissolve_limit(bm, angle_limit=0.001, verts=list(bm.verts), edges=list(bm.edges))
-    bm.to_mesh(mesh)
-    bm.free()
-    mesh.update()
+    authored_uv = entry.get('modelUV', False) and 'uvs' in part
+    if not authored_uv:
+        # OCC solids have separate vertices. Imported models retain authored seams.
+        bm = bmesh.new()
+        bm.from_mesh(mesh)
+        bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=1e-7)
+        bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+        bmesh.ops.dissolve_limit(bm, angle_limit=0.001, verts=list(bm.verts), edges=list(bm.edges))
+        bm.to_mesh(mesh)
+        bm.free()
+        mesh.update()
     uv = mesh.uv_layers.new(name='LMXSurfaceUV')
     scale = 1000.0 / entry.get('textureScale', 1000.0)
     rotation = math.radians(entry.get('textureRotation', 0))
@@ -93,24 +101,30 @@ def photographic_mesh(part, entry, material):
         axis = max(range(3), key=lambda i: abs(face.normal[i]))
         axes = (1, 2) if axis == 0 else (0, 2) if axis == 1 else (0, 1)
         for loop in face.loop_indices:
+            if authored_uv:
+                uv.data[loop].uv = part['uvs'][mesh.loops[loop].vertex_index]
+                continue
             p = mesh.vertices[mesh.loops[loop].vertex_index].co
             u, v = ((p[i] + offset[i]) * scale for i in axes)
             uv.data[loop].uv = (u * math.cos(rotation) - v * math.sin(rotation), u * math.sin(rotation) + v * math.cos(rotation))
         face.use_smooth = True
     mesh.set_sharp_from_angle(angle=math.radians(35))
+    if authored_uv and 'normals' in part:
+        mesh.normals_split_custom_set_from_vertices(part['normals'])
     obj = bpy.data.objects.new(part['owner'], mesh)
     bpy.context.scene.collection.objects.link(obj)
     obj.data.materials.append(material)
     # Room boundaries meet other solids; beveling them opens tiny daylight gaps.
-    if part.get('kind') not in ('Wall', 'HalfWall', 'Floor', 'Ceiling'):
+    if not authored_uv and part.get('kind') not in ('Wall', 'HalfWall', 'Floor', 'Ceiling'):
         bevel = obj.modifiers.new('Physical edge highlights', 'BEVEL')
         bevel.width = 0.0004 if entry.get('transmission', 0) else 0.0012
         bevel.segments = 3
         bevel.limit_method = 'ANGLE'
         bevel.angle_limit = math.radians(35)
         bevel.harden_normals = True
-    normal = obj.modifiers.new('Planar face normals', 'WEIGHTED_NORMAL')
-    normal.keep_sharp = True
+    if not authored_uv:
+        normal = obj.modifiers.new('Planar face normals', 'WEIGHTED_NORMAL')
+        normal.keep_sharp = True
     # Thin architectural panes pass daylight shadow rays; camera/glossy rays keep glass.
     # This avoids noisy refractive caustics, while preserving geometry and reflections.
     if part.get('kind') == 'Window' and entry.get('transmission', 0) > 0:

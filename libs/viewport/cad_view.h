@@ -1,5 +1,6 @@
 #pragma once
 #include "document/document.h"
+#include "geometry/scene_cache.h"
 #include "library/library.h"
 #include "placement/placement.h"
 #include <AIS_InteractiveContext.hxx>
@@ -16,6 +17,14 @@ class CadView final : public QWidget {
     Handle(AIS_InteractiveContext) context;
     Handle(V3d_View) view;
     Handle(AIS_Shape) preview;
+    std::string previewKey;
+    std::optional<bool> previewAllowed;
+    SceneGeometryCache geometryCache;
+    struct DisplayEntry {
+        std::string key;
+        Handle(AIS_Shape) shape;
+    };
+    std::map<std::string, DisplayEntry> displayed;
     std::map<const AIS_InteractiveObject *, std::string> owners;
     Document current;
     QTemporaryDir textureCache;

@@ -1,3 +1,11 @@
+# Benchmark report — limites do ciclo 0.6.0
+
+No host Windows, reutilizar o cache da cena pequena de cozinha sem mudanças geométricas levou 0,2029 ms, contra 111,726 ms para construí-lo na primeira chamada. O teste também verifica invalidação de parede/abertura/automações. O construtor da home levou 181 ms; essa medida exclui Qt/DLLs. Modelos detalhados e seus 66 mapas somam 31,12 MiB distribuídos; o cache de payload mantém até 48 MiB. Cycles CPU 960×540/64 informou salvamento aos 55,969 s. Esses números são amostras locais, não p95, FPS, memória total ou comparação com VDMax. [CYCLE_06](CYCLE_06.md).
+
+Busca sem payload, miniaturas em workers e atualização incremental do viewport foram implementadas; ainda falta benchmark de cenas 100/500/5.000 objetos, interação prolongada, footprint de undo e GPU/Linux.
+
+---
+
 # Benchmark report — limites do ciclo 0.3.0
 
 Host e versões em [TEST_REPORT](TEST_REPORT.md). Build Release, Windows/UCRT64. Nenhuma extrapolação para Linux ou desempenho de produto completo.

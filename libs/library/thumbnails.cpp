@@ -94,7 +94,7 @@ QImage renderAssetThumbnail(const Asset &asset) {
     std::sort(triangles.begin(), triangles.end(),
               [](const auto &a, const auto &b) { return a.depth < b.depth; });
     QImage result(192, 144, QImage::Format_ARGB32_Premultiplied);
-    result.fill(QColor("#111a22"));
+    result.fill(QColor("#17171f"));
     QPainter painter(&result);
     painter.setRenderHint(QPainter::Antialiasing);
     const double scale =
@@ -111,13 +111,13 @@ QImage renderAssetThumbnail(const Asset &asset) {
 }
 AssetThumbnails::AssetThumbnails(QObject *parent) : QObject(parent) {
     pool.setMaxThreadCount(2);
-    cacheDirectory = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/thumbnails-v2";
+    cacheDirectory = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/thumbnails-v3";
     QDir().mkpath(cacheDirectory);
 }
 AssetThumbnails::~AssetThumbnails() {
     pool.waitForDone();
 }
-QImage AssetThumbnails::request(const Asset &asset) {
+QImage AssetThumbnails::request(const Asset &asset, std::function<Asset(const Asset &)> loader) {
     auto recipe = materialPresets().dump() + asset.recipe.dump() +
                   QString("/%1/%2/%3").arg(asset.width).arg(asset.height).arg(asset.depth).toStdString();
     auto key = QString::fromLatin1(
@@ -146,9 +146,9 @@ QImage AssetThumbnails::request(const Asset &asset) {
             file.commit();
         emit ready(id, image);
     });
-    watcher->setFuture(QtConcurrent::run(&pool, [asset] {
+    watcher->setFuture(QtConcurrent::run(&pool, [asset, loader] {
         try {
-            return renderAssetThumbnail(asset);
+            return renderAssetThumbnail(loader ? loader(asset) : asset);
         } catch (const Standard_Failure &) {
             return QImage{};
         } catch (const std::exception &) {

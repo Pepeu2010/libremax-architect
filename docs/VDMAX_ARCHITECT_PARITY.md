@@ -1,6 +1,6 @@
 # Matriz de paridade — VDMax 3.0 Arquitetos e Decoradores
 
-Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. Versão LibreMax: 0.4.0 em desenvolvimento. **Não há paridade completa nem release 1.0.**
+Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. Versão LibreMax: 0.6.0 em desenvolvimento. **Não há paridade completa nem release 1.0.**
 
 Complemento visual em 2026-09-30: [auditoria](VISUAL_REFERENCE_AUDIT.md), 11 imagens inspecionadas de 47 referências indexadas. `visual_refs` indica somente essas imagens consultadas; não promove paridade funcional automaticamente.
 
@@ -33,11 +33,11 @@ Fontes oficiais consultadas:
 | G04 | Geometria | Rodatetos | Tutorial oficial dedicado | — | — | NOT_STARTED | V | Falta varredura de perímetro | — |
 | I01 | Importação | DXF | Tabela e tutorial dedicados | DXF ASCII, cinco tipos 2D, unidade/layers bloqueados persistentes | `[dxf]` | FUNCTIONAL | C,V | Sem malhas, bulge, conversão de linhas ou QA do diálogo | — |
 | I02 | Importação | Modelos externos | Formatos exigidos pela spec | — | — | NOT_STARTED | SPEC | GLB/OBJ/STL/DAE/STEP/IGES | — |
-| L01 | Biblioteca | Biblioteca de módulos | Módulos cozinha/dormitório | SQLite WAL/FTS5 + 25 receitas, duas aberturas e 52 malhas Kenney | `[library]` | IN_PROGRESS | P,C | Miniaturas reais assíncronas implementadas; faltam coleções, packs e catálogo extenso | LIB-01 |
+| L01 | Biblioteca | Biblioteca de módulos | Módulos cozinha/dormitório | SQLite WAL/FTS5 + 25 receitas, duas aberturas, 52 malhas Kenney e 18 Poly Haven | `[library]` + modern-smoke | IN_PROGRESS | P,C | Coleção Apartamento atual e miniaturas reais assíncronas; packs e catálogo extenso faltam | LIB-01 |
 | L02 | Biblioteca | Pesquisa local | Biblioteca categorizada | Busca sem acentos, filtros, favoritos, recentes | `[library]` | FUNCTIONAL | C,SPEC | Benchmark usa 10.000 fixtures, não 10.000 assets distribuídos | LIB-01 |
 | L03 | Biblioteca | Arrastar e soltar | Workflow exigido pela spec | MIME, prévia real, parede/piso/cantos/vizinhos, colisão e posição externa recusadas | assembly-smoke: planta/3D, MIME/ghost/drop + undo | FUNCTIONAL | manual oficial | Arraste manual e múltiplas plataformas pendentes | LIB-01 |
 | L04 | Biblioteca | Importar .lmaxpack | Formato LibreMax | — | — | NOT_STARTED | SPEC | Segurança antes de extração obrigatória | — |
-| L05 | Biblioteca | Biblioteca decorativa extensa | Mais de 3.000 itens | 79 itens: 25 receitas próprias, duas aberturas e 52 modelos prontos | — | IN_PROGRESS | P,B | Não atende meta de 3.000 | — |
+| L05 | Biblioteca | Biblioteca decorativa extensa | Mais de 3.000 itens | 97 itens: 25 receitas próprias, duas aberturas e 70 modelos prontos | modern-smoke + assembly-smoke | IN_PROGRESS | P,B | 18 modelos detalhados não atendem meta de 3.000 | — |
 | M01 | Módulos | Cozinha | Largura/altura/profundidade editáveis | Balcões, gaveteiro, aéreos, torre, nicho, ilha | `[modules]` + UI smoke | IN_PROGRESS | P,C | Cantos e famílias complexas ausentes | — |
 | M02 | Módulos | Dormitório | Modulação própria da categoria | Roupeiros 2/3/4 portas, criado, cama | `[modules]` | IN_PROGRESS | P,C | Correr/canto/espelho frontal faltam | — |
 | M03 | Módulos | Redimensionamento milimétrico | Editar dimensões sem trocar módulo | Recomposição de painéis/frentes/prateleiras/puxadores a 0,1 mm | `[modules]` + UI smoke | FUNCTIONAL | P | Sem scale destrutivo; limites por família precisam ampliar | — |
@@ -65,7 +65,7 @@ Fontes oficiais consultadas:
 | R02 | Câmeras | Câmeras | Requisito da spec | Posição/alvo/lente, abertura/foco e seleção por UUID; exposição/ambiente/denoise persistentes | `[render]` | IN_PROGRESS | SPEC | Seletor integrado e roundtrip testados; preset por cômodo implementado; posicionamento interativo completo falta | RENDER-06 |
 | R03 | Render | Ray tracing | Ray-trace com qualidade variável | QProcess + snapshot + Cycles + denoise, exposição/ambiente, GPU/CPU | Smoke QProcess/Cycles CPU | IN_PROGRESS | P | Sem fila multi-job e galeria persistente | RENDER-06,RENDER-08 |
 | R04 | Render | Exportar imagens | Resultado de apresentação | PNG/JPEG via Blender e visualizador central com exportação de cópia | Smoke 1280×720/128 CPU + inspeção visual | FUNCTIONAL | P,SPEC | PNG 1280×720 e cópia pela UI testados; JPEG pela UI e 1080p/4K pendentes | RENDER-08,VISUAL-03 |
-| P01 | Projetos | Salvar/abrir | Requisito da spec | Container ZIP v1, UUIDs, backup, validação e atomic replace | `[persistence]` + UI smoke | IN_PROGRESS | SPEC | Texturas incorporadas; modelos 3D/renders/migrations futuros faltam | — |
+| P01 | Projetos | Salvar/abrir | Requisito da spec | Container ZIP v1, UUIDs, modelos e mapas incorporados, backup, validação e atomic replace; home com recentes | `[persistence]` + UI/modern/experience smoke | IN_PROGRESS | SPEC | Renders e migrations futuros faltam; índice local não é backup | — |
 | P02 | Projetos | Autosave | Requisito da spec | Intervalo configurável 1–60 min, 5 snapshots por UUID | `[recovery]` + encerramento forçado/reinício | FUNCTIONAL | SPEC | Timer configurável implementado; QA de configuração pela UI pendente | — |
 | P03 | Projetos | Crash recovery | Requisito da spec | Seleção de versão, diálogo, descarte seguro, skip de corruptos | `[recovery]` + `--recovery-smoke` (processo morto e outro iniciado) | FUNCTIONAL | SPEC | Um projeto via UI comprovado; múltiplas versões via core; energia/interrupção durante escrita não testadas | — |
 | P04 | Projetos | Backup da biblioteca | Requisito da spec | — | — | NOT_STARTED | SPEC | — | — |
@@ -75,3 +75,5 @@ Fontes oficiais consultadas:
 Fora de escopo: plano de corte, nesting, BOM industrial, ERP/MRP, CNC, custos de matéria-prima, etiquetas e produção. Nenhuma dessas funções é incluída no roadmap.
 
 Pesquisa adicional de arrasto/encaixe, catálogo e comparação de limites: [VDMAX_RESEARCH_04](VDMAX_RESEARCH_04.md). Testes executados neste ciclo: [CYCLE_04](CYCLE_04.md).
+
+Atualização 0.6: [CYCLE_06](CYCLE_06.md), modelos detalhados, tutorial e biblioteca inicial. Não altera os gates abertos de render e de paridade integral.

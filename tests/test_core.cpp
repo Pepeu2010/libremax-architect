@@ -3,11 +3,13 @@
 #include "document/document.h"
 #include "document/examples.h"
 #include "geometry/geometry.h"
+#include "geometry/scene_cache.h"
 #include "import/dxf.h"
 #include "library/library.h"
 #include "library/model.h"
 #include "library/thumbnails.h"
 #include "materials/texture.h"
+#include "persistence/project_library.h"
 #include "persistence/project_store.h"
 #include "persistence/recovery_store.h"
 #include "placement/placement.h"
@@ -244,6 +246,89 @@ TEST_CASE("All 52 ready furniture meshes embed, persist and render independently
     REQUIRE(library.search("Novo nome").size() == 1);
     REQUIRE(library.search({}, {}, true).size() == 1);
 }
+TEST_CASE("Modern CC0 furniture retains authored UVs, normals, textures and provenance", "[modern][models]") {
+    QTemporaryDir dir;
+    Library library(dir.filePath("modern.db"), QStringLiteral(LMX_SOURCE_DIR) + "/starter-models");
+    QFile catalog(QStringLiteral(LMX_SOURCE_DIR) + "/starter-models/modern-catalog.json");
+    REQUIRE(catalog.open(QIODevice::ReadOnly));
+    library.seed(Json::parse(catalog.readAll().toStdString()));
+    const auto all = library.search();
+    REQUIRE(all.size() == 18);
+    for (const auto &asset : all) {
+        INFO(asset.id.toStdString());
+        REQUIRE_FALSE(asset.textures.empty());
+        Document d;
+        Library::attachModel(d, asset);
+        auto object = Library::instantiate(asset, 100, 200);
+        object.transform.yaw = 37;
+        object.transform.mirrored = true;
+        d.entities.push_back(object);
+        REQUIRE(object.metadata.at("author") != "Kenney");
+        REQUIRE(object.metadata.at("source").get<std::string>().starts_with("https://polyhaven.com/a/"));
+        REQUIRE_NOTHROW(d.validate());
+        auto snapshot = meshSnapshot(d);
+        REQUIRE_FALSE(snapshot.at("meshes").empty());
+        for (const auto &mesh : snapshot.at("meshes")) {
+            REQUIRE(mesh.at("uvs").size() == mesh.at("vertices").size());
+            REQUIRE(mesh.at("normals").size() == mesh.at("vertices").size());
+        }
+        REQUIRE_FALSE(renderAssetThumbnail(asset).isNull());
+        const auto filename = dir.filePath("self-contained.lmx");
+        ProjectStore::save(filename, d, false);
+        const auto restored = ProjectStore::open(filename);
+        REQUIRE(restored.serialize() == d.serialize());
+        REQUIRE(meshSnapshot(restored) == snapshot);
+        // An additional copy preserves the user's changed material finish.
+        const auto id = readModel(asset.model).at("materials")[0].at("id");
+        for (auto &material : d.materials)
+            if (material.at("id") == id)
+                material["roughness"] = 0.123;
+        Library::attachModel(d, asset);
+        for (const auto &material : d.materials)
+            if (material.at("id") == id)
+                REQUIRE(material.at("roughness") == 0.123);
+    }
+    auto bad = all.front();
+    bad.textures.begin()->second.append('x');
+    Document unchanged;
+    const auto before = unchanged.serialize();
+    REQUIRE_THROWS(Library::attachModel(unchanged, bad));
+    REQUIRE(unchanged.serialize() == before);
+    bad = all.front();
+    bad.textures.clear();
+    REQUIRE_THROWS(Library::attachModel(unchanged, bad));
+    REQUIRE(unchanged.serialize() == before);
+    auto invalid = readModel(all.front().model);
+    invalid["parts"][0]["uvs"].erase(invalid["parts"][0]["uvs"].begin());
+    REQUIRE_THROWS(readModel(QByteArray::fromStdString(invalid.dump())));
+    invalid = readModel(all.front().model);
+    invalid["parts"][0]["normals"][0] = {0, 0, 0};
+    REQUIRE_THROWS(readModel(QByteArray::fromStdString(invalid.dump())));
+    invalid = readModel(all.front().model);
+    invalid["parts"][0]["uvs"][0] = {1e20, 0};
+    REQUIRE_THROWS(readModel(QByteArray::fromStdString(invalid.dump())));
+}
+TEST_CASE("Ceiling fixtures follow room height and reject outside or obstructed placement",
+          "[modern][placement]") {
+    Document d;
+    addRectangularRoom(d, 4000, 4000, 2700, 120);
+    auto lamp = entity("DecorativeObject", "Pendente");
+    lamp.parameters = {{"family", "lamp"}, {"placement", "ceiling"}};
+    lamp.width = lamp.depth = 400;
+    lamp.height = 950;
+    const auto placed = placeObject(d, lamp, 2000, 2000, true);
+    REQUIRE(placed.allowed);
+    REQUIRE(placed.wall.empty());
+    REQUIRE(placed.object.transform.z == 1730);
+    REQUIRE(placed.message.starts_with("No teto"));
+    REQUIRE_FALSE(placeObject(d, lamp, -1000, 2000, true).allowed);
+    lamp.height = 2800;
+    REQUIRE_FALSE(placeObject(d, lamp, 2000, 2000, true).allowed);
+    lamp.height = 950;
+    d.entities.push_back(placed.object);
+    lamp.id = uuid();
+    REQUIRE_FALSE(placeObject(d, lamp, 2000, 2000, true).allowed);
+}
 TEST_CASE("numeric expressions are bounded and do not execute code", "[units]") {
     REQUIRE(evaluate("800+20") == 820);
     REQUIRE(evaluate("1200/2") == 600);
@@ -255,6 +340,73 @@ TEST_CASE("numeric expressions are bounded and do not execute code", "[units]") 
     REQUIRE_THROWS(evaluate("system(1)"));
     REQUIRE_THROWS(evaluate("999999999"));
     REQUIRE(millimeters(812.54) == 812.5);
+}
+TEST_CASE("Project home index persists previews, deduplicates paths and preserves project files",
+          "[experience][persistence]") {
+    QTemporaryDir directory;
+    auto filename = directory.filePath("Apartamento.lmx");
+    auto document = kitchenExample();
+    ProjectStore::save(filename, document, false);
+    QFile original(filename);
+    REQUIRE(original.open(QIODevice::ReadOnly));
+    const auto originalBytes = original.readAll();
+    original.close();
+    ProjectLibrary library(directory.filePath("library"));
+    REQUIRE(library.projects().empty());
+    QImage preview(200, 100, QImage::Format_RGB32);
+    preview.fill(Qt::red);
+    library.remember(filename, document, preview);
+    library.remember(filename, document);
+    ProjectLibrary reopened(directory.filePath("library"));
+    auto projects = reopened.projects();
+    REQUIRE(projects.size() == 1);
+    REQUIRE(projects[0].name.toStdString() == document.name);
+    REQUIRE(projects[0].available);
+    REQUIRE_FALSE(QImage(projects[0].thumbnail).isNull());
+    REQUIRE(original.open(QIODevice::ReadOnly));
+    REQUIRE(original.readAll() == originalBytes);
+    original.close();
+    REQUIRE(QFile::rename(filename, directory.filePath("Movido.lmx")));
+    REQUIRE_FALSE(reopened.projects()[0].available);
+    reopened.forget(filename);
+    REQUIRE(reopened.projects().empty());
+    REQUIRE(QFile::exists(directory.filePath("Movido.lmx")));
+}
+TEST_CASE("Scene cache reuses solids and invalidates walls, openings and associated finishes correctly",
+          "[performance][geometry]") {
+    auto document = kitchenExample();
+    SceneGeometryCache cache;
+    QElapsedTimer timer;
+    timer.start();
+    const auto first = cache.scene(document);
+    const auto cold = timer.nsecsElapsed();
+    const auto count = cache.buildCount();
+    timer.restart();
+    const auto second = cache.scene(document);
+    const auto warm = timer.nsecsElapsed();
+    REQUIRE(second.size() == first.size());
+    REQUIRE(cache.buildCount() == count);
+    for (std::size_t i = 0; i < first.size(); ++i)
+        REQUIRE(first[i].shape.TShape() == second[i].shape.TShape());
+    std::cout << "SCENE_CACHE_BENCHMARK: cold " << cold / 1e6 << " ms; warm " << warm / 1e6 << " ms\n";
+    document.name = "Nome alterado";
+    document.entities[0].name = "Outro nome";
+    document.materials[0]["baseColor"] = {0.1, 0.2, 0.3};
+    cache.scene(document);
+    REQUIRE(cache.buildCount() == count);
+    auto module = std::find_if(document.entities.begin(), document.entities.end(),
+                               [](const auto &e) { return e.type == "FurnitureModule"; });
+    module->width += 10;
+    cache.scene(document);
+    REQUIRE(cache.buildCount() > count + 1); // Source module and its associated countertop/plinth.
+    const auto afterModule = cache.buildCount();
+    auto door = std::find_if(document.entities.begin(), document.entities.end(),
+                             [](const auto &e) { return e.type == "Door"; });
+    door->width += 10;
+    cache.scene(document);
+    REQUIRE(cache.buildCount() == afterModule + 2); // Opening geometry and its wall cut.
+    door->visible = false;
+    REQUIRE(cache.scene(document).size() == buildScene(document).size());
 }
 TEST_CASE("wall vertical workflow keeps UUID across commands and project reopening",
           "[persistence][commands]") {
@@ -638,7 +790,7 @@ TEST_CASE("library thumbnails show real furniture geometry and distinct decorati
     int geometryPixels = 0;
     for (int y = 0; y < first.height(); ++y)
         for (int x = 0; x < first.width(); ++x)
-            geometryPixels += first.pixelColor(x, y) != QColor("#111a22");
+            geometryPixels += first.pixelColor(x, y) != first.pixelColor(0, 0);
     REQUIRE(geometryPixels > 1000);
 }
 TEST_CASE("bundled PBR maps remain self contained and reject missing normals or tampered source",

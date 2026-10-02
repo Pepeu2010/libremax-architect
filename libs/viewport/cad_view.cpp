@@ -5,7 +5,10 @@
 #include <Aspect_GridType.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <Bnd_Box.hxx>
+#include <Graphic3d_Texture2D.hxx>
+#include <Graphic3d_TextureParams.hxx>
 #include <OpenGl_GraphicDriver.hxx>
+#include <Prs3d_ShadingAspect.hxx>
 #include <QApplication>
 #include <QDragEnterEvent>
 #include <QDropEvent>
@@ -58,7 +61,7 @@ void CadView::initialize() {
         view->SetWindow(window);
         if (!window->IsMapped())
             window->Map();
-        view->SetBackgroundColor(Quantity_Color(0.008, 0.014, 0.022, Quantity_TOC_RGB));
+        view->SetBackgroundColor(Quantity_Color(0.012, 0.012, 0.019, Quantity_TOC_RGB));
         view->ChangeRenderingParams().NbMsaaSamples = 4;
         view->SetProj(V3d_Zpos);
         view->SetScale(6000);
@@ -88,10 +91,11 @@ void CadView::scene(const Document &d) {
     if (context.IsNull())
         return;
     try {
-        context->RemoveAll(false);
-        preview.Nullify();
+        clearPreview();
         owners.clear();
-        for (const auto &part : buildScene(d)) {
+        std::set<std::string> alive;
+        std::map<std::string, int> indices;
+        for (const auto &part : geometryCache.scene(d)) {
             const auto &owner = d.at(part.owner);
             if (cutaway && owner.type == "Ceiling")
                 continue;
@@ -112,7 +116,19 @@ void CadView::scene(const Document &d) {
                 }
             if (mat.is_null())
                 throw std::invalid_argument("Material de componente não encontrado");
-            if (mat.contains("baseColorTexture") && owner.type != "MeshObject") {
+            const auto displayId = part.owner + "/" + std::to_string(indices[part.owner]++);
+            alive.insert(displayId);
+            const auto key = std::to_string(reinterpret_cast<std::uintptr_t>(part.shape.TShape().get())) +
+                             mat.dump() + (owner.locked ? "/locked" : "/editable");
+            auto existing = displayed.find(displayId);
+            if (existing != displayed.end() && existing->second.key == key) {
+                owners.emplace(existing->second.shape.get(), part.owner);
+                continue;
+            }
+            if (existing != displayed.end())
+                context->Remove(existing->second.shape, false);
+            const bool modelTexture = owner.type == "MeshObject" && mat.value("modelUV", false);
+            if (mat.contains("baseColorTexture") && (owner.type != "MeshObject" || modelTexture)) {
                 auto hash = mat.at("baseColorTexture").get<std::string>();
                 auto filename = textureCache.filePath(QString::fromStdString(hash) + ".png");
                 if (!QFile::exists(filename)) {
@@ -121,15 +137,30 @@ void CadView::scene(const Document &d) {
                         textureFile.write(d.embeddedAssets.at(hash)) < 0)
                         throw std::runtime_error("Falha ao preparar textura de viewport");
                 }
-                Handle(AIS_TexturedShape) textured = new AIS_TexturedShape(part.shape);
-                textured->SetTextureFileName(QFile::encodeName(filename).constData());
-                textured->SetTextureMapOn();
-                textured->SetTextureScale(true, mat.value("textureScale", 1000.0),
-                                          mat.value("textureScale", 1000.0));
-                textured->SetDisplayMode(3);
-                shape = textured;
+                if (modelTexture) {
+                    // Mesh triangulations carry their original UVs, without planar remapping.
+                    shape->Attributes()->SetupOwnShadingAspect();
+                    auto aspect = shape->Attributes()->ShadingAspect()->Aspect();
+                    Handle(Graphic3d_Texture2D) texture =
+                        new Graphic3d_Texture2D(QFile::encodeName(filename).constData());
+                    texture->GetParams()->SetModulate(true);
+                    aspect->SetTextureMap(texture);
+                    aspect->SetTextureMapOn();
+                    if (mat.contains("alphaCutoff"))
+                        aspect->SetAlphaMode(Graphic3d_AlphaMode_Mask, mat.at("alphaCutoff").get<float>());
+                } else {
+                    Handle(AIS_TexturedShape) textured = new AIS_TexturedShape(part.shape);
+                    textured->SetTextureFileName(QFile::encodeName(filename).constData());
+                    textured->SetTextureMapOn();
+                    textured->SetTextureScale(true, mat.value("textureScale", 1000.0),
+                                              mat.value("textureScale", 1000.0));
+                    textured->SetDisplayMode(3);
+                    shape = textured;
+                }
             }
             auto c = mat.at("baseColor");
+            if (modelTexture && mat.contains("baseColorTexture"))
+                c = Json::array({1.0, 1.0, 1.0});
             shape->SetColor(
                 Quantity_Color(c[0].get<double>(), c[1].get<double>(), c[2].get<double>(), Quantity_TOC_RGB));
             if (mat.value("transmission", 0.0) > 0)
@@ -144,7 +175,14 @@ void CadView::scene(const Document &d) {
             if (d.at(part.owner).locked)
                 context->Deactivate(shape);
             owners.emplace(shape.get(), part.owner);
+            displayed[displayId] = {key, shape};
         }
+        std::erase_if(displayed, [&](const auto &entry) {
+            if (alive.contains(entry.first))
+                return false;
+            context->Remove(entry.second.shape, false);
+            return true;
+        });
         view->Redraw();
     } catch (const Standard_Failure &e) {
         emit failure(QString::fromUtf8(e.GetMessageString()));
@@ -182,6 +220,7 @@ gp_Pnt CadView::position(const QPoint &pixel, bool applySnap) const {
     return gp_Pnt(millimeters(x), millimeters(y), 0);
 }
 void CadView::clearPreview() {
+    previewAllowed.reset();
     if (!preview.IsNull() && !context.IsNull()) {
         context->Remove(preview, false);
         preview.Nullify();
@@ -250,22 +289,47 @@ std::pair<gp_Pnt, std::string> CadView::surfacePosition(const QPoint &pixel) {
     return {gp_Pnt(x + t * vx, y + t * vy, 0), wall.id};
 }
 void CadView::showPlacement(Placement placement, const Asset *asset) {
-    clearPreview();
     pendingPlacement = placement;
-    auto d = current;
-    if (asset)
-        Library::attachModel(d, *asset);
     if ((placement.object.type == "Door" || placement.object.type == "Window") &&
         placement.object.parent.empty()) {
         emit placementStatus(QString::fromStdString(placement.message), true, false);
         return;
     }
-    preview = new AIS_Shape(compound(buildEntity(d, placement.object)));
-    preview->SetColor(placement.allowed ? Quantity_Color(0.25, 0.85, 0.63, Quantity_TOC_RGB)
-                                        : Quantity_Color(1, 0.22, 0.16, Quantity_TOC_RGB));
-    preview->SetTransparency(0.35);
-    context->Display(preview, false);
-    context->Deactivate(preview);
+    const bool opening = placement.object.type == "Door" || placement.object.type == "Window";
+    auto localObject = placement.object;
+    if (!opening) {
+        localObject.transform.x = localObject.transform.y = localObject.transform.z =
+            localObject.transform.yaw = 0;
+    }
+    const auto key = localObject.type + localObject.parameters.dump() + std::to_string(localObject.width) +
+                     "/" + std::to_string(localObject.depth) + "/" + std::to_string(localObject.height) +
+                     (localObject.transform.mirrored ? "/mirror" : "");
+    if (preview.IsNull() || previewKey != key || opening) {
+        clearPreview();
+        pendingPlacement = placement;
+        auto d = current;
+        if (asset)
+            Library::attachModel(d, *asset);
+        preview = new AIS_Shape(compound(buildEntity(d, localObject)));
+        previewKey = key;
+        context->Display(preview, false);
+        context->Deactivate(preview);
+    }
+    if (!opening) {
+        gp_Trsf transform;
+        transform.SetRotation(gp_Ax1(gp_Pnt(0, 0, 0), gp_Dir(0, 0, 1)),
+                              placement.object.transform.yaw * std::numbers::pi / 180);
+        transform.SetTranslationPart(
+            gp_Vec(placement.object.transform.x, placement.object.transform.y, placement.object.transform.z));
+        context->SetLocation(preview, TopLoc_Location(transform));
+    }
+    if (!previewAllowed || *previewAllowed != placement.allowed) {
+        preview->SetColor(placement.allowed ? Quantity_Color(0.25, 0.85, 0.63, Quantity_TOC_RGB)
+                                            : Quantity_Color(1, 0.22, 0.16, Quantity_TOC_RGB));
+        preview->SetTransparency(0.35);
+        context->Redisplay(preview, false);
+        previewAllowed = placement.allowed;
+    }
     view->Redraw();
     emit placementStatus(QString::fromStdString(placement.message) +
                              (placingAsset ? tr(" · R gira · Esc cancela") : tr(" · Esc cancela")),

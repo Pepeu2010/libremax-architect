@@ -134,6 +134,11 @@ void Document::validate() const {
         if (!std::isfinite(m.value("normalStrength", 1.0)) || m.value("normalStrength", 1.0) < 0 ||
             m.value("normalStrength", 1.0) > 2)
             throw std::invalid_argument("Intensidade de relevo inválida");
+        if (m.contains("modelUV") && !m.at("modelUV").is_boolean())
+            throw std::invalid_argument("Mapeamento do modelo inválido");
+        if (!std::isfinite(m.value("alphaCutoff", 0.5)) || m.value("alphaCutoff", 0.5) < 0 ||
+            m.value("alphaCutoff", 0.5) > 1)
+            throw std::invalid_argument("Recorte de transparência inválido");
         if (!std::isfinite(m.value("ior", 1.45)) || m.value("ior", 1.45) < 1 || m.value("ior", 1.45) > 3)
             throw std::invalid_argument("Índice de refração inválido");
         for (auto key : {"roughness", "metallic", "transmission", "opacity"}) {

@@ -1,3 +1,9 @@
+# Test report — ciclo 0.6.0
+
+Executado em 01/10/2026 no host Windows: **26 casos / 1.461 assertions** aprovados. Build Release, coleção de 18 modelos detalhados, hashes/UVs/normais/mapas, catálogo de 97 itens, montagem, undo/redo, arquivo único `.lmx`, home/tutorial de 15 capítulos e telas a 900 px passaram. Render real Cycles CPU 960×540/64 e preservação da imagem anterior após falha também passaram. Evidência, reprodução e limites: [CYCLE_06](CYCLE_06.md). GPU, cenas grandes e arquitetura completa de fila/galeria continuam pendentes. Os relatórios abaixo são históricos.
+
+---
+
 # Test report — ciclo 0.4.0
 
 Executado em 30/09–01/10/2026 no host Windows: **22 casos / 1.054 assertions** aprovados. Build Release, 79 miniaturas reais, encaixe na parede em planta e 3D, bloqueio de área externa, arrasto de móvel existente com undo/redo, janela associada, apartamento com três cômodos e modelos incorporados, save/open e painéis em 900 px passaram no executável nativo. Regressão de UI/PBR/expressões em cm e recuperação após encerramento forçado também passaram.

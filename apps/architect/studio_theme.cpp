@@ -26,7 +26,7 @@ class StudioStyle final : public QProxyStyle {
                 painter->rotate(90);
             if (element == PE_IndicatorArrowRight)
                 painter->rotate(-90);
-            painter->setPen(QPen(QColor(option->state & State_Enabled ? "#c2d8e2" : "#738895"), 1.4,
+            painter->setPen(QPen(QColor(option->state & State_Enabled ? "#ded4ec" : "#95869f"), 1.4,
                                  Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
             painter->drawPolyline(QPolygonF{{-3, -1}, {0, 2}, {3, -1}});
             painter->restore();
@@ -39,21 +39,21 @@ class StudioStyle final : public QProxyStyle {
 void applyStudioPalette() {
     QApplication::setStyle(new StudioStyle);
     QPalette p;
-    p.setColor(QPalette::Window, QColor("#182129"));
-    p.setColor(QPalette::WindowText, QColor("#e6edf2"));
-    p.setColor(QPalette::Base, QColor("#101820"));
-    p.setColor(QPalette::AlternateBase, QColor("#202d36"));
-    p.setColor(QPalette::Text, QColor("#e6edf2"));
-    p.setColor(QPalette::Button, QColor("#24323d"));
-    p.setColor(QPalette::ButtonText, QColor("#e6edf2"));
-    p.setColor(QPalette::Highlight, QColor("#285b5b"));
-    p.setColor(QPalette::HighlightedText, QColor("#f2fffc"));
-    p.setColor(QPalette::ToolTipBase, QColor("#24343f"));
-    p.setColor(QPalette::ToolTipText, QColor("#e6edf2"));
-    p.setColor(QPalette::Disabled, QPalette::Text, QColor("#8795a1"));
-    p.setColor(QPalette::Disabled, QPalette::ButtonText, QColor("#8795a1"));
-    p.setColor(QPalette::Light, QColor("#42515e"));
-    p.setColor(QPalette::Dark, QColor("#0c1218"));
+    p.setColor(QPalette::Window, QColor("#1b1b25"));
+    p.setColor(QPalette::WindowText, QColor("#f1eff8"));
+    p.setColor(QPalette::Base, QColor("#14141c"));
+    p.setColor(QPalette::AlternateBase, QColor("#252534"));
+    p.setColor(QPalette::Text, QColor("#f1eff8"));
+    p.setColor(QPalette::Button, QColor("#292938"));
+    p.setColor(QPalette::ButtonText, QColor("#f1eff8"));
+    p.setColor(QPalette::Highlight, QColor("#534b81"));
+    p.setColor(QPalette::HighlightedText, QColor("#faf8ff"));
+    p.setColor(QPalette::ToolTipBase, QColor("#2c283b"));
+    p.setColor(QPalette::ToolTipText, QColor("#f1eff8"));
+    p.setColor(QPalette::Disabled, QPalette::Text, QColor("#9b90ad"));
+    p.setColor(QPalette::Disabled, QPalette::ButtonText, QColor("#9b90ad"));
+    p.setColor(QPalette::Light, QColor("#635773"));
+    p.setColor(QPalette::Dark, QColor("#101017"));
     QApplication::setPalette(p);
     const auto families = QFontDatabase::families();
     for (const auto &family :
@@ -69,7 +69,7 @@ QIcon studioIcon(const QString &name) {
     QPainter p(&pixmap);
     p.setRenderHint(QPainter::Antialiasing);
     p.scale(2, 2);
-    p.setPen(QPen(QColor("#b9d2dc"), 1.6, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    p.setPen(QPen(QColor("#d7c5e6"), 1.6, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     if (name == "new") {
         p.drawRect(QRectF(5, 3, 14, 18));
         p.drawLine(12, 8, 12, 16);
@@ -135,7 +135,7 @@ void AssetDelegate::paint(QPainter *p, const QStyleOptionViewItem &option, const
     const bool selected = option.state & QStyle::State_Selected;
     const bool hover = option.state & QStyle::State_MouseOver;
     auto rect = option.rect.adjusted(2, 2, -2, -2);
-    p->fillRect(rect, QColor(selected ? "#223e43" : hover ? "#23313c" : "#172129"));
+    p->fillRect(rect, QColor(selected ? "#223e43" : hover ? "#23313c" : "#1b1a25"));
     if (selected)
         p->fillRect(QRect(rect.left(), rect.top(), 3, rect.height()), QColor("#7dd9c2"));
     auto icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));

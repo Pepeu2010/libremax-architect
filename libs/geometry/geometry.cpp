@@ -21,6 +21,7 @@
 #include <TopoDS_Compound.hxx>
 #include <cmath>
 #include <gp_Circ.hxx>
+#include <gp_Pnt2d.hxx>
 #include <gp_Trsf.hxx>
 #include <numbers>
 #include <stdexcept>
@@ -90,7 +91,9 @@ std::vector<Part> buildEntity(const Document &doc, const Entity &e) {
         for (const auto &part : model.at("parts")) {
             const auto &vertices = part.at("vertices"), &triangles = part.at("triangles");
             Handle(Poly_Triangulation) mesh = new Poly_Triangulation(
-                static_cast<int>(vertices.size()), static_cast<int>(triangles.size()), false);
+                static_cast<int>(vertices.size()), static_cast<int>(triangles.size()), part.contains("uvs"));
+            if (part.contains("normals"))
+                mesh->AddNormals();
             for (std::size_t i = 0; i < vertices.size(); ++i) {
                 double x = vertices[i][0].get<double>() * w, y = vertices[i][1].get<double>() * d,
                        z = vertices[i][2].get<double>() * h;
@@ -100,6 +103,21 @@ std::vector<Part> buildEntity(const Document &doc, const Entity &e) {
                               gp_Pnt(e.transform.x + x * std::cos(angle) - y * std::sin(angle),
                                      e.transform.y + x * std::sin(angle) + y * std::cos(angle),
                                      e.transform.z + z));
+                if (part.contains("uvs")) {
+                    const auto &uv = part.at("uvs")[i];
+                    mesh->SetUVNode(static_cast<int>(i) + 1,
+                                    gp_Pnt2d(uv[0].get<double>(), uv[1].get<double>()));
+                }
+                if (part.contains("normals")) {
+                    const auto &normal = part.at("normals")[i];
+                    double nx = normal[0].get<double>() / w, ny = normal[1].get<double>() / d,
+                           nz = normal[2].get<double>() / h;
+                    if (e.transform.mirrored)
+                        nx = -nx;
+                    mesh->SetNormal(static_cast<int>(i) + 1,
+                                    gp_Dir(nx * std::cos(angle) - ny * std::sin(angle),
+                                           nx * std::sin(angle) + ny * std::cos(angle), nz));
+                }
             }
             for (std::size_t i = 0; i < triangles.size(); ++i) {
                 int a = triangles[i][0].get<int>() + 1, b = triangles[i][1].get<int>() + 1,
@@ -108,7 +126,8 @@ std::vector<Part> buildEntity(const Document &doc, const Entity &e) {
                     std::swap(b, c);
                 mesh->SetTriangle(static_cast<int>(i) + 1, Poly_Triangle(a, b, c));
             }
-            mesh->ComputeNormals();
+            if (!part.contains("normals"))
+                mesh->ComputeNormals();
             TopoDS_Face face;
             BRep_Builder builder;
             builder.MakeFace(face, mesh);
@@ -394,7 +413,8 @@ Json meshSnapshot(const Document &d) {
             if (!mesher.IsDone())
                 throw std::runtime_error("Falha de tesselação");
         }
-        Json vertices = Json::array(), triangles = Json::array();
+        Json vertices = Json::array(), triangles = Json::array(), uvs = Json::array(),
+             normals = Json::array();
         for (TopExp_Explorer it(part.shape, TopAbs_FACE); it.More(); it.Next()) {
             auto face = TopoDS::Face(it.Current());
             TopLoc_Location loc;
@@ -405,6 +425,16 @@ Json meshSnapshot(const Document &d) {
             for (int i = 1; i <= mesh->NbNodes(); ++i) {
                 auto p = mesh->Node(i).Transformed(loc.Transformation());
                 vertices.push_back({p.X() / 1000, p.Y() / 1000, p.Z() / 1000});
+                if (d.at(part.owner).type == "MeshObject") {
+                    if (mesh->HasUVNodes()) {
+                        const auto uv = mesh->UVNode(i);
+                        uvs.push_back({uv.X(), uv.Y()});
+                    }
+                    if (mesh->HasNormals()) {
+                        const auto normal = mesh->Normal(i).Transformed(loc.Transformation());
+                        normals.push_back({normal.X(), normal.Y(), normal.Z()});
+                    }
+                }
             }
             for (int i = 1; i <= mesh->NbTriangles(); ++i) {
                 int a, b, c;
@@ -419,6 +449,10 @@ Json meshSnapshot(const Document &d) {
                           {"material", part.material},
                           {"vertices", vertices},
                           {"triangles", triangles}});
+        if (uvs.size() == vertices.size() && !uvs.empty())
+            meshes.back()["uvs"] = std::move(uvs);
+        if (normals.size() == vertices.size() && !normals.empty())
+            meshes.back()["normals"] = std::move(normals);
     }
     Json lights = Json::array(), cameras = Json::array();
     for (const auto &e : d.entities)

@@ -1,5 +1,6 @@
 #pragma once
 #include "document/document.h"
+#include <QMutex>
 #include <QSqlDatabase>
 #include <QString>
 namespace lmx {
@@ -9,11 +10,19 @@ struct Asset {
     Json recipe;
     bool favorite = false;
     QByteArray model;
+    std::map<std::string, QByteArray> textures;
 };
 class Library {
     QString connection;
     QSqlDatabase db;
     QString modelDirectory;
+    struct Payload {
+        QByteArray model;
+        std::map<std::string, QByteArray> textures;
+    };
+    mutable QMutex payloadMutex;
+    mutable std::map<std::string, Payload> payloadCache;
+    mutable qint64 payloadBytes = 0;
 
   public:
     explicit Library(const QString &path, const QString &models = {});
@@ -22,7 +31,8 @@ class Library {
     Library &operator=(const Library &) = delete;
     void seed(const Json &entries);
     std::vector<Asset> search(const QString &text = {}, const QString &category = {}, bool favorites = false,
-                              bool recent = false) const;
+                              bool recent = false, bool includePayload = true) const;
+    Asset withPayload(Asset asset) const;
     void favorite(const QString &id, bool enabled);
     void used(const QString &id);
     static Entity instantiate(const Asset &asset, double x, double y);

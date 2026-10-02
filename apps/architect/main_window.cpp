@@ -1,5 +1,6 @@
 #include "main_window.h"
 #include "core/expression.h"
+#include "first_run.h"
 #include "geometry/geometry.h"
 #include "import/dxf.h"
 #include "materials/texture.h"
@@ -107,13 +108,18 @@ QString resourceFile(const QString &relative) {
     return QFileInfo::exists(installed) ? installed : QStringLiteral(LMX_SOURCE_DIR) + "/" + relative;
 }
 } // namespace
-MainWindow::MainWindow(bool test, const QString &recoveryDirectory)
+MainWindow::MainWindow(bool test, const QString &recoveryDirectory, bool welcome, const QString &testRoot)
     : recovery(recoveryDirectory.isEmpty() ? dataRoot() + "/recovery" : recoveryDirectory), testing(test) {
     setObjectName("mainWindow");
     setWindowTitle(tr("LibreMax Architect"));
     resize(1440, 900);
     setMinimumSize(900, 600);
-    library = std::make_unique<Library>(dataRoot() + "/library.db", resourceFile("starter-models"));
+    if (testing)
+        testLibraryDirectory = std::make_unique<QTemporaryDir>();
+    const auto localRoot =
+        testing ? (testRoot.isEmpty() ? testLibraryDirectory->path() : testRoot) : dataRoot();
+    library = std::make_unique<Library>(localRoot + "/library.db", resourceFile("starter-models"));
+    projects = std::make_unique<ProjectLibrary>(localRoot + "/projects");
     QFile catalog(resourceFile("starter-library/catalog.json"));
     if (!catalog.open(QIODevice::ReadOnly))
         throw std::runtime_error("Starter Library não encontrada");
@@ -122,6 +128,10 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory)
     if (!models.open(QIODevice::ReadOnly))
         throw std::runtime_error("Catálogo de móveis prontos não encontrado");
     library->seed(Json::parse(models.readAll().toStdString()));
+    QFile modern(resourceFile("starter-models/modern-catalog.json"));
+    if (!modern.open(QIODevice::ReadOnly))
+        throw std::runtime_error("Coleção de apartamentos atuais não encontrada");
+    library->seed(Json::parse(modern.readAll().toStdString()));
     createShell();
     connect(&thumbnails, &AssetThumbnails::ready, this, [this](const QString &, const QImage &) {
         for (int i = 0; i < assets->count(); ++i) {
@@ -174,7 +184,7 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory)
     viewport->assetResolver([this](const QString &id) -> std::optional<Asset> {
         for (const auto &a : visibleAssets)
             if (a.id == id)
-                return a;
+                return library->withPayload(a);
         return std::nullopt;
     });
     connect(&render, &RenderJob::state, this, [this](const QString &state) {
@@ -195,10 +205,14 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory)
     connect(&autosaveTimer, &QTimer::timeout, this, [this] { protect([&] { autosave(); }); });
     auto interval = std::clamp(QSettings().value("autosaveMinutes", 5).toInt(), 1, 60);
     autosaveTimer.start(interval * 60 * 1000);
-    refreshLibrary();
     refreshScene();
-    if (!testing)
-        QTimer::singleShot(400, this, [this] { protect([&] { recover(); }); });
+    if (testing && !welcome)
+        refreshLibrary();
+    else {
+        showHome();
+        if (!QSettings().value("onboarding/seen", false).toBool())
+            QTimer::singleShot(900, this, [this] { showTutorial(this); });
+    }
 }
 void MainWindow::protect(const std::function<void()> &operation) {
     try {
@@ -258,9 +272,17 @@ void MainWindow::createShell() {
     placementBanner = new QLabel(tr("Arraste um móvel para o cômodo. Perto da parede, ele encaixa sozinho."));
     placementBanner->setObjectName("placementBanner");
     placementBanner->setWordWrap(true);
-    placementBanner->setStyleSheet("color:#a9e5d0;background:#172c29;padding:10px;");
+    placementBanner->setStyleSheet("color:#dbc3ed;background:#2b2136;padding:10px;");
     studioLayout->addWidget(placementBanner);
-    setCentralWidget(studio);
+    editorPage = studio;
+    rootPages = new QStackedWidget;
+    rootPages->addWidget(editorPage);
+    home = new ProjectHome;
+    auto *homeScroll = new QScrollArea;
+    homeScroll->setWidgetResizable(true);
+    homeScroll->setWidget(home);
+    rootPages->addWidget(homeScroll);
+    setCentralWidget(rootPages);
     auto action = [this](QMenu *menu, const QString &name, const QKeySequence &shortcut,
                          std::function<void()> callback) {
         auto *a = menu->addAction(name);
@@ -272,6 +294,7 @@ void MainWindow::createShell() {
     auto *file = menuBar()->addMenu(tr("&Arquivo"));
     auto *newAction = action(file, tr("&Novo projeto"), QKeySequence::New, [this] {
         if (discardOrSave()) {
+            enterEditor();
             editor_.load(Document{});
             path.clear();
             selectedIds.clear();
@@ -326,6 +349,9 @@ void MainWindow::createShell() {
     auto *apartmentAction =
         action(environment, tr("Começar com apartamento de exemplo"), {}, [this] { apartmentStarter(); });
     apartmentAction->setObjectName("apartmentStarter");
+    auto *modernAction =
+        action(environment, tr("Começar com apartamento moderno"), {}, [this] { modernApartmentStarter(); });
+    modernAction->setObjectName("modernApartmentStarter");
     action(environment, tr("Inserir porta na parede…"), {}, [this] { opening(false); });
     action(environment, tr("Inserir janela na parede…"), {}, [this] { opening(true); });
     action(environment, tr("Escada reta…"), {}, [this] {
@@ -372,17 +398,30 @@ void MainWindow::createShell() {
     action(viewMenu, tr("Ver em 3D"), QKeySequence("3"), [this] { viewport->setTop(false); });
     action(viewMenu, tr("Enquadrar projeto"), QKeySequence("F"), [this] { viewport->frame(); });
     auto *help = menuBar()->addMenu(tr("A&juda"));
+    action(help, tr("Tutorial completo"), {}, [this] { showTutorial(this); });
+    auto *animations = action(help, tr("Animações de abertura"), {}, [] {});
+    animations->setCheckable(true);
+    animations->setChecked(motionEnabled());
+    connect(animations, &QAction::toggled, this,
+            [](bool enabled) { QSettings().setValue("accessibility/animations", enabled); });
     action(help, tr("Sobre LibreMax"), {}, [this] {
         QMessageBox::about(this, tr("LibreMax Architect"),
-                           tr("LibreMax Architect 0.4.0 — desenvolvimento\nEditor nativo C++20 / Qt / "
+                           tr("LibreMax Architect 0.6.0 — desenvolvimento\nEditor nativo C++20 / Qt / "
                               "OpenCASCADE\nCódigo GPL-3.0-or-later · Biblioteca procedural CC0\nA paridade "
                               "completa e os pacotes Linux ainda estão em desenvolvimento."));
     });
     auto *projectBar = addToolBar(tr("Projeto"));
+    auto *homeAction = projectBar->addAction(tr("Meus projetos"));
+    homeAction->setObjectName("projectHomeAction");
+    connect(homeAction, &QAction::triggered, this, [this] { protect([&] { showHome(); }); });
     projectBar->setMovable(false);
     projectBar->setIconSize({18, 18});
     projectBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    auto *brand = new QLabel(tr("  LIBREMAX  /  ARCHITECT  "));
+    auto *logo = new QLabel;
+    logo->setPixmap(QPixmap(":/studio/brand/libremax-mark.png")
+                        .scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    projectBar->addWidget(logo);
+    auto *brand = new QLabel(tr("  LIBREMAX  "));
     brand->setObjectName("studioBrand");
     projectBar->addWidget(brand);
     projectBar->addSeparator();
@@ -500,6 +539,8 @@ void MainWindow::createShell() {
     libraryLayout->addWidget(search);
     category = new QComboBox;
     category->addItem(tr("Todos os ambientes"), "");
+    category->addItem(tr("Apartamento atual"), "__modern");
+    category->setObjectName("libraryCategory");
     for (const auto &cat : {"Cozinha", "Dormitório", "Sala", "Banheiro", "Escritório", "Decoração",
                             "Eletrodomésticos", "Portas e janelas"})
         category->addItem(QString::fromUtf8(cat), QString::fromUtf8(cat));
@@ -547,7 +588,10 @@ void MainWindow::createShell() {
     libraryActions->addWidget(favorite);
     libraryDock->setWidget(libraryPanel);
     addDockWidget(Qt::LeftDockWidgetArea, libraryDock);
-    connect(search, &QLineEdit::textChanged, this, [this] { protect([&] { refreshLibrary(); }); });
+    searchTimer.setSingleShot(true);
+    searchTimer.setInterval(180);
+    connect(&searchTimer, &QTimer::timeout, this, [this] { protect([&] { refreshLibrary(); }); });
+    connect(search, &QLineEdit::textChanged, this, [this] { searchTimer.start(); });
     connect(category, &QComboBox::currentIndexChanged, this, [this] { protect([&] { refreshLibrary(); }); });
     connect(favoriteOnly, &QCheckBox::toggled, this, [this] { refreshLibrary(); });
     connect(recentOnly, &QCheckBox::toggled, this, [this] { refreshLibrary(); });
@@ -597,11 +641,12 @@ void MainWindow::createShell() {
     propertyLayout->setContentsMargins(16, 12, 16, 16);
     propertyLayout->setVerticalSpacing(9);
     propertyLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+    propertyLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);
     selectionTitle = new QLabel(tr("Nenhum objeto selecionado"));
     selectionTitle->setWordWrap(true);
     selectionTitle->setStyleSheet("font-size:16px;font-weight:600;padding:8px 0");
     propertyLayout->addRow(selectionTitle);
-    advancedProperties = new QCheckBox(tr("Mostrar ajustes de posição e câmera"));
+    advancedProperties = new QCheckBox(tr("Ajustes avançados"));
     advancedProperties->setObjectName("advancedProperties");
     propertyLayout->addRow(advancedProperties);
     connect(advancedProperties, &QCheckBox::toggled, this, [this] { refreshInspector(); });
@@ -639,6 +684,10 @@ void MainWindow::createShell() {
         fields[key] = field;
     }
     material = new QComboBox;
+    material->setMinimumContentsLength(12);
+    material->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    material->setMinimumWidth(76);
+    material->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
     material->setAccessibleName(tr("Material"));
     for (const auto &m : editor_.document().materials)
         material->addItem(q(m["name"].get<std::string>()), q(m["id"].get<std::string>()));
@@ -651,7 +700,7 @@ void MainWindow::createShell() {
     propertyLayout->addRow(tr("Puxador"), handle);
     glass = new QCheckBox(tr("Frentes com vidro"));
     propertyLayout->addRow(glass);
-    originalModelColors = new QCheckBox(tr("Usar cores originais deste modelo"));
+    originalModelColors = new QCheckBox(tr("Acabamento original"));
     propertyLayout->addRow(originalModelColors);
     connect(material, &QComboBox::activated, this, [this] { originalModelColors->setChecked(false); });
     lightColor = new QPushButton(tr("Escolher cor…"));
@@ -852,6 +901,19 @@ void MainWindow::createShell() {
     for (auto *dock : {libraryDock, sceneDock, propertyDock, renderDock})
         viewMenu->addAction(dock->toggleViewAction());
     resizeDocks({libraryDock, propertyDock}, {300, 320}, Qt::Horizontal);
+    connect(home, &ProjectHome::newProject, newAction, &QAction::trigger);
+    connect(home, &ProjectHome::openProject, openAction, &QAction::trigger);
+    connect(home, &ProjectHome::openRecent, this, [this](const QString &file) {
+        protect([&] {
+            if (QFileInfo(file).absoluteFilePath() == QFileInfo(path).absoluteFilePath() && !path.isEmpty())
+                enterEditor();
+            else if (discardOrSave())
+                loadProject(file);
+        });
+    });
+    connect(home, &ProjectHome::tutorial, this, [this] { showTutorial(this); });
+    connect(home, &ProjectHome::example, this, [this] { protect([&] { modernApartmentStarter(); }); });
+    connect(home, &ProjectHome::recovery, this, [this] { protect([&] { recover(); }); });
     auto *snapBox = new QCheckBox(tr("Alinhar desenho"));
     snapBox->setChecked(true);
     statusBar()->addPermanentWidget(snapBox);
@@ -945,17 +1007,25 @@ void MainWindow::refreshScene() {
     setWindowModified(!editor_.history.isClean());
 }
 void MainWindow::refreshLibrary() {
-    visibleAssets = library->search(search->text(), category->currentData().toString(),
-                                    favoriteOnly->isChecked(), recentOnly->isChecked());
+    const bool modern = category->currentData().toString() == "__modern";
+    visibleAssets = library->search(search->text(), modern ? QString{} : category->currentData().toString(),
+                                    favoriteOnly->isChecked(), recentOnly->isChecked(), false);
+    if (modern)
+        std::erase_if(visibleAssets, [](const auto &asset) {
+            return asset.recipe.value("collection", std::string{}) != "apartment-modern";
+        });
     assets->clear();
     for (const auto &a : visibleAssets) {
-        auto *item = new QListWidgetItem(
-            (a.favorite ? "★ " : "") + a.name +
-                QString("\n%1 × %2 × %3 cm").arg(a.width / 10).arg(a.depth / 10).arg(a.height / 10),
-            assets);
+        auto *item = new QListWidgetItem((a.favorite ? "★ " : "") + a.name +
+                                             QString("\n%1 × %2 × %3 cm")
+                                                 .arg(a.width / 10, 0, 'f', 1)
+                                                 .arg(a.depth / 10, 0, 'f', 1)
+                                                 .arg(a.height / 10, 0, 'f', 1),
+                                         assets);
         item->setData(Qt::UserRole, a.id);
         item->setData(Qt::UserRole + 1, a.category);
-        auto thumbnail = thumbnails.request(a);
+        auto thumbnail =
+            thumbnails.request(a, [this](const Asset &asset) { return library->withPayload(asset); });
         item->setIcon(thumbnail.isNull() ? studioIcon("cube") : QIcon(QPixmap::fromImage(thumbnail)));
         item->setData(Qt::UserRole + 2, !thumbnail.isNull());
         item->setToolTip(a.category + " · CC0 · " + tr("Arraste para inserir"));
@@ -1187,9 +1257,45 @@ void MainWindow::focusRoom() {
     else
         viewport->frameRoom(id);
 }
+void MainWindow::modernApartmentStarter() {
+    // Reuse the complete room, opening, camera and lighting setup.
+    if (!discardOrSave())
+        return;
+    editor_.history.setClean();
+    apartmentStarter();
+    auto all = library->search({}, {}, false, false, false);
+    editor_.apply(tr("Mobiliar apartamento moderno"), [&](Document &d) {
+        d.name = "Apartamento moderno";
+        std::erase_if(d.entities, [](const auto &e) {
+            const auto asset = e.metadata.value("asset", std::string{});
+            return asset == "ready-loungeSofa" || asset == "ready-tableCoffee" || asset == "ready-tableRound";
+        });
+        auto add = [&](const char *id, double x, double y, double yaw = 0, double z = 0) {
+            auto asset = std::find_if(all.begin(), all.end(), [&](const auto &a) { return a.id == id; });
+            if (asset == all.end())
+                throw std::runtime_error("Móvel moderno indisponível");
+            Library::attachModel(d, library->withPayload(*asset));
+            auto object = Library::instantiate(*asset, x, y);
+            object.transform.yaw = yaw;
+            object.transform.z = z;
+            d.entities.push_back(object);
+        };
+        add("ready-loungeDesignSofa", 180, 1000);
+        add("modern-modern_coffee_table_01", 3000, 2500, 90);
+        add("modern-modern_arm_chair_01", 4250, 1750, 180);
+        add("modern-coffee_table_round_01", 900, 4000);
+        add("modern-side_table_01", 300, 2400);
+        add("modern-ceramic_vase_02", 450, 2520, 0, 552.7);
+        add("modern-modern_ceiling_lamp_01", 2500, 2800, 0, 1728.4);
+    });
+    category->setCurrentIndex(category->findData("__modern"));
+    viewport->setTop(false);
+    viewport->frame();
+}
 void MainWindow::apartmentStarter() {
     if (!discardOrSave())
         return;
+    enterEditor();
     Document apartment;
     apartment.name = "Meu apartamento";
     addRectangularRoom(apartment, 5000, 6000, 2700, 120, 0, 0, "Sala e cozinha");
@@ -1203,14 +1309,14 @@ void MainWindow::apartmentStarter() {
             object.material = "porcelain";
         else if (object.type == "Ceiling")
             object.visible = true;
-    auto all = library->search();
+    auto all = library->search({}, {}, false, false, false);
     auto add = [&](const char *id, double x, double y, double yaw = 0) {
         auto asset = std::find_if(all.begin(), all.end(), [&](const auto &a) { return a.id == id; });
         if (asset == all.end())
             throw std::runtime_error("Móvel pronto indisponível");
         auto object = Library::instantiate(*asset, x, y);
         object.transform.yaw = yaw;
-        Library::attachModel(apartment, *asset);
+        Library::attachModel(apartment, library->withPayload(*asset));
         apartment.entities.push_back(object);
     };
     add("ready-loungeSofa", 180, 1000, 0);
@@ -1300,12 +1406,12 @@ void MainWindow::opening(bool window) {
         });
 }
 void MainWindow::insertAsset(const QString &id, const Entity &e) {
-    auto all = library->search();
+    auto all = library->search({}, {}, false, false, false);
     auto found = std::find_if(all.begin(), all.end(), [&](const auto &a) { return a.id == id; });
     if (found == all.end())
         throw std::invalid_argument("Asset não encontrado");
     editor_.apply(tr("Inserir %1").arg(found->name), [&](Document &d) {
-        Library::attachModel(d, *found);
+        Library::attachModel(d, library->withPayload(*found));
         d.entities.push_back(e);
     });
     library->used(id);
@@ -1643,6 +1749,7 @@ void MainWindow::activatePbrMaterials() {
 }
 void MainWindow::loadProject(const QString &filename) {
     auto document = ProjectStore::open(filename);
+    enterEditor();
     editor_.load(document);
     path = filename;
     selectedIds.clear();
@@ -1656,6 +1763,7 @@ void MainWindow::loadProject(const QString &filename) {
     while (recent.size() > 10)
         recent.removeLast();
     QSettings().setValue("recent", recent);
+    rememberProject();
 }
 bool MainWindow::saveProject(bool saveAs) {
     QString destination = path;
@@ -1666,13 +1774,86 @@ bool MainWindow::saveProject(bool saveAs) {
         return false;
     if (!destination.endsWith(".lmx", Qt::CaseInsensitive))
         destination += ".lmx";
+    if (editor_.document().name == "Projeto sem título")
+        editor_.apply(tr("Nomear projeto"),
+                      [&](Document &d) { d.name = QFileInfo(destination).completeBaseName().toStdString(); });
     ProjectStore::save(destination, editor_.document());
     path = destination;
     editor_.history.setClean();
     // A successful manual save supersedes this project's recovery snapshots.
     recovery.clear(editor_.document().id);
     statusBar()->showMessage(tr("Projeto salvo com segurança"), 5000);
+    rememberProject();
     return true;
+}
+void MainWindow::rememberProject() {
+    if (path.isEmpty())
+        return;
+    QImage cover;
+    try {
+        const auto filename = dataRoot() + "/project-cover.png";
+        viewport->capture(filename);
+        cover.load(filename);
+        projects->remember(path, editor_.document(), cover);
+    } catch (const std::exception &error) {
+        spdlog::warn("Project library: {}", error.what());
+        try {
+            projects->remember(path, editor_.document());
+        } catch (...) {
+        }
+    }
+}
+void MainWindow::enterEditor() {
+    statusBar()->show();
+    for (auto *action : menuBar()->actions())
+        action->setVisible(true);
+    rootPages->setCurrentWidget(editorPage);
+    for (auto *dock : findChildren<QDockWidget *>())
+        dock->show();
+    for (auto *toolbar : findChildren<QToolBar *>())
+        toolbar->show();
+    if (visibleAssets.empty())
+        refreshLibrary();
+    if (auto *dock = findChild<QDockWidget *>("libraryDock"))
+        dock->raise();
+    if (auto *dock = findChild<QDockWidget *>("propertiesDock"))
+        dock->raise();
+}
+void MainWindow::showHome() {
+    if (!path.isEmpty())
+        rememberProject();
+    std::vector<RecentProject> records;
+    QString warning;
+    try {
+        records = projects->projects();
+    } catch (const std::exception &error) {
+        spdlog::warn("Project index: {}", error.what());
+        warning = tr("A lista de projetos não pôde ser lida. Seus arquivos estão preservados; use Abrir "
+                     "arquivo .lmx.");
+    }
+    if (!testing)
+        for (const auto &filename : QSettings().value("recent").toStringList()) {
+            if (std::any_of(records.begin(), records.end(),
+                            [&](const auto &entry) { return entry.path == filename; }))
+                continue;
+            const QFileInfo file(filename);
+            records.push_back({filename,
+                               file.completeBaseName(),
+                               file.lastModified().toUTC().toString(Qt::ISODate),
+                               {},
+                               file.exists()});
+        }
+    home->setProjects(records);
+    if (!warning.isEmpty())
+        home->showIndexWarning(warning);
+    statusBar()->hide();
+    for (auto *action : menuBar()->actions())
+        action->setVisible(action->text() == tr("&Arquivo") || action->text() == tr("A&juda"));
+    rootPages->setCurrentIndex(1);
+    for (auto *dock : findChildren<QDockWidget *>())
+        dock->hide();
+    for (auto *toolbar : findChildren<QToolBar *>())
+        toolbar->hide();
 }
 void MainWindow::autosave() {
     if (editor_.history.isClean())
@@ -1712,6 +1893,7 @@ void MainWindow::recover() {
             .arg(q(recovered.name), latest.file.lastModified().toString("dd/MM/yyyy HH:mm")),
         QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
     if (choice == QMessageBox::Yes && discardOrSave()) {
+        enterEditor();
         editor_.load(recovered);
         path.clear();
         editor_.apply(tr("Recuperar autosave"), [](Document &d) { d.name += " (recuperado)"; });

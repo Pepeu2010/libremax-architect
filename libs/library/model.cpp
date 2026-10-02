@@ -14,6 +14,9 @@ Json readModel(const QByteArray &bytes) {
         model.at("parts").size() > 64)
         throw std::invalid_argument("Modelo 3D inválido");
     std::size_t total = 0;
+    if (model.contains("materials") &&
+        (!model.at("materials").is_array() || model.at("materials").size() > 64))
+        throw std::invalid_argument("Acabamentos do modelo inválidos");
     for (const auto &part : model.at("parts")) {
         const auto &vertices = part.at("vertices"), &triangles = part.at("triangles");
         if (!vertices.is_array() || vertices.size() < 3 || vertices.size() > 100000 ||
@@ -38,6 +41,27 @@ Json readModel(const QByteArray &bytes) {
                 if (!i.is_number_integer() || i.get<long long>() < 0 ||
                     i.get<std::size_t>() >= vertices.size())
                     throw std::invalid_argument("Face 3D fora do limite");
+        }
+        for (const auto *attribute : {"uvs", "normals"}) {
+            if (!part.contains(attribute))
+                continue;
+            const auto &values = part.at(attribute);
+            const bool normal = std::string(attribute) == "normals";
+            if (!values.is_array() || values.size() != vertices.size())
+                throw std::invalid_argument("Atributos da malha incompletos");
+            for (const auto &value : values) {
+                if (!value.is_array() || value.size() != (normal ? 3u : 2u))
+                    throw std::invalid_argument("Atributo da malha inválido");
+                double length = 0;
+                for (const auto &axis : value) {
+                    if (!axis.is_number() || !std::isfinite(axis.get<double>()) ||
+                        std::abs(axis.get<double>()) > (normal ? 1.001 : 1e6))
+                        throw std::invalid_argument("Atributo da malha fora do limite");
+                    length += axis.get<double>() * axis.get<double>();
+                }
+                if (normal && std::abs(length - 1) > 0.002)
+                    throw std::invalid_argument("Normal da malha inválida");
+            }
         }
     }
     return model;
