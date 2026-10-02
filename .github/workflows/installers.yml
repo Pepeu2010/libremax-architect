@@ -57,6 +57,9 @@ jobs:
           cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release -DLMX_DEPLOYMENT_BUILD=ON
           cmake --build build-linux --parallel 3
           ctest --test-dir build-linux --output-on-failure
+          sudo apt-get install -y xvfb libgl1-mesa-dri libxrender1 libxi6 libxxf86vm1 libxfixes3 libxkbcommon0 libegl1 libsm6
+          cmake --install build-linux --prefix "$PWD/build-linux/stage"
+          bash scripts/verify-cycles-linux.sh ./build-linux/stage/bin/libremax-architect build-linux/queue-evidence
           cpack --config build-linux/CPackConfig.cmake -G DEB -B dist/linux
           cd dist/linux
           sha256sum *.deb > SHA256SUMS-Linux.txt
@@ -67,6 +70,11 @@ jobs:
             dist/linux/*.deb
             dist/linux/SHA256SUMS-Linux.txt
           if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: linux-render-evidence
+          path: build-linux/queue-evidence
   linux-installed:
     needs: linux
     runs-on: ubuntu-24.04
