@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-libremax">
+    <comment>Projeto LibreMax Architect</comment>
+    <glob pattern="*.lmx"/>
+  </mime-type>
+</mime-info>

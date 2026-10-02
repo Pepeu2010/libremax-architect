@@ -2,7 +2,7 @@
 
 Editor desktop open source de interiores, com C++20, Qt 6 e OpenCASCADE. Linux é o alvo principal. A implementação é independente e clean-room, usando o VDMax Arquitetos e Decoradores somente como referência pública de capacidades.
 
-**Estado: 0.6.0 em desenvolvimento. Esta entrega ainda não atende à paridade integral da master spec e não é uma release 1.0.** A [master spec](docs/MASTER_SPEC.md) é o requisito de referência. A [matriz de paridade](docs/VDMAX_ARCHITECT_PARITY.md) registra as lacunas por requisito, sem promover testes do kernel a prova de um workflow completo.
+**Estado: 0.6.1 em desenvolvimento. Esta entrega ainda não atende à paridade integral da master spec e não é uma release 1.0.** A [master spec](docs/MASTER_SPEC.md) é o requisito de referência. A [matriz de paridade](docs/VDMAX_ARCHITECT_PARITY.md) registra as lacunas por requisito, sem promover testes do kernel a prova de um workflow completo.
 
 ![Coleção Apartamento atual no programa nativo](docs/screenshots/modern-catalog.png)
 
@@ -29,9 +29,15 @@ Já disponível neste ciclo:
 - Criar câmeras e luzes point/spot/area; renderizar com Blender/Cycles em processo separado, PNG/JPEG, presets, seleção de câmera, exposição, luz ambiente, denoise e descoberta GPU com fallback CPU.
 - Workspace escuro de render com zoom/pan, Ajustar, 1:1 e exportação de cópia PNG/JPEG; materiais PBR incorporados de madeira/pedra, céu natural/sol e câmera fotográfica no Cycles.
 
-Faltam recursos essenciais: detecção de regiões, junções avançadas, cotas, snap completo de desenho, escadas L/U, geometria livre/perfis/sancas, importadores 3D pela interface, atualização remota de packs, catálogo fotográfico extenso, agrupamento/gizmos, galeria/fila de renders persistentes e pacotes Linux testados. A coleção Kenney é estilizada; a nova coleção detalhada não cobre todos os móveis de um apartamento. O encaixe usa volumes aproximados. Veja [limites de montagem](docs/ASSEMBLY.md) e [ROADMAP](docs/ROADMAP.md).
+Faltam recursos essenciais: detecção de regiões, junções avançadas, cotas, snap completo de desenho, escadas L/U, geometria livre/perfis/sancas, importadores 3D pela interface, atualização remota de packs, catálogo fotográfico extenso, agrupamento/gizmos, galeria/fila de renders persistentes. A coleção Kenney é estilizada; a nova coleção detalhada não cobre todos os móveis de um apartamento. O encaixe usa volumes aproximados. Veja [limites de montagem](docs/ASSEMBLY.md) e [ROADMAP](docs/ROADMAP.md).
 
 Para apresentação, abra `examples/cozinha.lmx`, escolha **Céu natural** e a qualidade desejada no Render. Em outros projetos, **Ativar texturas reais** incorpora mapas de carvalho e pedra. Exposição e direção do sol são editáveis; abertura e foco ficam nas propriedades da câmera. [Guia de render](docs/RENDERING.md).
+
+## Baixar e instalar
+
+Abra [INSTALADOR](INSTALADOR/README.md) e escolha [Windows](INSTALADOR/windows/README.md) ou [Linux](INSTALADOR/linux/README.md). Os arquivos `.exe` e `.deb` ficam nas [Releases](https://github.com/Pepeu2010/libremax-architect/releases). É preciso acesso ao repositório privado.
+
+O instalador inclui modelos, texturas e exemplos. Para fotos realistas, instale Blender 5.2 LTS+ separadamente e selecione o executável no painel Render. A versão é uma prévia em desenvolvimento.
 
 ## Compilar e executar
 
@@ -44,7 +50,7 @@ bash scripts/test.sh
 bash scripts/run.sh
 ```
 
-Não há AppImage ou `.deb` publicado neste ciclo. O bootstrap instala dependências de desenvolvimento e não instala Blender. Escolha o executável Blender no painel Render; o usuário não precisa editar o projeto nele. [Instruções e limites de plataforma](docs/BUILDING.md).
+A distribuição inicial usa instalador Windows e `.deb` para Ubuntu 24.04/base do Mint 22. AppImage ainda não está disponível. O bootstrap abaixo instala dependências de desenvolvimento e não instala Blender. Escolha o executável Blender no painel Render; o usuário não precisa editar o projeto nele. [Instruções e limites de plataforma](docs/BUILDING.md).
 
 No host Windows desta sessão:
 

@@ -1,0 +1,110 @@
+name: Installers — Windows and Linux
+on:
+  push:
+    tags: ['v*-preview.*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x86_64-qt6-base
+            mingw-w64-ucrt-x86_64-opencascade mingw-w64-ucrt-x86_64-libzip
+            mingw-w64-ucrt-x86_64-catch mingw-w64-ucrt-x86_64-spdlog
+            mingw-w64-ucrt-x86_64-nlohmann-json mingw-w64-ucrt-x86_64-nsis
+            mingw-w64-ucrt-x86_64-python
+      - name: Build and core verification
+        shell: msys2 {0}
+        run: |
+          echo "LMX_TOOL_PREFIX=$(cygpath -w "$MINGW_PREFIX")" >> "$GITHUB_ENV"
+          cmake -S . -B build-windows -G Ninja -DCMAKE_BUILD_TYPE=Release -DLMX_DEPLOYMENT_BUILD=ON
+          cmake --build build-windows --parallel 3
+          ctest --test-dir build-windows --output-on-failure
+      - name: Build setup and verify actual installation
+        shell: pwsh
+        run: |
+          ./scripts/package-windows.ps1 -BuildDirectory build-windows -ToolPrefix $env:LMX_TOOL_PREFIX -Python "$env:LMX_TOOL_PREFIX/bin/python.exe"
+          ./scripts/verify-windows-installer.ps1 -Installer dist/windows/LibreMax-Architect-0.6.1-Windows-x64-Setup.exe -EvidenceDirectory build-windows/installation-evidence
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: |
+            dist/windows/*Setup.exe
+            dist/windows/SHA256SUMS-Windows.txt
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-installation-evidence
+          path: build-windows/installation-evidence
+  linux:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/bootstrap.sh
+      - name: Build and package
+        run: |
+          cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release -DLMX_DEPLOYMENT_BUILD=ON
+          cmake --build build-linux --parallel 3
+          ctest --test-dir build-linux --output-on-failure
+          cpack --config build-linux/CPackConfig.cmake -G DEB -B dist/linux
+          cd dist/linux
+          sha256sum *.deb > SHA256SUMS-Linux.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-installer
+          path: |
+            dist/linux/*.deb
+            dist/linux/SHA256SUMS-Linux.txt
+          if-no-files-found: error
+  linux-installed:
+    needs: linux
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux-installer
+          path: installer
+      - name: Install on a fresh runner with runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ./installer/*.deb xvfb libgl1-mesa-dri
+          QT_QPA_PLATFORM=offscreen /usr/bin/libremax-architect --installation-smoke evidence/runtime
+          xvfb-run -a env QT_QPA_PLATFORM=xcb LIBGL_ALWAYS_SOFTWARE=1 /usr/bin/libremax-architect --modern-smoke evidence/native
+          cp evidence/runtime/portable-project.lmx evidence/preserve-me.lmx
+          sudo apt-get remove -y libremax-architect
+          test -f evidence/preserve-me.lmx
+          test ! -f /usr/bin/libremax-architect
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: linux-installation-evidence
+          path: evidence
+  publish:
+    needs: [windows, linux-installed]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: '*-installer'
+          path: release
+          merge-multiple: true
+      - name: Publish verified preview installers and corresponding application source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git archive --format=tar.gz --prefix=LibreMax-Architect/ --output=release/LibreMax-Architect-Source.tar.gz HEAD
+          (cd release && sha256sum *.exe *.deb *.tar.gz > SHA256SUMS.txt)
+          gh release create "$GITHUB_REF_NAME" release/* --verify-tag --prerelease --title "LibreMax Architect 0.6.1 — Instaladores Windows e Linux" --notes-file INSTALADOR/RELEASE_NOTES.md

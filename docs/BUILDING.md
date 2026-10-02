@@ -2,6 +2,33 @@
 
 Fonte C++20, CMake ≥3.24, Ninja, Qt ≥6.4 (Core/Gui/Widgets/Sql/Concurrent/Test), OpenCASCADE, nlohmann/json, spdlog, libzip e Catch2. Preferir Catch2 3; aceitar 2.13 em distribuições com pacote antigo. Dependências não são baixadas pelo aplicativo em runtime.
 
+Para usar sem compilar, veja [INSTALADOR](../INSTALADOR/README.md). O fluxo abaixo é para desenvolvimento.
+
+## Reproduzir os instaladores 0.6.1
+
+Compile uma cópia limpa da tag publicada com `-DLMX_DEPLOYMENT_BUILD=ON`. Essa opção exige recursos instalados em `share/libremax` e gera executável Windows sem terminal. Não use a opção para abrir um binário solto na pasta de build.
+
+No Windows, acrescente NSIS e Python ao toolchain UCRT64. Configure/compile em `build-install/bin`, depois:
+
+```powershell
+./scripts/package-windows.ps1 -ToolPrefix 'C:/caminho/msys64/ucrt64' -Python 'C:/caminho/msys64/ucrt64/bin/python.exe'
+./scripts/verify-windows-installer.ps1 -Installer dist/windows/LibreMax-Architect-0.6.1-Windows-x64-Setup.exe -Gui
+```
+
+O verificador exige um usuário sem instalação/atalhos LibreMax existentes. Instala em uma pasta nova, limpa o PATH do processo de teste, verifica catálogo/SQLite/modelos/codecs/projeto, desinstala e confirma que um projeto permanece. `-Blender 'C:/caminho/blender.exe'` também verifica Cycles CPU. Os logs ficam em `build-install/installation-evidence`. Não modifica o PATH global.
+
+No Ubuntu 24.04:
+
+```bash
+bash scripts/bootstrap.sh
+cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release -DLMX_DEPLOYMENT_BUILD=ON
+cmake --build build-linux --parallel 3
+ctest --test-dir build-linux --output-on-failure
+cpack --config build-linux/CPackConfig.cmake -G DEB -B dist/linux
+```
+
+A [workflow dos instaladores](../.github/workflows/installers.yml) valida Windows e instala o `.deb` em um runner Ubuntu separado, sem checkout nem SDK do projeto, antes de publicar uma prévia. O Linux usa X11/XWayland; Mint 22 é alvo pela base Ubuntu, sem execução própria nesta entrega. DLLs Windows, licenças disponíveis e proveniência são descritas em [DEPENDENCIES](../INSTALADOR/windows/DEPENDENCIES.md).
+
 Linux: `bash scripts/bootstrap.sh`, `bash scripts/build.sh`, `bash scripts/test.sh`. Qt SQL SQLite deve conter FTS5. O viewport inicial Linux usa X11/Xw_Window; em Wayland usar XWayland (`QT_QPA_PLATFORM=xcb`). Wayland nativo ainda não validado. Debian 12/Qt6.4, Debian 13, Ubuntu 24.04+ e Mint correspondentes precisam de execução real antes de declarados suportados.
 
 Windows de validação: MSYS2 UCRT64 isolado em `~/.codex/tmp/lmx-tools/msys64`. Pacotes GCC, CMake, Ninja, Qt6, OpenCASCADE, libzip, Catch2, spdlog e nlohmann-json. Não alterar PATH global; no PowerShell:

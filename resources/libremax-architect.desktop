@@ -2,7 +2,7 @@
 Type=Application
 Name=LibreMax Architect
 Comment=Design de interiores nativo e offline
-Exec=libremax-architect %f
+Exec=env QT_QPA_PLATFORM=xcb libremax-architect %f
 Icon=libremax
 Terminal=false
 Categories=Graphics;3DGraphics;Engineering;

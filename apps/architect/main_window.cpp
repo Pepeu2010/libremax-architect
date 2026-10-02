@@ -5,6 +5,7 @@
 #include "import/dxf.h"
 #include "materials/texture.h"
 #include "persistence/project_store.h"
+#include "resource_paths.h"
 #include "studio_theme.h"
 #include <QActionGroup>
 #include <QApplication>
@@ -104,8 +105,7 @@ QString dataRoot() {
     return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
 }
 QString resourceFile(const QString &relative) {
-    auto installed = QApplication::applicationDirPath() + "/../share/libremax/" + relative;
-    return QFileInfo::exists(installed) ? installed : QStringLiteral(LMX_SOURCE_DIR) + "/" + relative;
+    return lmx::resourcePath(relative);
 }
 } // namespace
 MainWindow::MainWindow(bool test, const QString &recoveryDirectory, bool welcome, const QString &testRoot)

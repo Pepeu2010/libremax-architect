@@ -2,6 +2,7 @@
 #include "main_window.h"
 #include "materials/texture.h"
 #include "persistence/project_store.h"
+#include "resource_paths.h"
 #include "studio_theme.h"
 #include <QApplication>
 #include <QCommandLineParser>
@@ -42,12 +43,14 @@ int main(int argc, char **argv) {
     QApplication app(argc, argv);
     QApplication::setApplicationName("libremax");
     QApplication::setOrganizationName("LibreMax");
-    QApplication::setApplicationVersion("0.6.0");
+    QApplication::setApplicationVersion(LMX_VERSION);
     QApplication::setWindowIcon(QIcon(":/studio/brand/libremax-mark.png"));
     QCommandLineParser parser;
     parser.setApplicationDescription("LibreMax Architect — native interior design");
     parser.addHelpOption();
     parser.addVersionOption();
+    parser.addOption(
+        {"installation-smoke", "Verify installed catalogs, plugins, assets and projects", "directory"});
     parser.addOption({"ui-smoke", "Run native UI acceptance and save real screenshots", "directory"});
     parser.addOption(
         {"modern-smoke", "Verify modern models, filter and self-contained apartment", "directory"});
@@ -67,9 +70,9 @@ int main(int argc, char **argv) {
     parser.addOption({"blender", "Blender executable for render acceptance", "executable"});
     parser.addPositionalArgument("project", ".lmx project to open");
     parser.process(app);
-    bool test = parser.isSet("experience-smoke") || parser.isSet("modern-smoke") ||
-                parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") || parser.isSet("examples") ||
-                parser.isSet("render-smoke") || parser.isSet("recovery-smoke") ||
+    bool test = parser.isSet("installation-smoke") || parser.isSet("experience-smoke") ||
+                parser.isSet("modern-smoke") || parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") ||
+                parser.isSet("examples") || parser.isSet("render-smoke") || parser.isSet("recovery-smoke") ||
                 parser.isSet("recovery-fixture") || parser.isSet("recovery-verify");
     if (test)
         QStandardPaths::setTestModeEnabled(true);
@@ -88,6 +91,58 @@ int main(int argc, char **argv) {
         spdlog::rotating_logger_mt("libremax", (logs + "/libremax.log").toStdString(), 1024 * 1024, 3);
     spdlog::set_default_logger(logger);
     try {
+        if (parser.isSet("installation-smoke")) {
+            const auto output = QDir(parser.value("installation-smoke")).absolutePath();
+            QDir().mkpath(output);
+            const auto installedRoot =
+                QDir(QApplication::applicationDirPath() + "/../share/libremax").canonicalPath();
+            if (installedRoot.isEmpty() || !QFileInfo(lmx::resourcePath("starter-models"))
+                                                .canonicalFilePath()
+                                                .startsWith(installedRoot + "/"))
+                throw std::runtime_error("Installation must use packaged resources");
+            QTemporaryDir database;
+            lmx::Library library(database.filePath("library.db"), lmx::resourcePath("starter-models"));
+            std::size_t expected = 0;
+            for (const auto &catalog :
+                 {"starter-library/catalog.json", "starter-models/catalog.json",
+                  "starter-models/modern-catalog.json", "starter-models/current-catalog.json"}) {
+                QFile file(lmx::resourcePath(catalog));
+                if (!file.open(QIODevice::ReadOnly))
+                    throw std::runtime_error("Installed catalog missing");
+                auto entries = lmx::Json::parse(file.readAll().toStdString());
+                expected += entries.size();
+                library.seed(entries);
+            }
+            const auto entries = library.search({}, {}, false, false, false);
+            if (entries.size() != expected || library.search("sofa").empty())
+                throw std::runtime_error("Installed SQLite/FTS catalog failed");
+            auto project = lmx::ProjectStore::open(lmx::resourcePath("examples/apartamento-moderno.lmx"));
+            for (const auto &entry : entries)
+                if (entry.recipe.value("collection", std::string{}) == "apartment-modern") {
+                    auto payload = library.withPayload(entry);
+                    lmx::Document standalone;
+                    lmx::Library::attachModel(standalone, payload);
+                    standalone.entities.push_back(lmx::Library::instantiate(entry, 0, 0));
+                    standalone.validate();
+                }
+            lmx::ProjectStore::save(output + "/portable-project.lmx", project, false);
+            if (lmx::ProjectStore::open(output + "/portable-project.lmx").serialize() != project.serialize())
+                throw std::runtime_error("Installed project save/reopen failed");
+            QFile script(lmx::resourcePath("scripts/cycles_render.py"));
+            if (!script.open(QIODevice::ReadOnly) || script.size() < 1000 ||
+                !QFileInfo::exists(lmx::resourcePath("resources/style.qss")))
+                throw std::runtime_error("Installed renderer resources invalid");
+            QImage codec(32, 32, QImage::Format_RGB32);
+            codec.fill(Qt::darkBlue);
+            if (!codec.save(output + "/image-codec.jpg", "JPEG") ||
+                QImage(output + "/image-codec.jpg").isNull() ||
+                QImage(":/studio/brand/libremax-mark.png").isNull())
+                throw std::runtime_error("Installed JPEG/PNG codecs failed");
+            std::cout
+                << "INSTALLATION_PASS: " << expected
+                << " catalog entries, SQLite/FTS, 36 detailed assets, portable project, packaged renderer\n";
+            return 0;
+        }
         if (parser.isSet("recovery-smoke")) {
             QTemporaryDir directory;
             if (!directory.isValid())
@@ -132,7 +187,7 @@ int main(int argc, char **argv) {
         if (parser.isSet("examples")) {
             QDir dir(parser.value("examples"));
             QDir().mkpath(dir.absolutePath());
-            auto pack = lmx::readPbrMaterials(QStringLiteral(LMX_SOURCE_DIR) + "/starter-materials");
+            auto pack = lmx::readPbrMaterials(lmx::resourcePath("starter-materials"));
             auto kitchen = lmx::kitchenExample(), bedroom = lmx::bedroomExample();
             lmx::attachPbrMaterials(kitchen, pack);
             lmx::attachPbrMaterials(bedroom, pack);
@@ -151,8 +206,7 @@ int main(int argc, char **argv) {
             auto document = parser.isSet("render-project")
                                 ? lmx::ProjectStore::open(parser.value("render-project"))
                                 : lmx::kitchenExample();
-            lmx::attachPbrMaterials(
-                document, lmx::readPbrMaterials(QStringLiteral(LMX_SOURCE_DIR) + "/starter-materials"));
+            lmx::attachPbrMaterials(document, lmx::readPbrMaterials(lmx::resourcePath("starter-materials")));
             lmx::ProjectStore::save(directory + "/render-project.lmx", document, false);
             lmx::RenderJob job;
             bool checkingFailure = false;
@@ -192,24 +246,22 @@ int main(int argc, char **argv) {
                 checkingFailure = true;
                 std::erase_if(document.entities, [](const auto &e) { return e.type == "Camera"; });
                 document.renderSettings["camera"] = "";
-                job.start(document, parser.value("blender"),
-                          QStringLiteral(LMX_SOURCE_DIR) + "/scripts/cycles_render.py", path, renderWidth,
-                          renderHeight, renderSamples, "CPU");
+                job.start(document, parser.value("blender"), lmx::resourcePath("scripts/cycles_render.py"),
+                          path, renderWidth, renderHeight, renderSamples, "CPU");
             });
             QTimer::singleShot(600000, &app, [&] {
                 job.cancel();
                 std::cerr << "Render acceptance timeout\n";
                 app.exit(1);
             });
-            job.start(document, parser.value("blender"),
-                      QStringLiteral(LMX_SOURCE_DIR) + "/scripts/cycles_render.py",
+            job.start(document, parser.value("blender"), lmx::resourcePath("scripts/cycles_render.py"),
                       directory + "/cycles-kitchen.png", renderWidth, renderHeight, renderSamples, "CPU");
             return app.exec();
         }
         lmx::applyStudioPalette();
         QString stylesheet = QApplication::applicationDirPath() + "/../share/libremax/resources/style.qss";
         if (!QFileInfo::exists(stylesheet))
-            stylesheet = QStringLiteral(LMX_SOURCE_DIR) + "/resources/style.qss";
+            stylesheet = lmx::resourcePath("resources/style.qss");
         QFile style(stylesheet);
         if (style.open(QIODevice::ReadOnly))
             app.setStyleSheet(QString::fromUtf8(style.readAll()));
