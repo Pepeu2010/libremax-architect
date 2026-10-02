@@ -1,3 +1,13 @@
+# Test report — fila e galeria 0.7.0
+
+Verificado no host Windows em 02/10/2026: **31 casos / 1.737 assertions** aprovados. A fila nativa com Blender 5.2.1 LTS/Cycles CPU passou com cinco câmeras, snapshots imutáveis, edição durante o render, progresso de amostras, cancelamento na fila e durante o processo, falha intencional, repetição CPU, reabertura do histórico e metadados no `.lmx`. Imagens positivas: 160 × 90, oito amostras; o caso de cancelamento inicia 640 × 360/1024 e interrompe o processo.
+
+Também passaram a regressão de UI/montagem, tutorial de 15 capítulos e projeto único, render real 320 × 180 e preservação da imagem anterior após erro. PowerShell, script Python, formatador e diff foram conferidos. [Arquitetura, capturas e limites](RENDER_PIPELINE.md). Relatórios locais: `build-render/queue-report.txt`, `build-render/render-report.txt` e `build-render/Testing/Temporary/LastTest.log`.
+
+A CI Linux e os novos instaladores têm verificações próprias. O resultado de uma build não substitui esses gates nem QA em GPUs físicas, 4K ou apartamentos grandes. Os resultados abaixo são históricos.
+
+---
+
 # Test report — instaladores 0.6.1
 
 A [primeira CI de instalação](https://github.com/Pepeu2010/libremax-architect/actions/runs/37010283076) passou nos dois sistemas. Os testes verificaram os pacotes realmente instalados, sem usar o checkout para recursos:
