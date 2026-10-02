@@ -1,6 +1,6 @@
 # Test report — ampliação contemporânea 0.6.0
 
-Windows: **28 casos / 1.702 assertions** aprovados. Catálogo de 115 itens, filtro com 36 modelos, 18 acréscimos, ocultação correta das miniaturas, arraste de sofá/cama/peças suspensas, arquivo único, UI a 900 px, tutorial/home e recuperação passaram. Render real Cycles CPU com o novo sofá também passou. [Evidência e limites](CATALOG_EXPANSION.md). Verificação Linux desta ampliação ainda pendente; o resultado abaixo refere-se ao commit anterior.
+Windows: **28 casos / 1.706 assertions** aprovados. Catálogo de 115 itens, filtro com 36 modelos, 18 acréscimos, ocultação correta das miniaturas, arraste de sofá/cama/peças suspensas, arquivo único, UI a 900 px, tutorial/home e recuperação passaram. Render real Cycles CPU com o novo sofá também passou. [Evidência e limites](CATALOG_EXPANSION.md). Verificação Linux desta ampliação ainda pendente; o resultado abaixo refere-se ao commit anterior.
 
 ---
 

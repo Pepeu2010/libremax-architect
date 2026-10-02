@@ -30,7 +30,7 @@ Render executado com Blender 5.2.1 LTS/Cycles CPU, 960×540, 64 samples, denoise
 
 ## Verificação
 
-Build Release Windows com Qt 6.11.2/OpenCASCADE 7.9.3. **28 casos / 1.702 assertions** passaram. Cobertura inclui as 24 malhas Poly Haven, os 12 designs originais, UVs/normais, mapas, hashes, categorias, portabilidade, montagens na parede e uma regressão de superfícies cruzadas que exige ocultação por pixel.
+Build Release Windows com Qt 6.11.2/OpenCASCADE 7.9.3. **28 casos / 1.706 assertions** passaram. Cobertura inclui as 24 malhas Poly Haven, os 12 designs originais, UVs/normais, mapas, hashes, categorias, portabilidade, montagens na parede e uma regressão de superfícies cruzadas que exige ocultação por pixel.
 
 Smoke nativo passou com 36 miniaturas e arraste real de sofá, cama, espelho e mesa suspensa. Também passou a regressão de montagem com 115 miniaturas, interface a 900 px, tutorial/home e recuperação após encerramento forçado. Relatórios locais em `build-catalog/*-report.txt`. Build de verificação usa uma cópia do commit e apenas as mudanças do catálogo, preservando trabalhos em andamento no render e a versão anterior aberta pelo usuário.
 
@@ -40,3 +40,5 @@ ctest --test-dir build-catalog/bin --output-on-failure -V
 ```
 
 No host de desenvolvimento, **Abrir LibreMax.cmd** usa a build nova; salvar e fechar a versão antiga antes de reabrir permite carregar o catálogo atualizado. Não é instalador portátil. Paridade integral, fila/galeria de renders, diagnóstico GPU, HDRI/EXR e as demais lacunas da master spec continuam em desenvolvimento.
+
+Reprodução independente em Blender 5.2.1: as 12 malhas originais, o catálogo e a proveniência foram gerados novamente em outra pasta. Os 14 arquivos coincidiram byte a byte. A verificação detectou e corrigiu uma conversão de codificação no catálogo; buscas sem acentos e o filtro Decoração agora têm regressão explícita.

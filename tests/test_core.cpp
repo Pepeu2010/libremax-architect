@@ -394,6 +394,10 @@ TEST_CASE("Original contemporary furniture remains portable and follows mounting
         REQUIRE(meshSnapshot(restored) == snapshot);
     }
     REQUIRE(library.search("sofa").size() == 2);
+    REQUIRE(library.search("sofa").front().name.startsWith(QString::fromUtf8("Sofá")));
+    REQUIRE(library.search("luminaria").size() == 1);
+    REQUIRE(library.search("boucle").size() == 2);
+    REQUIRE(library.search({}, "Decoração").size() == 2);
     REQUIRE(library.search("cama queen").size() == 1);
     REQUIRE(library.search({}, "Dormitório").size() == 3);
     REQUIRE(library.search("ripad").size() == 3);
