@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(LibreMaxArchitect VERSION 0.6.1 LANGUAGES CXX)
+project(LibreMaxArchitect VERSION 0.7.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
@@ -10,6 +10,11 @@ find_package(nlohmann_json 3.10 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(libzip CONFIG REQUIRED)
 add_library(lmx_core
+  libs/rendering/render_options.cpp libs/rendering/render_options.h
+  libs/rendering/render_snapshot.cpp libs/rendering/render_snapshot.h
+  libs/rendering/render_scene_exporter.cpp libs/rendering/render_scene_exporter.h
+  libs/rendering/blender_bridge.cpp libs/rendering/blender_bridge.h
+  libs/rendering/render_queue.cpp libs/rendering/render_queue.h
   libs/geometry/scene_cache.cpp libs/geometry/scene_cache.h
   libs/persistence/project_library.cpp libs/persistence/project_library.h
   libs/placement/placement.cpp libs/placement/placement.h
@@ -38,6 +43,8 @@ endif()
 add_executable(libremax-architect apps/architect/main.cpp apps/architect/main_window.cpp apps/architect/main_window.h
   apps/architect/studio_theme.cpp apps/architect/studio_theme.h libs/viewport/cad_view.cpp libs/viewport/cad_view.h)
 target_sources(libremax-architect PRIVATE apps/architect/render_preview.cpp apps/architect/render_preview.h)
+target_sources(libremax-architect PRIVATE apps/architect/render_gallery.cpp apps/architect/render_gallery.h)
+target_sources(libremax-architect PRIVATE apps/architect/queue_acceptance.cpp apps/architect/queue_acceptance.h)
 target_sources(libremax-architect PRIVATE apps/architect/project_home.cpp apps/architect/project_home.h apps/architect/first_run.cpp apps/architect/first_run.h)
 qt_add_resources(libremax-architect studio_icons PREFIX "/studio" BASE resources
   FILES resources/arrow-down.png resources/arrow-up.png resources/check.png resources/brand/libremax-mark.png resources/brand/apartment-preview.png)
@@ -52,7 +59,7 @@ if(BUILD_TESTING)
   if(NOT Catch2_FOUND)
     find_package(Catch2 2.13 REQUIRED)
   endif()
-  add_executable(lmx_tests tests/main.cpp tests/test_core.cpp)
+  add_executable(lmx_tests tests/main.cpp tests/test_core.cpp tests/test_render.cpp)
   target_link_libraries(lmx_tests PRIVATE lmx_core Catch2::Catch2)
   target_compile_definitions(lmx_tests PRIVATE LMX_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
   add_test(NAME core COMMAND lmx_tests)

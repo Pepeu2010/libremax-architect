@@ -6,6 +6,10 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $Installer = (Resolve-Path -LiteralPath $Installer).Path
+if ([IO.Path]::GetFileName($Installer) -notmatch '^LibreMax-Architect-([0-9]+\.[0-9]+\.[0-9]+)-Windows-x64-Setup\.exe$') {
+    throw 'Installer filename must include its application version.'
+}
+$expectedVersion = $Matches[1]
 $evidence = [IO.Path]::GetFullPath($EvidenceDirectory)
 New-Item -ItemType Directory -Path $evidence -Force | Out-Null
 $installation = Join-Path $evidence ('installed-' + [guid]::NewGuid().ToString('N'))
@@ -50,7 +54,7 @@ try {
         throw 'Desktop shortcut target differs from installed application.'
     }
     if (!(Test-Path -LiteralPath (Join-Path $menu 'LibreMax Architect.lnk'))) { throw 'Start menu shortcut missing.' }
-    if ((Get-ItemProperty -LiteralPath $registry).DisplayVersion -notmatch '^0\.6\.1') { throw 'Installed version registration failed.' }
+    if ((Get-ItemProperty -LiteralPath $registry).DisplayVersion -notlike "$expectedVersion *") { throw 'Installed version registration failed.' }
     Invoke-App -Arguments @('--installation-smoke', (Join-Path $evidence 'runtime')) -Name 'runtime'
     if ($Gui) {
         $env:QT_QPA_PLATFORM = 'windows'

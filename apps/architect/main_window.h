@@ -6,8 +6,9 @@
 #include "persistence/project_library.h"
 #include "persistence/recovery_store.h"
 #include "project_home.h"
+#include "render_gallery.h"
 #include "render_preview.h"
-#include "rendering/render_job.h"
+#include "rendering/render_queue.h"
 #include "viewport/cad_view.h"
 #include <QCheckBox>
 #include <QComboBox>
@@ -20,6 +21,7 @@
 #include <QPlainTextEdit>
 #include <QProgressBar>
 #include <QPushButton>
+#include <QSpinBox>
 #include <QStackedWidget>
 #include <QTemporaryDir>
 #include <QTimer>
@@ -34,7 +36,10 @@ class MainWindow final : public QMainWindow {
     std::unique_ptr<QTemporaryDir> testLibraryDirectory;
     std::unique_ptr<Library> library;
     AssetThumbnails thumbnails;
-    RenderJob render;
+    std::unique_ptr<RenderQueue> render;
+    RenderGallery *gallery;
+    QByteArray editorLayout;
+    bool galleryMode = false;
     CadView *viewport;
     QTreeWidget *tree;
     QListWidget *assets;
@@ -52,6 +57,11 @@ class MainWindow final : public QMainWindow {
     QCheckBox *originalModelColors;
     QComboBox *renderDevice;
     QComboBox *renderQuality;
+    QComboBox *renderSize;
+    QComboBox *renderFormat;
+    QWidget *customRender;
+    std::map<QString, QSpinBox *> renderCounts;
+    std::map<QString, QDoubleSpinBox *> renderValues;
     QLineEdit *blenderPath;
     QPlainTextEdit *renderLog;
     QComboBox *renderCamera;
@@ -109,10 +119,14 @@ class MainWindow final : public QMainWindow {
     void importTexture();
     Q_INVOKABLE void activatePbrMaterials();
     void renderScene();
+    Json selectedRenderOptions() const;
+    void refreshRenderQueue();
+    Q_INVOKABLE void showRenderGallery();
     void applyRenderSettings();
     Q_INVOKABLE void recover();
     Q_INVOKABLE void showHome();
     void enterEditor();
+    void showEditorWorkspace();
     void rememberProject();
 
   protected:
@@ -123,6 +137,7 @@ class MainWindow final : public QMainWindow {
                         const QString &testRoot = {});
     Editor &editor() { return editor_; }
     CadView *cad() { return viewport; }
+    RenderQueue &renderQueue() { return *render; }
     void loadProject(const QString &filename);
     bool saveProject(bool saveAs = false);
     void autosave();

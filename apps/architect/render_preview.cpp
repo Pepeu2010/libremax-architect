@@ -51,6 +51,7 @@ RenderPreview::RenderPreview(QWidget *parent) : QWidget(parent) {
     };
     canvas = new ImageCanvas;
     canvas->setScene(&scene);
+    button(tr("Suas imagens"), "backToRenderGallery", [this] { emit backToGallery(); });
     button(tr("Ajustar"), "fitRenderImage", [this] { canvas->fit(); });
     button(tr("1:1"), "actualRenderSize", [this] { canvas->resetTransform(); });
     button(tr("Salvar cópia…"), "exportRenderImage", [this] {

@@ -141,20 +141,24 @@ def main():
     bpy.ops.object.select_all(action='SELECT')
     bpy.ops.object.delete(use_global=False)
     scene = bpy.context.scene
+    if bpy.app.version < (5, 2, 0):
+        raise RuntimeError('LibreMax requires Blender 5.2 LTS or newer')
     scene.render.engine = 'CYCLES'
     scene.cycles.samples = args.samples
     settings = package.get('renderSettings', {})
     scene.cycles.use_denoising = settings.get('denoise', True)
-    scene.cycles.max_bounces = 16
-    scene.cycles.diffuse_bounces = 8
-    scene.cycles.glossy_bounces = 8
-    scene.cycles.transmission_bounces = 12
-    scene.cycles.transparent_max_bounces = 12
+    cycles = settings.get('cycles', {})
+    scene.cycles.max_bounces = cycles.get('maxBounces', 16)
+    scene.cycles.diffuse_bounces = cycles.get('diffuseBounces', 8)
+    scene.cycles.glossy_bounces = cycles.get('glossyBounces', 8)
+    scene.cycles.transmission_bounces = cycles.get('transmissionBounces', 12)
+    scene.cycles.transparent_max_bounces = cycles.get('transparentBounces', 12)
     scene.cycles.denoising_prefilter = 'ACCURATE'
     scene.cycles.denoising_input_passes = 'RGB_ALBEDO_NORMAL'
-    scene.cycles.sample_clamp_indirect = 5
+    scene.cycles.sample_clamp_indirect = cycles.get('clamp', 5)
     scene.cycles.use_adaptive_sampling = True
-    scene.cycles.adaptive_threshold = 0.008
+    scene.cycles.adaptive_threshold = cycles.get('noiseThreshold', 0.008)
+    scene.render.film_transparent = cycles.get('transparent', False)
     scene.view_settings.view_transform = 'AgX'
     scene.view_settings.look = 'AgX - Medium High Contrast'
     scene.view_settings.exposure = settings.get('exposure', 0.0)
@@ -261,7 +265,25 @@ def main():
     scene.render.filepath = os.path.abspath(args.output)
     scene.render.use_file_extension = False
     bpy.ops.wm.save_as_mainfile(filepath=os.path.join(os.path.dirname(args.scene), 'scene.blend'))
-    bpy.ops.render.render(write_still=True)
+    # These are engine statistics, never a percentage inferred from elapsed time.
+    def engine_stats(stats):
+        print('LIBREMAX_STATS', stats, flush=True)
+    bpy.app.handlers.render_stats.append(engine_stats)
+    print('LIBREMAX_ENGINE', json.dumps({'blender': bpy.app.version_string,
+        'device': scene.cycles.device, 'samples': scene.cycles.samples,
+        'maxBounces': scene.cycles.max_bounces}), flush=True)
+    print('LIBREMAX_STAGE Rendering', flush=True)
+    try:
+        bpy.ops.render.render(write_still=True)
+    except RuntimeError as error:
+        if scene.cycles.device != 'GPU':
+            raise
+        print('LIBREMAX_GPU_FALLBACK', str(error), flush=True)
+        scene.cycles.device = 'CPU'
+        print('LIBREMAX_ENGINE', json.dumps({'blender': bpy.app.version_string,
+            'device': 'CPU', 'samples': scene.cycles.samples,
+            'maxBounces': scene.cycles.max_bounces, 'fallback': True}), flush=True)
+        bpy.ops.render.render(write_still=True)
     print('LIBREMAX_COMPLETED', scene.render.filepath, flush=True)
 
 if __name__ == '__main__':

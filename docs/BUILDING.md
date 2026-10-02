@@ -4,7 +4,7 @@ Fonte C++20, CMake ≥3.24, Ninja, Qt ≥6.4 (Core/Gui/Widgets/Sql/Concurrent/Te
 
 Para usar sem compilar, veja [INSTALADOR](../INSTALADOR/README.md). O fluxo abaixo é para desenvolvimento.
 
-## Reproduzir os instaladores 0.6.1
+## Reproduzir os instaladores 0.7.0
 
 Compile uma cópia limpa da tag publicada com `-DLMX_DEPLOYMENT_BUILD=ON`. Essa opção exige recursos instalados em `share/libremax` e gera executável Windows sem terminal. Não use a opção para abrir um binário solto na pasta de build.
 
@@ -12,7 +12,7 @@ No Windows, acrescente NSIS e Python ao toolchain UCRT64. Configure/compile em `
 
 ```powershell
 ./scripts/package-windows.ps1 -ToolPrefix 'C:/caminho/msys64/ucrt64' -Python 'C:/caminho/msys64/ucrt64/bin/python.exe'
-./scripts/verify-windows-installer.ps1 -Installer dist/windows/LibreMax-Architect-0.6.1-Windows-x64-Setup.exe -Gui
+./scripts/verify-windows-installer.ps1 -Installer dist/windows/LibreMax-Architect-0.7.0-Windows-x64-Setup.exe -Gui
 ```
 
 O verificador exige um usuário sem instalação/atalhos LibreMax existentes. Instala em uma pasta nova, limpa o PATH do processo de teste, verifica catálogo/SQLite/modelos/codecs/projeto, desinstala e confirma que um projeto permanece. `-Blender 'C:/caminho/blender.exe'` também verifica Cycles CPU. Os logs ficam em `build-install/installation-evidence`. Não modifica o PATH global.

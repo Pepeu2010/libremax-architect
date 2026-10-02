@@ -3,7 +3,7 @@ param(
     [string]$OutputDirectory = 'dist/windows',
     [string]$ToolPrefix = '',
     [string]$Python = 'python',
-    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+$')][string]$Version = '0.6.1'
+    [ValidatePattern('^$|^[0-9]+\.[0-9]+\.[0-9]+$')][string]$Version = ''
 )
 $ErrorActionPreference = 'Stop'
 $sourceRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
@@ -11,6 +11,11 @@ if (!$ToolPrefix) { $ToolPrefix = Join-Path $env:USERPROFILE '.codex\tmp\lmx-too
 $ToolPrefix = (Resolve-Path -LiteralPath $ToolPrefix).Path
 $env:PATH = (Join-Path $ToolPrefix 'bin') + ';' + $env:PATH
 $build = (Resolve-Path -LiteralPath (Join-Path $sourceRoot $BuildDirectory)).Path
+$config = Get-Content -LiteralPath (Join-Path $build 'CPackConfig.cmake') -Raw
+if ($config -notmatch 'set\(CPACK_PACKAGE_VERSION "([0-9]+\.[0-9]+\.[0-9]+)"\)') { throw 'Build package version missing.' }
+$builtVersion = $Matches[1]
+if ($Version -and $Version -ne $builtVersion) { throw 'Installer version differs from the compiled application.' }
+$Version = $builtVersion
 $output = [IO.Path]::GetFullPath((Join-Path $sourceRoot $OutputDirectory))
 $stage = Join-Path $output ('payload-' + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $stage -Force | Out-Null

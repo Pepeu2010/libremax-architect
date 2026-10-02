@@ -15,6 +15,7 @@ class ImageCanvas final : public QGraphicsView {
     void zoom(double factor);
 };
 class RenderPreview final : public QWidget {
+    Q_OBJECT
     QGraphicsScene scene;
     ImageCanvas *canvas;
     QLabel *caption;
@@ -24,5 +25,7 @@ class RenderPreview final : public QWidget {
     explicit RenderPreview(QWidget *parent = nullptr);
     void open(const QString &path);
     QSize imageSize() const;
+  signals:
+    void backToGallery();
 };
 } // namespace lmx

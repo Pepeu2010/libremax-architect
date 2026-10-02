@@ -2,6 +2,7 @@
 #include "main_window.h"
 #include "materials/texture.h"
 #include "persistence/project_store.h"
+#include "queue_acceptance.h"
 #include "resource_paths.h"
 #include "studio_theme.h"
 #include <QApplication>
@@ -50,6 +51,7 @@ int main(int argc, char **argv) {
     parser.setApplicationDescription("LibreMax Architect — native interior design");
     parser.addHelpOption();
     parser.addVersionOption();
+    parser.addOption({"queue-smoke", "Verify native batch render queue, snapshots and gallery", "directory"});
     parser.addOption(
         {"installation-smoke", "Verify installed catalogs, plugins, assets and projects", "directory"});
     parser.addOption({"ui-smoke", "Run native UI acceptance and save real screenshots", "directory"});
@@ -71,9 +73,10 @@ int main(int argc, char **argv) {
     parser.addOption({"blender", "Blender executable for render acceptance", "executable"});
     parser.addPositionalArgument("project", ".lmx project to open");
     parser.process(app);
-    bool test = parser.isSet("installation-smoke") || parser.isSet("experience-smoke") ||
-                parser.isSet("modern-smoke") || parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") ||
-                parser.isSet("examples") || parser.isSet("render-smoke") || parser.isSet("recovery-smoke") ||
+    bool test = parser.isSet("queue-smoke") || parser.isSet("installation-smoke") ||
+                parser.isSet("experience-smoke") || parser.isSet("modern-smoke") ||
+                parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") || parser.isSet("examples") ||
+                parser.isSet("render-smoke") || parser.isSet("recovery-smoke") ||
                 parser.isSet("recovery-fixture") || parser.isSet("recovery-verify");
     if (test)
         QStandardPaths::setTestModeEnabled(true);
@@ -281,6 +284,9 @@ int main(int argc, char **argv) {
         if (!parser.positionalArguments().isEmpty())
             window.loadProject(parser.positionalArguments().first());
         window.show();
+        if (parser.isSet("queue-smoke"))
+            lmx::startQueueAcceptance(window, app, parser.value("queue-smoke"), parser.value("blender"),
+                                      lmx::resourcePath("scripts/cycles_render.py"));
         if (!test || parser.isSet("experience-smoke"))
             lmx::showOpening(&window);
         if (parser.isSet("experience-smoke")) {

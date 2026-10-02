@@ -1,5 +1,6 @@
 #include "document.h"
 #include "library/model.h"
+#include "rendering/render_options.h"
 #include <QCryptographicHash>
 #include <QRegularExpression>
 #include <QUuid>
@@ -86,6 +87,8 @@ void Document::validate() const {
         throw std::invalid_argument("Materiais inválidos");
     if (!renderSettings.is_object())
         throw std::invalid_argument("Configuração de render inválida");
+    if (renderSettings.contains("cycles"))
+        validateRenderOptions(renderSettings.at("cycles"));
     for (auto key : {"exposure", "environmentStrength"})
         if (!std::isfinite(renderSettings.at(key).get<double>()))
             throw std::invalid_argument("Configuração de render inválida");

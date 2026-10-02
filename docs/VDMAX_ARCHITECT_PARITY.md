@@ -1,6 +1,6 @@
 # Matriz de paridade — VDMax 3.0 Arquitetos e Decoradores
 
-Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. Versão LibreMax: 0.6.0 em desenvolvimento. **Não há paridade completa nem release 1.0.**
+Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. Versão LibreMax: 0.7.0 em desenvolvimento. **Não há paridade completa nem release 1.0.**
 
 Complemento visual em 2026-09-30: [auditoria](VISUAL_REFERENCE_AUDIT.md), 11 imagens inspecionadas de 47 referências indexadas. `visual_refs` indica somente essas imagens consultadas; não promove paridade funcional automaticamente.
 
@@ -63,7 +63,7 @@ Fontes oficiais consultadas:
 | V07 | Editor | Undo/redo | Requisito da spec | QUndoStack + Command Pattern validado | `[commands]` | FUNCTIONAL | SPEC | UI smoke amplia cobertura | — |
 | R01 | Luz | Iluminação | Render calcula iluminação | Point/spot/area persistentes; cor/tamanho/ângulo/suavidade no inspector | `[render]` | IN_PROGRESS | P,SPEC | Céu natural/sol editáveis integrados; LED/HDRI/emissivo e QA amplo pendentes | LIGHT-02,LIGHT-03 |
 | R02 | Câmeras | Câmeras | Requisito da spec | Posição/alvo/lente, abertura/foco e seleção por UUID; exposição/ambiente/denoise persistentes | `[render]` | IN_PROGRESS | SPEC | Seletor integrado e roundtrip testados; preset por cômodo implementado; posicionamento interativo completo falta | RENDER-06 |
-| R03 | Render | Ray tracing | Ray-trace com qualidade variável | QProcess + snapshot + Cycles + denoise, exposição/ambiente, GPU/CPU | Smoke QProcess/Cycles CPU | IN_PROGRESS | P | Sem fila multi-job e galeria persistente | RENDER-06,RENDER-08 |
+| R03 | Render | Ray tracing | Ray-trace com qualidade variável | QProcess + snapshot + Cycles + denoise, exposição/ambiente, GPU/CPU | Smoke QProcess/Cycles CPU | IN_PROGRESS | P | Fila e galeria persistentes implementadas; faltam HDRI/EXR, mapas PBR adicionais e QA de GPUs físicas | RENDER-06,RENDER-08 |
 | R04 | Render | Exportar imagens | Resultado de apresentação | PNG/JPEG via Blender e visualizador central com exportação de cópia | Smoke 1280×720/128 CPU + inspeção visual | FUNCTIONAL | P,SPEC | PNG 1280×720 e cópia pela UI testados; JPEG pela UI e 1080p/4K pendentes | RENDER-08,VISUAL-03 |
 | P01 | Projetos | Salvar/abrir | Requisito da spec | Container ZIP v1, UUIDs, modelos e mapas incorporados, backup, validação e atomic replace; home com recentes | `[persistence]` + UI/modern/experience smoke | IN_PROGRESS | SPEC | Renders e migrations futuros faltam; índice local não é backup | — |
 | P02 | Projetos | Autosave | Requisito da spec | Intervalo configurável 1–60 min, 5 snapshots por UUID | `[recovery]` + encerramento forçado/reinício | FUNCTIONAL | SPEC | Timer configurável implementado; QA de configuração pela UI pendente | — |

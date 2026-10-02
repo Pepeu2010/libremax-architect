@@ -1,4 +1,4 @@
-# Render de apresentação — 0.6.0
+# Render de apresentação — 0.7.0
 
 O objetivo atual é uma aparência fotográfica com a geometria do projeto. Cycles calcula iluminação indireta, sombras, reflexos e transmissão; a qualidade depende da cena, materiais, iluminação e resolução. Um projeto com modelos simples continua mostrando esses limites.
 
@@ -6,15 +6,15 @@ O objetivo atual é uma aparência fotográfica com a geometria do projeto. Cycl
 
 **Câmera:** posição, alvo e lente, abertura f/ (1–64) e foco em mm (100–10.000.000) no inspector. Quando o arquivo antigo não especifica foco, o renderer foca no alvo. Sensor 36 mm, DOF e diafragma de sete lâminas; exemplo em f/8 para manter o ambiente legível. A câmera principal foi nivelada para linhas verticais naturais.
 
-**Qualidade:** Rascunho 640×360/16; Prévia 1280×720/128; Foto 1920×1080/512; Final 3840×2160/1024. CPU ou AUTO (OptiX/CUDA/HIP/oneAPI, fallback CPU). AgX/Medium High Contrast, adaptive threshold 0,008, denoise com albedo/normal e prefilter Accurate; 16 bounces totais, 12 de transmissão. Sem percentual artificial: Preparando/Renderizando exibem atividade indeterminada.
+**Qualidade:** Rápido 32 amostras/4 reflexões; Normal 128/8; Final 512/12; Personalizado com dimensões, amostras e reflexões próprias. Denoise ligado nos presets. CPU ou AUTO (OptiX/CUDA/HIP/oneAPI, fallback CPU). Percentuais vêm de amostras emitidas pelo Cycles; outras etapas mostram atividade indeterminada. [Fila, galeria e parâmetros](RENDER_PIPELINE.md).
 
 **Materiais/geometria:** mapas albedo/rugosidade/normal PBR locais e autossuficientes, com UV por face em escala física. Albedo sRGB e mapas de dados Non-Color. Tesselação B-rep → solda de vértices a 0,0001 mm → remoção de diagonais coplanares → pequenos bevels reais/weighted normals no Blender; paredes, pisos e forros preservam encontros sem bevel para evitar frestas de luz. A geometria CAD não é alterada por esses bevels de apresentação. Puxadores de barra têm haste cilíndrica e dois suportes no CAD e no render. Materiais procedurais continuam funcionando quando não há mapas.
 
 **Limite de vidro:** panes de janela mantêm refração/reflexos para câmera e glossy, mas passam shadow rays para permitir entrada estável de luz natural. É uma aproximação de vidro arquitetônico fino; não é simulação completa de caustics/espectro/medição luminotécnica. Outros vidros preservam sombras normais. A imagem não recebe geração por IA ou substituição de móveis.
 
-Snapshot validado → worker de tesselação → JSON/PNGs → QProcess `blender --background --factory-startup --python-exit-code 1 --python scripts/cycles_render.py -- ...` → imagem validada → cópia atômica. Sem shell ou Python gerado com strings do usuário. Job único cancelável; editar durante render modifica somente renders futuros. Falha sem câmera preserva a imagem anterior.
+Snapshot validado → worker de tesselação → JSON/PNGs → QProcess `blender --background --factory-startup --python-exit-code 1 --python scripts/cycles_render.py -- ...` → imagem validada → cópia atômica. Sem shell ou Python gerado com strings do usuário. Fila FIFO persistente com um processo ativo cancelável; editar durante render modifica somente renders futuros. Falha sem câmera preserva a imagem anterior.
 
-O resultado ocupa a área central: Ajustar/1:1, zoom/pan e Salvar cópia PNG/JPEG. Planta/3D mantêm o último resultado em Imagem. Fila e galeria persistente continuam pendentes, assim como QA GPU, Linux, Foto 1080p/Final 4K. Blender executado neste host: 5.2.1 LTS; o céu usa Multiple Scattering. Compatibilidade com versões anteriores e com Blender 6 não foi validada; 5.2 ainda informa depreciação de use_nodes.
+A galeria Suas imagens mantém resultados, câmeras, configurações, estados e logs. Abrir imagem oferece Ajustar/1:1, zoom/pan e Salvar cópia PNG/JPEG. Voltar ao projeto restaura os painéis de edição. Cópias da cena permitem repetir ou tentar com CPU sem usar alterações posteriores. QA de GPUs físicas, Foto 1080p/Final 4K e enquadramento exato ainda estão pendentes. Blender executado neste host: 5.2.1 LTS; o céu usa Multiple Scattering. Compatibilidade com Blender 6 não foi validada; 5.2 ainda informa depreciação de use_nodes.
 
 [Apartamento / Cycles CPU 640×360](screenshots/apartment-render.png), [cozinha / 1280×720](screenshots/photoreal-kitchen.png), [evidência do ciclo](CYCLE_03.md), [fontes/licenças dos mapas](../starter-materials/README.md).
 
@@ -22,4 +22,4 @@ Malhas prontas são as mesmas no viewport e no render, com materiais separados. 
 
 Na coleção **Apartamento atual**, malhas detalhadas mantêm UVs e normais originais, inclusive ao girar, espelhar e redimensionar. O Cycles preserva as costuras, evitando solda/bevel que altere o mapeamento do glTF. Cor, rugosidade e normal usam os mapas incorporados; a metalicidade é um valor médio do original. O viewport mostra textura de cor, com iluminação de edição. [Render real 960×540/64](screenshots/modern-apartment-render.png), [procedência e limites](../starter-models/README.md). O sofá dessa cena ainda é Kenney.
 
-Blender executa sem janela/terminal, com prioridade reduzida e até oito threads CPU neste pipeline. O editor continua disponível, mas não há benchmark de interação durante cenas grandes. A nova arquitetura completa de presets/fila/galeria solicitada ainda não foi concluída; os presets e estados indeterminados descritos acima permanecem os atuais.
+Blender executa sem janela/terminal, com prioridade reduzida e até oito threads CPU neste pipeline. O editor continua disponível, mas não há benchmark de interação durante cenas grandes. Presets, fila e galeria persistente estão integrados; recursos ainda pendentes da especificação ficam registrados em [RENDER_PIPELINE](RENDER_PIPELINE.md).

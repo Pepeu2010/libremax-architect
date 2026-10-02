@@ -140,8 +140,10 @@ void showTutorial(QWidget *parent) {
          "tempo e qualidade; Final usa mais amostras para apresentação. Personalizado mostra controles "
          "adicionais.\n\nClique em criar a imagem e acompanhe o estado. Você pode continuar editando ou "
          "cancelar. O render usa uma cópia do projeto no momento do pedido. A imagem abre dentro do "
-         "LibreMax; salve uma cópia em PNG ou JPEG. O motor Cycles precisa estar instalado, mas você não "
-         "abre o Blender manualmente."},
+         "LibreMax em Suas imagens. Crie imagens de todas as câmeras para enviar uma sequência à fila. "
+         "Cada imagem guarda a cena usada; depois você pode repetir, tentar com CPU ou salvar uma cópia "
+         "em PNG ou JPEG. A galeria permanece ao fechar o programa. O motor Cycles precisa estar "
+         "instalado, mas você não abre o Blender manualmente."},
         {"13. Salve e retome", "Um único arquivo .lmx leva o seu projeto.",
          "Ctrl+S salva. Na primeira vez, escolha o nome e a pasta. Salvar como cria outro arquivo. Ambiente, "
          "móveis e texturas ficam incorporados: não mova dezenas de arquivos separados.\n\nO projeto salvo "

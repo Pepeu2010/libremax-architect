@@ -25,6 +25,7 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QResizeEvent>
+#include <QSaveFile>
 #include <QScrollArea>
 #include <QSettings>
 #include <QSignalBlocker>
@@ -120,6 +121,7 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory, bool welcome
         testing ? (testRoot.isEmpty() ? testLibraryDirectory->path() : testRoot) : dataRoot();
     library = std::make_unique<Library>(localRoot + "/library.db", resourceFile("starter-models"));
     projects = std::make_unique<ProjectLibrary>(localRoot + "/projects");
+    render = std::make_unique<RenderQueue>(localRoot + "/renders");
     QFile catalog(resourceFile("starter-library/catalog.json"));
     if (!catalog.open(QIODevice::ReadOnly))
         throw std::runtime_error("Starter Library não encontrada");
@@ -192,21 +194,30 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory, bool welcome
                 return library->withPayload(a);
         return std::nullopt;
     });
-    connect(&render, &RenderJob::state, this, [this](const QString &state) {
-        renderState->setText(state);
-        const bool busy = render.busy();
-        renderStart->setEnabled(!busy && renderCamera->count() > 0);
-        renderCancel->setEnabled(busy);
-        renderProgress->setRange(0, busy ? 0 : 100);
-        renderProgress->setValue(state == tr("Concluído") ? 100 : 0);
-        renderLog->appendPlainText(state);
-        statusBar()->showMessage(tr("Render: %1").arg(state));
+    connect(render.get(), &RenderQueue::changed, this, &MainWindow::refreshRenderQueue);
+    connect(render.get(), &RenderQueue::log, renderLog, &QPlainTextEdit::appendPlainText);
+    connect(render.get(), &RenderQueue::warning, this,
+            [this](const QString &message) { statusBar()->showMessage(message, 10000); });
+    connect(render.get(), &RenderQueue::completed, this, [this](const QString &id, const QString &) {
+        statusBar()->showMessage(tr("Imagem pronta. Abra em Suas imagens."), 8000);
+        const auto entries = render->entries(editor_.document().id);
+        if (std::none_of(entries.begin(), entries.end(),
+                         [&](const auto &entry) { return entry.at("id") == id.toStdString(); }))
+            return;
+        editor_.apply(tr("Registrar imagens do projeto"), [&](Document &document) {
+            auto history = Json::array();
+            for (const auto &entry : entries)
+                if (entry.at("state") == "Completed")
+                    history.push_back({{"id", entry.at("id")},
+                                       {"camera", entry.at("camera")},
+                                       {"cameraName", entry.at("cameraName")},
+                                       {"created", entry.at("created")},
+                                       {"options", entry.at("options")},
+                                       {"engine", entry.value("engine", Json::object())}});
+            document.renderSettings["renderHistory"] = std::move(history);
+        });
     });
-    connect(&render, &RenderJob::log, renderLog, &QPlainTextEdit::appendPlainText);
-    connect(&render, &RenderJob::completed, this, [this](const QString &file) {
-        renderLog->appendPlainText(tr("Imagem salva: %1").arg(file));
-        protect([&] { showRenderImage(file); });
-    });
+    refreshRenderQueue();
     connect(&autosaveTimer, &QTimer::timeout, this, [this] { protect([&] { autosave(); }); });
     auto interval = std::clamp(QSettings().value("autosaveMinutes", 5).toInt(), 1, 60);
     autosaveTimer.start(interval * 60 * 1000);
@@ -492,12 +503,12 @@ void MainWindow::createShell() {
     connect(cutaway, &QCheckBox::toggled, viewport, &CadView::setCutaway);
     auto *top = toolbar->addAction(studioIcon("plan"), tr("Planta"));
     connect(top, &QAction::triggered, this, [this] {
-        workspace->setCurrentWidget(viewport);
+        showEditorWorkspace();
         viewport->setTop(true);
     });
     auto *iso = toolbar->addAction(studioIcon("cube"), tr("3D"));
     connect(iso, &QAction::triggered, this, [this] {
-        workspace->setCurrentWidget(viewport);
+        showEditorWorkspace();
         viewport->setTop(false);
     });
     auto *frame = toolbar->addAction(studioIcon("frame"), tr("Ver tudo"));
@@ -584,7 +595,7 @@ void MainWindow::createShell() {
     libraryLayout->addLayout(libraryActions);
     connect(place, &QPushButton::clicked, this, [this] {
         if (assets->currentItem()) {
-            workspace->setCurrentWidget(viewport);
+            showEditorWorkspace();
             viewport->beginPlacement(assets->currentItem()->data(Qt::UserRole).toString());
         }
     });
@@ -614,7 +625,7 @@ void MainWindow::createShell() {
         });
     });
     connect(assets, &QListWidget::itemDoubleClicked, this, [this](QListWidgetItem *item) {
-        workspace->setCurrentWidget(viewport);
+        showEditorWorkspace();
         viewport->beginPlacement(item->data(Qt::UserRole).toString());
     });
     auto *sceneDock = new QDockWidget(tr("O que está no projeto"), this);
@@ -758,12 +769,76 @@ void MainWindow::createShell() {
     renderLayout->addRow(tr("Câmera"), renderCamera);
     renderQuality = new QComboBox;
     renderQuality->setObjectName("renderQuality");
-    renderQuality->addItem(tr("Rascunho · 640 × 360"), 16);
-    renderQuality->addItem(tr("Prévia · 1280 × 720"), 128);
-    renderQuality->addItem(tr("Foto · 1920 × 1080"), 512);
-    renderQuality->addItem(tr("Final · 3840 × 2160"), 1024);
+    renderQuality->addItem(tr("Rápido · conferir luz e câmera"), "rapid");
+    renderQuality->addItem(tr("Normal · avaliar materiais"), "normal");
+    renderQuality->addItem(tr("Final · imagem de apresentação"), "final");
+    renderQuality->addItem(tr("Personalizado · ajustar detalhes"), "custom");
     renderQuality->setCurrentIndex(1);
     renderLayout->addRow(tr("Qualidade"), renderQuality);
+    renderSize = new QComboBox;
+    renderSize->setObjectName("renderSize");
+    for (const auto &size : {QSize(640, 360), QSize(1280, 720), QSize(1920, 1080), QSize(2560, 1440),
+                             QSize(3840, 2160), QSize(1080, 1080), QSize(1080, 1920), QSize(1600, 1200),
+                             QSize(1200, 1600), QSize(2480, 3508), QSize(3508, 2480)})
+        renderSize->addItem(QString("%1 × %2").arg(size.width()).arg(size.height()), size);
+    renderSize->setCurrentIndex(2);
+    renderLayout->addRow(tr("Tamanho da imagem"), renderSize);
+    renderFormat = new QComboBox;
+    renderFormat->setObjectName("renderFormat");
+    renderFormat->addItems({"PNG", "JPEG"});
+    renderLayout->addRow(tr("Formato"), renderFormat);
+    customRender = new QWidget;
+    customRender->setObjectName("customRender");
+    auto *customLayout = new QFormLayout(customRender);
+    customLayout->setContentsMargins(0, 0, 0, 0);
+    const auto defaults = renderPreset("normal");
+    for (const auto &[key, label] : std::map<QString, QString>{{"width", tr("Largura (pixels)")},
+                                                               {"height", tr("Altura (pixels)")},
+                                                               {"samples", tr("Amostras")},
+                                                               {"maxBounces", tr("Reflexões máximas")},
+                                                               {"diffuseBounces", tr("Luz indireta")},
+                                                               {"glossyBounces", tr("Reflexos")},
+                                                               {"transmissionBounces", tr("Vidro")},
+                                                               {"transparentBounces", tr("Transparência")}}) {
+        auto *field = new QSpinBox;
+        field->setObjectName("render_" + key);
+        field->setRange(key == "samples"                    ? 1
+                        : key == "width" || key == "height" ? 16
+                                                            : 0,
+                        key == "samples"                    ? 4096
+                        : key == "width" || key == "height" ? 8192
+                                                            : 64);
+        field->setValue(defaults.at(key.toStdString()).get<int>());
+        field->setAccessibleName(label);
+        renderCounts[key] = field;
+        customLayout->addRow(label, field);
+    }
+    for (const auto &[key, label] : std::map<QString, QString>{{"clamp", tr("Limitar pontos brilhantes")},
+                                                               {"noiseThreshold", tr("Limite de ruído")}}) {
+        auto *field = new QDoubleSpinBox;
+        field->setObjectName("render_" + key);
+        field->setRange(0, key == "clamp" ? 100 : 1);
+        field->setDecimals(3);
+        field->setSingleStep(key == "clamp" ? 1 : 0.001);
+        field->setValue(defaults.at(key.toStdString()).get<double>());
+        field->setAccessibleName(label);
+        renderValues[key] = field;
+        customLayout->addRow(label, field);
+    }
+    auto *transparent = new QCheckBox(tr("Fundo transparente (PNG)"));
+    transparent->setObjectName("renderTransparent");
+    customLayout->addRow(transparent);
+    connect(transparent, &QCheckBox::toggled, this, [this](bool checked) {
+        if (!refreshing) {
+            if (checked) {
+                QSignalBlocker blocker(renderFormat);
+                renderFormat->setCurrentText("PNG");
+            }
+            protect([&] { applyRenderSettings(); });
+        }
+    });
+    customRender->hide();
+    renderLayout->addRow(customRender);
     renderExposure = new QDoubleSpinBox;
     renderExposure->setObjectName("renderExposure");
     renderExposure->setRange(-8, 8);
@@ -799,12 +874,14 @@ void MainWindow::createShell() {
     renderLayout->addRow(tr("Direção do sol"), renderSunRotation);
     renderLayout->addRow(tr("Luz ambiente"), renderEnvironment);
     renderDevice = new QComboBox;
+    renderDevice->setObjectName("renderDevice");
     renderDevice->addItem(tr("GPU / CPU automático"), "AUTO");
     renderDevice->addItem(tr("CPU"), "CPU");
     renderLayout->addRow(tr("Dispositivo"), renderDevice);
     renderDenoise = new QCheckBox(tr("Reduzir ruído (denoise)"));
     renderDenoise->setObjectName("renderDenoise");
     renderDenoise->setChecked(true);
+    renderDenoise->setEnabled(false);
     renderLayout->addRow(renderDenoise);
     auto *pbr = new QPushButton(tr("Ativar texturas reais"));
     pbr->setObjectName("activatePbrMaterials");
@@ -819,14 +896,9 @@ void MainWindow::createShell() {
     auto *enginePanel = new QWidget;
     auto *engineLayout = new QVBoxLayout(enginePanel);
     engineLayout->setContentsMargins(0, 0, 0, 0);
-    blenderPath =
-        new QLineEdit(QSettings().value("blender", QStandardPaths::findExecutable("blender")).toString());
+    blenderPath = new QLineEdit(BlenderBridge::findExecutable(QSettings().value("blender").toString()));
+    blenderPath->setObjectName("blenderPath");
     blenderPath->setAccessibleName(tr("Executável Blender"));
-#ifdef Q_OS_WIN
-    if (blenderPath->text().isEmpty() &&
-        QFileInfo::exists("C:/Program Files/Blender Foundation/Blender 5.2/blender.exe"))
-        blenderPath->setText("C:/Program Files/Blender Foundation/Blender 5.2/blender.exe");
-#endif
     engineLayout->addWidget(blenderPath);
     auto *browse = new QPushButton(tr("Escolher executável…"));
     engineLayout->addWidget(browse);
@@ -846,12 +918,12 @@ void MainWindow::createShell() {
     renderLayout->addRow(renderState);
     renderProgress = new QProgressBar;
     renderProgress->setObjectName("renderProgress");
-    renderProgress->setTextVisible(false);
+    renderProgress->setTextVisible(true);
     renderProgress->setRange(0, 100);
     renderProgress->setValue(0);
     renderProgress->setAccessibleName(tr("Estado do render"));
     renderLayout->addRow(renderProgress);
-    renderStart = new QPushButton(tr("Renderizar imagem…"));
+    renderStart = new QPushButton(tr("Enviar para renderizar"));
     renderStart->setObjectName("startRender");
     renderStart->setProperty("role", "primary");
     renderCancel = new QPushButton(tr("Cancelar"));
@@ -859,7 +931,32 @@ void MainWindow::createShell() {
     renderLayout->addRow(renderStart);
     renderLayout->addRow(renderCancel);
     connect(renderStart, &QPushButton::clicked, this, [this] { protect([&] { renderScene(); }); });
-    connect(renderCancel, &QPushButton::clicked, &render, &RenderJob::cancel);
+    connect(renderCancel, &QPushButton::clicked, render.get(), &RenderQueue::cancelActive);
+    auto *showImages = new QPushButton(tr("Suas imagens e fila"));
+    showImages->setObjectName("showRenderGallery");
+    renderLayout->addRow(showImages);
+    connect(showImages, &QPushButton::clicked, this, &MainWindow::showRenderGallery);
+    auto *quickPreview = new QPushButton(tr("Prévia pequena · 640 × 360"));
+    quickPreview->setObjectName("renderQuickPreview");
+    renderLayout->addRow(quickPreview);
+    connect(quickPreview, &QPushButton::clicked, this, [this] {
+        renderQuality->setCurrentIndex(0);
+        protect([&] { renderScene(); });
+    });
+    auto *allCameras = new QPushButton(tr("Enviar todas as câmeras"));
+    allCameras->setObjectName("renderAllCameras");
+    renderLayout->addRow(allCameras);
+    connect(allCameras, &QPushButton::clicked, this, [this] {
+        protect([&] {
+            applyRenderSettings();
+            const auto document = editor_.document();
+            for (const auto &camera : document.entities)
+                if (camera.type == "Camera" && camera.visible)
+                    render->enqueue(RenderSnapshot(document, selectedRenderOptions(), camera.id),
+                                    blenderPath->text(), resourceFile("scripts/cycles_render.py"));
+            showRenderGallery();
+        });
+    });
     auto *details = new QPushButton(tr("Detalhes do processo"));
     details->setProperty("role", "quiet");
     details->setCheckable(true);
@@ -898,6 +995,74 @@ void MainWindow::createShell() {
         field->setMinimumWidth(76);
         field->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
     }
+    connect(renderQuality, &QComboBox::currentIndexChanged, this, [this] {
+        if (refreshing)
+            return;
+        const auto preset = renderPreset(renderQuality->currentData().toString());
+        QSignalBlocker blockSize(renderSize);
+        renderSize->setCurrentIndex(
+            renderSize->findData(QSize(preset.at("width").get<int>(), preset.at("height").get<int>())));
+        renderSize->setEnabled(renderQuality->currentData() != "custom");
+        customRender->setVisible(renderQuality->currentData() == "custom");
+        renderDenoise->setEnabled(renderQuality->currentData() == "custom");
+        protect([&] { applyRenderSettings(); });
+    });
+    for (auto *field : {renderSize, renderDevice})
+        connect(field, &QComboBox::currentIndexChanged, this, [this] {
+            if (!refreshing)
+                protect([&] { applyRenderSettings(); });
+        });
+    connect(renderFormat, &QComboBox::currentTextChanged, this, [this](const QString &format) {
+        if (!refreshing) {
+            if (format == "JPEG") {
+                auto *transparent = customRender->findChild<QCheckBox *>("renderTransparent");
+                QSignalBlocker blocker(transparent);
+                transparent->setChecked(false);
+            }
+            protect([&] { applyRenderSettings(); });
+        }
+    });
+    for (const auto &[key, field] : renderCounts)
+        connect(field, &QSpinBox::editingFinished, this, [this] {
+            if (!refreshing)
+                protect([&] { applyRenderSettings(); });
+        });
+    for (const auto &[key, field] : renderValues)
+        connect(field, &QDoubleSpinBox::editingFinished, this, [this] {
+            if (!refreshing)
+                protect([&] { applyRenderSettings(); });
+        });
+    gallery = new RenderGallery(*render);
+    workspace->addWidget(gallery);
+    connect(gallery, &RenderGallery::back, this, [this] { showEditorWorkspace(); });
+    connect(gallery, &RenderGallery::openImage, this,
+            [this](const QString &file) { protect([&] { showRenderImage(file); }); });
+    connect(gallery, &RenderGallery::cancelImage, this, [this](const QString &id) { render->cancel(id); });
+    connect(gallery, &RenderGallery::retryImage, this,
+            [this](const QString &id, bool cpu) { protect([&] { render->retry(id, cpu ? "CPU" : ""); }); });
+    connect(gallery, &RenderGallery::removeImage, this, [this](const QString &id) {
+        if (QMessageBox::question(this, tr("Excluir imagem"),
+                                  tr("Excluir esta imagem da galeria? O projeto será preservado.")) ==
+            QMessageBox::Yes)
+            protect([&] { render->remove(id); });
+    });
+    connect(gallery, &RenderGallery::saveImage, this, [this](const QString &source) {
+        protect([&] {
+            const auto extension = QFileInfo(source).suffix();
+            const auto destination =
+                QFileDialog::getSaveFileName(this, tr("Salvar cópia da imagem"), "Imagem." + extension,
+                                             tr("Imagem (*.%1)").arg(extension));
+            if (destination.isEmpty())
+                return;
+            QFile input(source);
+            QSaveFile output(destination);
+            if (!input.open(QIODevice::ReadOnly) || !output.open(QIODevice::WriteOnly))
+                throw std::runtime_error("Não foi possível salvar a cópia");
+            const auto data = input.readAll();
+            if (output.write(data) != data.size() || !output.commit())
+                throw std::runtime_error("Não foi possível salvar a cópia");
+        });
+    });
     renderScroll->setWidget(renderPanel);
     renderDock->setWidget(renderScroll);
     addDockWidget(Qt::RightDockWidgetArea, renderDock);
@@ -966,6 +1131,30 @@ void MainWindow::refreshScene() {
             editor_.document().renderSettings.at("environmentStrength").get<double>());
         renderDenoise->setChecked(editor_.document().renderSettings.at("denoise").get<bool>());
         const auto &settings = editor_.document().renderSettings;
+        if (settings.contains("cycles")) {
+            const auto &options = settings.at("cycles");
+            QSignalBlocker quality(renderQuality), size(renderSize), format(renderFormat),
+                device(renderDevice);
+            renderQuality->setCurrentIndex(
+                renderQuality->findData(q(options.at("preset").get<std::string>())));
+            renderSize->setCurrentIndex(
+                renderSize->findData(QSize(options.at("width").get<int>(), options.at("height").get<int>())));
+            renderFormat->setCurrentText(q(options.at("format").get<std::string>()));
+            renderDevice->setCurrentIndex(renderDevice->findData(q(options.at("device").get<std::string>())));
+            for (const auto &[key, field] : renderCounts)
+                field->setValue(options.at(key.toStdString()).get<int>());
+            for (const auto &[key, field] : renderValues)
+                field->setValue(options.at(key.toStdString()).get<double>());
+            auto *transparent = customRender->findChild<QCheckBox *>("renderTransparent");
+            QSignalBlocker transparency(transparent);
+            transparent->setChecked(options.at("transparent").get<bool>());
+        }
+        const bool custom = renderQuality->currentData() == "custom";
+        customRender->setVisible(custom);
+        renderSize->setEnabled(!custom);
+        renderDenoise->setEnabled(custom);
+        gallery->setProject(editor_.document().id);
+
         renderEnvironmentMode->setCurrentIndex(
             settings.value("environmentMode", std::string("studio")) == "sky" ? 1 : 0);
         renderSunElevation->setValue(settings.value("sunElevation", 35.0));
@@ -973,8 +1162,8 @@ void MainWindow::refreshScene() {
         auto *layout = qobject_cast<QFormLayout *>(renderEnvironmentMode->parentWidget()->layout());
         layout->setRowVisible(renderSunElevation, renderEnvironmentMode->currentIndex() == 1);
         layout->setRowVisible(renderSunRotation, renderEnvironmentMode->currentIndex() == 1);
-        renderStart->setEnabled(!render.busy() && renderCamera->count() > 0);
-        if (!render.busy())
+        renderStart->setEnabled(renderCamera->count() > 0);
+        if (!render->busy())
             renderState->setText(renderCamera->count() ? tr("Pronto para renderizar")
                                                        : tr("Crie uma câmera no menu Câmeras para começar."));
     }
@@ -1255,7 +1444,7 @@ void MainWindow::newRoom() {
     viewport->frame();
 }
 void MainWindow::focusRoom() {
-    workspace->setCurrentWidget(viewport);
+    showEditorWorkspace();
     const auto id = roomPicker->currentData().toString().toStdString();
     if (id.empty())
         viewport->frame();
@@ -1577,40 +1766,98 @@ void MainWindow::simpleCamera() {
     });
     statusBar()->showMessage(tr("Câmera preparada. Escolha a qualidade e clique em Criar imagem."), 8000);
 }
+Json MainWindow::selectedRenderOptions() const {
+    auto options = renderPreset(renderQuality->currentData().toString());
+    const bool custom = renderQuality->currentData() == "custom";
+    const auto size = renderSize->currentData().toSize();
+    options["width"] = size.width();
+    options["height"] = size.height();
+    options["device"] = renderDevice->currentData().toString().toStdString();
+    options["format"] = renderFormat->currentText().toStdString();
+    if (custom) {
+        for (const auto &[key, field] : renderCounts)
+            options[key.toStdString()] = field->value();
+        for (const auto &[key, field] : renderValues)
+            options[key.toStdString()] = field->value();
+        options["denoise"] = renderDenoise->isChecked();
+        options["transparent"] = customRender->findChild<QCheckBox *>("renderTransparent")->isChecked();
+    }
+    validateRenderOptions(options);
+    return options;
+}
 void MainWindow::renderScene() {
-    if (render.busy())
-        throw std::runtime_error("Aguarde ou cancele o render atual");
-    if (std::none_of(editor_.document().entities.begin(), editor_.document().entities.end(),
-                     [](const auto &e) { return e.type == "Camera" && e.visible; }))
-        throw std::runtime_error("Crie uma câmera no menu Câmeras");
-    auto output = QFileDialog::getSaveFileName(this, tr("Salvar render"), {},
-                                               tr("Imagem PNG (*.png);;Imagem JPEG (*.jpg)"));
-    if (output.isEmpty())
-        return;
+    if (renderCamera->currentData().toString().isEmpty())
+        throw std::runtime_error("Prepare uma câmera do cômodo antes de criar a imagem.");
+    const auto executable = BlenderBridge::findExecutable(blenderPath->text());
+    if (executable.isEmpty())
+        throw std::runtime_error("O mecanismo de render não foi encontrado. Instale o Blender 5.2 LTS ou "
+                                 "superior e selecione o executável em Configurar Blender.");
+    blenderPath->setText(executable);
     if (!testing)
-        QSettings().setValue("blender", blenderPath->text());
+        QSettings().setValue("blender", executable);
     applyRenderSettings();
-    int index = renderQuality->currentIndex();
-    const int widths[] = {640, 1280, 1920, 3840}, heights[] = {360, 720, 1080, 2160};
-    render.start(editor_.document(), blenderPath->text(), resourceFile("scripts/cycles_render.py"), output,
-                 widths[index], heights[index], renderQuality->currentData().toInt(),
-                 renderDevice->currentData().toString());
+    render->enqueue(RenderSnapshot(editor_.document(), selectedRenderOptions(),
+                                   renderCamera->currentData().toString().toStdString()),
+                    executable, resourceFile("scripts/cycles_render.py"));
+    showRenderGallery();
+}
+void MainWindow::showEditorWorkspace() {
+    if (galleryMode)
+        restoreState(editorLayout);
+    galleryMode = false;
+    placementBanner->show();
+    workspace->setCurrentWidget(viewport);
+}
+void MainWindow::showRenderGallery() {
+    if (!galleryMode) {
+        editorLayout = saveState();
+        galleryMode = true;
+        for (auto *dock : findChildren<QDockWidget *>())
+            dock->hide();
+        placementBanner->hide();
+    }
+    gallery->setProject(editor_.document().id);
+    workspace->setCurrentWidget(gallery);
+}
+void MainWindow::refreshRenderQueue() {
+    gallery->setProject(editor_.document().id);
+    renderCancel->setEnabled(!render->active().isEmpty());
+    renderStart->setEnabled(renderCamera->count() > 0);
+    const auto entries = render->entries();
+    const auto active = render->active().toStdString();
+    auto entry =
+        std::find_if(entries.begin(), entries.end(), [&](const auto &e) { return e.at("id") == active; });
+    if (entry == entries.end()) {
+        renderProgress->setRange(0, 100);
+        renderProgress->setValue(0);
+        renderState->setText(render->busy() ? tr("Preparando imagens. Você pode continuar editando.")
+                                            : tr("Pronto. Abra Suas imagens para ver os resultados."));
+        return;
+    }
+    const auto progress = entry->value("progress", -1);
+    renderProgress->setRange(0, progress < 0 ? 0 : 100);
+    if (progress >= 0)
+        renderProgress->setValue(progress);
+    renderState->setText(QString("%1 · %2").arg(q(entry->at("cameraName").get<std::string>()),
+                                                renderStateLabel(q(entry->at("state").get<std::string>()))));
 }
 void MainWindow::applyRenderSettings() {
-    editor_.apply(tr("Configurar render"), [&](Document &d) {
-        d.renderSettings = {
-            {"camera", renderCamera->currentData().toString().toStdString()},
-            {"exposure", renderExposure->value()},
-            {"environmentStrength", renderEnvironment->value()},
-            {"environmentMode", renderEnvironmentMode->currentData().toString().toStdString()},
-            {"sunElevation", renderSunElevation->value()},
-            {"sunRotation", renderSunRotation->value()},
-            {"denoise", renderDenoise->isChecked()}};
+    const auto options = selectedRenderOptions();
+    editor_.apply(tr("Configurar imagem"), [&](Document &d) {
+        d.renderSettings["camera"] = renderCamera->currentData().toString().toStdString();
+        d.renderSettings["exposure"] = renderExposure->value();
+        d.renderSettings["environmentStrength"] = renderEnvironment->value();
+        d.renderSettings["environmentMode"] = renderEnvironmentMode->currentData().toString().toStdString();
+        d.renderSettings["sunElevation"] = renderSunElevation->value();
+        d.renderSettings["sunRotation"] = renderSunRotation->value();
+        d.renderSettings["denoise"] = options.at("denoise");
+        d.renderSettings["cycles"] = options;
     });
 }
 void MainWindow::showRenderImage(const QString &filename) {
     if (!preview) {
         preview = new RenderPreview;
+        connect(preview, &RenderPreview::backToGallery, this, &MainWindow::showRenderGallery);
         workspace->addWidget(preview);
     }
     preview->open(filename);
@@ -1813,6 +2060,8 @@ void MainWindow::rememberProject() {
     }
 }
 void MainWindow::enterEditor() {
+    galleryMode = false;
+    placementBanner->show();
     statusBar()->show();
     for (auto *action : menuBar()->actions())
         action->setVisible(true);
@@ -1919,14 +2168,14 @@ void MainWindow::closeEvent(QCloseEvent *event) {
             event->ignore();
             return;
         }
-        if (render.busy()) {
-            auto choice =
-                QMessageBox::question(this, tr("Render em andamento"), tr("Cancelar o render e fechar?"));
+        if (render->busy()) {
+            auto choice = QMessageBox::question(this, tr("Render em andamento"),
+                                                tr("Cancelar as imagens na fila e fechar?"));
             if (choice != QMessageBox::Yes) {
                 event->ignore();
                 return;
             }
-            render.cancel();
+            render->cancelAll();
         }
         recovery.clear(editor_.document().id);
         event->accept();

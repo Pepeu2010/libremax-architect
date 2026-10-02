@@ -32,7 +32,9 @@ jobs:
         shell: pwsh
         run: |
           ./scripts/package-windows.ps1 -BuildDirectory build-windows -ToolPrefix $env:LMX_TOOL_PREFIX -Python "$env:LMX_TOOL_PREFIX/bin/python.exe"
-          ./scripts/verify-windows-installer.ps1 -Installer dist/windows/LibreMax-Architect-0.6.1-Windows-x64-Setup.exe -EvidenceDirectory build-windows/installation-evidence
+          $setups = @(Get-ChildItem dist/windows/*Setup.exe)
+          if ($setups.Count -ne 1) { throw 'Exactly one Windows installer expected.' }
+          ./scripts/verify-windows-installer.ps1 -Installer $setups[0].FullName -EvidenceDirectory build-windows/installation-evidence
       - uses: actions/upload-artifact@v4
         with:
           name: windows-installer
@@ -107,4 +109,4 @@ jobs:
         run: |
           git archive --format=tar.gz --prefix=LibreMax-Architect/ --output=release/LibreMax-Architect-Source.tar.gz HEAD
           (cd release && sha256sum *.exe *.deb *.tar.gz > SHA256SUMS.txt)
-          gh release create "$GITHUB_REF_NAME" release/* --verify-tag --prerelease --title "LibreMax Architect 0.6.1 — Instaladores Windows e Linux" --notes-file INSTALADOR/RELEASE_NOTES.md
+          gh release create "$GITHUB_REF_NAME" release/* --verify-tag --prerelease --title "LibreMax Architect $GITHUB_REF_NAME — Instaladores Windows e Linux" --notes-file INSTALADOR/RELEASE_NOTES.md

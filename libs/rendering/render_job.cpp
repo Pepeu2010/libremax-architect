@@ -1,149 +1,139 @@
 #include "render_job.h"
-#include "geometry/geometry.h"
+#include "render_scene_exporter.h"
 #include <QFile>
 #include <QFileInfo>
 #include <QImageReader>
+#include <QRegularExpression>
 #include <QSaveFile>
-#include <QThread>
 #include <QtConcurrent>
-#include <algorithm>
-#ifdef Q_OS_WIN
-#include <windows.h>
-#else
-#include <sys/resource.h>
-#endif
-
 namespace lmx {
 RenderJob::RenderJob(QObject *parent) : QObject(parent) {
-#ifdef Q_OS_WIN
-    process.setCreateProcessArgumentsModifier([](QProcess::CreateProcessArguments *arguments) {
-        arguments->flags |= CREATE_NO_WINDOW | BELOW_NORMAL_PRIORITY_CLASS;
-    });
-#else
-    process.setChildProcessModifier([] { setpriority(PRIO_PROCESS, 0, 10); });
-#endif
-    connect(&process, &QProcess::readyReadStandardOutput, this,
-            [this] { emit log(QString::fromUtf8(process.readAllStandardOutput())); });
-    connect(&process, &QProcess::readyReadStandardError, this,
-            [this] { emit log(QString::fromUtf8(process.readAllStandardError())); });
-    connect(&process, &QProcess::errorOccurred, this, [this](QProcess::ProcessError) {
-        if (cancelled)
+    connect(&bridge, &BlenderBridge::output, this, &RenderJob::consumeOutput);
+    connect(&bridge, &BlenderBridge::finished, this, [this](int code, bool normalExit) {
+        if (cancelled) {
+            finish(false, tr("Cancelado"), code);
             return;
-        active = false;
-        emit state(tr("Falhou"));
-        emit log(process.errorString());
+        }
+        QImageReader reader(renderedFile);
+        if (code != 0 || !normalExit || !reader.canRead() || reader.size() != resolution) {
+            finish(false,
+                   tr("O mecanismo de render não produziu uma imagem válida. Veja os detalhes ou tente com "
+                      "CPU."),
+                   code);
+            return;
+        }
+        emit stage("Saving");
+        QFile image(renderedFile);
+        QSaveFile destination(output);
+        destination.setDirectWriteFallback(false);
+        if (!image.open(QIODevice::ReadOnly) || !destination.open(QIODevice::WriteOnly)) {
+            finish(false, tr("Não foi possível salvar a imagem renderizada."), code);
+            return;
+        }
+        const auto bytes = image.readAll();
+        image.close();
+        if (destination.write(bytes) != bytes.size() || !destination.commit()) {
+            finish(false, tr("Falha ao salvar a imagem; versão anterior preservada."), code);
+            return;
+        }
+        finish(true, {}, code);
     });
-    connect(&process, qOverload<int, QProcess::ExitStatus>(&QProcess::finished), this,
-            [this](int code, QProcess::ExitStatus status) {
-                active = false;
-                if (cancelled) {
-                    emit state(tr("Cancelado"));
-                    return;
-                }
-                QImageReader reader(renderedFile);
-                if (code != 0 || status != QProcess::NormalExit || !reader.canRead() ||
-                    reader.size() != resolution) {
-                    emit state(tr("Falhou"));
-                    emit log(tr("Blender não produziu uma imagem válida."));
-                    return;
-                }
-                QFile image(renderedFile);
-                QSaveFile destination(output);
-                destination.setDirectWriteFallback(false);
-                if (!image.open(QIODevice::ReadOnly) || !destination.open(QIODevice::WriteOnly)) {
-                    emit state(tr("Falhou"));
-                    emit log(tr("Não foi possível salvar a imagem renderizada."));
-                    return;
-                }
-                const auto bytes = image.readAll();
-                if (destination.write(bytes) != bytes.size() || !destination.commit()) {
-                    emit state(tr("Falhou"));
-                    emit log(tr("Falha ao salvar a imagem; versão anterior preservada."));
-                    return;
-                }
-                emit state(tr("Concluído"));
-                emit completed(output);
-            });
 }
-RenderJob::~RenderJob() {
-    cancel();
-    preparing.waitForFinished();
-    if (process.state() != QProcess::NotRunning) {
-        process.kill();
-        process.waitForFinished(3000);
+void RenderJob::consumeOutput(const QString &text) {
+    emit log(text);
+    lineBuffer += text;
+    if (lineBuffer.size() > 65536)
+        lineBuffer = lineBuffer.right(65536);
+    int newline;
+    while ((newline = lineBuffer.indexOf('\n')) >= 0) {
+        const auto line = lineBuffer.left(newline);
+        lineBuffer.remove(0, newline + 1);
+        static const QRegularExpression samples("(?:Sample|Rendering)\\s+(\\d+)\\s*/\\s*(\\d+)");
+        auto match = samples.match(line);
+        if (match.hasMatch()) {
+            const auto current = match.captured(1).toInt(), total = match.captured(2).toInt();
+            if (total > 0 && current >= 0 && current <= total)
+                emit progress(current, total);
+        }
+        if (line.contains("Denoising", Qt::CaseInsensitive))
+            emit stage("Denoising");
+        if (line.startsWith("LIBREMAX_ENGINE ")) {
+            try {
+                engineInfo = Json::parse(line.mid(16).toStdString());
+            } catch (const std::exception &) { /* Keep the prior valid engine report. */
+            }
+        }
+        if (line.startsWith("LIBREMAX_STAGE "))
+            emit stage(line.mid(15).trimmed());
     }
 }
+void RenderJob::finish(bool success, const QString &message, int code) {
+    if (!active)
+        return;
+    active = false;
+    work.reset();
+    emit state(success ? tr("Concluído") : cancelled ? tr("Cancelado") : tr("Falhou"));
+    if (!message.isEmpty())
+        emit log(message + '\n');
+    if (success)
+        emit completed(output);
+    emit finished(success, cancelled, message, code);
+}
+RenderJob::~RenderJob() {
+    disconnect(&bridge, nullptr, this, nullptr);
+    disconnect(&preparing, nullptr, this, nullptr);
+    cancel();
+    preparing.waitForFinished();
+}
 bool RenderJob::busy() const {
-    return active || preparing.isRunning() || process.state() != QProcess::NotRunning;
+    return active || preparing.isRunning() || bridge.busy();
 }
 void RenderJob::start(const Document &snapshot, const QString &blender, const QString &script,
                       const QString &destination, int width, int height, int samples, const QString &device) {
     if (busy())
         throw std::runtime_error("Já existe um render em execução");
     if (!QFileInfo(blender).isExecutable() || !QFileInfo::exists(script))
-        throw std::runtime_error("Configure o executável Blender e o script de render");
+        throw std::runtime_error(
+            "O mecanismo de render não foi encontrado. Selecione o Blender nas configurações.");
     if (width < 16 || height < 16 || width > 8192 || height > 8192 || samples < 1 || samples > 4096)
         throw std::runtime_error("Configuração de render inválida");
     cancelled = false;
+    lineBuffer.clear();
+    engineInfo = Json::object();
     output = destination;
     work = std::make_shared<QTemporaryDir>();
     if (!work->isValid())
         throw std::runtime_error("Falha ao criar pacote de render");
     active = true;
-    resolution = QSize(width, height);
+    resolution = {width, height};
     const bool jpeg = destination.endsWith(".jpg", Qt::CaseInsensitive) ||
                       destination.endsWith(".jpeg", Qt::CaseInsensitive);
     renderedFile = work->filePath(jpeg ? "render.jpg" : "render.png");
     emit state(tr("Preparando"));
+    emit stage("Exporting");
     disconnect(&preparing, &QFutureWatcher<QString>::finished, this, nullptr);
     connect(&preparing, &QFutureWatcher<QString>::finished, this,
             [this, blender, script, width, height, samples, device] {
-                auto error = preparing.result();
+                const auto error = preparing.result();
                 if (cancelled) {
-                    active = false;
-                    emit state(tr("Cancelado"));
+                    finish(false, tr("Cancelado"));
                     return;
                 }
                 if (!error.isEmpty()) {
-                    active = false;
-                    emit state(tr("Falhou"));
-                    emit log(error);
+                    finish(false, error);
                     return;
                 }
                 emit state(tr("Renderizando"));
-                process.setProgram(blender);
-                const int threads = std::clamp(QThread::idealThreadCount() - 2, 1, 8);
-                process.setArguments({"--background",
-                                      "--factory-startup",
-                                      "--threads",
-                                      QString::number(threads),
-                                      "--python-exit-code",
-                                      "1",
-                                      "--python",
-                                      script,
-                                      "--",
-                                      "--scene",
-                                      work->filePath("scene.json"),
-                                      "--output",
-                                      renderedFile,
-                                      "--width",
-                                      QString::number(width),
-                                      "--height",
-                                      QString::number(height),
-                                      "--samples",
-                                      QString::number(samples),
-                                      "--device",
-                                      device});
-                process.start();
+                emit stage("Rendering");
+                bridge.start(blender, script,
+                             {"--scene", work->filePath("scene.json"), "--output", renderedFile, "--width",
+                              QString::number(width), "--height", QString::number(height), "--samples",
+                              QString::number(samples), "--device", device});
             });
     auto directory = work;
     preparing.setFuture(QtConcurrent::run([snapshot, directory]() -> QString {
         try {
-            auto json = meshSnapshot(snapshot).dump();
-            QFile f(directory->filePath("scene.json"));
-            if (!f.open(QIODevice::WriteOnly) ||
-                f.write(json.data(), static_cast<qint64>(json.size())) != static_cast<qint64>(json.size()))
-                return QStringLiteral("Falha ao exportar cena");
+            RenderSceneExporter::exportScene(snapshot, directory->filePath("scene.json"));
             return {};
         } catch (const std::exception &e) {
             return QString::fromUtf8(e.what());
@@ -152,7 +142,6 @@ void RenderJob::start(const Document &snapshot, const QString &blender, const QS
 }
 void RenderJob::cancel() {
     cancelled = true;
-    if (process.state() != QProcess::NotRunning)
-        process.kill();
+    bridge.cancel();
 }
 } // namespace lmx
