@@ -19,6 +19,10 @@
 #include <QToolTip>
 #include <QWheelEvent>
 #include <Standard_Failure.hxx>
+#include <Standard_Version.hxx>
+#if OCC_VERSION_HEX < 0x070900
+#include <Graphic3d_Texture2Dmanual.hxx>
+#endif
 #include <V3d_Viewer.hxx>
 #include <cmath>
 #include <numbers>
@@ -142,7 +146,11 @@ void CadView::scene(const Document &d) {
                     shape->Attributes()->SetupOwnShadingAspect();
                     auto aspect = shape->Attributes()->ShadingAspect()->Aspect();
                     Handle(Graphic3d_Texture2D) texture =
+#if OCC_VERSION_HEX >= 0x070900
                         new Graphic3d_Texture2D(QFile::encodeName(filename).constData());
+#else
+                        new Graphic3d_Texture2Dmanual(QFile::encodeName(filename).constData());
+#endif
                     texture->GetParams()->SetModulate(true);
                     aspect->SetTextureMap(texture);
                     aspect->SetTextureMapOn();

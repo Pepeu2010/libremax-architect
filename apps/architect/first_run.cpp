@@ -8,6 +8,7 @@
 #include <QVBoxLayout>
 #include <QWizard>
 #include <QWizardPage>
+#include <vector>
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif

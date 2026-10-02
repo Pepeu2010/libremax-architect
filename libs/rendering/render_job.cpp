@@ -6,6 +6,7 @@
 #include <QSaveFile>
 #include <QThread>
 #include <QtConcurrent>
+#include <algorithm>
 #ifdef Q_OS_WIN
 #include <windows.h>
 #else

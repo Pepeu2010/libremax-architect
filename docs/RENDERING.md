@@ -1,4 +1,4 @@
-# Render de apresentação — 0.4.0
+# Render de apresentação — 0.6.0
 
 O objetivo atual é uma aparência fotográfica com a geometria do projeto. Cycles calcula iluminação indireta, sombras, reflexos e transmissão; a qualidade depende da cena, materiais, iluminação e resolução. Um projeto com modelos simples continua mostrando esses limites.
 
@@ -19,3 +19,7 @@ O resultado ocupa a área central: Ajustar/1:1, zoom/pan e Salvar cópia PNG/JPE
 [Apartamento / Cycles CPU 640×360](screenshots/apartment-render.png), [cozinha / 1280×720](screenshots/photoreal-kitchen.png), [evidência do ciclo](CYCLE_03.md), [fontes/licenças dos mapas](../starter-materials/README.md).
 
 Malhas prontas são as mesmas no viewport e no render, com materiais separados. O render valida hashes de todos os assets e extrai como PNG apenas hashes realmente usados pelos mapas de materiais; modelos JSON não viram texturas. O catálogo Kenney estilizado limita realismo mesmo com iluminação física. O teste do apartamento é uma prévia funcional de 640×360/32 samples, sem alegação de equivalência a fotografia.
+
+Na coleção **Apartamento atual**, malhas detalhadas mantêm UVs e normais originais, inclusive ao girar, espelhar e redimensionar. O Cycles preserva as costuras, evitando solda/bevel que altere o mapeamento do glTF. Cor, rugosidade e normal usam os mapas incorporados; a metalicidade é um valor médio do original. O viewport mostra textura de cor, com iluminação de edição. [Render real 960×540/64](screenshots/modern-apartment-render.png), [procedência e limites](../starter-models/README.md). O sofá dessa cena ainda é Kenney.
+
+Blender executa sem janela/terminal, com prioridade reduzida e até oito threads CPU neste pipeline. O editor continua disponível, mas não há benchmark de interação durante cenas grandes. A nova arquitetura completa de presets/fila/galeria solicitada ainda não foi concluída; os presets e estados indeterminados descritos acima permanecem os atuais.

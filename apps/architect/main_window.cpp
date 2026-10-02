@@ -172,8 +172,9 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory, bool welcome
         viewport, &CadView::placementStatus, this, [this](const QString &text, bool active, bool allowed) {
             placementBanner->setText(
                 active ? text : tr("Arraste um móvel para o cômodo. Perto da parede, ele encaixa sozinho."));
-            placementBanner->setStyleSheet(allowed ? "color:#a9e5d0;background:#172c29;padding:10px;"
-                                                   : "color:#ffc1b6;background:#392420;padding:10px;");
+            placementBanner->setStyleSheet(!active   ? "color:#dbc3ed;background:#2b2136;padding:10px;"
+                                           : allowed ? "color:#a9e5d0;background:#172c29;padding:10px;"
+                                                     : "color:#ffc1b6;background:#392420;padding:10px;");
         });
     connect(viewport, &CadView::coordinates, this,
             [this](const QString &text) { statusBar()->showMessage(text); });
