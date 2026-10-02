@@ -1,3 +1,25 @@
+# Test report — instaladores 0.6.1
+
+A [primeira CI de instalação](https://github.com/Pepeu2010/libremax-architect/actions/runs/37010283076) passou nos dois sistemas. Os testes verificaram os pacotes realmente instalados, sem usar o checkout para recursos:
+
+| Verificação | Resultado |
+|---|---|
+| Windows Server 2022: NSIS, atalhos, registro e execução com PATH só do Windows | Passou |
+| Ubuntu 24.04: `.deb` em runner novo, dependências de runtime pelo apt, sem SDK nem checkout | Passou |
+| Recursos instalados: 115 itens, SQLite/FTS, 36 modelos detalhados, JPEG/PNG e projeto portátil | Passou nos dois sistemas |
+| Linux: montagem real com Xvfb/Mesa, encaixe, undo/redo e reabertura | Passou |
+| Desinstalação e preservação de projeto | Passou nos dois sistemas |
+
+Neste host Windows, o instalador reconstruído com a correção da automação de salvar também passou em `--modern-smoke`, `--experience-smoke` e `--recovery-smoke`: tutorial completo, novo cômodo, teclado no diálogo de salvar, `.lmx`, biblioteca inicial e recuperação após encerramento forçado. O teste de render usou **Blender 5.2.1 LTS, Cycles CPU, 320×180/8**, com o script e modelos instalados. A imagem foi gerada e preservada após uma falha de câmera provocada. Logs locais em `build-install/verify-fixed-report.txt` e `build-install/installation-evidence`; os testes não alteram projetos/preferências do usuário.
+
+A [CI da tag de Release](https://github.com/Pepeu2010/libremax-architect/actions/runs/37011097009) gera os arquivos publicáveis. Os guias e limites estão em [INSTALADOR](../INSTALADOR/README.md).
+
+Não comprova: Mint 22 em execução própria, todas as versões do Windows, drivers/GPU variados, render final fotorealista de apresentação, execução Cycles no Linux, AMD HIP/NVIDIA OptiX, cenas grandes ou paridade integral com VDMax. Windows não possui assinatura digital nesta prévia; Linux usa X11/XWayland.
+
+Os relatórios abaixo são históricos.
+
+---
+
 # Test report — ampliação contemporânea 0.6.0
 
 Windows: **28 casos / 1.706 assertions** aprovados. Catálogo de 115 itens, filtro com 36 modelos, 18 acréscimos, ocultação correta das miniaturas, arraste de sofá/cama/peças suspensas, arquivo único, UI a 900 px, tutorial/home e recuperação passaram. Render real Cycles CPU com o novo sofá também passou. [Evidência e limites](CATALOG_EXPANSION.md). Linux: implementação `ae0fe5b` aprovada em [CI Ubuntu 24.04](https://github.com/Pepeu2010/libremax-architect/actions/runs/36951914174), incluindo build/core/formatador, smokes nativos Xvfb/Mesa e pacote Debian. Hardware gráfico físico, instalação limpa e Cycles no Linux continuam sem validação. O resultado abaixo refere-se ao ciclo anterior.
