@@ -1,6 +1,6 @@
 # Test report — ampliação contemporânea 0.6.0
 
-Windows: **28 casos / 1.706 assertions** aprovados. Catálogo de 115 itens, filtro com 36 modelos, 18 acréscimos, ocultação correta das miniaturas, arraste de sofá/cama/peças suspensas, arquivo único, UI a 900 px, tutorial/home e recuperação passaram. Render real Cycles CPU com o novo sofá também passou. [Evidência e limites](CATALOG_EXPANSION.md). Verificação Linux desta ampliação ainda pendente; o resultado abaixo refere-se ao commit anterior.
+Windows: **28 casos / 1.706 assertions** aprovados. Catálogo de 115 itens, filtro com 36 modelos, 18 acréscimos, ocultação correta das miniaturas, arraste de sofá/cama/peças suspensas, arquivo único, UI a 900 px, tutorial/home e recuperação passaram. Render real Cycles CPU com o novo sofá também passou. [Evidência e limites](CATALOG_EXPANSION.md). Linux: implementação `ae0fe5b` aprovada em [CI Ubuntu 24.04](https://github.com/Pepeu2010/libremax-architect/actions/runs/36951914174), incluindo build/core/formatador, smokes nativos Xvfb/Mesa e pacote Debian. Hardware gráfico físico, instalação limpa e Cycles no Linux continuam sem validação. O resultado abaixo refere-se ao ciclo anterior.
 
 ---
 

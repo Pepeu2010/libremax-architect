@@ -42,3 +42,5 @@ ctest --test-dir build-catalog/bin --output-on-failure -V
 No host de desenvolvimento, **Abrir LibreMax.cmd** usa a build nova; salvar e fechar a versão antiga antes de reabrir permite carregar o catálogo atualizado. Não é instalador portátil. Paridade integral, fila/galeria de renders, diagnóstico GPU, HDRI/EXR e as demais lacunas da master spec continuam em desenvolvimento.
 
 Reprodução independente em Blender 5.2.1: as 12 malhas originais, o catálogo e a proveniência foram gerados novamente em outra pasta. Os 14 arquivos coincidiram byte a byte. A verificação detectou e corrigiu uma conversão de codificação no catálogo; buscas sem acentos e o filtro Decoração agora têm regressão explícita.
+
+**CI Linux aprovada:** implementação `ae0fe5b5f4e2e0334e4d93f86d238f3f2fc777af`, [execução 36951914174](https://github.com/Pepeu2010/libremax-architect/actions/runs/36951914174), Ubuntu 24.04. Build, core, formatador, UI/montagem/modelos/tutorial/recuperação com Xvfb/Mesa e pacote Debian passaram. A CI não executa render Cycles no Linux nem comprova GPU física ou instalação limpa.
