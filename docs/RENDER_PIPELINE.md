@@ -35,7 +35,7 @@ Blender recebe argumentos separados, sem shell. O script Python é um recurso di
 
 Estados distinguem preparação, exportação, render, denoise, salvamento, conclusão, falha, cancelamento e interrupção. Percentuais usam contagens de amostras emitidas pelo Cycles. Quando não há contagem, a interface mostra atividade indeterminada. O tempo transcorrido nunca inventa percentual. Os registros guardam a versão Blender, dispositivo, parâmetros e código de saída.
 
-Uma imagem só substitui a saída depois de validar o arquivo e sua resolução. A cópia final usa QSaveFile; falha de processo ou imagem inválida preserva o resultado anterior. AUTO procura OptiX, CUDA, HIP e oneAPI; a seleção de dispositivo e a repetição após erro podem recorrer à CPU. Esse comportamento ainda não foi validado em GPUs físicas de cada fabricante.
+Uma imagem só substitui a saída depois de validar o arquivo e sua resolução. A cópia final usa QSaveFile; falha de processo ou imagem inválida preserva o resultado anterior. AUTO procura OptiX, CUDA, HIP e oneAPI; a seleção de dispositivo e a repetição após erro podem recorrer à CPU. A seleção HIP e um render real de apartamento foram validados na RX 7600 deste host Windows. NVIDIA/Intel, outras GPUs e HIP no Linux ainda não foram validados. A seleção usa apenas dispositivos do backend correspondente; a lista do Blender pode incluir dispositivos de outros backends.
 
 ![Galeria nativa com imagens calculadas pelo Cycles CPU](screenshots/render-gallery.png)
 
@@ -45,6 +45,17 @@ Uma imagem só substitui a saída depois de validar o arquivo e sua resolução.
 
 O teste `--queue-smoke` usa Blender/Cycles real, cinco câmeras, imagens de 160 × 90 e oito amostras CPU. Verifica ordem FIFO, cancelamento na fila e durante o render, falha de processo, repetição com CPU, progresso de amostras, edição sem alterar snapshots, reabertura do histórico, salvamento do projeto editado e galeria em janelas de 1440 e 900 pixels. A falha intencional é um caso negativo; as imagens positivas são calculadas pelo script de produção.
 
-`--render-smoke` verifica imagem válida e preservação da imagem anterior após falha. Os testes do núcleo cobrem presets, parâmetros inválidos, snapshots e recuperação de registros interrompidos/corrompidos. A CI Linux executa a fila com o Blender oficial 5.2.1, conferindo SHA256 antes de extrair. Os instaladores continuam passando pelos testes de instalação, plugins, modelos, salvamento/reabertura e desinstalação.
+`--render-smoke` verifica imagem válida e preservação da imagem anterior após falha. Os testes do núcleo cobrem presets, parâmetros inválidos, snapshots e recuperação de registros interrompidos/corrompidos. A [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37018691178) passou com a fila, Blender oficial 5.2.1 e SHA256 conferido antes de extrair. Os instaladores continuam passando pelos testes de instalação, plugins, modelos, salvamento/reabertura e desinstalação.
 
-Esta entrega não completa toda a especificação de render. Permanecem pendentes: HDRI; EXR; canais adicionais de metalicidade, opacidade e emissão por mapa; painel completo de temperatura Kelvin, LED e Sun; validação exata de enquadramento entre viewport e Cycles; instâncias e tesselação própria de apresentação; políticas de cache; diagnóstico dedicado de versões/dispositivos; render Final em 4K; benchmarks de apartamentos grandes e QA com GPUs NVIDIA/AMD/Intel. O catálogo e a iluminação também condicionam o realismo. Não há comprovação de superioridade geral sobre o VDMax.
+Esta entrega não completa toda a especificação de render. Permanecem pendentes: HDRI; EXR; canais adicionais de metalicidade, opacidade e emissão por mapa; painel completo de temperatura Kelvin, LED e Sun; validação exata de enquadramento entre viewport e Cycles; instâncias e tesselação própria de apresentação; políticas de cache; diagnóstico dedicado de versões/dispositivos; render Final em 4K; benchmarks de apartamentos grandes e QA com outras GPUs NVIDIA/AMD/Intel, incluindo HIP no Linux. O catálogo e a iluminação também condicionam o realismo. Não há comprovação de superioridade geral sobre o VDMax.
+
+
+## Reproduzir a verificação HIP no Windows
+
+Foi gerada uma imagem real do apartamento moderno, 640 × 360/32 amostras e denoise, por QProcess/BlenderBridge. O registro do motor confirmou `device=GPU`, `backend=HIP`, `AMD Radeon RX 7600`, Blender 5.2.1 LTS; não houve fallback CPU. Uma falha de câmera posterior preservou o hash da imagem. Driver do host: 32.0.32015.2008. Essa prévia pequena não é um benchmark de 4K.
+
+```powershell
+./build-render/libremax-architect.exe --render-smoke build-render/gpu-evidence --blender 'C:/Program Files/Blender Foundation/Blender 5.2/blender.exe' --render-device AUTO --expect-render-gpu --render-size 640x360 --render-samples 32 --render-project examples/apartamento-moderno.lmx
+```
+
+`--expect-render-gpu` falha se o resultado recorrer à CPU. Sem essa opção, CPU continua sendo um fallback permitido. O teste padrão usa CPU. [Imagem HIP calculada neste host](screenshots/hip-apartment-render.png).

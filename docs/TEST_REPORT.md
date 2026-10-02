@@ -4,7 +4,7 @@ Verificado no host Windows em 02/10/2026: **31 casos / 1.737 assertions** aprova
 
 Também passaram a regressão de UI/montagem, tutorial de 15 capítulos e projeto único, render real 320 × 180 e preservação da imagem anterior após erro. PowerShell, script Python, formatador e diff foram conferidos. [Arquitetura, capturas e limites](RENDER_PIPELINE.md). Relatórios locais: `build-render/queue-report.txt`, `build-render/render-report.txt` e `build-render/Testing/Temporary/LastTest.log`.
 
-A CI Linux e os novos instaladores têm verificações próprias. O resultado de uma build não substitui esses gates nem QA em GPUs físicas, 4K ou apartamentos grandes. Os resultados abaixo são históricos.
+A [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37018691178) passou com build, núcleo, interface compacta, tutorial/montagem/recuperação, pacote Debian e fila com Blender/Cycles CPU real. No Windows, a RX 7600 gerou o apartamento em 640 × 360/32 com HIP confirmado, sem fallback, e preservou a imagem após falha. Os novos instaladores têm verificações próprias. O resultado de uma build não substitui esses gates nem QA em GPUs físicas, 4K ou apartamentos grandes. Os resultados abaixo são históricos.
 
 ---
 

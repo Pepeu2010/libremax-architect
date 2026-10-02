@@ -163,17 +163,21 @@ def main():
     scene.view_settings.look = 'AgX - Medium High Contrast'
     scene.view_settings.exposure = settings.get('exposure', 0.0)
     scene.cycles.device = 'CPU'
+    selected_backend = 'CPU'
+    selected_devices = []
     if args.device == 'AUTO':
         prefs = bpy.context.preferences.addons['cycles'].preferences
         for backend in ('OPTIX', 'CUDA', 'HIP', 'ONEAPI'):
             try:
                 prefs.compute_device_type = backend
                 prefs.refresh_devices()
-                devices = [device for device in prefs.devices if device.type != 'CPU']
+                devices = [device for device in prefs.devices if device.type == backend]
                 if devices:
                     for device in prefs.devices:
-                        device.use = device.type != 'CPU'
+                        device.use = device.type == backend
                     scene.cycles.device = 'GPU'
+                    selected_backend = backend
+                    selected_devices = [device.name for device in devices]
                     print('LIBREMAX_DEVICE', backend, [device.name for device in devices], flush=True)
                     break
             except (TypeError, RuntimeError):
@@ -270,7 +274,8 @@ def main():
         print('LIBREMAX_STATS', stats, flush=True)
     bpy.app.handlers.render_stats.append(engine_stats)
     print('LIBREMAX_ENGINE', json.dumps({'blender': bpy.app.version_string,
-        'device': scene.cycles.device, 'samples': scene.cycles.samples,
+        'device': scene.cycles.device, 'backend': selected_backend, 'devices': selected_devices,
+        'samples': scene.cycles.samples,
         'maxBounces': scene.cycles.max_bounces}), flush=True)
     print('LIBREMAX_STAGE Rendering', flush=True)
     try:
@@ -281,7 +286,7 @@ def main():
         print('LIBREMAX_GPU_FALLBACK', str(error), flush=True)
         scene.cycles.device = 'CPU'
         print('LIBREMAX_ENGINE', json.dumps({'blender': bpy.app.version_string,
-            'device': 'CPU', 'samples': scene.cycles.samples,
+            'device': 'CPU', 'backend': 'CPU', 'devices': [], 'samples': scene.cycles.samples,
             'maxBounces': scene.cycles.max_bounces, 'fallback': True}), flush=True)
         bpy.ops.render.render(write_still=True)
     print('LIBREMAX_COMPLETED', scene.render.filepath, flush=True)

@@ -64,6 +64,8 @@ int main(int argc, char **argv) {
     parser.addOption({"examples", "Generate valid sample .lmx projects", "directory"});
     parser.addOption({"render-smoke", "Run real Cycles through asynchronous QProcess pipeline", "directory"});
     parser.addOption({"render-size", "Acceptance render size WxH", "size", "320x180"});
+    parser.addOption({"render-device", "Acceptance device CPU or AUTO", "device", "CPU"});
+    parser.addOption({"expect-render-gpu", "Require the acceptance image to actually use a GPU"});
     parser.addOption({"render-samples", "Acceptance Cycles samples", "samples", "16"});
     parser.addOption({"render-project", "Use a saved .lmx for render acceptance", "project"});
     parser.addOption({"preview-image", "Exercise native image viewer with an existing real render", "image"});
@@ -200,6 +202,9 @@ int main(int argc, char **argv) {
             return 0;
         }
         if (parser.isSet("render-smoke")) {
+            const auto renderDevice = parser.value("render-device");
+            if (renderDevice != "CPU" && renderDevice != "AUTO")
+                throw std::runtime_error("Use render device CPU or AUTO");
             const auto size = parser.value("render-size").split('x');
             if (size.size() != 2)
                 throw std::runtime_error("Use render size WxH");
@@ -238,8 +243,16 @@ int main(int argc, char **argv) {
                     app.exit(1);
                     return;
                 }
-                std::cout << "RENDER_SMOKE_PASS: real Cycles, CPU, denoise, " << renderWidth << "x"
-                          << renderHeight << " image\n";
+                const auto engine = job.engine();
+                std::cout << "RENDER_ENGINE: " << engine.dump() << '\n';
+                if (parser.isSet("expect-render-gpu") &&
+                    (engine.value("device", std::string{}) != "GPU" || engine.value("fallback", false))) {
+                    std::cerr << "Requested GPU acceptance fell back to CPU\n";
+                    app.exit(1);
+                    return;
+                }
+                std::cout << "RENDER_SMOKE_PASS: real Cycles, " << engine.value("device", std::string{})
+                          << ", denoise, " << renderWidth << "x" << renderHeight << " image\n";
                 QFile file(path);
                 if (!file.open(QIODevice::ReadOnly)) {
                     std::cerr << "Unable to verify the completed render\n";
@@ -251,7 +264,7 @@ int main(int argc, char **argv) {
                 std::erase_if(document.entities, [](const auto &e) { return e.type == "Camera"; });
                 document.renderSettings["camera"] = "";
                 job.start(document, parser.value("blender"), lmx::resourcePath("scripts/cycles_render.py"),
-                          path, renderWidth, renderHeight, renderSamples, "CPU");
+                          path, renderWidth, renderHeight, renderSamples, renderDevice);
             });
             QTimer::singleShot(600000, &app, [&] {
                 job.cancel();
@@ -259,7 +272,8 @@ int main(int argc, char **argv) {
                 app.exit(1);
             });
             job.start(document, parser.value("blender"), lmx::resourcePath("scripts/cycles_render.py"),
-                      directory + "/cycles-kitchen.png", renderWidth, renderHeight, renderSamples, "CPU");
+                      directory + "/cycles-kitchen.png", renderWidth, renderHeight, renderSamples,
+                      renderDevice);
             return app.exec();
         }
         lmx::applyStudioPalette();
