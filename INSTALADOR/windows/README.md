@@ -1,7 +1,7 @@
 # Windows
 
-1. Abra a [Release dos instaladores](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.8.0-rc.1).
-2. Baixe **LibreMax-Architect-0.8.0-Windows-x64-Setup.exe**.
+1. Abra a [Release dos instaladores](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.9.0-rc.1).
+2. Baixe **LibreMax-Architect-0.9.0-Windows-x64-Setup.exe**.
 3. Abra o arquivo e siga o instalador em português.
 4. Use **LibreMax Architect** no menu Iniciar ou na Área de Trabalho.
 

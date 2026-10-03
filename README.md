@@ -2,13 +2,13 @@
 
 Editor desktop open source de interiores, com C++20, Qt 6 e OpenCASCADE. Linux é o alvo principal. A implementação é independente e clean-room, usando o VDMax Arquitetos e Decoradores somente como referência pública de capacidades.
 
-**Estado: fontes 0.9.0 em validação; instaladores publicados 0.8.0. Esta entrega ainda não atende à paridade integral da master spec e não é uma release 1.0.** A [master spec](docs/MASTER_SPEC.md) é o requisito de referência. A [matriz de paridade](docs/VDMAX_ARCHITECT_PARITY.md) registra as lacunas por requisito, sem promover testes do kernel a prova de um workflow completo.
+**Estado: prévia 0.9.0 com instaladores Windows e Linux. Esta entrega ainda não atende à paridade integral da master spec e não é uma release 1.0.** A [master spec](docs/MASTER_SPEC.md) é o requisito de referência. A [matriz de paridade](docs/VDMAX_ARCHITECT_PARITY.md) registra as lacunas por requisito, sem promover testes do kernel a prova de um workflow completo.
 
 ![Coleção Apartamento atual no programa nativo](docs/screenshots/modern-catalog.png)
 
 A direção visual atual usa grafite neutro, violeta e cobre, com logo próprio, abertura breve e opção para desativar animações. A tela inicial reúne projetos recentes e ações para criar, abrir ou experimentar um apartamento.
 
-A imagem acima é uma captura do programa compilado no Windows, com viewport OpenCASCADE; não é um mockup. Build, testes, interface nativa com Xvfb/Mesa e pacote Debian passaram na [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37019798505); o render HIP foi verificado na RX 7600 deste host Windows, em prévia de 640 × 360. Outros drivers/GPUs continuam sem validação. A instalação do pacote Ubuntu 24.04 em um runner novo passou na [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37019803477).
+A imagem acima é uma captura do programa compilado no Windows, com viewport OpenCASCADE; não é um mockup. Build, testes, interface nativa com Xvfb/Mesa e pacote Debian passaram na [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37121303969); o render HIP foi verificado na RX 7600 deste host Windows, em prévia de 640 × 360. Outros drivers/GPUs continuam sem validação. A instalação do pacote Ubuntu 24.04 em um runner novo passou na [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37121304063).
 
 Ampliação atual: [60 novos modelos, fontes e modos de desempenho](docs/MODEL_LIBRARIES_PERFORMANCE.md). No host de desenvolvimento, `Abrir LibreMax.cmd` abre a build atualizada.
 

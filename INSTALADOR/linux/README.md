@@ -2,12 +2,12 @@
 
 Pacote inicial para **Ubuntu 24.04 e Linux Mint 22, x86-64**. Outras distribuições ainda não foram validadas.
 
-1. Abra a [Release dos instaladores](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.8.0-rc.1).
-2. Baixe **LibreMax-Architect-0.8.0-Linux-Ubuntu24.04-amd64.deb**.
+1. Abra a [Release dos instaladores](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.9.0-rc.1).
+2. Baixe **LibreMax-Architect-0.9.0-Linux-Ubuntu24.04-amd64.deb**.
 3. Abra o pacote no instalador de aplicativos da sua distribuição. Se ele não oferecer essa opção, use no Terminal, na pasta do download:
 
 ```bash
-sudo apt install ./LibreMax-Architect-0.8.0-Linux-Ubuntu24.04-amd64.deb
+sudo apt install ./LibreMax-Architect-0.9.0-Linux-Ubuntu24.04-amd64.deb
 ```
 
 O gerenciador instala as bibliotecas necessárias. Depois, procure **LibreMax Architect** no menu de aplicativos. Modelos, texturas e exemplos já acompanham o pacote.
