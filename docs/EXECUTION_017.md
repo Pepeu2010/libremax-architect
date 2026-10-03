@@ -36,14 +36,17 @@ O render continua em outro processo; a moldura não calcula iluminação ao vivo
   24/255. A câmera padrão preserva a aparência anterior nessa cena controlada.
 
 Provas locais: `build-render/camera-017-release-45/`,
-`build-render/camera-017-release-52/`, `build-render/camera-017-dpi150/`,
+`build-render/camera-017-release-52/`, `build-render/camera-017-release-dpi150/`,
 `build-render/camera-017-archived-parity/` e `build-render/ui-017/`.
 A captura compacta é do aplicativo nativo compilado.
 
 ## Gates e limites
 
-A CI inclui o teste com os dois Blenders no Linux/Mesa e nos pacotes
-instalados Windows/Ubuntu. Os novos gates ainda precisam concluir;
+A [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37163354243)
+inclui o teste com os dois Blenders e Mesa; a
+[CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37163354206)
+executa o teste nos pacotes Windows/Ubuntu. Ambas usam a fonte
+`c3d68484d933a1765228a025386874afff859cec`. Os novos gates ainda precisam concluir;
 os instaladores publicados permanecem na prévia 0.16.
 
 Essa prova não cobre todas as GPUs/driver, navegação a pé, vistas divididas,
