@@ -1,6 +1,6 @@
 # Instalar o LibreMax Architect
 
-Escolha seu sistema. Os arquivos para baixar ficam nas [Releases do projeto](https://github.com/Pepeu2010/libremax-architect/releases). Como o repositório é privado, entre no GitHub com uma conta que tenha acesso.
+Escolha seu sistema. Os arquivos para baixar ficam nas [Releases do projeto](https://github.com/Pepeu2010/libremax-architect/releases). O repositório é público. Os instaladores publicados podem ser baixados sem acesso especial ao projeto.
 
 | Sistema | Instalador | Guia |
 |---|---|---|

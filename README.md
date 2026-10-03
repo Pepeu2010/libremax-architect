@@ -61,7 +61,7 @@ Para apresentação, abra `examples/cozinha.lmx`, escolha **Céu natural** e a q
 
 ## Baixar e instalar
 
-Abra [INSTALADOR](INSTALADOR/README.md) e escolha [Windows](INSTALADOR/windows/README.md) ou [Linux](INSTALADOR/linux/README.md). Os arquivos `.exe` e `.deb` ficam nas [Releases](https://github.com/Pepeu2010/libremax-architect/releases). É preciso acesso ao repositório privado.
+Abra [INSTALADOR](INSTALADOR/README.md) e escolha [Windows](INSTALADOR/windows/README.md) ou [Linux](INSTALADOR/linux/README.md). Os arquivos `.exe` e `.deb` ficam nas [Releases](https://github.com/Pepeu2010/libremax-architect/releases). O repositório é público; código e instaladores publicados ficam disponíveis para qualquer pessoa.
 
 Os instaladores 0.15 incluem modelos, texturas, exemplos e Blender 4.5.9 LTS/Cycles. O motor é configurado automaticamente; abra Criar imagem para renderizar. Uma instalação externa continua opcional nos ajustes. [Dependências incluídas e testes](docs/BUNDLED_RUNTIME.md). A versão é uma prévia em desenvolvimento.
 
