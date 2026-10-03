@@ -4,7 +4,7 @@ Requisito confirmado pelo usuário: o LibreMax deve permitir montar um apartamen
 
 O [i3-6006U](https://www.intel.com/content/www/us/en/products/sku/91157/intel-core-i36006u-processor-3m-cache-2-00-ghz/specifications.html) tem dois núcleos, quatro threads e GPU Skylake. A GPU compartilha a memória do sistema. Suporte OpenGL depende também do driver instalado.
 
-## Caminho implementado na fonte 0.12
+## Caminho implementado na versão 0.12
 
 - Sem preferência anterior, CPUs com até quatro threads começam em **Leve**: sem mapas de imagem na vista, sem MSAA e com um worker de miniaturas. A escolha manual continua sendo preservada.
 - O editor usa OpenCASCADE/OpenGL. Modelos, medidas, materiais e texturas do projeto não são removidos pelo modo Leve; o render conserva os detalhes.
@@ -31,4 +31,4 @@ Sem crash, falta de memória ou bloqueio prolongado da edição nessas cenas. Ce
 
 O Blender oficial **4.5.9 LTS Windows x64**, baixado em versão portátil, teve SHA256 conferido com o manifesto oficial: `41da973b9bf95bb312cbeff4d1982feb13259b43c821686b9bafea4dfe5477cf`. Produziu a imagem real do apartamento moderno com céu Nishita, 27 mapas PBR, CPU, denoise, 320 × 180 / oito amostras. Uma falha posterior preservou a imagem. Essa prova foi feita no host Ryzen/RX 7600, não no i3/HD 520.
 
-Fila e galeria, quatro imagens HDRI/EXR e sete renders de iluminação passaram com Blender 4.5.9 CPU no Windows. Progresso, estimativa positiva, cancelamento e duração persistida passaram. Biblioteca de 175 miniaturas, três modos e montagem passaram; Blender 5.2.1 também manteve o render CPU do apartamento. Núcleo: 40 testes / 2.269 verificações. A CI 4.5 está em validação. O teste físico acima permanece pendente. [Relatório](TEST_REPORT.md), [biblioteca e modos de edição](MODEL_LIBRARIES_PERFORMANCE.md).
+Fila e galeria, quatro imagens HDRI/EXR e sete renders de iluminação passaram com Blender 4.5.9 CPU no Windows. Progresso, estimativa positiva, cancelamento e duração persistida passaram. Biblioteca de 175 miniaturas, três modos e montagem passaram; Blender 5.2.1 também manteve o render CPU do apartamento. Núcleo: 40 testes / 2.269 verificações. A [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37130831318) passou com os dois motores e confirmou início automático em Leve num runner com duas CPUs lógicas. A [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37130831328) passou em Windows e Ubuntu instalado em runner novo. A [prévia 0.12](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.12.0-preview.1) está publicada. O teste físico acima permanece pendente. [Relatório](TEST_REPORT.md), [biblioteca e modos de edição](MODEL_LIBRARIES_PERFORMANCE.md).

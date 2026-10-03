@@ -30,6 +30,8 @@ No menu **Vista → Desempenho durante edição**, escolha:
 | Equilibrado | Ativadas | 4 amostras | 2 |
 | Mais detalhes | Ativadas | 8 amostras, conforme o driver | 4 |
 
+Na versão 0.12, sem preferência anterior, CPUs com até quatro threads disponíveis começam em Leve. O alvo mínimo obrigatório é i3-6006U/HD 520/8 GB; [a validação física permanece pendente](MINIMUM_HARDWARE.md).
+
 A aproximação de curvas CAD também varia com o modo. As malhas importadas mantêm sua geometria. O modo é uma preferência local persistente: não altera medidas, texturas incorporadas, materiais ou a malha exportada para Cycles. A foto final conserva os detalhes. Para testar uma foto em computadores mais lentos, comece pelo preset Rápido e escolha CPU quando a GPU não for compatível.
 
 Uma correção adicional atualiza somente a linha da miniatura concluída. Antes, cada conclusão percorria e recalculava todas as miniaturas do catálogo. A geração continua fora da thread da interface.

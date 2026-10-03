@@ -1,4 +1,4 @@
-# Render de apresentação — fontes 0.10.0
+# Render de apresentação — fontes 0.12.0
 
 O objetivo atual é uma aparência fotográfica com a geometria do projeto. Cycles calcula iluminação indireta, sombras, reflexos e transmissão; a qualidade depende da cena, materiais, iluminação e resolução. Um projeto com modelos simples continua mostrando esses limites.
 
@@ -18,7 +18,7 @@ O objetivo atual é uma aparência fotográfica com a geometria do projeto. Cycl
 
 Snapshot validado → worker de tesselação → JSON/PNGs → QProcess `blender --background --factory-startup --python-exit-code 1 --python scripts/cycles_render.py -- ...` → imagem validada → cópia atômica. Sem shell ou Python gerado com strings do usuário. Fila FIFO persistente com um processo ativo cancelável; editar durante render modifica somente renders futuros. Falha sem câmera preserva a imagem anterior.
 
-A galeria Suas imagens mantém resultados, câmeras, configurações, estados e logs. Abrir imagem oferece Ajustar/1:1, zoom/pan e Salvar cópia PNG/JPEG. Voltar ao projeto restaura os painéis de edição. Cópias da cena permitem repetir ou tentar com CPU sem usar alterações posteriores. QA de GPUs físicas, Foto 1080p/Final 4K e enquadramento exato ainda estão pendentes. Blender executado neste host: 5.2.1 LTS; o céu usa Multiple Scattering. Compatibilidade com Blender 6 não foi validada; 5.2 ainda informa depreciação de use_nodes.
+A galeria Suas imagens mantém resultados, câmeras, configurações, estados e logs. Abrir imagem oferece Ajustar/1:1, zoom/pan e Salvar cópia PNG/JPEG. Voltar ao projeto restaura os painéis de edição. Cópias da cena permitem repetir ou tentar com CPU sem usar alterações posteriores. QA de GPUs físicas, Foto 1080p/Final 4K e enquadramento exato ainda estão pendentes. Blender 4.5.9 LTS e 5.2.1 LTS foram executados neste host. O céu usa Nishita no 4.5 e Multiple Scattering no 5+. Para i3-6006U/HD 520/8 GB, use 4.5 LTS com CPU; a validação física de desempenho está [pendente](MINIMUM_HARDWARE.md). Compatibilidade com Blender 6 não foi validada; 5.2 ainda informa depreciação de use_nodes.
 
 [Apartamento / Cycles CPU 640×360](screenshots/apartment-render.png), [cozinha / 1280×720](screenshots/photoreal-kitchen.png), [evidência do ciclo](CYCLE_03.md), [fontes/licenças dos mapas](../starter-materials/README.md).
 

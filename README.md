@@ -2,19 +2,19 @@
 
 Editor desktop open source de interiores, com C++20, Qt 6 e OpenCASCADE. Linux é o alvo principal. A implementação é independente e clean-room, usando o VDMax Arquitetos e Decoradores somente como referência pública de capacidades.
 
-**Estado: prévia 0.11.0 com instaladores Windows e Linux [publicados](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.11.0-preview.1). Esta entrega ainda não atende à paridade integral da master spec e não é uma release 1.0.** A [master spec](docs/MASTER_SPEC.md) é o requisito de referência. A [matriz de paridade](docs/VDMAX_ARCHITECT_PARITY.md) registra as lacunas por requisito, sem promover testes do kernel a prova de um workflow completo.
+**Estado: prévia 0.12.0 com instaladores Windows e Linux [publicados](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.12.0-preview.1). Esta entrega ainda não atende à paridade integral da master spec e não é uma release 1.0.** A [master spec](docs/MASTER_SPEC.md) é o requisito de referência. A [matriz de paridade](docs/VDMAX_ARCHITECT_PARITY.md) registra as lacunas por requisito, sem promover testes do kernel a prova de um workflow completo.
 
 ![Coleção Apartamento atual no programa nativo](docs/screenshots/modern-catalog.png)
 
 A direção visual atual usa grafite neutro, violeta e cobre, com logo próprio, abertura breve e opção para desativar animações. A tela inicial reúne projetos recentes e ações para criar, abrir ou experimentar um apartamento.
 
-A imagem acima é uma captura do programa compilado no Windows, com viewport OpenCASCADE; não é um mockup. Build, testes, interface nativa com Xvfb/Mesa, pacote Debian e iluminação Cycles CPU passaram na [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37129048387). A instalação Windows e Ubuntu 24.04 em runner novo passou na [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37129048284). O apartamento com Kelvin/LED também gerou [uma imagem 4K](docs/LIGHTING.md#apartamento-em-4k), 512 amostras máximas e 12 reflexões, na RX 7600/HIP deste Windows. Esse teste pelo pipeline não comprova equivalência fotográfica, todas as câmeras ou outros drivers/GPUs.
+A imagem acima é uma captura do programa compilado no Windows, com viewport OpenCASCADE; não é um mockup. Build, testes, interface nativa com Xvfb/Mesa, pacote Debian e iluminação Cycles CPU passaram na [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37130831318). A instalação Windows e Ubuntu 24.04 em runner novo passou na [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37130831328). O apartamento com Kelvin/LED também gerou [uma imagem 4K](docs/LIGHTING.md#apartamento-em-4k), 512 amostras máximas e 12 reflexões, na RX 7600/HIP deste Windows. Esse teste pelo pipeline não comprova equivalência fotográfica, todas as câmeras ou outros drivers/GPUs.
 
 Ampliações atuais: [60 novos modelos, fontes e modos de desempenho](docs/MODEL_LIBRARIES_PERFORMANCE.md) e [iluminação Kelvin, LED e sol](docs/LIGHTING.md). No host de desenvolvimento, `Abrir LibreMax.cmd` abre a build atualizada.
 
 A versão 0.11 acrescenta [barra de progresso, tempo decorrido e previsão do Cycles](docs/RENDER_PROGRESS.md), na galeria e durante a edição. Os instaladores Windows e Ubuntu passaram nos testes de publicação.
 
-Alvo mínimo confirmado: **i3-6006U / Intel HD Graphics 520 / 8 GB de RAM**. A fonte 0.12 começa em Leve nas CPUs de até quatro threads e acrescenta o caminho Blender 4.5 LTS/CPU. [Requisito e teste físico pendente](docs/MINIMUM_HARDWARE.md).
+Alvo mínimo confirmado: **i3-6006U / Intel HD Graphics 520 / 8 GB de RAM**. A versão 0.12 começa em Leve nas CPUs de até quatro threads e acrescenta o caminho Blender 4.5 LTS/CPU. [Requisito e teste físico pendente](docs/MINIMUM_HARDWARE.md).
 
 Já disponível neste ciclo:
 
@@ -45,7 +45,7 @@ Para apresentação, abra `examples/cozinha.lmx`, escolha **Céu natural** e a q
 
 Abra [INSTALADOR](INSTALADOR/README.md) e escolha [Windows](INSTALADOR/windows/README.md) ou [Linux](INSTALADOR/linux/README.md). Os arquivos `.exe` e `.deb` ficam nas [Releases](https://github.com/Pepeu2010/libremax-architect/releases). É preciso acesso ao repositório privado.
 
-O instalador inclui modelos, texturas e exemplos. Para fotos realistas, instale Blender 5.2 LTS+ separadamente e selecione o executável no painel Render. A versão é uma prévia em desenvolvimento.
+O instalador inclui modelos, texturas e exemplos. Para fotos realistas, instale Blender 4.5 LTS ou 5.2 LTS separadamente e selecione o executável no painel Render. A versão é uma prévia em desenvolvimento.
 
 ## Compilar e executar
 
