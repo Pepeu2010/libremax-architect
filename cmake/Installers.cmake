@@ -50,8 +50,12 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Editor desktop de arquitetura de interior
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 if(LMX_BLENDER_RUNTIME_DIR)
   set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS_PRIVATE_DIRS
-      "${LMX_BLENDER_RUNTIME_DIR}/lib" "${LMX_BLENDER_RUNTIME_DIR}/4.5/python/lib")
+      "${LMX_BLENDER_RUNTIME_DIR}/lib" "${LMX_BLENDER_RUNTIME_DIR}/lib/mesa"
+      "${LMX_BLENDER_RUNTIME_DIR}/4.5/python/lib"
+      "${LMX_BLENDER_RUNTIME_DIR}/4.5/python/lib/python3.11/site-packages/MaterialX")
 endif()
+set(CPACK_LMX_BUNDLED_RUNTIME_DIR "${LMX_BLENDER_RUNTIME_DIR}")
+set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/PackagingOptions.cmake")
 set(CPACK_DEBIAN_PACKAGE_SECTION graphics)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libqt6sql6-sqlite, libxcb-cursor0, shared-mime-info, desktop-file-utils, xwayland, libxrender1, libxi6, libxxf86vm1, libxfixes3, libxkbcommon0, libegl1, libsm6, libgl1")
 set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64)

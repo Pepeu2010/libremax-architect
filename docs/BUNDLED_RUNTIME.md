@@ -22,6 +22,13 @@ o gerenciador resolve as dependências automaticamente. Se elas ainda não
 estiverem disponíveis, a instalação precisa de acesso aos repositórios Ubuntu.
 Depois da instalação, edição e render locais não exigem internet.
 
+O empacotador Debian calcula as dependências nativas do aplicativo, do motor e
+do Python. Quatro plugins opcionais de GPU permanecem incluídos, mas não tornam
+obrigatória a instalação simultânea de drivers AMD, NVIDIA e Intel. CPU funciona
+com as dependências normais do pacote; render GPU continua dependendo do driver
+compatível com a placa escolhida. A varredura mantém as demais bibliotecas,
+incluindo denoise CPU e módulos Python/MaterialX.
+
 ## Preparação e integridade
 
 `scripts/blender-runtime.json` fixa versão, URLs oficiais e SHA256 por plataforma.
