@@ -1,3 +1,9 @@
+# Test report — biblioteca e desempenho 0.9.0
+
+Windows Release: **35 testes / 2.191 verificações** passaram. Todos os 60 novos assets reais foram validados e salvos/reabertos com malhas e texturas incorporadas. O smoke nativo verificou 175 miniaturas, filtros com 105 modelos leves e sete objetos detalhados, três modos de edição e preservação do documento/malha do render. Sofá KayKit no piso e relógio detalhado na parede passaram pela colocação nativa e reabertura do projeto. Montagem, coleção moderna e tutorial passaram. O mesmo smoke passou com afinidade limitada a dois núcleos lógicos, mantendo a RX 7600: 19,14 segundos e janela em 415 ms. Esse limite não representa um computador antigo completo. [Fontes, capturas e limites](MODEL_LIBRARIES_PERFORMANCE.md). CI e instaladores 0.9 ainda pendentes.
+
+---
+
 # Test report — HDRI e EXR 0.8.0
 
 Build Release no Windows: **34 casos / 1.829 assertions** aprovados. Importação HDR/EXR em ponto flutuante, projeto v2 portátil, snapshots e publicação segura testados. O fluxo nativo completou quatro renders Cycles CPU, verificou rotação nos pixels, fundo oculto, alpha, originais EXR FLOAT32, histórico, miniaturas e cópia pela galeria byte a byte. UI, montagem, modelos modernos, tutorial, recuperação e fila de cinco câmeras passaram. A prévia do apartamento com HDRI também passou na RX 7600 / HIP, 640 × 360 / 32 amostras, sem fallback e com preservação da imagem após falha. [Capturas, números e limites](HDRI_EXR.md).

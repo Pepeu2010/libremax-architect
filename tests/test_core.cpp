@@ -247,6 +247,49 @@ TEST_CASE("All 52 ready furniture meshes embed, persist and render independently
     REQUIRE(library.search("Novo nome").size() == 1);
     REQUIRE(library.search({}, {}, true).size() == 1);
 }
+TEST_CASE("Expanded CC0 models remain portable with authored geometry and textures", "[expanded][models]") {
+    application();
+    QTemporaryDir dir;
+    Library library(dir.filePath("expanded.db"), QStringLiteral(LMX_SOURCE_DIR) + "/starter-models");
+    QFile catalog(QStringLiteral(LMX_SOURCE_DIR) + "/starter-models/expanded-catalog.json");
+    REQUIRE(catalog.open(QIODevice::ReadOnly));
+    const auto entries = Json::parse(catalog.readAll().toStdString());
+    REQUIRE(entries.size() == 60);
+    library.seed(entries);
+    const auto all = library.search();
+    REQUIRE(all.size() == 60);
+    REQUIRE(library.search("KayKit").size() == 53);
+    Document apartment;
+    for (const auto &asset : all) {
+        INFO(asset.id.toStdString());
+        const auto model = readModel(asset.model);
+        REQUIRE_FALSE(model.at("materials").empty());
+        REQUIRE_FALSE(asset.textures.empty());
+        if (asset.id.startsWith("kaykit-")) {
+            std::size_t triangles = 0;
+            for (const auto &part : model.at("parts"))
+                triangles += part.at("triangles").size();
+            REQUIRE(triangles < 3000);
+        }
+        Document standalone;
+        Library::attachModel(standalone, asset);
+        standalone.entities.push_back(Library::instantiate(asset, 0, 0));
+        REQUIRE_NOTHROW(standalone.validate());
+        REQUIRE_FALSE(meshSnapshot(standalone).at("meshes").empty());
+        REQUIRE_FALSE(renderAssetThumbnail(asset).isNull());
+        Library::attachModel(apartment, asset);
+        apartment.entities.push_back(Library::instantiate(asset, 0, 0));
+    }
+    const auto path = dir.filePath("expanded.lmx");
+    REQUIRE_NOTHROW(ProjectStore::save(path, apartment, false));
+    const auto reopened = ProjectStore::open(path);
+    REQUIRE(reopened.entities.size() == 60);
+    REQUIRE(reopened.embeddedAssets == apartment.embeddedAssets);
+    REQUIRE(meshSnapshot(reopened) == meshSnapshot(apartment));
+    auto corrupt = all.front();
+    corrupt.model.append('x');
+    REQUIRE_THROWS(Library::attachModel(apartment, corrupt));
+}
 TEST_CASE("Modern CC0 furniture retains authored UVs, normals, textures and provenance", "[modern][models]") {
     QTemporaryDir dir;
     Library library(dir.filePath("modern.db"), QStringLiteral(LMX_SOURCE_DIR) + "/starter-models");

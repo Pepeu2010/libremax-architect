@@ -24,6 +24,7 @@
 #include <Graphic3d_Texture2Dmanual.hxx>
 #endif
 #include <V3d_Viewer.hxx>
+#include <algorithm>
 #include <cmath>
 #include <numbers>
 #include <set>
@@ -66,7 +67,7 @@ void CadView::initialize() {
         if (!window->IsMapped())
             window->Map();
         view->SetBackgroundColor(Quantity_Color(0.012, 0.012, 0.019, Quantity_TOC_RGB));
-        view->ChangeRenderingParams().NbMsaaSamples = 4;
+        view->ChangeRenderingParams().NbMsaaSamples = performance == 0 ? 0 : performance == 1 ? 4 : 8;
         view->SetProj(V3d_Zpos);
         view->SetScale(6000);
         viewer->SetRectangularGridValues(0, 0, 100, 100, 0);
@@ -87,6 +88,19 @@ void CadView::paintEvent(QPaintEvent *) {
 void CadView::resizeEvent(QResizeEvent *) {
     if (!view.IsNull())
         view->MustBeResized();
+}
+int CadView::multisampling() const {
+    return view.IsNull() ? 0 : view->RenderingParams().NbMsaaSamples;
+}
+void CadView::setPerformanceMode(int mode) {
+    mode = std::clamp(mode, 0, 2);
+    if (performance == mode)
+        return;
+    performance = mode;
+    if (!view.IsNull()) {
+        view->ChangeRenderingParams().NbMsaaSamples = mode == 0 ? 0 : mode == 1 ? 4 : 8;
+        scene(current);
+    }
 }
 void CadView::scene(const Document &d) {
     current = d;
@@ -123,7 +137,8 @@ void CadView::scene(const Document &d) {
             const auto displayId = part.owner + "/" + std::to_string(indices[part.owner]++);
             alive.insert(displayId);
             const auto key = std::to_string(reinterpret_cast<std::uintptr_t>(part.shape.TShape().get())) +
-                             mat.dump() + (owner.locked ? "/locked" : "/editable");
+                             mat.dump() + (owner.locked ? "/locked" : "/editable") + "/performance/" +
+                             std::to_string(performance);
             auto existing = displayed.find(displayId);
             if (existing != displayed.end() && existing->second.key == key) {
                 owners.emplace(existing->second.shape.get(), part.owner);
@@ -132,7 +147,9 @@ void CadView::scene(const Document &d) {
             if (existing != displayed.end())
                 context->Remove(existing->second.shape, false);
             const bool modelTexture = owner.type == "MeshObject" && mat.value("modelUV", false);
-            if (mat.contains("baseColorTexture") && (owner.type != "MeshObject" || modelTexture)) {
+            const bool textured = performance != 0 && mat.contains("baseColorTexture") &&
+                                  (owner.type != "MeshObject" || modelTexture);
+            if (textured) {
                 auto hash = mat.at("baseColorTexture").get<std::string>();
                 auto filename = textureCache.filePath(QString::fromStdString(hash) + ".png");
                 if (!QFile::exists(filename)) {
@@ -167,7 +184,7 @@ void CadView::scene(const Document &d) {
                 }
             }
             auto c = mat.at("baseColor");
-            if (modelTexture && mat.contains("baseColorTexture"))
+            if (modelTexture && textured)
                 c = Json::array({1.0, 1.0, 1.0});
             shape->SetColor(
                 Quantity_Color(c[0].get<double>(), c[1].get<double>(), c[2].get<double>(), Quantity_TOC_RGB));
@@ -177,8 +194,9 @@ void CadView::scene(const Document &d) {
                 shape->SetColor(Quantity_NOC_CYAN1);
                 shape->SetWidth(1.5);
             }
-            if (!mat.contains("baseColorTexture") || owner.type == "MeshObject")
+            if (!textured || owner.type == "MeshObject")
                 shape->SetDisplayMode(AIS_Shaded);
+            shape->SetOwnDeviationCoefficient(performance == 0 ? 0.01 : performance == 1 ? 0.001 : 0.0002);
             context->Display(shape, false);
             if (d.at(part.owner).locked)
                 context->Deactivate(shape);

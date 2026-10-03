@@ -20,6 +20,7 @@ class AssetThumbnails final : public QObject {
     explicit AssetThumbnails(QObject *parent = nullptr);
     ~AssetThumbnails() override;
     QImage request(const Asset &asset, std::function<Asset(const Asset &)> loader = {});
+    void setWorkerLimit(int workers);
   signals:
     void ready(const QString &id, const QImage &image);
 };

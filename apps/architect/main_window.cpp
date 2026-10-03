@@ -141,19 +141,19 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory, bool welcome
     if (!current.open(QIODevice::ReadOnly))
         throw std::runtime_error("Coleção contemporânea não encontrada");
     library->seed(Json::parse(current.readAll().toStdString()));
+    QFile expanded(resourceFile("starter-models/expanded-catalog.json"));
+    if (!expanded.open(QIODevice::ReadOnly))
+        throw std::runtime_error("Coleção ampliada não encontrada");
+    library->seed(Json::parse(expanded.readAll().toStdString()));
     createShell();
-    connect(&thumbnails, &AssetThumbnails::ready, this, [this](const QString &, const QImage &) {
+    connect(&thumbnails, &AssetThumbnails::ready, this, [this](const QString &id, const QImage &image) {
         for (int i = 0; i < assets->count(); ++i) {
             auto *item = assets->item(i);
-            for (const auto &asset : visibleAssets)
-                if (asset.id == item->data(Qt::UserRole).toString()) {
-                    auto image = thumbnails.request(asset);
-                    if (!image.isNull()) {
-                        item->setIcon(QIcon(QPixmap::fromImage(image)));
-                        item->setData(Qt::UserRole + 2, true);
-                    }
-                    break;
-                }
+            if (item->data(Qt::UserRole).toString() == id) {
+                item->setIcon(QIcon(QPixmap::fromImage(image)));
+                item->setData(Qt::UserRole + 2, true);
+                break;
+            }
         }
     });
     connect(&editor_, &Editor::changed, this, &MainWindow::refreshScene);
@@ -416,6 +416,27 @@ void MainWindow::createShell() {
     action(viewMenu, tr("Planta superior"), QKeySequence("1"), [this] { viewport->setTop(true); });
     action(viewMenu, tr("Ver em 3D"), QKeySequence("3"), [this] { viewport->setTop(false); });
     action(viewMenu, tr("Enquadrar projeto"), QKeySequence("F"), [this] { viewport->frame(); });
+    auto *performanceMenu = viewMenu->addMenu(tr("Desempenho durante edição"));
+    auto *performanceGroup = new QActionGroup(this);
+    const int savedPerformance = std::clamp(QSettings().value("performance/editor", 1).toInt(), 0, 2);
+    viewport->setPerformanceMode(savedPerformance);
+    thumbnails.setWorkerLimit(savedPerformance == 0 ? 1 : savedPerformance == 1 ? 2 : 4);
+    const QStringList performanceLabels{tr("Leve — computador mais lento"), tr("Equilibrado"),
+                                        tr("Mais detalhes")};
+    for (int mode = 0; mode < performanceLabels.size(); ++mode) {
+        auto *choice = performanceMenu->addAction(performanceLabels[mode]);
+        choice->setObjectName(QString("performanceMode%1").arg(mode));
+        choice->setCheckable(true);
+        choice->setChecked(mode == savedPerformance);
+        performanceGroup->addAction(choice);
+        connect(choice, &QAction::triggered, this, [this, mode] {
+            viewport->setPerformanceMode(mode);
+            thumbnails.setWorkerLimit(mode == 0 ? 1 : mode == 1 ? 2 : 4);
+            QSettings().setValue("performance/editor", mode);
+            statusBar()->showMessage(tr("Desempenho da edição ajustado. O render final mantém os detalhes."),
+                                     8000);
+        });
+    }
     auto *help = menuBar()->addMenu(tr("A&juda"));
     action(help, tr("Tutorial completo"), {}, [this] { showTutorial(this); });
     auto *animations = action(help, tr("Animações de abertura"), {}, [] {});
@@ -559,6 +580,8 @@ void MainWindow::createShell() {
     category = new QComboBox;
     category->addItem(tr("Todos os ambientes"), "");
     category->addItem(tr("Apartamento atual"), "__modern");
+    category->addItem(tr("Modelos leves"), "__light");
+    category->addItem(tr("Objetos detalhados"), "__detail");
     category->setObjectName("libraryCategory");
     for (const auto &cat : {"Cozinha", "Dormitório", "Sala", "Banheiro", "Escritório", "Decoração",
                             "Eletrodomésticos", "Portas e janelas"})
@@ -1315,11 +1338,23 @@ void MainWindow::refreshScene() {
 }
 void MainWindow::refreshLibrary() {
     const bool modern = category->currentData().toString() == "__modern";
-    visibleAssets = library->search(search->text(), modern ? QString{} : category->currentData().toString(),
-                                    favoriteOnly->isChecked(), recentOnly->isChecked(), false);
+    const bool light = category->currentData().toString() == "__light";
+    const bool detail = category->currentData().toString() == "__detail";
+    visibleAssets = library->search(
+        search->text(), modern || light || detail ? QString{} : category->currentData().toString(),
+        favoriteOnly->isChecked(), recentOnly->isChecked(), false);
     if (modern)
         std::erase_if(visibleAssets, [](const auto &asset) {
             return asset.recipe.value("collection", std::string{}) != "apartment-modern";
+        });
+    if (light)
+        std::erase_if(visibleAssets, [](const auto &asset) {
+            return !asset.id.startsWith("ready-") &&
+                   asset.recipe.value("collection", std::string{}) != "lightweight-ready";
+        });
+    if (detail)
+        std::erase_if(visibleAssets, [](const auto &asset) {
+            return asset.recipe.value("collection", std::string{}) != "detail-ready";
         });
     assets->clear();
     for (const auto &a : visibleAssets) {
@@ -1338,6 +1373,7 @@ void MainWindow::refreshLibrary() {
         item->setToolTip(a.category + " · CC0 · " + tr("Arraste para inserir"));
         item->setSizeHint({114, 174});
     }
+    assets->verticalScrollBar()->setValue(0);
     libraryCount->setText(visibleAssets.empty()
                               ? tr("Nenhum item encontrado. Ajuste a busca ou os filtros.")
                               : tr("%1 itens · biblioteca local").arg(visibleAssets.size()));

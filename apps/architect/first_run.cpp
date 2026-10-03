@@ -94,7 +94,8 @@ void showTutorial(QWidget *parent) {
          "Use Planta para montar os móveis e 3D para conferir o ambiente. Ver por dentro esconde o teto e "
          "parte das paredes só na tela, sem alterar a foto final.\n\nA roda aproxima e afasta. O botão do "
          "meio arrasta a vista. O botão direito gira a vista 3D. Ver tudo enquadra o projeto. A lista Cômodo "
-         "aproxima a vista do ambiente escolhido."},
+         "aproxima a vista do ambiente escolhido.\n\nSe o computador estiver lento, escolha Vista → "
+         "Desempenho durante edição → Leve. Isso simplifica a tela, mas mantém os detalhes na foto final."},
         {"4. Desenhe paredes", "Para formatos próprios, desenhe uma parede por vez.",
          "Escolha Parede, clique no começo e no fim. Continue clicando para formar uma sequência. Esc "
          "termina o desenho. Mureta cria uma parede mais baixa.\n\nA grade ajuda a alinhar. O tamanho da "
@@ -102,7 +103,9 @@ void showTutorial(QWidget *parent) {
          "espaço retangular."},
         {"5. Encontre um móvel", "A biblioteca fica à esquerda.",
          "Busque por um nome comum, como mesa, cama ou poltrona. Apartamento atual mostra as novas peças "
-         "contemporâneas. As medidas abaixo de cada item estão em centímetros.\n\nFavoritar guarda os itens "
+         "contemporâneas. Modelos leves reúne móveis estilizados com menos detalhes geométricos. Objetos "
+         "detalhados reúne peças com texturas de materiais reais. As medidas abaixo de cada item "
+         "estão em centímetros.\n\nFavoritar guarda os itens "
          "que você mais usa. Recentes mostra os itens colocados há pouco. As miniaturas representam a forma "
          "real do modelo; detalhes e texturas aparecem na vista 3D e na foto."},
         {"6. Coloque e mova", "Arraste o móvel até o lugar desejado.",

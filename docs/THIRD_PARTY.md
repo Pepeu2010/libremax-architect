@@ -34,3 +34,5 @@ Também inclui 24 modelos detalhados e 84 mapas preparados a partir de glTF da [
 O logo LibreMax foi gerado pela ferramenta de imagem integrada; [prompt e origem](../resources/brand/README.md). A imagem de apartamento usada na abertura é um render do próprio exemplo LibreMax, produzido com Cycles.
 
 A coleção original LibreMax acrescenta 12 designs contemporâneos CC0, criados pelo script Blender do repositório. [Dedicação dos assets](../starter-models/CURRENT_LICENSE.txt), [proveniência](../starter-models/current-provenance.json). Não deriva de modelos de fabricantes ou do VDMax.
+
+A ampliação 0.9 inclui 53 modelos do [KayKit Furniture Bits](https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0), de Kay Lousberg, CC0, na revisão `96d5930a8dbdb363409bbc2d3341718b00e17c9c`. [Licença preservada](../starter-models/KAYKIT_LICENSE.txt). Inclui também sete modelos Poly Haven adicionais, CC0. [URLs oficiais, autores, hashes de todos os arquivos de origem e preparados](../starter-models/expanded-provenance.json).

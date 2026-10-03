@@ -1,6 +1,6 @@
 # Móveis prontos
 
-A biblioteca agora inclui **88 modelos prontos**: 52 Kenney, 24 Poly Haven e 12 designs originais LibreMax. O filtro **Apartamento atual** reúne os 36 modelos Poly Haven/LibreMax. Os catálogos anteriores mantêm seus IDs e receitas.
+A biblioteca agora inclui **148 modelos prontos**: 52 Kenney, 53 KayKit, 31 Poly Haven e 12 designs originais LibreMax. O filtro **Apartamento atual** reúne os 36 modelos Poly Haven/LibreMax. Os catálogos anteriores mantêm seus IDs e receitas.
 
 ## Designs contemporâneos LibreMax
 
@@ -33,3 +33,7 @@ Preparação reproduzível: `python scripts/prepare-furniture-pack.py <pasta-ext
 Os modelos são **estilizados, com poucos polígonos**. Eles melhoram a variedade e o uso imediato da biblioteca; não são modelos de fotografia de produtos. Madeira, tecido, vidro e metal continuam separados. Escala por largura/altura/profundidade, posição, rotação, espelhamento e acabamento são editáveis; detalhes internos não são paramétricos como os módulos próprios de cozinha.
 
 O catálogo vem junto com o aplicativo. O projeto incorpora os modelos usados por hash; salvar, abrir, renderizar e mover não dependem de internet, do ZIP original ou desta pasta. `MeshObject` usa triangulação no viewport OpenCASCADE e no snapshot do Cycles. Malhas decorativas não são sólidos CAD editáveis.
+
+## Ampliação 0.9
+
+[expanded-catalog.json](expanded-catalog.json) acrescenta 53 modelos estilizados KayKit Furniture Bits e sete modelos Poly Haven detalhados. Inclui camas, poltronas, sofás, cadeiras, banquetas, armários, prateleiras, mesas, luminárias, quadros, cactos, almofadas, tapetes, livros, vasos, relógios, tigelas e porta-retrato. [Licença KayKit](KAYKIT_LICENSE.txt), [proveniência completa](expanded-provenance.json), [pesquisa, preparação, filtros, desempenho e limites](../docs/MODEL_LIBRARIES_PERFORMANCE.md).

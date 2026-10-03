@@ -2,7 +2,7 @@
 
 Editor desktop open source de interiores, com C++20, Qt 6 e OpenCASCADE. Linux é o alvo principal. A implementação é independente e clean-room, usando o VDMax Arquitetos e Decoradores somente como referência pública de capacidades.
 
-**Estado: prévia 0.8.0 com instaladores Windows e Linux. Esta entrega ainda não atende à paridade integral da master spec e não é uma release 1.0.** A [master spec](docs/MASTER_SPEC.md) é o requisito de referência. A [matriz de paridade](docs/VDMAX_ARCHITECT_PARITY.md) registra as lacunas por requisito, sem promover testes do kernel a prova de um workflow completo.
+**Estado: fontes 0.9.0 em validação; instaladores publicados 0.8.0. Esta entrega ainda não atende à paridade integral da master spec e não é uma release 1.0.** A [master spec](docs/MASTER_SPEC.md) é o requisito de referência. A [matriz de paridade](docs/VDMAX_ARCHITECT_PARITY.md) registra as lacunas por requisito, sem promover testes do kernel a prova de um workflow completo.
 
 ![Coleção Apartamento atual no programa nativo](docs/screenshots/modern-catalog.png)
 
@@ -10,15 +10,16 @@ A direção visual atual usa grafite neutro, violeta e cobre, com logo próprio,
 
 A imagem acima é uma captura do programa compilado no Windows, com viewport OpenCASCADE; não é um mockup. Build, testes, interface nativa com Xvfb/Mesa e pacote Debian passaram na [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37019798505); o render HIP foi verificado na RX 7600 deste host Windows, em prévia de 640 × 360. Outros drivers/GPUs continuam sem validação. A instalação do pacote Ubuntu 24.04 em um runner novo passou na [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37019803477).
 
-Ampliação atual: [18 novos modelos contemporâneos e evidência](docs/CATALOG_EXPANSION.md). No host de desenvolvimento, `Abrir LibreMax.cmd` abre a build atualizada.
+Ampliação atual: [60 novos modelos, fontes e modos de desempenho](docs/MODEL_LIBRARIES_PERFORMANCE.md). No host de desenvolvimento, `Abrir LibreMax.cmd` abre a build atualizada.
 
 Já disponível neste ciclo:
 
 - Desenhar cadeias de paredes e muretas; criar ambiente retangular com piso e forro.
 - Inserir portas e janelas com recortes booleanos reais, vinculadas à parede.
-- Biblioteca local SQLite/FTS5 com busca sem acentos, filtros, favoritos e recentes; 115 itens: 25 receitas próprias, porta/janela, 52 modelos 3D Kenney, 24 Poly Haven e 12 designs contemporâneos LibreMax CC0. O filtro **Apartamento atual** reúne 36 modelos, incluindo sofás, cama queen, móveis ripados, espelho, banquetas e decoração. Os modelos Poly Haven preservam mapas/UVs; os designs originais usam acabamentos procedurais no Cycles.
+- Biblioteca local SQLite/FTS5 com busca sem acentos, filtros, favoritos e recentes; 175 itens: 25 receitas próprias, porta/janela, 52 modelos 3D Kenney, 53 KayKit, 31 Poly Haven e 12 designs contemporâneos LibreMax CC0. O filtro **Apartamento atual** reúne 36 modelos, incluindo sofás, cama queen, móveis ripados, espelho, banquetas e decoração. Os modelos Poly Haven preservam mapas/UVs; os designs originais usam acabamentos procedurais no Cycles.
+- Modos Leve, Equilibrado e Mais detalhes em Vista; texturas/suavização da tela e workers de miniaturas ajustáveis, preservando o render final.
 - Tutorial de 15 capítulos na primeira abertura, reaberto em Ajuda ou na tela inicial. Biblioteca de projetos locais com imagem, nome, data e aviso de arquivo movido.
-- Catálogo carregado ao entrar no editor; busca sem carregar todas as malhas, miniaturas em dois workers e cache de geometria para evitar reconstruir sólidos inalterados. Essas melhorias não constituem benchmark de apartamentos grandes.
+- Catálogo carregado ao entrar no editor; busca sem carregar todas as malhas, miniaturas em 1, 2 ou 4 workers conforme o modo de edição e cache de geometria para evitar reconstruir sólidos inalterados. Essas melhorias não constituem benchmark de apartamentos grandes.
 - Arrastar móveis em planta/3D com orientação pela parede, encaixe em cantos/vizinhos, prévia verde/vermelha e bloqueio de posição ocupada. Objetos pequenos acompanham o topo do móvel e o novo pendente acompanha a altura do cômodo. Arrastar itens existentes confirma uma alteração reversível.
 - Duplo clique aguarda escolher o lugar; R gira a prévia, Esc cancela. Editar medidas comuns em centímetros, com vírgula e expressões; coordenadas técnicas ficam nos ajustes adicionais.
 - Criar cômodos adjacentes em metros, reaproveitar paredes coincidentes e abrir um apartamento com sala/cozinha, quarto e banheiro.

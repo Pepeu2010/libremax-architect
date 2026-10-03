@@ -32,6 +32,7 @@ class CadView final : public QWidget {
     QPoint last;
     bool top = true;
     bool cutaway = true;
+    int performance = 1;
     QString tool = "select";
     std::function<std::optional<Asset>(const QString &)> findAsset;
     std::optional<Asset> placingAsset;
@@ -72,6 +73,9 @@ class CadView final : public QWidget {
     void scene(const Document &d);
     void setTool(const QString &mode);
     void setTop(bool enabled);
+    void setPerformanceMode(int mode);
+    int performanceMode() const { return performance; }
+    int multisampling() const;
     void setCutaway(bool enabled) {
         cutaway = enabled;
         scene(current);

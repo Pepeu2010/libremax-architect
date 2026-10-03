@@ -1,0 +1,2411 @@
+[
+  {
+    "id": "kaykit-armchair",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/armchair.gltf",
+        "sha256": "5236bd9c4945fb60d5ac4d4b064c0c0c74bcded1c280b474d3899a1d84d68b25",
+        "bytes": 3019
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/armchair.bin",
+        "sha256": "7e8762add696dc52fe545c3f25d6d25331e70f2fafbdf9ea79de75a75effec2b",
+        "bytes": 17312
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "e01461af08bda3028748bd9e24c8016f2c893a2c2ff59610e104009d80c3f9f9",
+    "bytes": 44940,
+    "triangles": 528,
+    "dimensionsMillimeters": [
+      850,
+      900,
+      850
+    ],
+    "sourceBoundsMillimeters": [
+      1800.0,
+      1600.0,
+      1224.1
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-armchair_pillows",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/armchair_pillows.gltf",
+        "sha256": "1344db27a72870fb0a1b43ffcfe12f5f3dd3284f5dcecd10ed593d6e0d940f79",
+        "bytes": 3036
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/armchair_pillows.bin",
+        "sha256": "b40556981e1bd4593ccaf7a14593f32e20859c2f2e6022a0ed0d1a278a4194a0",
+        "bytes": 20420
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "a65aa87ac3a91e4a0be0611d3ac96a3a41ed5a54c4699fc1cf7a395dfae57ccd",
+    "bytes": 53136,
+    "triangles": 614,
+    "dimensionsMillimeters": [
+      850,
+      900,
+      850
+    ],
+    "sourceBoundsMillimeters": [
+      1800.0,
+      1600.0,
+      1224.1
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-bed_double_A",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/bed_double_A.gltf",
+        "sha256": "55451127bbeb9734bb88c1a761a6246eaaf89ac33eee2f703d78053719e5c4e5",
+        "bytes": 3011
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/bed_double_A.bin",
+        "sha256": "0eb1bc50981bdb0c0ff95b30b6783dc5d40fd61497a4a21165d366e301c6e53c",
+        "bytes": 24648
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "cd8197008d4c35b77df7a14fa1371513020b9b411d0039479cde075a5a1b9fc8",
+    "bytes": 61792,
+    "triangles": 540,
+    "dimensionsMillimeters": [
+      1600,
+      2100,
+      850
+    ],
+    "sourceBoundsMillimeters": [
+      3100.0,
+      3000.0,
+      1000.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-bed_double_B",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/bed_double_B.gltf",
+        "sha256": "f74f5d6d126f4821294cdf0985e7365743d28893098e625f01b58fdb75093cb4",
+        "bytes": 3011
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/bed_double_B.bin",
+        "sha256": "34c2a62639167e346b916fad93823d7a9cf25b4a93b71fd634dfa50c6bbc24ed",
+        "bytes": 27856
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "1d9a5dfe88efaad91c3384c691581f3160e61459c032acabb175ca03a980f8cd",
+    "bytes": 69789,
+    "triangles": 600,
+    "dimensionsMillimeters": [
+      1600,
+      2100,
+      850
+    ],
+    "sourceBoundsMillimeters": [
+      3100.0,
+      3000.0,
+      1000.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-bed_single_A",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/bed_single_A.gltf",
+        "sha256": "7b2852bb66bf82cad3e0d03a499b1480879790fa66b645347e3e73761c4fe3f5",
+        "bytes": 3009
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/bed_single_A.bin",
+        "sha256": "fc7631db4540d31cbe76dac3c672bc8836ee302796d14bba428bda84b9237f5b",
+        "bytes": 22044
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "848cd2ba679fd8ec16340bd249804c26748b22d262bec82ee979d29948dedf1d",
+    "bytes": 53909,
+    "triangles": 474,
+    "dimensionsMillimeters": [
+      900,
+      2100,
+      850
+    ],
+    "sourceBoundsMillimeters": [
+      1600.0,
+      3000.0,
+      1000.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-bed_single_B",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/bed_single_B.gltf",
+        "sha256": "f702283107f35fe400aa55775baa9515cbd9adaf9e2003b3441fd5cbedb9a07c",
+        "bytes": 3009
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/bed_single_B.bin",
+        "sha256": "a1b26c1848d104381b311cae4dbd4b6d574a3d79e6c9fe88087405f3a99bb918",
+        "bytes": 25348
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "30d96c55c1c165beddaea6f544caa339a01ced696fd1376fca3815d92091c2da",
+    "bytes": 62349,
+    "triangles": 534,
+    "dimensionsMillimeters": [
+      900,
+      2100,
+      850
+    ],
+    "sourceBoundsMillimeters": [
+      1600.0,
+      3000.0,
+      1000.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-book_set",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/book_set.gltf",
+        "sha256": "437bfaba3f3413a0b825627a1cb905765a191f4708be51838c9b60c8132cbe61",
+        "bytes": 3051
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/book_set.bin",
+        "sha256": "3aa3fcc774b46c7ffe2b1a3109bf006749163bbb392cfca930b34bfba4b67853",
+        "bytes": 11576
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "a9bb68451c87a4f05cd609bf4092ba1e0bc129ebfd79d4a7bc82d911348804df",
+    "bytes": 27052,
+    "triangles": 196,
+    "dimensionsMillimeters": [
+      250.0,
+      117.0,
+      160.3
+    ],
+    "sourceBoundsMillimeters": [
+      780.0,
+      365.0,
+      500.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-book_single",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/book_single.gltf",
+        "sha256": "7b86695b060681fc6de8ac70fc1f24b870edcaf84bfe4ed98b7e706ae594d464",
+        "bytes": 3056
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/book_single.bin",
+        "sha256": "0aa0921f471184039e85488a80041a0b4aee6f68589ad53077eea03f4659d66c",
+        "bytes": 3992
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "8c0554596b8881f7b8bb997636c143b0788f13f1dc088058c4352fd42ebfeb88",
+    "bytes": 9350,
+    "triangles": 68,
+    "dimensionsMillimeters": [
+      130.0,
+      182.5,
+      250.0
+    ],
+    "sourceBoundsMillimeters": [
+      260.0,
+      365.0,
+      500.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-cabinet_medium",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cabinet_medium.gltf",
+        "sha256": "139419c479c6f8b38ac24e12ce85bf81a199e05067a544db879f7e403446c9dc",
+        "bytes": 3000
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cabinet_medium.bin",
+        "sha256": "3fc4bff757a36226ecb9504dd6e9d031a5a6c957cb9cc2bb636f12ab49e877e6",
+        "bytes": 23304
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "3a251806d151ac7b3ec272693496fcc6af4bc0f5b159069daec86369e7283e99",
+    "bytes": 57583,
+    "triangles": 428,
+    "dimensionsMillimeters": [
+      1000,
+      400,
+      650
+    ],
+    "sourceBoundsMillimeters": [
+      2000.0,
+      1001.6,
+      1000.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-cabinet_medium_decorated",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cabinet_medium_decorated.gltf",
+        "sha256": "144b417f282e689ad4c40e8357c5ab76ad26fe3ca0fd777cca29d59eb6013a81",
+        "bytes": 3060
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cabinet_medium_decorated.bin",
+        "sha256": "03b4374eeab5d9d9a7cb83a410b00aff243cf8d3f39ea0230ecceeedd93fbe8f",
+        "bytes": 49020
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "0a0bfd073d25ac90415bce2a76f44447cb856ee77950148a105abecd6c50880f",
+    "bytes": 129030,
+    "triangles": 1018,
+    "dimensionsMillimeters": [
+      1000,
+      400,
+      650
+    ],
+    "sourceBoundsMillimeters": [
+      2041.6,
+      1001.6,
+      1827.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-cabinet_small",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cabinet_small.gltf",
+        "sha256": "06ce4ee6232ee68e791927e838bb8e77c11391b7de9ba3141374626a910772e5",
+        "bytes": 3001
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cabinet_small.bin",
+        "sha256": "b29dfd659c0b0f7b5a97377e42b52ebcd8245780bcbf024b383f45ec0e59641d",
+        "bytes": 19468
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "f0deb1212fbfd3af0e0c7aa488f9791264f41828c5a3dd6b47e4301919eda46a",
+    "bytes": 48252,
+    "triangles": 322,
+    "dimensionsMillimeters": [
+      500,
+      400,
+      650
+    ],
+    "sourceBoundsMillimeters": [
+      1000.0,
+      1001.6,
+      1000.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-cabinet_small_decorated",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cabinet_small_decorated.gltf",
+        "sha256": "3d241df76df2030583c7ebdc292063b5ded40cf9c642e8cfb18b4e0855f3702a",
+        "bytes": 3068
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cabinet_small_decorated.bin",
+        "sha256": "b123a747dd82f2088e2e823e9a3e42cb581b42878e67ac9060363c7d612e07f2",
+        "bytes": 27552
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "bff63572ff220646509dd641350e7a5c53a4b781daa2f7575ebb124f8c313e9d",
+    "bytes": 71820,
+    "triangles": 464,
+    "dimensionsMillimeters": [
+      500,
+      400,
+      650
+    ],
+    "sourceBoundsMillimeters": [
+      1047.7,
+      1103.9,
+      1617.5
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-cactus_medium_A",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cactus_medium_A.gltf",
+        "sha256": "902c48a87bf8e48a2d72055485eaaeae3aefd91224e5af914aeb42fca99759a8",
+        "bytes": 3072
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cactus_medium_A.bin",
+        "sha256": "be9378a1328b82751ac651de9387d7b20db4ffbb5e1c087b0e634a00ebf7cc0f",
+        "bytes": 17536
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "3f98807d9079d24e558da85e7989e674d0b6941863d4eaafdbfdd1c8ce7170b4",
+    "bytes": 45637,
+    "triangles": 448,
+    "dimensionsMillimeters": [
+      400.0,
+      380.4,
+      376.0
+    ],
+    "sourceBoundsMillimeters": [
+      879.9,
+      836.8,
+      827.2
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-cactus_medium_B",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cactus_medium_B.gltf",
+        "sha256": "849e6bf20405548890ebff081970f92a39af6e749a3fbb0ecc8f0363748c5e3b",
+        "bytes": 3072
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cactus_medium_B.bin",
+        "sha256": "3b19e4f559ff111ef66f8bfaea3989f31368ca86d4c46212be4ee26d1a56aee4",
+        "bytes": 17536
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "6bd86256c82d93c44cc7ae152e2a5438b1bf8464574de959d2e48c3dd4b65231",
+    "bytes": 45598,
+    "triangles": 448,
+    "dimensionsMillimeters": [
+      400.0,
+      380.4,
+      376.0
+    ],
+    "sourceBoundsMillimeters": [
+      879.9,
+      836.8,
+      827.2
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-cactus_small_A",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cactus_small_A.gltf",
+        "sha256": "4e2d93fb22b7f6097f3726b1fc513647873428224c01b17abdbe79c01c1e959b",
+        "bytes": 3071
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cactus_small_A.bin",
+        "sha256": "43dae3699635f54fb84199b7a998c1144690c3e54d6c3fc3c045c38aa54f7fdc",
+        "bytes": 9320
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "79c7440e6629a017d13ce979616264e47570b83d3fec6bac3cf4e1789bd796c1",
+    "bytes": 23728,
+    "triangles": 252,
+    "dimensionsMillimeters": [
+      226.6,
+      226.6,
+      250.0
+    ],
+    "sourceBoundsMillimeters": [
+      500.0,
+      500.0,
+      551.6
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-cactus_small_B",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cactus_small_B.gltf",
+        "sha256": "f3f9555486151b309d682a94dc120d893167bd8f506f61c20264a23c8b54d38d",
+        "bytes": 3071
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/cactus_small_B.bin",
+        "sha256": "84b85293ba5ede54f1c970531e679bb181c584adb65bf96ad94c52122319edb3",
+        "bytes": 9320
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "009fe73b7e4c7b3f53005273d0759d7ff1a410f28693ada7ab75e47436e14ffa",
+    "bytes": 23723,
+    "triangles": 252,
+    "dimensionsMillimeters": [
+      226.6,
+      226.6,
+      250.0
+    ],
+    "sourceBoundsMillimeters": [
+      500.0,
+      500.0,
+      551.6
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-chair_A",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/chair_A.gltf",
+        "sha256": "fdc71044f23c89c5cff9093cff18bac295c9b750e73daf3cbd8ee6ca9e930dbb",
+        "bytes": 3022
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/chair_A.bin",
+        "sha256": "8db53212634ccc983dc0e9940f2809b3951abe91d0cc8ad040cf74d7100f19a8",
+        "bytes": 16504
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "2664edc463d8d237b418407d542e54e5e8d6108e138bb4f345591c5f78a927f7",
+    "bytes": 42186,
+    "triangles": 308,
+    "dimensionsMillimeters": [
+      500,
+      500,
+      850
+    ],
+    "sourceBoundsMillimeters": [
+      750.0,
+      845.1,
+      1258.3
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-chair_A_wood",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/chair_A_wood.gltf",
+        "sha256": "e17a16127b9a3e44ef8888c9d52fe7ec09a06b348934627816a538720793af8d",
+        "bytes": 3032
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/chair_A_wood.bin",
+        "sha256": "726ea8962909becf3d925d272928a8e26a1f345fc9f8f165e7424221c69be733",
+        "bytes": 16504
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "8ce9f93071270c3a270aae94ecedd1fe1389d08970fbd7c3614f52f1dbb57d1f",
+    "bytes": 42188,
+    "triangles": 308,
+    "dimensionsMillimeters": [
+      500,
+      500,
+      850
+    ],
+    "sourceBoundsMillimeters": [
+      750.0,
+      845.1,
+      1258.3
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-chair_B",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/chair_B.gltf",
+        "sha256": "e9cb04ebee4a60a22a26449b46c22efd3c7a022a3bab937ac813ed30f4392855",
+        "bytes": 3049
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/chair_B.bin",
+        "sha256": "1862f8c8392a67e39219e480ba2aafd19e67bbbfe7c6d3b459f082dea041a1fa",
+        "bytes": 18240
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "a7a8a91fd36208d91f860099df599e054feed2a2e30cc8b9e1006111880a1fc7",
+    "bytes": 47191,
+    "triangles": 384,
+    "dimensionsMillimeters": [
+      500,
+      500,
+      850
+    ],
+    "sourceBoundsMillimeters": [
+      750.0,
+      845.1,
+      1258.3
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-chair_B_wood",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/chair_B_wood.gltf",
+        "sha256": "7a19685725e1878f960e0ce724eaffc9a2a5fe36c0496608dd5328aa73290f03",
+        "bytes": 3059
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/chair_B_wood.bin",
+        "sha256": "223864f633ba3c5fb06e239a907b5f379fe0a3ad4f5c5fff2577e97ef0f6250d",
+        "bytes": 18240
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "1f015429d7e68442b7e5756a298d1889ad023c507f4cb0d52e340a28490c6237",
+    "bytes": 47201,
+    "triangles": 384,
+    "dimensionsMillimeters": [
+      500,
+      500,
+      850
+    ],
+    "sourceBoundsMillimeters": [
+      750.0,
+      845.1,
+      1258.3
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-chair_C",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/chair_C.gltf",
+        "sha256": "fc042915c24c52f96f0571db348a2de275b15c0065c3e561fce37d4dbc81568a",
+        "bytes": 3036
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/chair_C.bin",
+        "sha256": "dbcd655953927997f2a4f61676692d053f4eb261b364fe5441276aa4614cfc9d",
+        "bytes": 12608
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "aa8a5bf75dbdd5436a079e33e07eb1dda83eac55ae32f51f627970ea1d6dded9",
+    "bytes": 33110,
+    "triangles": 288,
+    "dimensionsMillimeters": [
+      500,
+      500,
+      850
+    ],
+    "sourceBoundsMillimeters": [
+      750.0,
+      935.6,
+      1202.9
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-chair_stool",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/chair_stool.gltf",
+        "sha256": "6f830305b9afb97f8d77d52a92971ee237d3012db2ca1abbd4abafc2d82f4c46",
+        "bytes": 3042
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/chair_stool.bin",
+        "sha256": "c99c96e2440a55c6c08ac929493424b221b11482618229fcf8574baa93ab4566",
+        "bytes": 10832
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "3399023d12eddc017c001a4533308ecfb388e874428fbbc7847830231a09c913",
+    "bytes": 27620,
+    "triangles": 216,
+    "dimensionsMillimeters": [
+      400,
+      400,
+      500
+    ],
+    "sourceBoundsMillimeters": [
+      750.0,
+      750.0,
+      500.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-chair_stool_wood",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/chair_stool_wood.gltf",
+        "sha256": "b1670bee678ab5920ad8ef3a6fb7c6146054bb7b859798f86aaac96be5765f35",
+        "bytes": 3052
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/chair_stool_wood.bin",
+        "sha256": "59ebde1791f6c46b6f3880cbe5632e44b123466a1bc7d2d2f3008da9a2a492ac",
+        "bytes": 10832
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "fedded830440ed7fea90f15b2f8666c15b22ecb082d119de0953a84f31525a43",
+    "bytes": 27602,
+    "triangles": 216,
+    "dimensionsMillimeters": [
+      400,
+      400,
+      500
+    ],
+    "sourceBoundsMillimeters": [
+      750.0,
+      750.0,
+      500.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-couch",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/couch.gltf",
+        "sha256": "1a5b74b3a3368870783743c5ce7baa61f45f71131dca66af80b35fd4ac63c222",
+        "bytes": 3014
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/couch.bin",
+        "sha256": "00f6c9892aa87e2894e049ba47d697307c158c5096eb41bdd44474d5e7ecf5e0",
+        "bytes": 21416
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "1f0676ce9e9d969419ee55597c8bbe8d71cc15ce934c52a6877de53b68e1863b",
+    "bytes": 55119,
+    "triangles": 636,
+    "dimensionsMillimeters": [
+      2050,
+      900,
+      850
+    ],
+    "sourceBoundsMillimeters": [
+      3000.0,
+      1600.0,
+      1224.1
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-couch_pillows",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/couch_pillows.gltf",
+        "sha256": "d3396c15fc460c5db1e2db95b06bb623140c269369f2e9bc38dc4d3b5807011c",
+        "bytes": 3030
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/couch_pillows.bin",
+        "sha256": "3157c7ce9717ff69f198f9da0395d7a57e9ab230f2161990f86e21395608cc3e",
+        "bytes": 27632
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "79d155a4a544ba19f137cd0b0376d09f3fbac64ba2869d3b76b9dcc1c1886428",
+    "bytes": 71575,
+    "triangles": 808,
+    "dimensionsMillimeters": [
+      2050,
+      900,
+      850
+    ],
+    "sourceBoundsMillimeters": [
+      3000.0,
+      1600.0,
+      1224.1
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-lamp_standing",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/lamp_standing.gltf",
+        "sha256": "ff42a083e688c94948493c441d4db51c7e0736336525b3eed4f4da75825b88b7",
+        "bytes": 3034
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/lamp_standing.bin",
+        "sha256": "ee58a9e2776406071c8ac60714f1b4dd7ad83a11848ee24aec77b297c9d535d9",
+        "bytes": 11648
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "abeaa817eaeddc8d3ba7740f747474d4f165e7ea173b811207f2936e0bc3e158",
+    "bytes": 29191,
+    "triangles": 320,
+    "dimensionsMillimeters": [
+      450,
+      450,
+      1600
+    ],
+    "sourceBoundsMillimeters": [
+      1000.0,
+      1000.0,
+      2520.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-lamp_table",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/lamp_table.gltf",
+        "sha256": "7cc2e9f24145551bfc919247e74a414bbd40bc2fde1fb9a1ac33e16cb9d0497b",
+        "bytes": 3029
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/lamp_table.bin",
+        "sha256": "c3d4cc2fea09cfb3037b9ece861abf6126cae3226858f18de37bd8cf87a06145",
+        "bytes": 12816
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "796e042cbf43ed16e5393f41a36fbbabef4dc6042e25b40574ae7ac74498bbbd",
+    "bytes": 32406,
+    "triangles": 392,
+    "dimensionsMillimeters": [
+      280,
+      280,
+      500
+    ],
+    "sourceBoundsMillimeters": [
+      1000.0,
+      1000.0,
+      1021.7
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-pictureframe_large_A",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_large_A.gltf",
+        "sha256": "b12aadc4e0179aa9c27a18cd31f5a980159188a20d11cc62b9c5a97e4381c59f",
+        "bytes": 3071
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_large_A.bin",
+        "sha256": "85368442c0af0cc12cd32fa512284391905219dd7a88e3360d69a1a25db2262c",
+        "bytes": 3176
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "de709127024f034d1ff381b70876276dc490445cf900ea8bb81843e8b7b59f49",
+    "bytes": 7993,
+    "triangles": 60,
+    "dimensionsMillimeters": [
+      547.1,
+      108.3,
+      650.0
+    ],
+    "sourceBoundsMillimeters": [
+      1010.0,
+      200.0,
+      1200.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-pictureframe_large_B",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_large_B.gltf",
+        "sha256": "1ee9d4842d9f4626e08ffce88e34293a7a8b11ffdc1cd0340eb934c209a97cdc",
+        "bytes": 3054
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_large_B.bin",
+        "sha256": "ff87db23fa7e1b9c7e55c8a25bbb9b5d37f11bf94c36e1d97b104fa8d9b22660",
+        "bytes": 3176
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "e490f04a57a5171b73760e388093ea17fada0aabb28b584a689ec90677f3784d",
+    "bytes": 7819,
+    "triangles": 60,
+    "dimensionsMillimeters": [
+      650.0,
+      65.0,
+      390.0
+    ],
+    "sourceBoundsMillimeters": [
+      2000.0,
+      200.0,
+      1200.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-pictureframe_medium",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_medium.gltf",
+        "sha256": "768ebf5e81d2d4dfe87276e70b7373ee541592ca409a57067e5e76626a010926",
+        "bytes": 3069
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_medium.bin",
+        "sha256": "ae120086448ad5f8c8a2e1a360355f9052f4b7848e5b422b00398827b9355e8d",
+        "bytes": 3176
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "e3421a676d18ee64d0fac5402e639f28ec568f5a4bfe63157b6610962c163c40",
+    "bytes": 8011,
+    "triangles": 60,
+    "dimensionsMillimeters": [
+      311.1,
+      88.9,
+      400.0
+    ],
+    "sourceBoundsMillimeters": [
+      700.0,
+      200.0,
+      900.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-pictureframe_small_A",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_small_A.gltf",
+        "sha256": "4482cf85a994f9ba3ef45fe490858e5633ef0f09767f79a8511b826024e1de85",
+        "bytes": 3073
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_small_A.bin",
+        "sha256": "e0e7dd8c5fcbc564e19934d9b820942aaa0637c1a7112e714d56db9d90926db6",
+        "bytes": 3176
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "af1c290b28e797d86750dbf9a047a55311f4a02bfd966fce74a4eded804a7a4b",
+    "bytes": 7901,
+    "triangles": 60,
+    "dimensionsMillimeters": [
+      208.3,
+      83.3,
+      250.0
+    ],
+    "sourceBoundsMillimeters": [
+      500.0,
+      200.0,
+      600.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-pictureframe_small_B",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_small_B.gltf",
+        "sha256": "b65a9e655be3dbdfa02c0363bf5652461b480f53a584a3749d19e26120435bfa",
+        "bytes": 3073
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_small_B.bin",
+        "sha256": "08da006ae3bb669f591b742ce25aa9007068282be3cae1fc43525f623ab25fca",
+        "bytes": 3176
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "f41149439664d71be31267edfdfbaf00c246d896bb9b26942d8f028e3ebab563",
+    "bytes": 7999,
+    "triangles": 60,
+    "dimensionsMillimeters": [
+      250.0,
+      71.4,
+      157.1
+    ],
+    "sourceBoundsMillimeters": [
+      700.0,
+      200.0,
+      440.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-pictureframe_small_C",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_small_C.gltf",
+        "sha256": "ca88e60a46bfa85e6b22bd318b2d2aac33a247ab0d480ae995fa13157f4d2731",
+        "bytes": 3071
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_small_C.bin",
+        "sha256": "0b4a3ef34939cf0232bf0d01a398095238704385314e02c196e44d38c9322a14",
+        "bytes": 3176
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "7051d5a461ce7e6de014ad5b9188cba27a26e4a9e0bf3538b53cc9a4f9b1c9ba",
+    "bytes": 7882,
+    "triangles": 60,
+    "dimensionsMillimeters": [
+      250.0,
+      100.0,
+      250.0
+    ],
+    "sourceBoundsMillimeters": [
+      500.0,
+      200.0,
+      500.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-pictureframe_standing_A",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_standing_A.gltf",
+        "sha256": "214ae94eacc35984cfec9185ef05e6c930bea45c974b3cec013e991b841fae1b",
+        "bytes": 3050
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_standing_A.bin",
+        "sha256": "5c1f0b5344fea1938b5058bc6f1f5b402593728a6d0b926e3eb542e1de0807d3",
+        "bytes": 4092
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "103ac1911a8a37a8651dcb8be0aa1f7431c3d3e2ef4d0dcb437241ed744d8630",
+    "bytes": 10471,
+    "triangles": 74,
+    "dimensionsMillimeters": [
+      202.1,
+      153.4,
+      250.0
+    ],
+    "sourceBoundsMillimeters": [
+      500.0,
+      379.5,
+      618.5
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-pictureframe_standing_B",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_standing_B.gltf",
+        "sha256": "93933e6d9b96b8f3718e2dc7be1723e8bf8604f35dd035796a88618f2a33dddc",
+        "bytes": 3081
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pictureframe_standing_B.bin",
+        "sha256": "e94f9884301a778cee61c3c03b63e7c013a66a1dc32f42f75e25650e9918c203",
+        "bytes": 4188
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "a2ab77e9389124050b9ee06f281bf99822bc9430059d5dc5ae7df0e042d64766",
+    "bytes": 11034,
+    "triangles": 74,
+    "dimensionsMillimeters": [
+      250.0,
+      127.5,
+      167.2
+    ],
+    "sourceBoundsMillimeters": [
+      700.0,
+      357.0,
+      468.2
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-pillow_A",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pillow_A.gltf",
+        "sha256": "c24247361c709675257b516dfab950708adf8c086710e8a1fc85e572ea5ebb61",
+        "bytes": 3029
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pillow_A.bin",
+        "sha256": "9a295dd293a96e518b0388d3cfcbc7c0ce491e46cfe2c5e3affa016b99e8c0ff",
+        "bytes": 2724
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "a31338f4d34243edaaf60331ac2912d276c3aa539fbccb011eb279cfef7fefe0",
+    "bytes": 7100,
+    "triangles": 86,
+    "dimensionsMillimeters": [
+      450.0,
+      346.2,
+      138.5
+    ],
+    "sourceBoundsMillimeters": [
+      650.0,
+      500.0,
+      200.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-pillow_B",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pillow_B.gltf",
+        "sha256": "cf47391e684e93241ba5f9db6bb1e518700fe3a7a79b7f58c40e38ee62e9e36d",
+        "bytes": 3029
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/pillow_B.bin",
+        "sha256": "4cf9482b7fc816e038da3f25a793761b30d60880cb24b4f04ce1aee5f07f9d53",
+        "bytes": 2724
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "e1b2811898fb8a9d521ace67425da994d2c953fb450a9986b00b3954ecd24e81",
+    "bytes": 7106,
+    "triangles": 86,
+    "dimensionsMillimeters": [
+      450.0,
+      346.2,
+      138.5
+    ],
+    "sourceBoundsMillimeters": [
+      650.0,
+      500.0,
+      200.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-rug_oval_A",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/rug_oval_A.gltf",
+        "sha256": "5d49e065dcb89c0585a17c41823b19788c6e41ab2d8dd45299250241911b1231",
+        "bytes": 2970
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/rug_oval_A.bin",
+        "sha256": "4d55cba0cc3e86c930b320a14a25d2742e8bd214f298bfbf23f73329b0cea32e",
+        "bytes": 6560
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "8abe24e16bc35a1971bfca84ccfcb665e00cfebc5552d87bf1ab383d0d33543f",
+    "bytes": 16399,
+    "triangles": 176,
+    "dimensionsMillimeters": [
+      1800.0,
+      1200.0,
+      60.0
+    ],
+    "sourceBoundsMillimeters": [
+      3000.0,
+      2000.0,
+      100.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-rug_oval_B",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/rug_oval_B.gltf",
+        "sha256": "34e61ec3d96e4af2de6691fa376796469d157f82f91fbc69d69a2e364ce95851",
+        "bytes": 2970
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/rug_oval_B.bin",
+        "sha256": "57804d2de6c6ce964b5e597d288492912d99fc90a311e86ea6e80a6a22087a55",
+        "bytes": 6560
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "ec0e9c77c9d7d54a7e01b9b00e3e2cfc943c776c783b96191eeb817f8e89571a",
+    "bytes": 16355,
+    "triangles": 176,
+    "dimensionsMillimeters": [
+      1800.0,
+      1200.0,
+      60.0
+    ],
+    "sourceBoundsMillimeters": [
+      3000.0,
+      2000.0,
+      100.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-rug_rectangle_A",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/rug_rectangle_A.gltf",
+        "sha256": "892417306a01eac711c6af97b148fc152d375940ec3660964b36e10ea2a8cfda",
+        "bytes": 2971
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/rug_rectangle_A.bin",
+        "sha256": "10eb71fc2b20b056b6186526d451ee0a560c425495402d7818f4413795aba506",
+        "bytes": 1800
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "49fbf7052fcbe3b7870a1926bc99bd651a917b8dabab9e4dd99a9d109b11d12d",
+    "bytes": 4354,
+    "triangles": 44,
+    "dimensionsMillimeters": [
+      1800.0,
+      1200.0,
+      60.0
+    ],
+    "sourceBoundsMillimeters": [
+      3000.0,
+      2000.0,
+      100.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-rug_rectangle_B",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/rug_rectangle_B.gltf",
+        "sha256": "03fba0522315e872a545fe915f111aaaa54d5682329766e98e1fcb6e9a78ba51",
+        "bytes": 2971
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/rug_rectangle_B.bin",
+        "sha256": "d60abedef14aed184c9231fc59ff296bd9435b8fe28844804c5aa4515beb3b70",
+        "bytes": 1800
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "1eb50b685343ba86826ddc5c453d7d8d92ad002cb1d31ca55718c6525f8fbe51",
+    "bytes": 4362,
+    "triangles": 44,
+    "dimensionsMillimeters": [
+      1800.0,
+      1200.0,
+      60.0
+    ],
+    "sourceBoundsMillimeters": [
+      3000.0,
+      2000.0,
+      100.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-rug_rectangle_stripes_A",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/rug_rectangle_stripes_A.gltf",
+        "sha256": "daeafdd3efd5c2d3781426d1bb48ac6dc31893dea30abd3e6f2b22ff70890c55",
+        "bytes": 2988
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/rug_rectangle_stripes_A.bin",
+        "sha256": "4ce28e95c940d486b3bb94e91b79a8ad9633b3628dbd6f07be03a6ec6b3ac579",
+        "bytes": 2712
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "e37fba40fe7c73593515e2ad13a5400f42b6f0be3d4fbd3a25e096af7ad8f0cc",
+    "bytes": 6140,
+    "triangles": 68,
+    "dimensionsMillimeters": [
+      1800.0,
+      1200.0,
+      60.0
+    ],
+    "sourceBoundsMillimeters": [
+      3000.0,
+      2000.0,
+      100.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-rug_rectangle_stripes_B",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/rug_rectangle_stripes_B.gltf",
+        "sha256": "dbad49ace370c37e3821b5f029dd8af0ed0ea6b768180983ca960d5b2565fa85",
+        "bytes": 2988
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/rug_rectangle_stripes_B.bin",
+        "sha256": "b4fbacb59a9289490f74d059e921efcc6aaef54a3ba3e8f4b927886aed93da5c",
+        "bytes": 2712
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "66338fe459e070c41edcd9cc2997be46f55614284f9446b65eca332aba4676c8",
+    "bytes": 6144,
+    "triangles": 68,
+    "dimensionsMillimeters": [
+      1800.0,
+      1200.0,
+      60.0
+    ],
+    "sourceBoundsMillimeters": [
+      3000.0,
+      2000.0,
+      100.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-shelf_A_big",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/shelf_A_big.gltf",
+        "sha256": "e2f1e24576e603a390f29f5c55c2013389cebaddb0255e1a4808e35ef1279873",
+        "bytes": 3025
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/shelf_A_big.bin",
+        "sha256": "d133c5a07e63360d69a1363d6a96cc011b4db9e645358824fb8f274b02a59700",
+        "bytes": 10104
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "d29f5dd95b995864def544dc88c32637118ed998cc087a6975c8ec42fd619618",
+    "bytes": 23366,
+    "triangles": 212,
+    "dimensionsMillimeters": [
+      1200,
+      250,
+      300
+    ],
+    "sourceBoundsMillimeters": [
+      2000.0,
+      500.0,
+      400.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-shelf_A_small",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/shelf_A_small.gltf",
+        "sha256": "198fb7851f987c51c8dba4ea2e22c27345467c1cbef700995699c10298f9edd5",
+        "bytes": 3033
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/shelf_A_small.bin",
+        "sha256": "4e87b996fe8184cac7d556d0ea854513bd7d04e674d254fb8c7d296320cbdfc0",
+        "bytes": 10104
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "229c0d634353ef7d030c7d368c2594c402cc1144d8f5ef718ecf072dc4f2d6f0",
+    "bytes": 23849,
+    "triangles": 212,
+    "dimensionsMillimeters": [
+      600,
+      250,
+      300
+    ],
+    "sourceBoundsMillimeters": [
+      1000.0,
+      500.0,
+      400.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-shelf_B_large",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/shelf_B_large.gltf",
+        "sha256": "438921fdd044014a02f4e77e4b02205222d83cec3632db2eb8dad50173b24d5c",
+        "bytes": 3047
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/shelf_B_large.bin",
+        "sha256": "30bbd1a44054d02245bd7388d7143c5f676928d4e293a93f9fd442479afd4840",
+        "bytes": 10104
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "4fd3e9b65ab5a2db7bfa8c56e49e841b0293835bbdc74d56b27836088edf8372",
+    "bytes": 24981,
+    "triangles": 212,
+    "dimensionsMillimeters": [
+      1200,
+      250,
+      300
+    ],
+    "sourceBoundsMillimeters": [
+      2000.0,
+      500.0,
+      400.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-shelf_B_large_decorated",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/shelf_B_large_decorated.gltf",
+        "sha256": "fc613ad31e07529ad1ec9044a8e7e900821c8636efbd714a3238292326a49fad",
+        "bytes": 3069
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/shelf_B_large_decorated.bin",
+        "sha256": "80b560eac9dd1d2750149f96f4845ead4c734f446088975a5c0a1c259dd50611",
+        "bytes": 25772
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "c5cce2aba0392dc0562138c20a497e3457325de2b5399216476c22ab443e283b",
+    "bytes": 64778,
+    "triangles": 482,
+    "dimensionsMillimeters": [
+      1200,
+      250,
+      300
+    ],
+    "sourceBoundsMillimeters": [
+      2000.0,
+      500.0,
+      817.5
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-shelf_B_small",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/shelf_B_small.gltf",
+        "sha256": "6e6a946ef20fc916247f9ff59b74a3c958edad53c2594356086e7e36fcde5e6e",
+        "bytes": 3049
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/shelf_B_small.bin",
+        "sha256": "7e75cbd1c734a901852c4dc924dc47f9fa75eaed85b19503a6b24218b5efcdb1",
+        "bytes": 10104
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "7392668f0ec915e06537b83666594694b96b603d9fb645c67026ccc277085b8e",
+    "bytes": 25469,
+    "triangles": 212,
+    "dimensionsMillimeters": [
+      600,
+      250,
+      300
+    ],
+    "sourceBoundsMillimeters": [
+      1000.0,
+      500.0,
+      400.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-shelf_B_small_decorated",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/shelf_B_small_decorated.gltf",
+        "sha256": "7a8748dbe6dc428aa45dbef650c7d10bccee41e823c832ecd9a95b870675aa59",
+        "bytes": 3071
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/shelf_B_small_decorated.bin",
+        "sha256": "de3efcfcdc9572dfb1f82d22f99017d56e0b7c1451ce9bbe12fe1d828f8c677f",
+        "bytes": 23416
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "17d27662ddb404a5924eb5929b31af6375908f1705d6e53d89c553c782075e4c",
+    "bytes": 60186,
+    "triangles": 532,
+    "dimensionsMillimeters": [
+      600,
+      250,
+      300
+    ],
+    "sourceBoundsMillimeters": [
+      1000.0,
+      571.3,
+      1011.6
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-table_low",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/table_low.gltf",
+        "sha256": "3bf202a3ee70ee95943c26419bd5f540353a16b8b6a0b41449746f85c3319a2a",
+        "bytes": 2990
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/table_low.bin",
+        "sha256": "e9f604c5676bfa974d6d1bf45757a11d298ac40e8e7981be29d249936c8339cd",
+        "bytes": 12408
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "dd89908da90fda2887436170c87919e53dc72eca29663899e4a8ec373b24ffb7",
+    "bytes": 29916,
+    "triangles": 276,
+    "dimensionsMillimeters": [
+      1100,
+      650,
+      420
+    ],
+    "sourceBoundsMillimeters": [
+      2400.0,
+      1500.0,
+      500.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-table_medium_long",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/table_medium_long.gltf",
+        "sha256": "e3ba8f08ce5964d602cde13ecba2b837f90b3ed22d092e28fa489f3c216e2488",
+        "bytes": 2987
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/table_medium_long.bin",
+        "sha256": "b436c4b982a7defac5310f6ca17bf387f24c8c9b843e035c09d23094ace9b788",
+        "bytes": 9328
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "c4be306a2b5fd5a68d9c0c3759a59adb46de677e2a6de675d45594eb15e6f680",
+    "bytes": 21280,
+    "triangles": 168,
+    "dimensionsMillimeters": [
+      1800,
+      900,
+      750
+    ],
+    "sourceBoundsMillimeters": [
+      3000.0,
+      2000.0,
+      1000.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-table_medium",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/table_medium.gltf",
+        "sha256": "fd5e5fe8bbf1d3729b6bd725165d58490e9cbd8dd46ce42314b01f20951a302b",
+        "bytes": 2973
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/table_medium.bin",
+        "sha256": "0e6ba8fd006f673d946979e45487067f4e274be9bbd07816fd371578d2a37518",
+        "bytes": 9328
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "382aa40e7ccc5badb91020968b391371f433c4a88b3f1fb6f0dfd4e54d30d8a6",
+    "bytes": 21104,
+    "triangles": 168,
+    "dimensionsMillimeters": [
+      1000,
+      1000,
+      750
+    ],
+    "sourceBoundsMillimeters": [
+      2000.0,
+      2000.0,
+      1000.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "kaykit-table_small",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "revision": "96d5930a8dbdb363409bbc2d3341718b00e17c9c",
+    "sources": [
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/table_small.gltf",
+        "sha256": "6ae46ef60d18cf1fe507fbb2fb20235144af2ac7101f410269a761ac91ae9aee",
+        "bytes": 2979
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/table_small.bin",
+        "sha256": "e18bad66ad227a4a374fd58fbe6870a73c0f3f3687cb363506e0d77e07964066",
+        "bytes": 9328
+      },
+      {
+        "url": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0/blob/96d5930a8dbdb363409bbc2d3341718b00e17c9c/addons/kaykit_furniture_bits/Assets/gltf/furniturebits_texture.png",
+        "sha256": "de62db37a80d1801c3d9eb674890ae04b04469e0c149481a51fa250562c628dc",
+        "bytes": 15605
+      }
+    ],
+    "preparedSha256": "d9f80b67a9037df98ed91f83d390c2316f1d1544770f2b0c2e370eaad0715a7b",
+    "bytes": 21108,
+    "triangles": 168,
+    "dimensionsMillimeters": [
+      450,
+      450,
+      500
+    ],
+    "sourceBoundsMillimeters": [
+      1000.0,
+      1000.0,
+      1000.0
+    ],
+    "dimensionBasis": "suggested apartment size"
+  },
+  {
+    "id": "detail-ceramic_vase_01",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "source": "https://polyhaven.com/a/ceramic_vase_01",
+    "revision": null,
+    "sources": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ceramic_vase_01/ceramic_vase_01_1k.gltf",
+        "bytes": 2706,
+        "md5": "8f11b5472424578c2c505dee271a0868",
+        "sha256": "4e2c69eb5bbccf86e9fbf92af438464669d804c1f0eae041ee28651a5b57d91e"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/ceramic_vase_01/ceramic_vase_01_nor_gl_1k.jpg",
+        "bytes": 36504,
+        "md5": "46081f52a4e9bb58d706477318627a22",
+        "sha256": "c35b59d15e0f08db44b0bc8a5870bc65ae781819e5abf0447996d0faf05b7722"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/ceramic_vase_01/ceramic_vase_01_diff_1k.jpg",
+        "bytes": 32351,
+        "md5": "52337c4fedc46490476d46a8950e1d6b",
+        "sha256": "5f7d22178b74a59fe92aa0ccc958b897e2fb80df514eb28b97000097c0e71beb"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/ceramic_vase_01/ceramic_vase_01_arm_1k.jpg",
+        "bytes": 74240,
+        "md5": "14e56f6d0f810525ddcf9305fa09f495",
+        "sha256": "121469880a7900513717685e9035dfc1b04613f85c778ab4e9dba98c1675d660"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/ceramic_vase_01/ceramic_vase_01.bin",
+        "bytes": 272656,
+        "md5": "73f8a0f911f2d377e3b925b0ae9c7d4c",
+        "sha256": "56ffadcafff3f56538d04b0b43c06c9704baeec2ac3ec286ef01c313c82906f0"
+      }
+    ],
+    "preparedSha256": "7aa4616da65969aae886df9101a2a8502982a93f3d65f67f388c62ca817dfca5",
+    "bytes": 735842,
+    "triangles": 10296,
+    "dimensionsMillimeters": [
+      203.6,
+      203.6,
+      400.3
+    ],
+    "sourceBoundsMillimeters": [
+      203.6,
+      203.6,
+      400.3
+    ],
+    "dimensionBasis": "source bounds"
+  },
+  {
+    "id": "detail-ceramic_vase_04",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "source": "https://polyhaven.com/a/ceramic_vase_04",
+    "revision": null,
+    "sources": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ceramic_vase_04/ceramic_vase_04_1k.gltf",
+        "bytes": 2716,
+        "md5": "184ebeafbbf0e36534282394700d1464",
+        "sha256": "ca6461229bd6379b621396581e32400f93884fe77f7fa8abe6ddbeb64d57421b"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/ceramic_vase_04/ceramic_vase_04.bin",
+        "bytes": 239728,
+        "md5": "1abf7cc9d6a6b5db009320dda7738235",
+        "sha256": "00d6b5743358cba4bc78d25010b1bfc262d6cb313de8cbeffa570bb95387dfc7"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/ceramic_vase_04/ceramic_vase_04_rough_1k.jpg",
+        "bytes": 134635,
+        "md5": "fe9707c1f135a8edff329de7b4b4b94b",
+        "sha256": "56186ba6e1980655ff8284a59b2bf04588c047fe61d69d09b98dde40a85f503e"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/ceramic_vase_04/ceramic_vase_04_diff_1k.jpg",
+        "bytes": 95512,
+        "md5": "12dffd624e864a81e1172cf81fdc0c9f",
+        "sha256": "b8682d194184e15b97b3e8547ebb92e96101d16260412528f37e3096b3844b67"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/ceramic_vase_04/ceramic_vase_04_nor_gl_1k.jpg",
+        "bytes": 123462,
+        "md5": "c13afa45f2658f08621c2e2f5c453700",
+        "sha256": "a1c1cc5eda4157a17ba104387d9898362f2731632b840af62f76c2d00c751bd3"
+      }
+    ],
+    "preparedSha256": "e4cd1b826272cab01869d976e8b734f3319598825873645f6e8d584cc39dc43b",
+    "bytes": 646860,
+    "triangles": 9000,
+    "dimensionsMillimeters": [
+      181.1,
+      181.1,
+      341.9
+    ],
+    "sourceBoundsMillimeters": [
+      181.1,
+      181.1,
+      341.9
+    ],
+    "dimensionBasis": "source bounds"
+  },
+  {
+    "id": "detail-wall_clock",
+    "license": "CC0-1.0",
+    "author": "PierreB3D",
+    "source": "https://polyhaven.com/a/wall_clock",
+    "revision": null,
+    "sources": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wall_clock/wall_clock_1k.gltf",
+        "bytes": 9008,
+        "md5": "86c50202813c717074d1bc72ddad9109",
+        "sha256": "4e67385443e808bc709c054c1de5be1e83d4bf07eb0893884c301fec0bae8bc6"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wall_clock/wall_clock_nor_gl_1k.jpg",
+        "bytes": 236489,
+        "md5": "d6404c2ffb48b17fbeed2cb9bf187a29",
+        "sha256": "6138946e055828e92d5e0d8d50c75e3d2da0ea789dd6512b30f85f0e18435d00"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wall_clock/wall_clock_diff_1k.jpg",
+        "bytes": 366683,
+        "md5": "32e8346296eebf4776e7e917f0080c7f",
+        "sha256": "012bfc3ceecd5e35679fe5764e33b6d1b8a631ad4fc9f5b267af25ad10468672"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wall_clock/wall_clock_arm_1k.jpg",
+        "bytes": 444044,
+        "md5": "6d962d1263bd5b34e16a69fa5473e8ac",
+        "sha256": "c78aabec7bb4af4fd6818be1099523e59bf12d88c872530b2260cdea08d81968"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wall_clock/wall_clock_glass_arm_1k.jpg",
+        "bytes": 376244,
+        "md5": "5e84b53fb7e087f4114de28d70787f5c",
+        "sha256": "42804955958b3d0fdc1da8d4c4e8e909b04f659ae1b02911e148abe0741b8b84"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/wall_clock/wall_clock.bin",
+        "bytes": 132412,
+        "md5": "f1399287d9ad2fa2cfb303e95bbdbc45",
+        "sha256": "61d9fe03e871508230160de546ef505f3f4405b1e82c167536945a483a8bb639"
+      }
+    ],
+    "preparedSha256": "a830f9afdd18517d4f3e958e505744ef48ea13ed04411f41f10179e94afa556c",
+    "bytes": 341670,
+    "triangles": 3658,
+    "dimensionsMillimeters": [
+      320.5,
+      47.2,
+      320.5
+    ],
+    "sourceBoundsMillimeters": [
+      320.5,
+      47.2,
+      320.5
+    ],
+    "dimensionBasis": "source bounds"
+  },
+  {
+    "id": "detail-alarm_clock_01",
+    "license": "CC0-1.0",
+    "author": "Yann Kervran, James Ray Cock",
+    "source": "https://polyhaven.com/a/alarm_clock_01",
+    "revision": null,
+    "sources": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/alarm_clock_01/alarm_clock_01_1k.gltf",
+        "bytes": 10056,
+        "md5": "8b21feb17dbc39d8dda7a9cf2b12deea",
+        "sha256": "ca16e83e334e28f8eaf2bf1fbf8ce043b7e4fe5d0e171d01a264b12f5f42a78c"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/alarm_clock_01/alarm_clock_01_diff_1k.jpg",
+        "bytes": 404998,
+        "md5": "27a85fe476bc1c0debe34b37ac824ad8",
+        "sha256": "deb82094c2c1aa8cda0a0ce7192b193a81c5376743344503764abbcd2db19ac1"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/alarm_clock_01/alarm_clock_01_nor_gl_1k.jpg",
+        "bytes": 420026,
+        "md5": "7cd24fe02d79a68cce132650b6ede34b",
+        "sha256": "a0a7b35de5712e23d06832e49516ec0e1170aa159eb60ec9b2af0b0df2102fa4"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/alarm_clock_01/alarm_clock_01.bin",
+        "bytes": 284408,
+        "md5": "276d0e4b0863c2d5ab976abaa5ea0451",
+        "sha256": "74b589dc31596fe9350e8ef6d123571955d58cee9955060d831fa0f3055758c6"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/alarm_clock_01/alarm_clock_01_arm_1k.jpg",
+        "bytes": 538163,
+        "md5": "cb2b21cf42ccda7f0c5e1f82d47b85bf",
+        "sha256": "99727eb8908dfea5aac2a2353af7ff60857e40c50b396d7efbe15df685fe4918"
+      }
+    ],
+    "preparedSha256": "55bf9f0ebbda863d372d98bfbdbf81747379081a8d8df91581a83d5e51d66180",
+    "bytes": 740197,
+    "triangles": 8985,
+    "dimensionsMillimeters": [
+      131.7,
+      66.7,
+      174.2
+    ],
+    "sourceBoundsMillimeters": [
+      131.7,
+      66.7,
+      174.2
+    ],
+    "dimensionBasis": "source bounds"
+  },
+  {
+    "id": "detail-wooden_bowl_01",
+    "license": "CC0-1.0",
+    "author": "Oliver Harries",
+    "source": "https://polyhaven.com/a/wooden_bowl_01",
+    "revision": null,
+    "sources": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wooden_bowl_01/wooden_bowl_01_1k.gltf",
+        "bytes": 2811,
+        "md5": "d4fa6acadbae81c8f66f346381b11582",
+        "sha256": "7fe0d6aa4b58e1b9bfc704a8142f4f23f651640c5701b26037fbee3c01613c3b"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_bowl_01/wooden_bowl_01_diff_1k.jpg",
+        "bytes": 450565,
+        "md5": "64626044995a55e0525dbf8ad1388914",
+        "sha256": "7c33269d85411cf905d5bb53d95bd148c174b26a3cfb86ee58a26735123098b1"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/wooden_bowl_01/wooden_bowl_01.bin",
+        "bytes": 321052,
+        "md5": "ab8f522a5b859d901de1eed742f275bd",
+        "sha256": "2659e19ea140aed29edca6761b6ee117e0a488ac14cd32c30fd0f1116f645761"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_bowl_01/wooden_bowl_01_nor_gl_1k.jpg",
+        "bytes": 597196,
+        "md5": "ba2691b4cc8cfdbbd8ff5c5ae9bfadbc",
+        "sha256": "f25955450f21c80e8db34b4621ceec3778199f73c8d5c3350367640cac8cc214"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_bowl_01/wooden_bowl_01_arm_1k.jpg",
+        "bytes": 451613,
+        "md5": "3bdbd9a9f73108f6a6b6c9a248aa1eb9",
+        "sha256": "206e84e320ebc4eb538a1509d3a59cfce5feb96596f7cae3700382d1a0790c81"
+      }
+    ],
+    "preparedSha256": "bd1491ad5aabee1832a680d5bc94fceae94e160feacf461f92e66a56d92cfb11",
+    "bytes": 872782,
+    "triangles": 14122,
+    "dimensionsMillimeters": [
+      313.1,
+      309.1,
+      93.7
+    ],
+    "sourceBoundsMillimeters": [
+      313.1,
+      309.1,
+      93.7
+    ],
+    "dimensionBasis": "source bounds"
+  },
+  {
+    "id": "detail-wooden_bowl_02",
+    "license": "CC0-1.0",
+    "author": "Kuutti Siitonen",
+    "source": "https://polyhaven.com/a/wooden_bowl_02",
+    "revision": null,
+    "sources": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wooden_bowl_02/wooden_bowl_02_1k.gltf",
+        "bytes": 2800,
+        "md5": "7e1269b42d3cf9e96d3a7a43784a9fc5",
+        "sha256": "18ba4fb40b1880d9b776f6d98eefdaa9e01e41fbe362ba1dc40a831422e38336"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_bowl_02/wooden_bowl_02_arm_1k.jpg",
+        "bytes": 770851,
+        "md5": "a416eec6afe81cfc5b2a94cabe241f69",
+        "sha256": "0715dde81d3a8acbdf67031702c80e994e0b418a9973237f2964f1d0be9f4645"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/wooden_bowl_02/wooden_bowl_02.bin",
+        "bytes": 116156,
+        "md5": "92850bb8ba7e6dfd53f4b157276a8536",
+        "sha256": "6e3e1fb30969e9a52db3519b01ace016628a361c2cd9e2817c5e50c1ffb8a1dd"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_bowl_02/wooden_bowl_02_nor_gl_1k.jpg",
+        "bytes": 816221,
+        "md5": "76dedcb76919daaed23a3d7510c43257",
+        "sha256": "1951d9aae111412f4bd262c18e232b0b11962f33145e46acb936e314a442ec7d"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_bowl_02/wooden_bowl_02_diff_1k.jpg",
+        "bytes": 805338,
+        "md5": "69dfe9fa89f7458fbeb03300267a279d",
+        "sha256": "a3bb80f6ea747491fe91628badc0b98d320fc6d427682564095aba6033a523dc"
+      }
+    ],
+    "preparedSha256": "def4f105a37473ba03465531620ada1c560f4036c5d90766786341f41dfb6ac5",
+    "bytes": 313164,
+    "triangles": 4666,
+    "dimensionsMillimeters": [
+      130.7,
+      124.5,
+      73.1
+    ],
+    "sourceBoundsMillimeters": [
+      130.7,
+      124.5,
+      73.1
+    ],
+    "dimensionBasis": "source bounds"
+  },
+  {
+    "id": "detail-standing_picture_frame_01",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "source": "https://polyhaven.com/a/standing_picture_frame_01",
+    "revision": null,
+    "sources": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/standing_picture_frame_01/standing_picture_frame_01_1k.gltf",
+        "bytes": 6936,
+        "md5": "c2a8d1f0a22e5678c531a1d07ed7841c",
+        "sha256": "cd8a0326db53a48c918940c9a7ad016236d825a6b487e5d312fcac33897074bc"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/standing_picture_frame_01/standing_picture_frame_01_artwork_rough_1k.jpg",
+        "bytes": 12684,
+        "md5": "b8e5b8431b0c53b20d83ec0bcff51747",
+        "sha256": "62d875e9427f5d71f1bb4d9dc9569e34465bfd3067b8b13f5644b73e23a09fa3"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/standing_picture_frame_01/standing_picture_frame_01_nor_gl_1k.jpg",
+        "bytes": 36570,
+        "md5": "d5e15327a5729ffd12079b047a6d9aeb",
+        "sha256": "75899a4f4bc80ec69383b148076c054fb1d61f0bf62a32bb913bc151f1d26f04"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/standing_picture_frame_01/standing_picture_frame_01.bin",
+        "bytes": 55424,
+        "md5": "330583102237422c33ef765c4f841e45",
+        "sha256": "bdaf666c5011671c55d5661171d2395cee7d80f1558e92760c663050cba39b49"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/standing_picture_frame_01/standing_picture_frame_01_artwork_diff_1k.jpg",
+        "bytes": 116687,
+        "md5": "361854894b0f28fe681b53d350d2e808",
+        "sha256": "d65a41f6391563f3c5e35b66fb6a96949d166072d174406223412ac4dfb0c11e"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/standing_picture_frame_01/standing_picture_frame_01_arm_1k.jpg",
+        "bytes": 107611,
+        "md5": "c355702b7712e808b3a82868205a77bb",
+        "sha256": "1092eae6ea8c312fbb3acdd3ab90e80a83658b9a593ff8c8412151dbddac2250"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/standing_picture_frame_01/standing_picture_frame_01_diff_1k.jpg",
+        "bytes": 94436,
+        "md5": "6932ac7b367f2580224bbcf8c9a4dc4b",
+        "sha256": "e9d1030940b00ed576cafd704f7fc44226a255ed8d2db5ef3b8fd02d5521a763"
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/standing_picture_frame_01/standing_picture_frame_01_artwork_nor_gl_1k.jpg",
+        "bytes": 17077,
+        "md5": "b487da64181c500852ee514b8ae5e4a3",
+        "sha256": "2b1cabd85ed19872b1df2d509a8906fea80003925ae71e773b1fb0f6010ffbf0"
+      }
+    ],
+    "preparedSha256": "7bb23742ea32c7cbb4262c193b7ca47b995e5c0eb994227b859a1db7c5ec41ed",
+    "bytes": 148905,
+    "triangles": 1634,
+    "dimensionsMillimeters": [
+      100.3,
+      200.8,
+      249.7
+    ],
+    "sourceBoundsMillimeters": [
+      100.3,
+      200.8,
+      249.7
+    ],
+    "dimensionBasis": "source bounds"
+  }
+]

@@ -1,0 +1,1622 @@
+[
+  {
+    "id": "kaykit-armchair",
+    "name": "Poltrona com braços · KayKit",
+    "category": "Sala",
+    "width": 850,
+    "depth": 900,
+    "height": 850,
+    "tags": "Poltrona com braços · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-armchair.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "e01461af08bda3028748bd9e24c8016f2c893a2c2ff59610e104009d80c3f9f9",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-armchair_pillows",
+    "name": "Poltrona com almofadas · KayKit",
+    "category": "Sala",
+    "width": 850,
+    "depth": 900,
+    "height": 850,
+    "tags": "Poltrona com almofadas · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-armchair_pillows.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "a65aa87ac3a91e4a0be0611d3ac96a3a41ed5a54c4699fc1cf7a395dfae57ccd",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-bed_double_A",
+    "name": "Cama de casal com cabeceira · KayKit",
+    "category": "Dormitório",
+    "width": 1600,
+    "depth": 2100,
+    "height": 850,
+    "tags": "Cama de casal com cabeceira · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-bed_double_A.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "cd8197008d4c35b77df7a14fa1371513020b9b411d0039479cde075a5a1b9fc8",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-bed_double_B",
+    "name": "Cama de casal baixa · KayKit",
+    "category": "Dormitório",
+    "width": 1600,
+    "depth": 2100,
+    "height": 850,
+    "tags": "Cama de casal baixa · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-bed_double_B.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "1d9a5dfe88efaad91c3384c691581f3160e61459c032acabb175ca03a980f8cd",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-bed_single_A",
+    "name": "Cama de solteiro com cabeceira · KayKit",
+    "category": "Dormitório",
+    "width": 900,
+    "depth": 2100,
+    "height": 850,
+    "tags": "Cama de solteiro com cabeceira · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-bed_single_A.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "848cd2ba679fd8ec16340bd249804c26748b22d262bec82ee979d29948dedf1d",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-bed_single_B",
+    "name": "Cama de solteiro baixa · KayKit",
+    "category": "Dormitório",
+    "width": 900,
+    "depth": 2100,
+    "height": 850,
+    "tags": "Cama de solteiro baixa · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-bed_single_B.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "30d96c55c1c165beddaea6f544caa339a01ced696fd1376fca3815d92091c2da",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-book_set",
+    "name": "Livros empilhados · KayKit",
+    "category": "Decoração",
+    "width": 250.0,
+    "depth": 117.0,
+    "height": 160.3,
+    "tags": "Livros empilhados · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-book_set.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "a9bb68451c87a4f05cd609bf4092ba1e0bc129ebfd79d4a7bc82d911348804df",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-book_single",
+    "name": "Livro fechado · KayKit",
+    "category": "Decoração",
+    "width": 130.0,
+    "depth": 182.5,
+    "height": 250.0,
+    "tags": "Livro fechado · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-book_single.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "8c0554596b8881f7b8bb997636c143b0788f13f1dc088058c4352fd42ebfeb88",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-cabinet_medium",
+    "name": "Armário médio · KayKit",
+    "category": "Sala",
+    "width": 1000,
+    "depth": 400,
+    "height": 650,
+    "tags": "Armário médio · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-cabinet_medium.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "3a251806d151ac7b3ec272693496fcc6af4bc0f5b159069daec86369e7283e99",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-cabinet_medium_decorated",
+    "name": "Armário médio decorado · KayKit",
+    "category": "Sala",
+    "width": 1000,
+    "depth": 400,
+    "height": 650,
+    "tags": "Armário médio decorado · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-cabinet_medium_decorated.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "0a0bfd073d25ac90415bce2a76f44447cb856ee77950148a105abecd6c50880f",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-cabinet_small",
+    "name": "Armário pequeno · KayKit",
+    "category": "Sala",
+    "width": 500,
+    "depth": 400,
+    "height": 650,
+    "tags": "Armário pequeno · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-cabinet_small.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "f0deb1212fbfd3af0e0c7aa488f9791264f41828c5a3dd6b47e4301919eda46a",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-cabinet_small_decorated",
+    "name": "Armário pequeno decorado · KayKit",
+    "category": "Sala",
+    "width": 500,
+    "depth": 400,
+    "height": 650,
+    "tags": "Armário pequeno decorado · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-cabinet_small_decorated.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "bff63572ff220646509dd641350e7a5c53a4b781daa2f7575ebb124f8c313e9d",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-cactus_medium_A",
+    "name": "Cacto alto em vaso · KayKit",
+    "category": "Decoração",
+    "width": 400.0,
+    "depth": 380.4,
+    "height": 376.0,
+    "tags": "Cacto alto em vaso · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-cactus_medium_A.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "3f98807d9079d24e558da85e7989e674d0b6941863d4eaafdbfdd1c8ce7170b4",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-cactus_medium_B",
+    "name": "Cacto ramificado em vaso · KayKit",
+    "category": "Decoração",
+    "width": 400.0,
+    "depth": 380.4,
+    "height": 376.0,
+    "tags": "Cacto ramificado em vaso · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-cactus_medium_B.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "6bd86256c82d93c44cc7ae152e2a5438b1bf8464574de959d2e48c3dd4b65231",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-cactus_small_A",
+    "name": "Cacto pequeno redondo · KayKit",
+    "category": "Decoração",
+    "width": 226.6,
+    "depth": 226.6,
+    "height": 250.0,
+    "tags": "Cacto pequeno redondo · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-cactus_small_A.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "79c7440e6629a017d13ce979616264e47570b83d3fec6bac3cf4e1789bd796c1",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-cactus_small_B",
+    "name": "Cacto pequeno ramificado · KayKit",
+    "category": "Decoração",
+    "width": 226.6,
+    "depth": 226.6,
+    "height": 250.0,
+    "tags": "Cacto pequeno ramificado · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-cactus_small_B.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "009fe73b7e4c7b3f53005273d0759d7ff1a410f28693ada7ab75e47436e14ffa",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-chair_A",
+    "name": "Cadeira estofada com braços · KayKit",
+    "category": "Sala",
+    "width": 500,
+    "depth": 500,
+    "height": 850,
+    "tags": "Cadeira estofada com braços · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-chair_A.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "2664edc463d8d237b418407d542e54e5e8d6108e138bb4f345591c5f78a927f7",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-chair_A_wood",
+    "name": "Cadeira de madeira com braços · KayKit",
+    "category": "Sala",
+    "width": 500,
+    "depth": 500,
+    "height": 850,
+    "tags": "Cadeira de madeira com braços · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-chair_A_wood.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "8ce9f93071270c3a270aae94ecedd1fe1389d08970fbd7c3614f52f1dbb57d1f",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-chair_B",
+    "name": "Cadeira estofada reta · KayKit",
+    "category": "Sala",
+    "width": 500,
+    "depth": 500,
+    "height": 850,
+    "tags": "Cadeira estofada reta · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-chair_B.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "a7a8a91fd36208d91f860099df599e054feed2a2e30cc8b9e1006111880a1fc7",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-chair_B_wood",
+    "name": "Cadeira de madeira reta · KayKit",
+    "category": "Sala",
+    "width": 500,
+    "depth": 500,
+    "height": 850,
+    "tags": "Cadeira de madeira reta · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-chair_B_wood.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "1f015429d7e68442b7e5756a298d1889ad023c507f4cb0d52e340a28490c6237",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-chair_C",
+    "name": "Cadeira com encosto aberto · KayKit",
+    "category": "Sala",
+    "width": 500,
+    "depth": 500,
+    "height": 850,
+    "tags": "Cadeira com encosto aberto · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-chair_C.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "aa8a5bf75dbdd5436a079e33e07eb1dda83eac55ae32f51f627970ea1d6dded9",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-chair_stool",
+    "name": "Banqueta com assento estofado · KayKit",
+    "category": "Sala",
+    "width": 400,
+    "depth": 400,
+    "height": 500,
+    "tags": "Banqueta com assento estofado · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-chair_stool.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "3399023d12eddc017c001a4533308ecfb388e874428fbbc7847830231a09c913",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-chair_stool_wood",
+    "name": "Banqueta com assento de madeira · KayKit",
+    "category": "Sala",
+    "width": 400,
+    "depth": 400,
+    "height": 500,
+    "tags": "Banqueta com assento de madeira · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-chair_stool_wood.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "fedded830440ed7fea90f15b2f8666c15b22ecb082d119de0953a84f31525a43",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-couch",
+    "name": "Sofá de dois lugares · KayKit",
+    "category": "Sala",
+    "width": 2050,
+    "depth": 900,
+    "height": 850,
+    "tags": "Sofá de dois lugares · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-couch.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "1f0676ce9e9d969419ee55597c8bbe8d71cc15ce934c52a6877de53b68e1863b",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-couch_pillows",
+    "name": "Sofá de dois lugares com almofadas · KayKit",
+    "category": "Sala",
+    "width": 2050,
+    "depth": 900,
+    "height": 850,
+    "tags": "Sofá de dois lugares com almofadas · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-couch_pillows.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "79d155a4a544ba19f137cd0b0376d09f3fbac64ba2869d3b76b9dcc1c1886428",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-lamp_standing",
+    "name": "Luminária de piso com cúpula · KayKit",
+    "category": "Decoração",
+    "width": 450,
+    "depth": 450,
+    "height": 1600,
+    "tags": "Luminária de piso com cúpula · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-lamp_standing.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "abeaa817eaeddc8d3ba7740f747474d4f165e7ea173b811207f2936e0bc3e158",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-lamp_table",
+    "name": "Abajur com cúpula · KayKit",
+    "category": "Decoração",
+    "width": 280,
+    "depth": 280,
+    "height": 500,
+    "tags": "Abajur com cúpula · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-lamp_table.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "796e042cbf43ed16e5393f41a36fbbabef4dc6042e25b40574ae7ac74498bbbd",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-pictureframe_large_A",
+    "name": "Quadro grande de paisagem · KayKit",
+    "category": "Decoração",
+    "width": 547.1,
+    "depth": 108.3,
+    "height": 650.0,
+    "tags": "Quadro grande de paisagem · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-pictureframe_large_A.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "de709127024f034d1ff381b70876276dc490445cf900ea8bb81843e8b7b59f49",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1200
+      }
+    }
+  },
+  {
+    "id": "kaykit-pictureframe_large_B",
+    "name": "Quadro grande vertical · KayKit",
+    "category": "Decoração",
+    "width": 650.0,
+    "depth": 65.0,
+    "height": 390.0,
+    "tags": "Quadro grande vertical · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-pictureframe_large_B.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "e490f04a57a5171b73760e388093ea17fada0aabb28b584a689ec90677f3784d",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1200
+      }
+    }
+  },
+  {
+    "id": "kaykit-pictureframe_medium",
+    "name": "Quadro médio · KayKit",
+    "category": "Decoração",
+    "width": 311.1,
+    "depth": 88.9,
+    "height": 400.0,
+    "tags": "Quadro médio · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-pictureframe_medium.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "e3421a676d18ee64d0fac5402e639f28ec568f5a4bfe63157b6610962c163c40",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1200
+      }
+    }
+  },
+  {
+    "id": "kaykit-pictureframe_small_A",
+    "name": "Quadro pequeno horizontal · KayKit",
+    "category": "Decoração",
+    "width": 208.3,
+    "depth": 83.3,
+    "height": 250.0,
+    "tags": "Quadro pequeno horizontal · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-pictureframe_small_A.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "af1c290b28e797d86750dbf9a047a55311f4a02bfd966fce74a4eded804a7a4b",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1200
+      }
+    }
+  },
+  {
+    "id": "kaykit-pictureframe_small_B",
+    "name": "Quadro pequeno vertical · KayKit",
+    "category": "Decoração",
+    "width": 250.0,
+    "depth": 71.4,
+    "height": 157.1,
+    "tags": "Quadro pequeno vertical · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-pictureframe_small_B.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "f41149439664d71be31267edfdfbaf00c246d896bb9b26942d8f028e3ebab563",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1200
+      }
+    }
+  },
+  {
+    "id": "kaykit-pictureframe_small_C",
+    "name": "Quadro pequeno quadrado · KayKit",
+    "category": "Decoração",
+    "width": 250.0,
+    "depth": 100.0,
+    "height": 250.0,
+    "tags": "Quadro pequeno quadrado · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-pictureframe_small_C.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "7051d5a461ce7e6de014ad5b9188cba27a26e4a9e0bf3538b53cc9a4f9b1c9ba",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1200
+      }
+    }
+  },
+  {
+    "id": "kaykit-pictureframe_standing_A",
+    "name": "Porta-retrato horizontal · KayKit",
+    "category": "Decoração",
+    "width": 202.1,
+    "depth": 153.4,
+    "height": 250.0,
+    "tags": "Porta-retrato horizontal · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-pictureframe_standing_A.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "103ac1911a8a37a8651dcb8be0aa1f7431c3d3e2ef4d0dcb437241ed744d8630",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-pictureframe_standing_B",
+    "name": "Porta-retrato vertical · KayKit",
+    "category": "Decoração",
+    "width": 250.0,
+    "depth": 127.5,
+    "height": 167.2,
+    "tags": "Porta-retrato vertical · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-pictureframe_standing_B.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "a2ab77e9389124050b9ee06f281bf99822bc9430059d5dc5ae7df0e042d64766",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-pillow_A",
+    "name": "Almofada quadrada · KayKit",
+    "category": "Decoração",
+    "width": 450.0,
+    "depth": 346.2,
+    "height": 138.5,
+    "tags": "Almofada quadrada · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-pillow_A.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "a31338f4d34243edaaf60331ac2912d276c3aa539fbccb011eb279cfef7fefe0",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-pillow_B",
+    "name": "Almofada alongada · KayKit",
+    "category": "Decoração",
+    "width": 450.0,
+    "depth": 346.2,
+    "height": 138.5,
+    "tags": "Almofada alongada · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-pillow_B.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "e1b2811898fb8a9d521ace67425da994d2c953fb450a9986b00b3954ecd24e81",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-rug_oval_A",
+    "name": "Tapete oval claro · KayKit",
+    "category": "Decoração",
+    "width": 1800.0,
+    "depth": 1200.0,
+    "height": 60.0,
+    "tags": "Tapete oval claro · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-rug_oval_A.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "8abe24e16bc35a1971bfca84ccfcb665e00cfebc5552d87bf1ab383d0d33543f",
+        "originalMaterials": true,
+        "placement": "rug",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-rug_oval_B",
+    "name": "Tapete oval colorido · KayKit",
+    "category": "Decoração",
+    "width": 1800.0,
+    "depth": 1200.0,
+    "height": 60.0,
+    "tags": "Tapete oval colorido · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-rug_oval_B.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "ec0e9c77c9d7d54a7e01b9b00e3e2cfc943c776c783b96191eeb817f8e89571a",
+        "originalMaterials": true,
+        "placement": "rug",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-rug_rectangle_A",
+    "name": "Tapete retangular claro · KayKit",
+    "category": "Decoração",
+    "width": 1800.0,
+    "depth": 1200.0,
+    "height": 60.0,
+    "tags": "Tapete retangular claro · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-rug_rectangle_A.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "49fbf7052fcbe3b7870a1926bc99bd651a917b8dabab9e4dd99a9d109b11d12d",
+        "originalMaterials": true,
+        "placement": "rug",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-rug_rectangle_B",
+    "name": "Tapete retangular colorido · KayKit",
+    "category": "Decoração",
+    "width": 1800.0,
+    "depth": 1200.0,
+    "height": 60.0,
+    "tags": "Tapete retangular colorido · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-rug_rectangle_B.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "1eb50b685343ba86826ddc5c453d7d8d92ad002cb1d31ca55718c6525f8fbe51",
+        "originalMaterials": true,
+        "placement": "rug",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-rug_rectangle_stripes_A",
+    "name": "Tapete com listras claras · KayKit",
+    "category": "Decoração",
+    "width": 1800.0,
+    "depth": 1200.0,
+    "height": 60.0,
+    "tags": "Tapete com listras claras · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-rug_rectangle_stripes_A.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "e37fba40fe7c73593515e2ad13a5400f42b6f0be3d4fbd3a25e096af7ad8f0cc",
+        "originalMaterials": true,
+        "placement": "rug",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-rug_rectangle_stripes_B",
+    "name": "Tapete com listras coloridas · KayKit",
+    "category": "Decoração",
+    "width": 1800.0,
+    "depth": 1200.0,
+    "height": 60.0,
+    "tags": "Tapete com listras coloridas · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-rug_rectangle_stripes_B.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "66338fe459e070c41edcd9cc2997be46f55614284f9446b65eca332aba4676c8",
+        "originalMaterials": true,
+        "placement": "rug",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-shelf_A_big",
+    "name": "Prateleira longa aberta · KayKit",
+    "category": "Sala",
+    "width": 1200,
+    "depth": 250,
+    "height": 300,
+    "tags": "Prateleira longa aberta · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-shelf_A_big.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "d29f5dd95b995864def544dc88c32637118ed998cc087a6975c8ec42fd619618",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1200
+      }
+    }
+  },
+  {
+    "id": "kaykit-shelf_A_small",
+    "name": "Prateleira curta aberta · KayKit",
+    "category": "Sala",
+    "width": 600,
+    "depth": 250,
+    "height": 300,
+    "tags": "Prateleira curta aberta · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-shelf_A_small.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "229c0d634353ef7d030c7d368c2594c402cc1144d8f5ef718ecf072dc4f2d6f0",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1200
+      }
+    }
+  },
+  {
+    "id": "kaykit-shelf_B_large",
+    "name": "Prateleira longa com nichos · KayKit",
+    "category": "Sala",
+    "width": 1200,
+    "depth": 250,
+    "height": 300,
+    "tags": "Prateleira longa com nichos · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-shelf_B_large.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "4fd3e9b65ab5a2db7bfa8c56e49e841b0293835bbdc74d56b27836088edf8372",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1200
+      }
+    }
+  },
+  {
+    "id": "kaykit-shelf_B_large_decorated",
+    "name": "Prateleira longa com livros e objetos · KayKit",
+    "category": "Sala",
+    "width": 1200,
+    "depth": 250,
+    "height": 300,
+    "tags": "Prateleira longa com livros e objetos · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-shelf_B_large_decorated.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "c5cce2aba0392dc0562138c20a497e3457325de2b5399216476c22ab443e283b",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1200
+      }
+    }
+  },
+  {
+    "id": "kaykit-shelf_B_small",
+    "name": "Prateleira curta com nichos · KayKit",
+    "category": "Sala",
+    "width": 600,
+    "depth": 250,
+    "height": 300,
+    "tags": "Prateleira curta com nichos · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-shelf_B_small.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "7392668f0ec915e06537b83666594694b96b603d9fb645c67026ccc277085b8e",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1200
+      }
+    }
+  },
+  {
+    "id": "kaykit-shelf_B_small_decorated",
+    "name": "Prateleira curta com livros e objetos · KayKit",
+    "category": "Sala",
+    "width": 600,
+    "depth": 250,
+    "height": 300,
+    "tags": "Prateleira curta com livros e objetos · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-shelf_B_small_decorated.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "17d27662ddb404a5924eb5929b31af6375908f1705d6e53d89c553c782075e4c",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1200
+      }
+    }
+  },
+  {
+    "id": "kaykit-table_low",
+    "name": "Mesa de centro baixa · KayKit",
+    "category": "Sala",
+    "width": 1100,
+    "depth": 650,
+    "height": 420,
+    "tags": "Mesa de centro baixa · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-table_low.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "dd89908da90fda2887436170c87919e53dc72eca29663899e4a8ec373b24ffb7",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-table_medium_long",
+    "name": "Mesa de jantar alongada · KayKit",
+    "category": "Sala",
+    "width": 1800,
+    "depth": 900,
+    "height": 750,
+    "tags": "Mesa de jantar alongada · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-table_medium_long.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "c4be306a2b5fd5a68d9c0c3759a59adb46de677e2a6de675d45594eb15e6f680",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-table_medium",
+    "name": "Mesa de jantar quadrada · KayKit",
+    "category": "Sala",
+    "width": 1000,
+    "depth": 1000,
+    "height": 750,
+    "tags": "Mesa de jantar quadrada · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-table_medium.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "382aa40e7ccc5badb91020968b391371f433c4a88b3f1fb6f0dfd4e54d30d8a6",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "kaykit-table_small",
+    "name": "Mesa lateral quadrada · KayKit",
+    "category": "Sala",
+    "width": 450,
+    "depth": 450,
+    "height": 500,
+    "tags": "Mesa lateral quadrada · KayKit Kay Lousberg pronto leve estilizado",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg",
+    "origin": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "kaykit-table_small.json",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0",
+      "author": "Kay Lousberg",
+      "collection": "lightweight-ready",
+      "parameters": {
+        "meshAsset": "d9f80b67a9037df98ed91f83d390c2316f1d1544770f2b0c2e370eaad0715a7b",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "detail-ceramic_vase_01",
+    "name": "Vaso de cerâmica com textura natural",
+    "category": "Decoração",
+    "width": 203.6,
+    "depth": 203.6,
+    "height": 400.3,
+    "tags": "Vaso de cerâmica com textura natural James Ray Cock pronto realista detalhado",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "origin": "https://polyhaven.com/a/ceramic_vase_01",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "detail-ceramic_vase_01.json",
+      "source": "https://polyhaven.com/a/ceramic_vase_01",
+      "author": "James Ray Cock",
+      "collection": "detail-ready",
+      "parameters": {
+        "meshAsset": "7aa4616da65969aae886df9101a2a8502982a93f3d65f67f388c62ca817dfca5",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "detail-ceramic_vase_04",
+    "name": "Vaso de cerâmica com alças",
+    "category": "Decoração",
+    "width": 181.1,
+    "depth": 181.1,
+    "height": 341.9,
+    "tags": "Vaso de cerâmica com alças James Ray Cock pronto realista detalhado",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "origin": "https://polyhaven.com/a/ceramic_vase_04",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "detail-ceramic_vase_04.json",
+      "source": "https://polyhaven.com/a/ceramic_vase_04",
+      "author": "James Ray Cock",
+      "collection": "detail-ready",
+      "parameters": {
+        "meshAsset": "e4cd1b826272cab01869d976e8b734f3319598825873645f6e8d584cc39dc43b",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "detail-wall_clock",
+    "name": "Relógio de parede detalhado",
+    "category": "Decoração",
+    "width": 320.5,
+    "depth": 47.2,
+    "height": 320.5,
+    "tags": "Relógio de parede detalhado PierreB3D pronto realista detalhado",
+    "license": "CC0-1.0",
+    "author": "PierreB3D",
+    "origin": "https://polyhaven.com/a/wall_clock",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "detail-wall_clock.json",
+      "source": "https://polyhaven.com/a/wall_clock",
+      "author": "PierreB3D",
+      "collection": "detail-ready",
+      "parameters": {
+        "meshAsset": "a830f9afdd18517d4f3e958e505744ef48ea13ed04411f41f10179e94afa556c",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1200
+      }
+    }
+  },
+  {
+    "id": "detail-alarm_clock_01",
+    "name": "Relógio de mesa detalhado",
+    "category": "Decoração",
+    "width": 131.7,
+    "depth": 66.7,
+    "height": 174.2,
+    "tags": "Relógio de mesa detalhado Yann Kervran, James Ray Cock pronto realista detalhado",
+    "license": "CC0-1.0",
+    "author": "Yann Kervran, James Ray Cock",
+    "origin": "https://polyhaven.com/a/alarm_clock_01",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "detail-alarm_clock_01.json",
+      "source": "https://polyhaven.com/a/alarm_clock_01",
+      "author": "Yann Kervran, James Ray Cock",
+      "collection": "detail-ready",
+      "parameters": {
+        "meshAsset": "55bf9f0ebbda863d372d98bfbdbf81747379081a8d8df91581a83d5e51d66180",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "detail-wooden_bowl_01",
+    "name": "Tigela de madeira natural",
+    "category": "Decoração",
+    "width": 313.1,
+    "depth": 309.1,
+    "height": 93.7,
+    "tags": "Tigela de madeira natural Oliver Harries pronto realista detalhado",
+    "license": "CC0-1.0",
+    "author": "Oliver Harries",
+    "origin": "https://polyhaven.com/a/wooden_bowl_01",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "detail-wooden_bowl_01.json",
+      "source": "https://polyhaven.com/a/wooden_bowl_01",
+      "author": "Oliver Harries",
+      "collection": "detail-ready",
+      "parameters": {
+        "meshAsset": "bd1491ad5aabee1832a680d5bc94fceae94e160feacf461f92e66a56d92cfb11",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "detail-wooden_bowl_02",
+    "name": "Tigela de madeira arredondada",
+    "category": "Decoração",
+    "width": 130.7,
+    "depth": 124.5,
+    "height": 73.1,
+    "tags": "Tigela de madeira arredondada Kuutti Siitonen pronto realista detalhado",
+    "license": "CC0-1.0",
+    "author": "Kuutti Siitonen",
+    "origin": "https://polyhaven.com/a/wooden_bowl_02",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "detail-wooden_bowl_02.json",
+      "source": "https://polyhaven.com/a/wooden_bowl_02",
+      "author": "Kuutti Siitonen",
+      "collection": "detail-ready",
+      "parameters": {
+        "meshAsset": "def4f105a37473ba03465531620ada1c560f4036c5d90766786341f41dfb6ac5",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "detail-standing_picture_frame_01",
+    "name": "Porta-retrato de madeira detalhado",
+    "category": "Decoração",
+    "width": 100.3,
+    "depth": 200.8,
+    "height": 249.7,
+    "tags": "Porta-retrato de madeira detalhado James Ray Cock pronto realista detalhado",
+    "license": "CC0-1.0",
+    "author": "James Ray Cock",
+    "origin": "https://polyhaven.com/a/standing_picture_frame_01",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "detail-standing_picture_frame_01.json",
+      "source": "https://polyhaven.com/a/standing_picture_frame_01",
+      "author": "James Ray Cock",
+      "collection": "detail-ready",
+      "parameters": {
+        "meshAsset": "7bb23742ea32c7cbb4262c193b7ca47b995e5c0eb994227b859a1db7c5ec41ed",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0
+      }
+    }
+  }
+]

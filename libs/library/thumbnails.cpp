@@ -156,6 +156,9 @@ AssetThumbnails::AssetThumbnails(QObject *parent) : QObject(parent) {
 AssetThumbnails::~AssetThumbnails() {
     pool.waitForDone();
 }
+void AssetThumbnails::setWorkerLimit(int workers) {
+    pool.setMaxThreadCount(std::clamp(workers, 1, 4));
+}
 QImage AssetThumbnails::request(const Asset &asset, std::function<Asset(const Asset &)> loader) {
     auto recipe = materialPresets().dump() + asset.recipe.dump() +
                   QString("/%1/%2/%3").arg(asset.width).arg(asset.height).arg(asset.depth).toStdString();

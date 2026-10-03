@@ -29,7 +29,7 @@ $savedPlugins = $env:QT_PLUGIN_PATH
 $installed = $false
 function Invoke-App([string[]]$Arguments, [string]$Name) {
     $quoted = foreach ($argument in $Arguments) { '"' + $argument + '"' }
-    $process = Start-Process -FilePath (Join-Path $installation 'bin/libremax-architect.exe') -ArgumentList ($quoted -join ' ') -PassThru -RedirectStandardOutput (Join-Path $evidence "$Name.stdout.txt") -RedirectStandardError (Join-Path $evidence "$Name.stderr.txt")
+    $process = Start-Process -FilePath (Join-Path $installation 'bin/libremax-architect.exe') -ArgumentList ($quoted -join ' ') -PassThru -WindowStyle Hidden -RedirectStandardOutput (Join-Path $evidence "$Name.stdout.txt") -RedirectStandardError (Join-Path $evidence "$Name.stderr.txt")
     if (!$process.WaitForExit(180000)) {
         $process.Kill()
         throw ('Installed application check timed out: ' + $Name)
@@ -58,6 +58,7 @@ try {
     Invoke-App -Arguments @('--installation-smoke', (Join-Path $evidence 'runtime')) -Name 'runtime'
     if ($Gui) {
         $env:QT_QPA_PLATFORM = 'windows'
+        Invoke-App -Arguments @('--ui-smoke', (Join-Path $evidence 'expanded-library')) -Name 'expanded-library'
         Invoke-App -Arguments @('--modern-smoke', (Join-Path $evidence 'modern')) -Name 'modern'
         Invoke-App -Arguments @('--experience-smoke', (Join-Path $evidence 'experience')) -Name 'experience'
         Invoke-App -Arguments @('--recovery-smoke') -Name 'recovery'

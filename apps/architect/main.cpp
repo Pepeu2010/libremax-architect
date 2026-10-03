@@ -114,7 +114,8 @@ int main(int argc, char **argv) {
             std::size_t expected = 0;
             for (const auto &catalog :
                  {"starter-library/catalog.json", "starter-models/catalog.json",
-                  "starter-models/modern-catalog.json", "starter-models/current-catalog.json"}) {
+                  "starter-models/modern-catalog.json", "starter-models/current-catalog.json",
+                  "starter-models/expanded-catalog.json"}) {
                 QFile file(lmx::resourcePath(catalog));
                 if (!file.open(QIODevice::ReadOnly))
                     throw std::runtime_error("Installed catalog missing");
@@ -127,7 +128,7 @@ int main(int argc, char **argv) {
                 throw std::runtime_error("Installed SQLite/FTS catalog failed");
             auto project = lmx::ProjectStore::open(lmx::resourcePath("examples/apartamento-moderno.lmx"));
             for (const auto &entry : entries)
-                if (entry.recipe.value("collection", std::string{}) == "apartment-modern") {
+                if (entry.recipe.contains("modelFile")) {
                     auto payload = library.withPayload(entry);
                     lmx::Document standalone;
                     lmx::Library::attachModel(standalone, payload);
@@ -150,7 +151,7 @@ int main(int argc, char **argv) {
                 QImage(":/studio/brand/libremax-mark.png").isNull())
                 throw std::runtime_error("Installed JPEG/PNG codecs failed");
             std::cout << "INSTALLATION_PASS: " << expected
-                      << " catalog entries, SQLite/FTS, 36 detailed assets, portable HDRI project, packaged "
+                      << " catalog entries, SQLite/FTS, all bundled models, portable HDRI project, packaged "
                          "renderer\n";
             return 0;
         }
@@ -557,7 +558,7 @@ int main(int argc, char **argv) {
                     };
                     auto *cad = window.cad();
                     auto *assets = window.findChild<QListWidget *>("assetList");
-                    ensure(assets && assets->count() == 115, "Ready model catalog missing");
+                    ensure(assets && assets->count() == 175, "Expanded model catalog missing");
                     int ready = 0;
                     for (int attempt = 0; attempt < 300; ++attempt) {
                         ready = 0;
@@ -567,7 +568,7 @@ int main(int argc, char **argv) {
                             break;
                         QTest::qWait(100);
                     }
-                    ensure(ready == 115, "Native thumbnails missing for real models");
+                    ensure(ready == 175, "Native thumbnails missing for real models");
                     lmx::Document d;
                     lmx::addRectangularRoom(d, 4000, 3000, 2700, 120);
                     window.editor().load(d);
@@ -674,9 +675,10 @@ int main(int argc, char **argv) {
                     ensure(assets->horizontalScrollBar()->maximum() == 0, "Compact catalog overflows");
                     ensure(window.screen()->grabWindow(window.winId()).save(directory + "/apartment-900.png"),
                            "Compact screenshot failed");
-                    std::cout << "ASSEMBLY_PASS: 115 thumbnails, wall ghost/drop, outside rejection, mouse "
-                                 "move undo/redo, window wall attachment, 88 ready meshes, 3-room apartment "
-                                 "save/open, 900 px panels\n";
+                    std::cout
+                        << "ASSEMBLY_PASS: 175 thumbnails, wall ghost/drop, outside rejection, mouse "
+                           "move undo/redo, window wall attachment, ready mesh catalog, 3-room apartment "
+                           "save/open, 900 px panels\n";
                     app.exit(0);
                 } catch (const std::exception &e) {
                     std::cerr << "ASSEMBLY_FAIL: " << e.what() << '\n';
@@ -751,7 +753,7 @@ int main(int argc, char **argv) {
                     auto *assets = window.findChild<QListWidget *>("assetList");
                     ensure(assets && assets->count() > 0, "Starter library is unavailable");
                     int ready = 0;
-                    for (int attempt = 0; attempt < 100; ++attempt) {
+                    for (int attempt = 0; attempt < 300; ++attempt) {
                         ready = 0;
                         for (int i = 0; i < assets->count(); ++i)
                             ready += assets->item(i)->data(Qt::UserRole + 2).toBool();
@@ -759,8 +761,8 @@ int main(int argc, char **argv) {
                             break;
                         QTest::qWait(100);
                     }
-                    ensure(ready == 115, "Shipped asset geometry thumbnails were not generated");
-                    std::cout << "THUMBNAILS_PASS: 115 actual geometry previews\n";
+                    ensure(ready == 175, "Shipped asset geometry thumbnails were not generated");
+                    std::cout << "THUMBNAILS_PASS: 175 actual geometry previews\n";
                     QListWidgetItem *asset = nullptr;
                     for (int i = 0; i < assets->count(); ++i)
                         if (assets->item(i)->data(Qt::UserRole).toString() == "base-1")
@@ -965,6 +967,78 @@ int main(int argc, char **argv) {
                         std::cout << "RENDER_VIEWER_PASS: real image, fit, 1:1, native PNG export preserves "
                                      "pixels\n";
                     }
+                    const auto untouched = window.editor().document().serialize().dump();
+                    const auto fullMesh = lmx::meshSnapshot(window.editor().document()).dump();
+                    QSignalSpy profileErrors(window.cad(), &lmx::CadView::failure);
+                    for (int mode = 0; mode < 3; ++mode) {
+                        auto *choice = window.findChild<QAction *>(QString("performanceMode%1").arg(mode));
+                        ensure(choice, "Performance choice unavailable");
+                        choice->trigger();
+                        QTest::qWait(120);
+                        ensure(window.cad()->performanceMode() == mode, "Editor mode did not change");
+                        ensure(window.cad()->multisampling() == (mode == 0   ? 0
+                                                                 : mode == 1 ? 4
+                                                                             : 8),
+                               "Editor multisampling did not change");
+                        ensure(window.editor().document().serialize().dump() == untouched,
+                               "Performance setting altered the saved project");
+                        ensure(lmx::meshSnapshot(window.editor().document()).dump() == fullMesh,
+                               "Performance setting reduced the render mesh");
+                        window.cad()->capture(directory + QString("/performance-%1.png").arg(mode));
+                    }
+                    ensure(profileErrors.count() == 0, "Viewport failed during performance mode changes");
+                    window.findChild<QAction *>("performanceMode1")->trigger();
+                    auto *modelFilter = window.findChild<QComboBox *>("libraryCategory");
+                    modelFilter->setCurrentIndex(modelFilter->findData("__light"));
+                    ensure(assets->count() == 105, "Lightweight collection incomplete");
+                    modelFilter->setCurrentIndex(modelFilter->findData("__detail"));
+                    ensure(assets->count() == 7, "Detailed collection incomplete");
+                    QTest::qWait(150);
+                    ensure(
+                        window.screen()->grabWindow(window.winId()).save(directory + "/expanded-details.png"),
+                        "Detailed catalog screenshot failed");
+                    modelFilter->setCurrentIndex(modelFilter->findData("__light"));
+                    QTest::qWait(120);
+                    ensure(
+                        window.screen()->grabWindow(window.winId()).save(directory + "/expanded-light.png"),
+                        "Lightweight catalog screenshot failed");
+                    modelFilter->setCurrentIndex(0);
+                    lmx::Document placementProject;
+                    lmx::addRectangularRoom(placementProject, 6000, 5000, 2700, 120);
+                    window.editor().load(placementProject);
+                    window.cad()->setTop(true);
+                    window.cad()->frame();
+                    QTest::qWait(150);
+                    modelFilter->setCurrentIndex(modelFilter->findData("__light"));
+                    auto placeExpanded = [&](const QString &id, double x, double y) {
+                        const auto count = window.editor().document().entities.size();
+                        window.cad()->beginPlacement(id);
+                        const auto pixel = window.cad()->project(x, y);
+                        QTest::mouseMove(window.cad(), pixel);
+                        QTest::mouseClick(window.cad(), Qt::LeftButton, Qt::NoModifier, pixel);
+                        ensure(window.editor().document().entities.size() == count + 1,
+                               "Expanded model could not be placed through the native viewport");
+                    };
+                    placeExpanded("kaykit-couch", 2000, 2000);
+                    ensure(window.editor().document().entities.back().type == "MeshObject",
+                           "KayKit placement did not create the actual mesh");
+                    modelFilter->setCurrentIndex(modelFilter->findData("__detail"));
+                    placeExpanded("detail-wall_clock", 3000, 0);
+                    const auto &clock = window.editor().document().entities.back();
+                    const auto clockWall = clock.metadata.value("placementWall", "");
+                    ensure(!clockWall.empty() && window.editor().document().contains(clockWall) &&
+                               std::abs(clock.transform.y - 62) < 0.2 &&
+                               std::abs(clock.transform.z - 1200) < 0.2,
+                           "Detailed wall clock did not attach at the expected wall and height");
+                    const auto expandedPath = directory + "/expanded-placement.lmx";
+                    lmx::ProjectStore::save(expandedPath, window.editor().document(), false);
+                    ensure(lmx::ProjectStore::open(expandedPath).serialize() ==
+                               window.editor().document().serialize(),
+                           "Placed expanded models did not remain portable");
+                    std::cout << "EXPANDED_PLACEMENT_PASS: native KayKit sofa and detailed wall clock, "
+                                 "wall attachment, embedded meshes/textures and save/reopen\n";
+                    std::cout << "PERFORMANCE_PASS: 3 native modes, project and render mesh preserved, "
+                                 "105 lightweight models and 7 detailed additions\n";
                     std::cout << "UI_SMOKE_PASS: wall draw, library double-click and drop/ghost, "
                                  "undo/redo, centimeter expression edit, "
                                  "save/open, native CAD screenshots\n";
