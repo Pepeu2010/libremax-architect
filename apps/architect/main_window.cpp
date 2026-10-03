@@ -1023,6 +1023,8 @@ void MainWindow::createShell() {
     renderLayout->addRow(tr("Ambiente"), renderEnvironmentMode);
     auto *roomStyle = new QComboBox;
     roomStyle->setObjectName("roomPhotoStyle");
+    roomStyle->setMinimumWidth(76);
+    roomStyle->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
     roomStyle->addItem(tr("Escolher um estilo pronto…"), "");
     roomStyle->addItem(tr("Natural · madeira e luz suave"), "natural");
     roomStyle->addItem(tr("Claro · pedra e luz do dia"), "bright");

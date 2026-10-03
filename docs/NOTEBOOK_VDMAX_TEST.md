@@ -29,7 +29,7 @@ travamentos e tentativas de colocar móveis fora do ambiente. Tire capturas das
 mesmas vistas. Esses resultados avaliam facilidade de uso, além de velocidade.
 
 Faça uma foto em 1920 × 1080 em cada programa, com enquadramento, materiais e
-iluminação semelhantes. No LibreMax, escolha **Processador**, 64 amostras e
+iluminação semelhantes. No LibreMax, escolha **CPU (processador)**, 64 amostras e
 redução de ruído. Registre o tempo total mostrado pela fila e a memória pelo
 Gerenciador de Tarefas. Guarde as duas imagens. Como motores, modelos e materiais
 podem diferir, a comparação de tempo não isola apenas o desempenho do motor.

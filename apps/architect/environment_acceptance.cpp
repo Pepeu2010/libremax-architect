@@ -60,10 +60,22 @@ void startEnvironmentAcceptance(MainWindow &window, QApplication &app, const QSt
                 auto *button = window.findChild<QPushButton *>("useDaylightHdri");
                 ensure(button, "Bundled daylight button missing");
                 QTest::qWait(100);
-                window.findChild<QScrollArea *>("renderScroll")->ensureWidgetVisible(button);
+                auto *scroll = window.findChild<QScrollArea *>("renderScroll");
+                scroll->ensureWidgetVisible(button);
                 QTest::qWait(100);
+                const auto center = button->mapTo(scroll->viewport(), button->rect().center());
+                std::cout << "HDRI_CLICK_TARGET: button " << button->width() << 'x' << button->height()
+                          << " center " << center.x() << ',' << center.y() << " viewport "
+                          << scroll->viewport()->width() << 'x' << scroll->viewport()->height()
+                          << " horizontal " << scroll->horizontalScrollBar()->maximum() << '\n'
+                          << std::flush;
+                ensure(scroll->viewport()->rect().contains(center),
+                       "Daylight button center is outside the visible render panel");
+                ensure(scroll->horizontalScrollBar()->maximum() == 0,
+                       "Render panel overflows before HDRI import");
                 QSignalSpy clicked(button, &QPushButton::clicked);
-                QTest::mouseClick(button, Qt::LeftButton);
+                QTest::mouseClick(window.windowHandle(), Qt::LeftButton, Qt::NoModifier,
+                                  button->mapTo(&window, button->rect().center()));
                 ensure(clicked.count() == 1, "Native daylight button click did not reach its target");
                 state->phase = 1;
             } else if (state->phase == 1 &&
@@ -211,6 +223,7 @@ void startEnvironmentAcceptance(MainWindow &window, QApplication &app, const QSt
             ++state->ticks;
             poll->start();
         } catch (const std::exception &error) {
+            window.screen()->grabWindow(window.winId()).save(directory + "/failed.png");
             std::cerr << "ENVIRONMENT_ACCEPTANCE_FAILED: " << error.what() << '\n' << std::flush;
             app.exit(1);
         }

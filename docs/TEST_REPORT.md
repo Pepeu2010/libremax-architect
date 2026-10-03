@@ -9,7 +9,10 @@ incluindo mapas de cor e recusa de caminhos glTF inválidos.
 
 Três estilos distintos produziram imagens Cycles CPU de 320 × 180 / 8 amostras.
 A inspeção visual levou à correção do forro oculto e da potência excessiva de luz.
-As fotos pequenas são evidência do fluxo, não de qualidade final em Full HD.
+As fotos pequenas são evidência do fluxo. O estilo Natural também concluiu
+1920 × 1080 / 64 amostras em Blender 4.5.9 CPU: 3min53s no host Ryzen/RX 7600,
+com pico de memória interno do Cycles de 326,83 MB. A imagem foi inspecionada.
+Esse resultado não mede o notebook mínimo nem comprova equivalência ao VDMax.
 No benchmark isolado de 48 cortinas, a RX 7600 carregou a cena em 69 ms e editou
 com p50 de 29,27 ms e p95 de 30,48 ms. Malha completa: 439.872 triângulos;
 edição: 71.952. Isso não é uma medida de FPS nem comprova desempenho da HD 520.
@@ -18,7 +21,13 @@ Logs: `build-render/Testing/Temporary/LastTest.log`, `ui-015.txt`,
 `assembly-015.txt`, `experience-015.txt`, `recovery-015.txt`,
 `apartment-tools-015-enclosed.txt`, `import-formats-45b/report.json` e
 `import-formats-52/report.json`.
-Os instaladores e a CI Linux desta fonte ainda aguardam execução.
+O pacote de distribuição Windows passou no benchmark com PATH restrito ao
+sistema e Blender incluído; pico conjunto medido de 589,7 MiB na cena controlada.
+A instalação/desinstalação Windows passou na CI da primeira tentativa 0.15.
+O Linux parou no teste de clique do botão HDRI antes de produzir renders.
+O seletor de estilo agora respeita a largura do painel; o teste verifica posição,
+ausência de rolagem horizontal e chegada do clique, usando a janela nativa.
+HDRI/EXR e UI local passaram novamente. A nova CI e a publicação aguardam conclusão.
 O usuário confirmou disponibilidade de notebook e VDMax;
 [teste físico e comparação](NOTEBOOK_VDMAX_TEST.md) continuam pendentes.
 
