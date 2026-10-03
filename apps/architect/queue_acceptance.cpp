@@ -234,22 +234,13 @@ void startQueueAcceptance(MainWindow &window, QApplication &app, const QString &
                     return;
                 }
                 if (state->phase == 3) {
-                    QFile log(queue.logPath(state->activeCancel));
-                    bool rendering = false;
-                    if (log.open(QIODevice::ReadOnly)) {
-                        log.seek(std::max<qint64>(0, log.size() - 32768));
-                        rendering = log.readAll().contains("LIBREMAX_STAGE Rendering");
-                    }
-                    if (!rendering) {
-                        poll->start();
-                        return;
-                    }
                     const auto records = queue.entries();
                     const auto active = std::find_if(records.begin(), records.end(), [&](const auto &entry) {
                         return id(entry) == state->activeCancel;
                     });
                     ensure(active != records.end(), "Active progress record missing");
-                    if (active->value("remainingMs", qint64{-1}) <= 0 || active->value("progress", -1) <= 0) {
+                    if (active->at("state") != "Rendering" || active->value("remainingMs", qint64{-1}) <= 0 ||
+                        active->value("progress", -1) <= 0) {
                         poll->start();
                         return;
                     }

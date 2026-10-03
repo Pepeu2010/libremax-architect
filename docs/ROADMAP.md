@@ -4,6 +4,8 @@ Este ciclo integra a fundação e subconjuntos reais dos blocos Ambiente, Biblio
 
 Próximo bloco prioritário:
 
+**Gate de hardware mínimo:** i3-6006U, Intel HD Graphics 520 e 8 GB de RAM. Montagem, arquivo portátil, edição durante render e foto CPU devem passar nesse notebook antes de afirmar suporte confirmado. [Caminho implementado e aceitação](MINIMUM_HARDWARE.md).
+
 1. Executar build/testes/viewport em Linux Mint/Ubuntu/Debian, resolver compatibilidade e produzir primeiro AppImage validado.
 2. Completar ambiente: junções L/T/X, regiões fechadas, piso/forro associativos, cotas e snap, preview numérico, aberturas em planta, escadas L/U.
 3. Biblioteca/UX: ampliar QA/performance de thumbnails reais já implementados, modelos fotográficos detalhados além das 52 malhas estilizadas, coleções, importadores 3D pela interface, `.lmaxpack` seguro, backup e instalação offline.

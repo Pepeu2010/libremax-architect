@@ -36,6 +36,7 @@
 #include <QStandardItemModel>
 #include <QStandardPaths>
 #include <QStatusBar>
+#include <QThread>
 #include <QToolBar>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -433,7 +434,9 @@ void MainWindow::createShell() {
     action(viewMenu, tr("Enquadrar projeto"), QKeySequence("F"), [this] { viewport->frame(); });
     auto *performanceMenu = viewMenu->addMenu(tr("Desempenho durante edição"));
     auto *performanceGroup = new QActionGroup(this);
-    const int savedPerformance = std::clamp(QSettings().value("performance/editor", 1).toInt(), 0, 2);
+    const int initialPerformance = QThread::idealThreadCount() <= 4 ? 0 : 1;
+    const int savedPerformance =
+        std::clamp(QSettings().value("performance/editor", initialPerformance).toInt(), 0, 2);
     viewport->setPerformanceMode(savedPerformance);
     thumbnails.setWorkerLimit(savedPerformance == 0 ? 1 : savedPerformance == 1 ? 2 : 4);
     const QStringList performanceLabels{tr("Leve — computador mais lento"), tr("Equilibrado"),
@@ -2235,7 +2238,7 @@ void MainWindow::renderScene() {
         throw std::runtime_error("Prepare uma câmera do cômodo antes de criar a imagem.");
     const auto executable = BlenderBridge::findExecutable(blenderPath->text());
     if (executable.isEmpty())
-        throw std::runtime_error("O mecanismo de render não foi encontrado. Instale o Blender 5.2 LTS ou "
+        throw std::runtime_error("O mecanismo de render não foi encontrado. Instale o Blender 4.5 LTS ou "
                                  "superior e selecione o executável em Configurar Blender.");
     blenderPath->setText(executable);
     if (!testing)

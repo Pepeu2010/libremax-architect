@@ -32,6 +32,11 @@ jobs:
         run: |
           sudo apt-get install -y libxrender1 libxi6 libxxf86vm1 libxfixes3 libxkbcommon0 libegl1 libsm6
           bash scripts/verify-cycles-linux.sh
+      - name: Blender 4.5 LTS compatibility with real CPU renders
+        timeout-minutes: 15
+        run: |
+          bash scripts/verify-cycles-linux.sh ./build/libremax-architect build/compatibility-45-evidence 4.5.9
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build/libremax-architect --render-smoke build/compatibility-45-evidence/sky --blender "$PWD/build/blender-runtime/blender-4.5.9-linux-x64/blender" --render-device CPU --render-size 320x180 --render-samples 8 --render-project examples/apartamento-moderno.lmx
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -42,4 +47,5 @@ jobs:
             build/modern-evidence
             build/experience-evidence
             build/queue-evidence
+            build/compatibility-45-evidence
             dist/*.deb

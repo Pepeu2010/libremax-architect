@@ -144,8 +144,8 @@ def main():
     bpy.ops.object.select_all(action='SELECT')
     bpy.ops.object.delete(use_global=False)
     scene = bpy.context.scene
-    if bpy.app.version < (5, 2, 0):
-        raise RuntimeError('LibreMax requires Blender 5.2 LTS or newer')
+    if bpy.app.version < (4, 5, 0):
+        raise RuntimeError('LibreMax requires Blender 4.5 LTS or newer')
     scene.render.engine = 'CYCLES'
     scene.cycles.samples = args.samples
     settings = package.get('renderSettings', {})
@@ -243,7 +243,7 @@ def main():
     scene.world.node_tree.nodes['Background'].inputs['Strength'].default_value = settings.get('environmentStrength', 0.2)
     if settings.get('environmentMode', 'studio') == 'sky':
         sky = scene.world.node_tree.nodes.new('ShaderNodeTexSky')
-        sky.sky_type = 'MULTIPLE_SCATTERING'
+        sky.sky_type = 'MULTIPLE_SCATTERING' if bpy.app.version >= (5, 0, 0) else 'NISHITA'
         sky.sun_elevation = math.radians(settings.get('sunElevation', 35))
         sky.sun_rotation = math.radians(settings.get('sunRotation', 30))
         sky.sun_size = math.radians(0.526)

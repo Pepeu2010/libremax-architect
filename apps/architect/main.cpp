@@ -37,6 +37,7 @@
 #include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QTest>
+#include <QThread>
 #include <QTimer>
 #include <QWizard>
 #include <iostream>
@@ -742,6 +743,12 @@ int main(int argc, char **argv) {
                         if (!value)
                             throw std::runtime_error(error);
                     };
+                    if (QThread::idealThreadCount() <= 4 && !QSettings().contains("performance/editor")) {
+                        ensure(window.cad()->performanceMode() == 0 && window.cad()->multisampling() == 0,
+                               "Small CPU did not start with the lightweight viewport");
+                        std::cout << "LIGHTWEIGHT_START_PASS: " << QThread::idealThreadCount()
+                                  << " logical CPUs, textures and MSAA disabled\n";
+                    }
                     window.editor().load(lmx::Document{});
                     window.cad()->setTop(true);
                     window.cad()->setTool("wall");

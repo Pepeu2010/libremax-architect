@@ -1,3 +1,15 @@
+# Test report — caminho para hardware mínimo 0.12.0
+
+Alvo obrigatório confirmado pelo usuário: **i3-6006U, Intel HD Graphics 520 e 8 GB de RAM**. O hardware físico ainda não foi testado. [Caminho implementado, fontes oficiais e aceitação](MINIMUM_HARDWARE.md).
+
+Windows Release: **40 testes / 2.269 verificações** passaram, com build, formatação e diff. Blender oficial **4.5.9 LTS**, SHA256 conferido, calculou o apartamento moderno com céu Nishita, 27 mapas PBR, CPU/denoise em 320 × 180 / oito amostras; falha posterior preservou a imagem. A fila nativa calculou quatro imagens e confirmou cancelamento, repetição, snapshots, persistência e tempos em 1440/900 pixels. Quatro imagens HDRI/EXR e sete de iluminação passaram, incluindo Kelvin e LED ligado/desligado/quente/frio. A interface conferiu 175 miniaturas, três modos, encaixe e arquivo portátil. Blender 5.2.1 manteve o céu Multiple Scattering e a imagem CPU do apartamento.
+
+A primeira execução do teste de fila 4.5 perdeu o marcador de início ao ler apenas os últimos 32 KiB do log mais verboso desse motor. O teste passou a consultar o estado estruturado do pedido; a nova execução completa passou com barra a 7%, 27s decorridos e estimativa positiva. A falha era da espera do teste; os registros do render já continham progresso e previsão válidos.
+
+CPUs com até quatro threads disponíveis começam em Leve sem preferência anterior. A CI acrescenta execução real com Blender 4.5.9 e confirma a inicialização do viewport leve no runner com poucos threads. CI e instaladores 0.12 em validação. Não extrapolar os tempos nem a fluidez do Ryzen/RX 7600 para o i3/HD 520. O caminho CPU não garante baixo uso de RAM em projetos grandes.
+
+---
+
 # Test report — progresso de render 0.11.0
 
 Windows Release: **40 testes / 2.269 verificações** passaram. Build, formatação C++ e `git diff --check` passaram. Os testes de núcleo verificaram amostras e transições de partes de imagem baseadas no log 4K anterior, limites de tempo, previsões inválidas/ausentes/vencidas e duração congelada. O estado de carregar kernels de denoise já não oculta a estimativa durante o cálculo.

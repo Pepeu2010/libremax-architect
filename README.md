@@ -14,6 +14,8 @@ Ampliações atuais: [60 novos modelos, fontes e modos de desempenho](docs/MODEL
 
 A versão 0.11 acrescenta [barra de progresso, tempo decorrido e previsão do Cycles](docs/RENDER_PROGRESS.md), na galeria e durante a edição. Os instaladores Windows e Ubuntu passaram nos testes de publicação.
 
+Alvo mínimo confirmado: **i3-6006U / Intel HD Graphics 520 / 8 GB de RAM**. A fonte 0.12 começa em Leve nas CPUs de até quatro threads e acrescenta o caminho Blender 4.5 LTS/CPU. [Requisito e teste físico pendente](docs/MINIMUM_HARDWARE.md).
+
 Já disponível neste ciclo:
 
 - Desenhar cadeias de paredes e muretas; criar ambiente retangular com piso e forro.
