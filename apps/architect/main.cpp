@@ -1,5 +1,6 @@
 #include "environment_acceptance.h"
 #include "first_run.h"
+#include "lighting_acceptance.h"
 #include "main_window.h"
 #include "materials/texture.h"
 #include "persistence/project_store.h"
@@ -56,6 +57,8 @@ int main(int argc, char **argv) {
     parser.addOption({"queue-smoke", "Verify native batch render queue, snapshots and gallery", "directory"});
     parser.addOption({"environment-smoke", "Verify native HDRI and real Cycles EXR queue", "directory"});
     parser.addOption(
+        {"lighting-smoke", "Verify native light creation and actual Cycles LED and Kelvin", "directory"});
+    parser.addOption(
         {"installation-smoke", "Verify installed catalogs, plugins, assets and projects", "directory"});
     parser.addOption({"ui-smoke", "Run native UI acceptance and save real screenshots", "directory"});
     parser.addOption(
@@ -78,10 +81,11 @@ int main(int argc, char **argv) {
     parser.addOption({"blender", "Blender executable for render acceptance", "executable"});
     parser.addPositionalArgument("project", ".lmx project to open");
     parser.process(app);
-    bool test = parser.isSet("environment-smoke") || parser.isSet("queue-smoke") ||
-                parser.isSet("installation-smoke") || parser.isSet("experience-smoke") ||
-                parser.isSet("modern-smoke") || parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") ||
-                parser.isSet("examples") || parser.isSet("render-smoke") || parser.isSet("recovery-smoke") ||
+    bool test = parser.isSet("lighting-smoke") || parser.isSet("environment-smoke") ||
+                parser.isSet("queue-smoke") || parser.isSet("installation-smoke") ||
+                parser.isSet("experience-smoke") || parser.isSet("modern-smoke") ||
+                parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") || parser.isSet("examples") ||
+                parser.isSet("render-smoke") || parser.isSet("recovery-smoke") ||
                 parser.isSet("recovery-fixture") || parser.isSet("recovery-verify");
     if (test)
         QStandardPaths::setTestModeEnabled(true);
@@ -142,6 +146,7 @@ int main(int argc, char **argv) {
                 throw std::runtime_error("Installed project save/reopen failed");
             QFile script(lmx::resourcePath("scripts/cycles_render.py"));
             if (!script.open(QIODevice::ReadOnly) || script.size() < 1000 ||
+                !QFileInfo::exists(lmx::resourcePath("scripts/cycles_lights.py")) ||
                 !QFileInfo::exists(lmx::resourcePath("resources/style.qss")))
                 throw std::runtime_error("Installed renderer resources invalid");
             QImage codec(32, 32, QImage::Format_RGB32);
@@ -304,6 +309,9 @@ int main(int argc, char **argv) {
         if (!parser.positionalArguments().isEmpty())
             window.loadProject(parser.positionalArguments().first());
         window.show();
+        if (parser.isSet("lighting-smoke"))
+            lmx::startLightingAcceptance(window, app, parser.value("lighting-smoke"),
+                                         parser.value("blender"));
         if (parser.isSet("environment-smoke"))
             lmx::startEnvironmentAcceptance(window, app, parser.value("environment-smoke"),
                                             parser.value("blender"));

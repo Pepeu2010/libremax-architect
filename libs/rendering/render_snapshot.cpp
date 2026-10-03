@@ -8,7 +8,7 @@ RenderSnapshot::RenderSnapshot(const Document &document, Json options, const std
     scene.renderSettings["camera"] = camera;
     scene.renderSettings["cycles"] = settings;
     if (settings.at("format") == "EXR")
-        scene.version = 2;
+        scene.version = std::max(2, scene.version);
     scene.renderSettings["denoise"] = settings.at("denoise");
 }
 } // namespace lmx

@@ -1,8 +1,10 @@
-# Formato `.lmx` v1 e v2
+# Formato `.lmx` v1, v2 e v3
 
 ZIP com `manifest.json`, `project.json`, `scene.json`, `materials.json`, `lighting.json`, `cameras.json` e opcionais `custom-assets/<sha256>.png` / `custom-models/<sha256>.json`.
 
-O leitor atual aceita v1 e v2. Importar HDRI promove o documento para v2 e acrescenta `custom-environments/<sha256>.hdr` ou `.exr`. O manifesto e o documento devem indicar a mesma versão. `renderSettings.hdri` guarda hash, formato, nome, dimensões, rotação e visibilidade na câmera. Os bytes originais são incorporados sem conversão para PNG. Os snapshots da fila carregam a mesma cópia. Aplicativos anteriores que aceitam apenas v1 recusam v2 e preservam o arquivo; use o aplicativo atualizado para abrir esses projetos.
+O leitor atual aceita v1, v2 e v3. Importar HDRI promove documentos v1 para v2 e acrescenta `custom-environments/<sha256>.hdr` ou `.exr`; um documento v3 continua v3. O manifesto e o documento devem indicar a mesma versão. `renderSettings.hdri` guarda hash, formato, nome, dimensões, rotação e visibilidade na câmera. Os bytes originais são incorporados sem conversão para PNG. Os snapshots da fila carregam a mesma cópia. Aplicativos anteriores que aceitam apenas v1 recusam v2 e preservam o arquivo; use o aplicativo atualizado para abrir esses projetos.
+
+0.10 acrescenta v3 para iluminação Kelvin, LED, sol e controles adicionais de área/ponto/spot. A criação ou edição nativa de luz promove o documento para v3. `Light.parameters` guarda `colorMode` (kelvin/custom), `temperature`, `shape` (DISK/RECTANGLE/SQUARE), `sizeY`, `radius`, `sunAngle` e os parâmetros anteriores. Medidas continuam em milímetros, temperatura em Kelvin, ângulos em graus. `Light.transform.yaw` gira a fonte sobre sua direção. Documentos v1/v2 com luzes antigas continuam aceitos; novos parâmetros exigem v3. Aplicativos 0.9 e anteriores recusam v3. Use Salvar como para conservar uma cópia anterior; não há downgrade automático. HDRI, EXR e snapshots preservam v3. [Detalhes de iluminação](LIGHTING.md).
 
 O HDRI permite até 64 MiB e 16 milhões de pixels, com dimensões de até 8192 por eixo. Texturas/modelos conservam os limites individuais de 16 MiB e total de 48 MiB. O total de assets, incluindo o panorama, é limitado a 112 MiB; o ZIP descompactado a 128 MiB. HDR/EXR inválidos são recusados na importação; EXR deep/multipart não são suportados. Nenhum arquivo do ZIP é extraído para um caminho fornecido pelo usuário.
 

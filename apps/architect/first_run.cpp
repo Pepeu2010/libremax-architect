@@ -130,8 +130,11 @@ void showTutorial(QWidget *parent) {
          "experimentar mudanças maiores; Desfazer continua disponível."},
         {"10. Materiais e luz", "A luz e o acabamento mudam o resultado da foto.",
          "Ativar materiais realistas incorpora mapas de madeira e pedra. Importar textura permite usar uma "
-         "imagem sua, que fica dentro do arquivo do projeto.\n\nIluminação oferece luz de área, ponto e "
-         "spot. Área produz uma luz ampla; ponto ilumina em várias direções; spot cria um feixe. Céu natural "
+         "imagem sua, que fica dentro do arquivo do projeto.\n\nEm Iluminação → Nova luz, escolha spot, "
+         "fita LED, painel, ponto ou sol. LED é uma faixa contínua que ilumina de verdade; painel espalha "
+         "a luz; ponto ilumina em várias direções; spot cria um feixe. Escolha Quente, Neutra ou Fria, "
+         "ou uma temperatura própria. Ajuste o brilho e as medidas em centímetros. O marcador no editor "
+         "ajuda a posicionar; a prévia mostra a iluminação calculada. Céu natural "
          "controla sol e luz do dia. Use Usar luz do dia para adicionar uma iluminação pronta. Importar luz "
          "aceita panoramas HDR/EXR, que acompanham o projeto salvo. Girar a luz muda a direção; Mostrar na "
          "imagem controla o fundo sem apagar a iluminação. Comece com o exemplo e ajuste a exposição aos "

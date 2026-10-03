@@ -1,6 +1,6 @@
 # Matriz de paridade — VDMax 3.0 Arquitetos e Decoradores
 
-Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. Versão LibreMax: 0.7.0 em desenvolvimento. **Não há paridade completa nem release 1.0.**
+Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. Fontes LibreMax: 0.10.0 em validação; instaladores publicados 0.9.0. **Não há paridade completa nem release 1.0.**
 
 Complemento visual em 2026-09-30: [auditoria](VISUAL_REFERENCE_AUDIT.md), 11 imagens inspecionadas de 47 referências indexadas. `visual_refs` indica somente essas imagens consultadas; não promove paridade funcional automaticamente.
 
@@ -33,11 +33,11 @@ Fontes oficiais consultadas:
 | G04 | Geometria | Rodatetos | Tutorial oficial dedicado | — | — | NOT_STARTED | V | Falta varredura de perímetro | — |
 | I01 | Importação | DXF | Tabela e tutorial dedicados | DXF ASCII, cinco tipos 2D, unidade/layers bloqueados persistentes | `[dxf]` | FUNCTIONAL | C,V | Sem malhas, bulge, conversão de linhas ou QA do diálogo | — |
 | I02 | Importação | Modelos externos | Formatos exigidos pela spec | — | — | NOT_STARTED | SPEC | GLB/OBJ/STL/DAE/STEP/IGES | — |
-| L01 | Biblioteca | Biblioteca de módulos | Módulos cozinha/dormitório | SQLite WAL/FTS5 + 25 receitas, duas aberturas, 52 malhas Kenney e 18 Poly Haven | `[library]` + modern-smoke | IN_PROGRESS | P,C | Coleção Apartamento atual e miniaturas reais assíncronas; packs e catálogo extenso faltam | LIB-01 |
+| L01 | Biblioteca | Biblioteca de módulos | Módulos cozinha/dormitório | SQLite WAL/FTS5 + 25 receitas, duas aberturas, 52 Kenney, 53 KayKit, 31 Poly Haven e 12 LibreMax | `[library]` + UI/modern-smoke | IN_PROGRESS | P,C | 175 miniaturas reais; três modos de edição; atualização remota de packs e catálogo extenso faltam | LIB-01 |
 | L02 | Biblioteca | Pesquisa local | Biblioteca categorizada | Busca sem acentos, filtros, favoritos, recentes | `[library]` | FUNCTIONAL | C,SPEC | Benchmark usa 10.000 fixtures, não 10.000 assets distribuídos | LIB-01 |
 | L03 | Biblioteca | Arrastar e soltar | Workflow exigido pela spec | MIME, prévia real, parede/piso/cantos/vizinhos, colisão e posição externa recusadas | assembly-smoke: planta/3D, MIME/ghost/drop + undo | FUNCTIONAL | manual oficial | Arraste manual e múltiplas plataformas pendentes | LIB-01 |
 | L04 | Biblioteca | Importar .lmaxpack | Formato LibreMax | — | — | NOT_STARTED | SPEC | Segurança antes de extração obrigatória | — |
-| L05 | Biblioteca | Biblioteca decorativa extensa | Mais de 3.000 itens | 97 itens: 25 receitas próprias, duas aberturas e 70 modelos prontos | modern-smoke + assembly-smoke | IN_PROGRESS | P,B | 18 modelos detalhados não atendem meta de 3.000 | — |
+| L05 | Biblioteca | Biblioteca decorativa extensa | Mais de 3.000 itens | 175 itens: 25 receitas próprias, duas aberturas e 148 modelos prontos | UI/modern-smoke + assembly-smoke | IN_PROGRESS | P,B | Coleções leves/detalhadas e 36 modelos em Apartamento atual; não atende meta de 3.000 | — |
 | M01 | Módulos | Cozinha | Largura/altura/profundidade editáveis | Balcões, gaveteiro, aéreos, torre, nicho, ilha | `[modules]` + UI smoke | IN_PROGRESS | P,C | Cantos e famílias complexas ausentes | — |
 | M02 | Módulos | Dormitório | Modulação própria da categoria | Roupeiros 2/3/4 portas, criado, cama | `[modules]` | IN_PROGRESS | P,C | Correr/canto/espelho frontal faltam | — |
 | M03 | Módulos | Redimensionamento milimétrico | Editar dimensões sem trocar módulo | Recomposição de painéis/frentes/prateleiras/puxadores a 0,1 mm | `[modules]` + UI smoke | FUNCTIONAL | P | Sem scale destrutivo; limites por família precisam ampliar | — |
@@ -61,16 +61,16 @@ Fontes oficiais consultadas:
 | V05 | Editor | Alinhamento/distribuição | Requisito da spec | — | — | NOT_STARTED | SPEC | — | — |
 | V06 | Editor | Visualização 3D | Apresentação de ambientes | AIS/V3d sobre B-rep, ortográfica superior/isométrica, orbit/pan/zoom | UI smoke | IN_PROGRESS | P | Dividida, perspectiva/walk e outras vistas faltam | VIEW-01,SCENE-01 |
 | V07 | Editor | Undo/redo | Requisito da spec | QUndoStack + Command Pattern validado | `[commands]` | FUNCTIONAL | SPEC | UI smoke amplia cobertura | — |
-| R01 | Luz | Iluminação | Render calcula iluminação | Point/spot/area persistentes; cor/tamanho/ângulo/suavidade no inspector | `[render]` | IN_PROGRESS | P,SPEC | Céu natural/sol editáveis integrados; HDRI local incorporado implementado; LED/emissivo e QA amplo pendentes | LIGHT-02,LIGHT-03 |
+| R01 | Luz | Iluminação | Render calcula iluminação | Ponto/spot/área/LED/sol persistentes; Kelvin, cor, medidas, raio, feixe e sombra; marcadores no editor | `[lighting]` + lighting-smoke Cycles CPU + LED HIP RX 7600 | IN_PROGRESS | P,SPEC | Sete imagens reais e comparação LED quente/frio/desligado; HDRI e céu integrados; QA amplo e material emissivo por mapa pendentes | LIGHT-02,LIGHT-03 |
 | R02 | Câmeras | Câmeras | Requisito da spec | Posição/alvo/lente, abertura/foco e seleção por UUID; exposição/ambiente/denoise persistentes | `[render]` | IN_PROGRESS | SPEC | Seletor integrado e roundtrip testados; preset por cômodo implementado; posicionamento interativo completo falta | RENDER-06 |
 | R03 | Render | Ray tracing | Ray-trace com qualidade variável | QProcess + snapshot + Cycles + denoise, exposição/ambiente, GPU/CPU | Smoke QProcess/Cycles CPU | IN_PROGRESS | P | Fila e galeria persistentes implementadas; HDRI/EXR integrados e testados no Windows; faltam mapas PBR adicionais e QA amplo de GPUs físicas | RENDER-06,RENDER-08 |
 | R04 | Render | Exportar imagens | Resultado de apresentação | PNG/JPEG e EXR float32 com prévia integrada, galeria e exportação de cópia | Smoke 1280×720/128 CPU + inspeção visual | FUNCTIONAL | P,SPEC | PNG 1280×720 e cópia pela UI testados; JPEG pela UI e 1080p/4K pendentes | RENDER-08,VISUAL-03 |
-| P01 | Projetos | Salvar/abrir | Requisito da spec | Container ZIP v1/v2, HDRI incorporado, UUIDs, modelos e mapas incorporados, backup, validação e atomic replace; home com recentes | `[persistence]` + UI/modern/experience smoke | IN_PROGRESS | SPEC | Imagens de render não incorporadas; promoção HDRI v1 para v2 testada; índice local não é backup | — |
+| P01 | Projetos | Salvar/abrir | Requisito da spec | Container ZIP v1/v2/v3, HDRI e novas luzes, UUIDs, modelos e mapas incorporados, backup, validação e atomic replace; home com recentes | `[persistence][lighting]` + UI/modern/experience/lighting smoke | IN_PROGRESS | SPEC | Imagens de render não incorporadas; HDRI/EXR preservam v3; índice local não é backup | — |
 | P02 | Projetos | Autosave | Requisito da spec | Intervalo configurável 1–60 min, 5 snapshots por UUID | `[recovery]` + encerramento forçado/reinício | FUNCTIONAL | SPEC | Timer configurável implementado; QA de configuração pela UI pendente | — |
 | P03 | Projetos | Crash recovery | Requisito da spec | Seleção de versão, diálogo, descarte seguro, skip de corruptos | `[recovery]` + `--recovery-smoke` (processo morto e outro iniciado) | FUNCTIONAL | SPEC | Um projeto via UI comprovado; múltiplas versões via core; energia/interrupção durante escrita não testadas | — |
 | P04 | Projetos | Backup da biblioteca | Requisito da spec | — | — | NOT_STARTED | SPEC | — | — |
 | X01 | Produto | Offline completo | Exigência LibreMax | Edição, biblioteca, save/open/render locais | Rede desabilitada a executar | IN_PROGRESS | SPEC | Não declarar offline testado por ausência de código de rede | — |
-| X02 | Produto | Pacotes Linux | Exigência LibreMax | CMake install/CPack; CI a preparar | Runner Linux a executar | BLOCKED | SPEC | Host atual Windows sem WSL | — |
+| X02 | Produto | Pacotes Linux | Exigência LibreMax | CMake install/CPack e `.deb` publicado 0.9; dependências runtime declaradas | CI Linux 37121303969 + instalação Ubuntu novo 37121304063 | FUNCTIONAL | SPEC | Ubuntu 24.04 amd64, UI Mesa/Xvfb, modelos e desinstalação preservando projeto; Mint, ARM, AppImage e hardware físico adicional pendentes | — |
 
 Fora de escopo: plano de corte, nesting, BOM industrial, ERP/MRP, CNC, custos de matéria-prima, etiquetas e produção. Nenhuma dessas funções é incluída no roadmap.
 
@@ -79,3 +79,7 @@ Pesquisa adicional de arrasto/encaixe, catálogo e comparação de limites: [VDM
 Atualização 0.6: [CYCLE_06](CYCLE_06.md), modelos detalhados, tutorial e biblioteca inicial. Não altera os gates abertos de render e de paridade integral.
 
 Atualização 0.8: [HDRI/EXR](HDRI_EXR.md), incluindo projeto v2, snapshot, Cycles CPU real, rotação, alpha, galeria e cópia EXR pela interface. Não altera os gates de paridade integral.
+
+Atualização 0.9: [modelos e desempenho](MODEL_LIBRARIES_PERFORMANCE.md), com 60 modelos novos, 175 itens, 148 malhas e três modos de edição. Pacotes Windows/Ubuntu publicados após os gates de instalação.
+
+Atualização 0.10: [iluminação](LIGHTING.md), com cinco tipos, Kelvin, emissor LED real, editor em centímetros e projeto v3. CI e instaladores desta versão ainda em validação; não altera os gates de paridade integral.

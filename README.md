@@ -2,7 +2,7 @@
 
 Editor desktop open source de interiores, com C++20, Qt 6 e OpenCASCADE. Linux é o alvo principal. A implementação é independente e clean-room, usando o VDMax Arquitetos e Decoradores somente como referência pública de capacidades.
 
-**Estado: prévia 0.9.0 com instaladores Windows e Linux. Esta entrega ainda não atende à paridade integral da master spec e não é uma release 1.0.** A [master spec](docs/MASTER_SPEC.md) é o requisito de referência. A [matriz de paridade](docs/VDMAX_ARCHITECT_PARITY.md) registra as lacunas por requisito, sem promover testes do kernel a prova de um workflow completo.
+**Estado: fontes 0.10.0 em validação; instaladores publicados 0.9.0 para Windows e Linux. Esta entrega ainda não atende à paridade integral da master spec e não é uma release 1.0.** A [master spec](docs/MASTER_SPEC.md) é o requisito de referência. A [matriz de paridade](docs/VDMAX_ARCHITECT_PARITY.md) registra as lacunas por requisito, sem promover testes do kernel a prova de um workflow completo.
 
 ![Coleção Apartamento atual no programa nativo](docs/screenshots/modern-catalog.png)
 
@@ -10,7 +10,7 @@ A direção visual atual usa grafite neutro, violeta e cobre, com logo próprio,
 
 A imagem acima é uma captura do programa compilado no Windows, com viewport OpenCASCADE; não é um mockup. Build, testes, interface nativa com Xvfb/Mesa e pacote Debian passaram na [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37121303969); o render HIP foi verificado na RX 7600 deste host Windows, em prévia de 640 × 360. Outros drivers/GPUs continuam sem validação. A instalação do pacote Ubuntu 24.04 em um runner novo passou na [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37121304063).
 
-Ampliação atual: [60 novos modelos, fontes e modos de desempenho](docs/MODEL_LIBRARIES_PERFORMANCE.md). No host de desenvolvimento, `Abrir LibreMax.cmd` abre a build atualizada.
+Ampliações atuais: [60 novos modelos, fontes e modos de desempenho](docs/MODEL_LIBRARIES_PERFORMANCE.md) e [iluminação Kelvin, LED e sol](docs/LIGHTING.md). No host de desenvolvimento, `Abrir LibreMax.cmd` abre a build atualizada.
 
 Já disponível neste ciclo:
 
@@ -27,7 +27,7 @@ Já disponível neste ciclo:
 - Gerar tampos, rodatampos, rodapés, rodaforros, painel lateral e envelopamento sobre fontes associadas. A cobertura ainda é restrita aos casos documentados em [AUTOMATIONS](docs/AUTOMATIONS.md).
 - Importar DXF ASCII com layers e unidade; incorporar texturas JPG/PNG ao projeto.
 - Salvar/abrir `.lmx` ZIP versionado, backup `.bak`, undo/redo, autosave configurável (1–60 minutos) e recuperação de versões locais.
-- Criar câmeras e luzes point/spot/area; renderizar com Blender/Cycles em processo separado, PNG/JPEG, presets, seleção de câmera, exposição, luz ambiente, denoise e descoberta GPU com fallback CPU.
+- Criar câmeras e luzes ponto/spot/painel/LED/sol; escolher tons de luz ou Kelvin, dimensões em centímetros, raio, feixe e sombra solar. Marcadores selecionáveis ajudam a localizar as luzes. Renderizar com Blender/Cycles em processo separado, PNG/JPEG, presets, seleção de câmera, exposição, luz ambiente, denoise e descoberta GPU com fallback CPU.
 - Fila persistente de renders, quatro modos (Rápido/Normal/Final/Personalizado), várias câmeras, cancelamento e repetição com CPU. Galeria com miniaturas, histórico, imagens e logs; a edição continua durante o render. [Arquitetura e validação](docs/RENDER_PIPELINE.md).
 - HDRI local incorporado ao `.lmx`, luz do dia incluída, rotação e controle do fundo. EXR float 32 bits em Personalizado, com prévia PNG na galeria. [Uso e limites](docs/HDRI_EXR.md).
 - Workspace escuro de render com zoom/pan, Ajustar, 1:1 e exportação de cópia PNG/JPEG; materiais PBR incorporados de madeira/pedra, céu natural/sol e câmera fotográfica no Cycles.

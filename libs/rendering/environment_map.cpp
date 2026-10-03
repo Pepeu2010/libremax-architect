@@ -28,7 +28,7 @@ void attachEnvironment(Document &document, const ImportedEnvironment &environmen
     const auto previous = document.renderSettings.value("hdri", Json::object());
     if (!previous.empty() && previous.at("asset") != environment.hash)
         document.embeddedAssets.erase(previous.at("asset").get<std::string>());
-    document.version = 2;
+    document.version = std::max(2, document.version);
     document.embeddedAssets[environment.hash] = environment.bytes;
     document.renderSettings["hdri"] = environment.settings;
     document.renderSettings["environmentMode"] = "hdri";

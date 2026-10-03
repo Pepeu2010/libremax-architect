@@ -6,6 +6,7 @@
 #include "materials/texture.h"
 #include "persistence/project_store.h"
 #include "rendering/environment_map.h"
+#include "rendering/light_model.h"
 #include "resource_paths.h"
 #include "studio_theme.h"
 #include <QActionGroup>
@@ -39,6 +40,7 @@
 #include <QVBoxLayout>
 #include <QtConcurrent>
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <numbers>
 #include <set>
@@ -74,6 +76,17 @@ class AssetList final : public QListWidget {
 
   public:
     using QListWidget::QListWidget;
+};
+class PropertyForm final : public QWidget {
+  protected:
+    void resizeEvent(QResizeEvent *event) override {
+        QWidget::resizeEvent(event);
+        if (auto *form = qobject_cast<QFormLayout *>(layout())) {
+            const auto policy = width() < 280 ? QFormLayout::WrapAllRows : QFormLayout::WrapLongRows;
+            if (form->rowWrapPolicy() != policy)
+                form->setRowWrapPolicy(policy);
+        }
+    }
 };
 bool numericDialog(QWidget *parent, const QString &title, const QStringList &labels,
                    std::vector<double> &values) {
@@ -678,7 +691,7 @@ void MainWindow::createShell() {
     auto *scroll = new QScrollArea;
     scroll->setObjectName("inspectorScroll");
     scroll->setWidgetResizable(true);
-    inspector = new QWidget;
+    inspector = new PropertyForm;
     auto *propertyLayout = new QFormLayout(inspector);
     propertyLayout->setContentsMargins(16, 12, 16, 16);
     propertyLayout->setVerticalSpacing(9);
@@ -704,8 +717,11 @@ void MainWindow::createShell() {
                                                   {"offset", tr("Distância do canto (cm)")},
                                                   {"sill", tr("Altura do piso (cm)")},
                                                   {"openAngle", tr("Abertura da porta (°)")},
-                                                  {"power", tr("Potência (W)")},
-                                                  {"size", tr("Área de luz (mm)")},
+                                                  {"power", tr("Brilho da luz")},
+                                                  {"size", tr("Comprimento da luz (cm)")},
+                                                  {"sizeY", tr("Largura da luz (cm)")},
+                                                  {"radius", tr("Suavidade da sombra (cm)")},
+                                                  {"sunAngle", tr("Suavidade do sol (°)")},
                                                   {"angle", tr("Feixe spot (°)")},
                                                   {"blend", tr("Suavidade (0–1)")},
                                                   {"targetX", tr("Alvo X (mm)")},
@@ -748,6 +764,38 @@ void MainWindow::createShell() {
     lightColor = new QPushButton(tr("Escolher cor…"));
     lightColor->setObjectName("lightColor");
     propertyLayout->addRow(tr("Cor da luz"), lightColor);
+    lightTone = new QComboBox;
+    lightTone->setObjectName("lightTone");
+    for (const auto &[label, kelvin] :
+         std::vector<std::pair<QString, int>>{{tr("Quente · 2700 K"), 2700},
+                                              {tr("Aconchegante · 3000 K"), 3000},
+                                              {tr("Neutra · 4000 K"), 4000},
+                                              {tr("Luz do dia · 5000 K"), 5000},
+                                              {tr("Fria · 6500 K"), 6500},
+                                              {tr("Outra temperatura"), 0},
+                                              {tr("Cor escolhida"), -1}})
+        lightTone->addItem(label, kelvin);
+    lightTone->setMinimumWidth(76);
+    lightTone->setMinimumContentsLength(12);
+    lightTone->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    lightTone->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+    propertyLayout->addRow(tr("Tom da luz"), lightTone);
+    lightKelvin = new QSpinBox;
+    lightKelvin->setObjectName("lightKelvin");
+    lightKelvin->setRange(1000, 12000);
+    lightKelvin->setSingleStep(100);
+    lightKelvin->setSuffix(tr(" K"));
+    propertyLayout->addRow(tr("Temperatura"), lightKelvin);
+    lightShape = new QComboBox;
+    lightShape->setObjectName("lightShape");
+    lightShape->addItem(tr("Retângulo"), "RECTANGLE");
+    lightShape->addItem(tr("Redonda"), "DISK");
+    lightShape->addItem(tr("Quadrada"), "SQUARE");
+    propertyLayout->addRow(tr("Formato da luz"), lightShape);
+    fields["power"]->setToolTip(
+        tr("Controla o brilho na foto. Não representa o consumo elétrico da lâmpada."));
+    connect(lightTone, &QComboBox::currentIndexChanged, this, [this] { refreshLightControls(); });
+    connect(lightShape, &QComboBox::currentIndexChanged, this, [this] { refreshLightControls(); });
     connect(lightColor, &QPushButton::clicked, this, [this] {
         auto color = QColorDialog::getColor(selectedLightColor, this, tr("Cor da luz"),
                                             QColorDialog::DontUseNativeDialog);
@@ -1390,7 +1438,7 @@ void MainWindow::refreshInspector() {
     auto *form = qobject_cast<QFormLayout *>(inspector->layout());
     advancedProperties->setVisible(e != nullptr);
     findChild<QPushButton *>("applyProperties")->setEnabled(e && !e->locked);
-    form->setRowVisible(material, e != nullptr);
+    form->setRowVisible(material, e && e->type != "Light" && e->type != "Camera");
     form->setRowVisible(handle, e && e->type == "FurnitureModule");
     form->setRowVisible(glass, e && e->type == "FurnitureModule");
     form->setRowVisible(originalModelColors, e && e->type == "MeshObject");
@@ -1399,6 +1447,11 @@ void MainWindow::refreshInspector() {
     selectionTitle->setText(e                       ? q(e->name)
                             : selectedIds.isEmpty() ? tr("Selecione um objeto")
                                                     : tr("%1 objetos selecionados").arg(selectedIds.size()));
+    hint->setText(
+        e && e->type == "Light"
+            ? tr("O marcador mostra onde está a luz. Ajuste o brilho e crie uma prévia para ver o resultado.")
+            : tr("Arraste para mover. Use centímetros para ajustar o tamanho. Ctrl+clique seleciona vários "
+                 "itens."));
     for (const auto &[key, field] : fields) {
         bool visible = e != nullptr;
         if (key == "offset" || key == "sill" || key == "openAngle")
@@ -1406,7 +1459,19 @@ void MainWindow::refreshInspector() {
         if (key == "power")
             visible = e && e->type == "Light";
         if (key == "size")
-            visible = e && e->type == "Light" && e->parameters.value("kind", std::string("area")) == "area";
+            visible = e && e->type == "Light" &&
+                      (e->parameters.value("kind", "area") == "area" ||
+                       e->parameters.value("kind", "area") == "led");
+        if (key == "sizeY")
+            visible = false;
+        if (key == "radius")
+            visible = e && e->type == "Light" &&
+                      (e->parameters.value("kind", "area") == "point" ||
+                       e->parameters.value("kind", "area") == "spot");
+        if (key == "sunAngle")
+            visible = e && e->type == "Light" && e->parameters.value("kind", "area") == "sun";
+        if (key == "width" || key == "height" || key == "depth")
+            visible = e && e->type != "Light" && e->type != "Camera";
         if (key == "angle" || key == "blend")
             visible = e && e->type == "Light" && e->parameters.value("kind", std::string("area")) == "spot";
         if (key == "lens" || key == "fstop" || key == "focusDistance")
@@ -1429,13 +1494,14 @@ void MainWindow::refreshInspector() {
     material->setEnabled(e && !e->locked);
     handle->setEnabled(e && !e->locked && e->type == "FurnitureModule");
     glass->setEnabled(handle->isEnabled());
+    refreshLightControls();
     if (!e)
         return;
     auto set = [&](const QString &key, double v) {
         if (key == "width" || key == "height" || key == "depth" || key == "z" || key == "offset" ||
-            key == "sill")
+            key == "sill" || key == "size" || key == "sizeY" || key == "radius")
             v /= 10;
-        fields[key]->setText(QString::number(v, 'f', 2));
+        fields[key]->setText(QString::number(v, 'f', key == "sunAngle" ? 3 : 2));
     };
     fields["name"]->setText(q(e->name));
     set("x", e->transform.x);
@@ -1461,9 +1527,12 @@ void MainWindow::refreshInspector() {
     glass->setChecked(e->parameters.value("glass", false));
     fields["power"]->setEnabled(e->type == "Light" && !e->locked);
     set("power", e->parameters.value("power", 500.0));
-    for (const auto &key : {"size", "angle", "blend"})
+    for (const auto &key : {"size", "sizeY", "radius", "sunAngle", "angle", "blend"})
         fields[key]->setEnabled(e->type == "Light" && !e->locked && fields[key]->isVisibleTo(inspector));
     set("size", e->parameters.value("size", 1000.0));
+    set("sizeY", e->parameters.value("sizeY", 1000.0));
+    set("radius", e->parameters.value("radius", 0.0));
+    set("sunAngle", e->parameters.value("sunAngle", 0.526));
     set("angle", e->parameters.value("angle", 45.0));
     set("blend", e->parameters.value("blend", 0.3));
     auto color = e->type == "Light" ? e->parameters.value("color", Json::array({1.0, 0.89, 0.73}))
@@ -1472,6 +1541,18 @@ void MainWindow::refreshInspector() {
         QColor::fromRgbF(color[0].get<double>(), color[1].get<double>(), color[2].get<double>());
     lightColor->setText(selectedLightColor.name());
     lightColor->setEnabled(e->type == "Light" && !e->locked);
+    {
+        QSignalBlocker toneBlock(lightTone), shapeBlock(lightShape);
+        const auto temperature = e->parameters.value("temperature", 3000);
+        const bool kelvin = e->parameters.value("colorMode", "custom") == "kelvin";
+        auto tone = lightTone->findData(temperature);
+        lightTone->setCurrentIndex(kelvin ? (tone >= 0 ? tone : lightTone->findData(0))
+                                          : lightTone->findData(-1));
+        lightKelvin->setValue(temperature);
+        lightShape->setCurrentIndex(
+            lightShape->findData(q(e->parameters.value("shape", std::string("DISK")))));
+    }
+    refreshLightControls();
     fields["lens"]->setEnabled(e->type == "Camera" && !e->locked);
     set("lens", e->parameters.value("lens", 28.0));
     for (auto *key : {"fstop", "focusDistance"})
@@ -1489,6 +1570,26 @@ void MainWindow::refreshInspector() {
         set(key, target[i].get<double>());
     }
 }
+void MainWindow::refreshLightControls() {
+    const Entity *light =
+        selectedIds.size() == 1 && editor_.document().contains(selectedIds.first().toStdString())
+            ? &editor_.document().at(selectedIds.first().toStdString())
+            : nullptr;
+    const bool active = light && light->type == "Light";
+    auto *form = qobject_cast<QFormLayout *>(inspector->layout());
+    form->setRowVisible(lightTone, active);
+    form->setRowVisible(lightKelvin, active && lightTone->currentData().toInt() == 0);
+    form->setRowVisible(lightColor, active && lightTone->currentData().toInt() == -1);
+    const auto kind = active ? light->parameters.value("kind", "area") : std::string{};
+    form->setRowVisible(lightShape, active && kind == "area");
+    const bool widthVisible =
+        active && (kind == "led" || (kind == "area" && lightShape->currentData() == "RECTANGLE"));
+    form->setRowVisible(fields["sizeY"], widthVisible);
+    fields["sizeY"]->setEnabled(widthVisible && !light->locked);
+    for (auto *widget : {static_cast<QWidget *>(lightTone), static_cast<QWidget *>(lightKelvin),
+                         static_cast<QWidget *>(lightShape)})
+        widget->setEnabled(active && !light->locked);
+}
 void MainWindow::applyInspector() {
     if (selectedIds.size() != 1)
         return;
@@ -1500,10 +1601,13 @@ void MainWindow::applyInspector() {
         e.name = fields["name"]->text().toStdString();
         auto value = [&](const char *key, double previous) {
             const QString name = key;
-            const double unit = (name == "width" || name == "height" || name == "depth" || name == "z" ||
-                                 name == "offset" || name == "sill")
-                                    ? 10
-                                    : 1;
+            const double unit =
+                (name == "width" || name == "height" || name == "depth" || name == "z" || name == "offset" ||
+                 name == "sill" || name == "size" || name == "sizeY" || name == "radius")
+                    ? 10
+                    : 1;
+            if (name == "sunAngle" || name == "blend")
+                return fields[key]->isEnabled() ? evaluate(fields[key]->text().toStdString()) : previous;
             return fields[key]->isEnabled() ? millimeters(evaluate(fields[key]->text().toStdString()) * unit)
                                             : previous;
         };
@@ -1516,14 +1620,21 @@ void MainWindow::applyInspector() {
         if (e.type == "MeshObject")
             e.parameters["originalMaterials"] = originalModelColors->isChecked();
         for (const auto *key : {"offset", "sill", "openAngle", "power", "lens", "size", "angle", "blend",
-                                "fstop", "focusDistance"})
+                                "fstop", "focusDistance", "sizeY", "radius", "sunAngle"})
             if (fields[key]->isEnabled())
                 e.parameters[key] = value(key, 0);
         if (e.type == "Light" || e.type == "Camera")
             e.parameters["target"] = {value("targetX", 2000), value("targetY", 1500), value("targetZ", 1000)};
-        if (e.type == "Light")
+        if (e.type == "Light") {
             e.parameters["color"] = {selectedLightColor.redF(), selectedLightColor.greenF(),
                                      selectedLightColor.blueF()};
+            const auto tone = lightTone->currentData().toInt();
+            e.parameters["colorMode"] = tone < 0 ? "custom" : "kelvin";
+            e.parameters["temperature"] = tone > 0 ? tone : lightKelvin->value();
+            if (e.parameters.value("kind", "area") == "area")
+                e.parameters["shape"] = lightShape->currentData().toString().toStdString();
+            d.version = 3;
+        }
         if (e.type == "FurnitureModule") {
             e.parameters["handle"] = handle->currentData().toString().toStdString();
             e.parameters["glass"] = glass->isChecked();
@@ -1860,25 +1971,152 @@ void MainWindow::automate(const std::string &kind) {
         });
 }
 void MainWindow::createLight() {
-    bool ok = false;
-    auto kind = QInputDialog::getItem(this, tr("Tipo de luz"), tr("Luz"),
-                                      {tr("Área"), tr("Ponto"), tr("Spot")}, 0, false, &ok);
-    if (!ok)
+    QDialog dialog(this);
+    dialog.setObjectName("newLightDialog");
+    dialog.setWindowTitle(tr("Adicionar iluminação"));
+    dialog.resize(480, 450);
+    auto *form = new QFormLayout(&dialog);
+    form->setRowWrapPolicy(QFormLayout::WrapLongRows);
+    auto *description = new QLabel(
+        tr("Escolha o tipo e o tom. A luz será colocada no cômodo atual; você pode ajustar depois."));
+    description->setWordWrap(true);
+    form->addRow(description);
+    auto *kind = new QComboBox;
+    kind->setObjectName("newLightKind");
+    for (const auto &[label, id] :
+         std::vector<std::pair<QString, QString>>{{tr("Spot no teto"), "spot"},
+                                                  {tr("Fita LED"), "led"},
+                                                  {tr("Painel de luz"), "area"},
+                                                  {tr("Luz em todas as direções"), "point"},
+                                                  {tr("Luz do sol"), "sun"}})
+        kind->addItem(label, id);
+    form->addRow(tr("Tipo"), kind);
+    auto *name = new QLineEdit(kind->currentText());
+    name->setObjectName("newLightName");
+    form->addRow(tr("Nome"), name);
+    auto *tone = new QComboBox;
+    tone->setObjectName("newLightTone");
+    for (int i = 0; i < lightTone->count(); ++i)
+        tone->addItem(lightTone->itemText(i), lightTone->itemData(i));
+    tone->setCurrentIndex(tone->findData(3000));
+    form->addRow(tr("Tom da luz"), tone);
+    auto *temperature = new QSpinBox;
+    temperature->setObjectName("newLightKelvin");
+    temperature->setRange(1000, 12000);
+    temperature->setSingleStep(100);
+    temperature->setValue(3000);
+    temperature->setSuffix(tr(" K"));
+    form->addRow(tr("Temperatura"), temperature);
+    QColor color(Qt::white);
+    auto *colorButton = new QPushButton(tr("Escolher cor…"));
+    form->addRow(tr("Cor"), colorButton);
+    connect(colorButton, &QPushButton::clicked, &dialog, [&] {
+        const auto chosen =
+            QColorDialog::getColor(color, &dialog, tr("Cor da luz"), QColorDialog::DontUseNativeDialog);
+        if (chosen.isValid()) {
+            color = chosen;
+            colorButton->setText(color.name());
+        }
+    });
+    auto *power = new QDoubleSpinBox;
+    power->setObjectName("newLightPower");
+    power->setRange(0, 100000);
+    power->setValue(100);
+    power->setToolTip(fields["power"]->toolTip());
+    form->addRow(tr("Brilho"), power);
+    auto *length = new QDoubleSpinBox, *width = new QDoubleSpinBox;
+    length->setObjectName("newLightLength");
+    width->setObjectName("newLightWidth");
+    for (auto *dimension : {length, width}) {
+        dimension->setRange(0.1, 10000);
+        dimension->setSuffix(tr(" cm"));
+        dimension->setDecimals(2);
+        dimension->setValue(100);
+    }
+    form->addRow(tr("Comprimento"), length);
+    form->addRow(tr("Largura"), width);
+    auto *positionToggle = new QCheckBox(tr("Ajustar posição ao criar"));
+    form->addRow(positionToggle);
+    auto *position = new QWidget;
+    auto *positionForm = new QFormLayout(position);
+    positionForm->setContentsMargins(0, 0, 0, 0);
+    double x = 2000, y = 1500, z = 2500;
+    const auto roomId = roomPicker->currentData().toString().toStdString();
+    const Entity *room = nullptr;
+    for (const auto &object : editor_.document().entities)
+        if (object.type == "Room" && (!room || object.id == roomId))
+            room = &object;
+    if (room) {
+        x = room->transform.x + room->width / 2;
+        y = room->transform.y + room->depth / 2;
+        z = room->height - 200;
+    }
+    std::array<QDoubleSpinBox *, 3> coordinates{};
+    const std::array<double, 3> initial{x, y, z};
+    const QStringList labels{tr("Posição lateral"), tr("Posição no cômodo"), tr("Altura do piso")};
+    for (int i = 0; i < 3; ++i) {
+        coordinates[i] = new QDoubleSpinBox;
+        coordinates[i]->setRange(i == 2 ? 1 : -1e6, 1e6);
+        coordinates[i]->setDecimals(1);
+        coordinates[i]->setSuffix(tr(" cm"));
+        coordinates[i]->setValue(initial[i] / 10);
+        coordinates[i]->setObjectName(QString("newLightPosition%1").arg(i));
+        positionForm->addRow(labels[i], coordinates[i]);
+    }
+    form->addRow(position);
+    position->hide();
+    connect(positionToggle, &QCheckBox::toggled, position, &QWidget::setVisible);
+    auto refresh = [&] {
+        const bool extended = kind->currentData() == "led" || kind->currentData() == "area";
+        form->setRowVisible(length, extended);
+        form->setRowVisible(width, extended);
+        form->setRowVisible(temperature, tone->currentData().toInt() == 0);
+        form->setRowVisible(colorButton, tone->currentData().toInt() == -1);
+    };
+    QString previousName = kind->currentText();
+    connect(kind, &QComboBox::currentIndexChanged, &dialog, [&] {
+        const auto preset = lightEntity(kind->currentData().toString().toStdString());
+        power->setValue(preset.parameters.at("power").get<double>());
+        length->setValue(preset.parameters.at("size").get<double>() / 10);
+        width->setValue(preset.parameters.at("sizeY").get<double>() / 10);
+        const auto kelvin = preset.parameters.at("temperature").get<int>();
+        temperature->setValue(kelvin);
+        const auto toneIndex = tone->findData(kelvin);
+        tone->setCurrentIndex(toneIndex >= 0 ? toneIndex : tone->findData(0));
+        if (name->text() == previousName)
+            name->setText(kind->currentText());
+        previousName = kind->currentText();
+        refresh();
+    });
+    connect(tone, &QComboBox::currentIndexChanged, &dialog, refresh);
+    refresh();
+    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    buttons->button(QDialogButtonBox::Ok)->setText(tr("Adicionar luz"));
+    buttons->setObjectName("newLightButtons");
+    form->addRow(buttons);
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    if (dialog.exec() != QDialog::Accepted)
         return;
-    std::vector<double> v{2000, 1500, 2500, 1000};
-    if (numericDialog(this, tr("Nova luz"), {tr("X (mm)"), tr("Y (mm)"), tr("Z (mm)"), tr("Potência (W)")},
-                      v))
-        editor_.apply(tr("Criar luz"), [&](Document &d) {
-            auto e = entity("Light", "Luz");
-            e.transform = {v[0], v[1], v[2], 0, false};
-            e.parameters = {{"kind", kind == tr("Área")    ? "area"
-                                     : kind == tr("Ponto") ? "point"
-                                                           : "spot"},
-                            {"power", v[3]},
-                            {"size", 1000},
-                            {"target", {2000, 1500, 0}}};
-            d.entities.push_back(e);
-        });
+    auto light = lightEntity(kind->currentData().toString().toStdString());
+    light.name = name->text().trimmed().toStdString();
+    light.transform = {coordinates[0]->value() * 10, coordinates[1]->value() * 10,
+                       coordinates[2]->value() * 10, 0, false};
+    light.parameters["target"] = {light.transform.x, light.transform.y, 0};
+    light.parameters["power"] = power->value();
+    light.parameters["size"] = length->value() * 10;
+    light.parameters["sizeY"] = width->value() * 10;
+    light.parameters["colorMode"] = tone->currentData().toInt() < 0 ? "custom" : "kelvin";
+    light.parameters["temperature"] =
+        tone->currentData().toInt() > 0 ? tone->currentData().toInt() : temperature->value();
+    light.parameters["color"] = {color.redF(), color.greenF(), color.blueF()};
+    editor_.apply(tr("Criar luz"), [&](Document &d) {
+        d.version = 3;
+        d.entities.push_back(light);
+    });
+    selectIds({q(light.id)});
+    viewport->select({light.id});
+    findChild<QDockWidget *>("propertiesDock")->raise();
 }
 void MainWindow::createCamera() {
     std::vector<double> v{2000, 4500, 2200, 2000, 1000, 1100, 28};
@@ -2054,7 +2292,7 @@ void MainWindow::applyRenderSettings() {
         d.renderSettings["denoise"] = options.at("denoise");
         d.renderSettings["cycles"] = options;
         if (options.at("format") == "EXR" || d.renderSettings.at("environmentMode") == "solid")
-            d.version = 2;
+            d.version = std::max(2, d.version);
     });
 }
 void MainWindow::showRenderImage(const QString &filename) {

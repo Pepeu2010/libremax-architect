@@ -9,6 +9,8 @@ import math
 import bpy
 import bmesh
 from mathutils import Vector
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from cycles_lights import translate_light
 
 def arguments():
     parser = argparse.ArgumentParser()
@@ -217,22 +219,7 @@ def main():
     for part in package['meshes']:
         photographic_mesh(part, material_entries[part['material']], materials[part['material']])
     for entry in package['lights']:
-        p = entry['parameters']
-        kind = p.get('kind', 'area').upper()
-        light = bpy.data.lights.new(entry['name'], kind)
-        light.energy = p.get('power', 500)
-        light.color = p.get('color', [1.0, 0.89, 0.73])
-        if kind == 'AREA':
-            light.shape = 'DISK'
-            light.size = p.get('size', 1000) / 1000
-        elif kind == 'SPOT':
-            light.spot_size = math.radians(p.get('angle', 45))
-            light.spot_blend = p.get('blend', 0.3)
-        obj = bpy.data.objects.new(entry['name'], light)
-        scene.collection.objects.link(obj)
-        obj.location = entry['position']
-        target = Vector([v / 1000 for v in p.get('target', [2000, 1500, 0])])
-        obj.rotation_euler = (target - obj.location).to_track_quat('-Z', 'Y').to_euler()
+        translate_light(entry, scene)
     selected_id = settings.get('camera', '')
     camera_entry = next((camera for camera in package['cameras'] if camera['id'] == selected_id), None) if selected_id else (package['cameras'][0] if package['cameras'] else None)
     if camera_entry is None:

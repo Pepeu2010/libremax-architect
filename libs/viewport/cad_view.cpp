@@ -4,6 +4,8 @@
 #include <Aspect_DisplayConnection.hxx>
 #include <Aspect_GridType.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakePolygon.hxx>
+#include <BRepPrimAPI_MakeSphere.hxx>
 #include <Bnd_Box.hxx>
 #include <Graphic3d_Texture2D.hxx>
 #include <Graphic3d_TextureParams.hxx>
@@ -20,6 +22,7 @@
 #include <QWheelEvent>
 #include <Standard_Failure.hxx>
 #include <Standard_Version.hxx>
+#include <gp_Circ.hxx>
 #if OCC_VERSION_HEX < 0x070900
 #include <Graphic3d_Texture2Dmanual.hxx>
 #endif
@@ -202,6 +205,75 @@ void CadView::scene(const Document &d) {
                 context->Deactivate(shape);
             owners.emplace(shape.get(), part.owner);
             displayed[displayId] = {key, shape};
+        }
+        // Light helpers are editor aids only; they never enter geometry/export snapshots.
+        for (const auto &light : d.entities) {
+            if (light.type != "Light" || !light.visible)
+                continue;
+            const auto displayId = light.id + "/light";
+            const auto key = Json{
+                {"position", {light.transform.x, light.transform.y, light.transform.z}},
+                {"yaw", light.transform.yaw},
+                {"parameters", light.parameters},
+                {"locked",
+                 light.locked}}.dump();
+            alive.insert(displayId);
+            auto existing = displayed.find(displayId);
+            if (existing != displayed.end() && existing->second.key == key) {
+                owners.emplace(existing->second.shape.get(), light.id);
+                continue;
+            }
+            if (existing != displayed.end())
+                context->Remove(existing->second.shape, false);
+            const auto kind = light.parameters.value("kind", "area");
+            const gp_Pnt position(light.transform.x, light.transform.y, light.transform.z);
+            TopoDS_Shape marker;
+            if (kind == "area" || kind == "led") {
+                const auto target = light.parameters.value("target", Json::array({2000, 1500, 0}));
+                auto normal = gp_Vec(position, gp_Pnt(target[0].get<double>(), target[1].get<double>(),
+                                                      target[2].get<double>()));
+                if (normal.SquareMagnitude() < 1e-12)
+                    normal = gp_Vec(0, 0, -1);
+                normal.Normalize();
+                if (kind == "area")
+                    normal.Reverse();
+                auto up = gp_Vec(0, 1, 0);
+                if (std::abs(up.Dot(normal)) > .999)
+                    up = gp_Vec(0, 0, 1);
+                auto yAxis = (up - normal.Multiplied(up.Dot(normal))).Normalized();
+                auto xAxis = yAxis.Crossed(normal).Normalized();
+                const auto angle = light.transform.yaw * std::numbers::pi / 180;
+                const auto x = xAxis.Multiplied(std::cos(angle)) + yAxis.Multiplied(std::sin(angle));
+                const auto y = yAxis.Multiplied(std::cos(angle)) - xAxis.Multiplied(std::sin(angle));
+                const auto shape = light.parameters.value("shape", "DISK");
+                const auto length = light.parameters.value("size", 1000.0);
+                if (kind == "area" && shape == "DISK")
+                    marker = BRepBuilderAPI_MakeEdge(
+                                 gp_Circ(gp_Ax2(position, gp_Dir(normal), gp_Dir(x)), length / 2))
+                                 .Shape();
+                else {
+                    const auto width = kind == "area" && shape == "SQUARE"
+                                           ? length
+                                           : light.parameters.value("sizeY", 1000.0);
+                    BRepBuilderAPI_MakePolygon outline;
+                    for (const auto &[a, b] :
+                         std::array<std::pair<double, double>, 4>{{{-1, -1}, {1, -1}, {1, 1}, {-1, 1}}})
+                        outline.Add(
+                            position.Translated(x.Multiplied(a * length / 2) + y.Multiplied(b * width / 2)));
+                    outline.Close();
+                    marker = outline.Shape();
+                }
+            } else
+                marker = BRepPrimAPI_MakeSphere(position, 45).Shape();
+            Handle(AIS_Shape) helper = new AIS_Shape(marker);
+            helper->SetColor(Quantity_NOC_YELLOW);
+            helper->SetWidth(3);
+            helper->SetDisplayMode(AIS_WireFrame);
+            context->Display(helper, false);
+            if (light.locked)
+                context->Deactivate(helper);
+            owners.emplace(helper.get(), light.id);
+            displayed[displayId] = {key, helper};
         }
         std::erase_if(displayed, [&](const auto &entry) {
             if (alive.contains(entry.first))

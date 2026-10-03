@@ -1,8 +1,10 @@
 #include "commands/editor.h"
 #include "document/examples.h"
+#include "geometry/geometry.h"
 #include "persistence/project_store.h"
 #include "rendering/environment_map.h"
 #include "rendering/high_dynamic_image.h"
+#include "rendering/light_model.h"
 #include "rendering/render_queue.h"
 #include "rendering/render_result.h"
 #include "rendering/render_snapshot.h"
@@ -15,12 +17,90 @@
 #include <QFile>
 #include <QImage>
 #include <QTemporaryDir>
+#include <limits>
 #if __has_include(<catch2/catch_test_macros.hpp>)
 #include <catch2/catch_test_macros.hpp>
 #else
 #include <catch2/catch.hpp>
 #endif
 using namespace lmx;
+TEST_CASE("Five light types retain Kelvin, physical dimensions, orientation and versioned snapshots",
+          "[lighting]") {
+    QTemporaryDir directory;
+    auto document = kitchenExample();
+    document.version = 3;
+    std::erase_if(document.entities, [](const Entity &e) { return e.type == "Light"; });
+    for (const auto &kind : {"point", "spot", "area", "led", "sun"}) {
+        auto light = lightEntity(kind);
+        light.transform = {1200, 1500, 2400, 35, false};
+        light.parameters["target"] = {1200, 1500, 0};
+        light.parameters["temperature"] = 3400;
+        document.entities.push_back(light);
+    }
+    REQUIRE_NOTHROW(document.validate());
+    const auto filename = directory.filePath("lighting.lmx");
+    ProjectStore::save(filename, document, false);
+    REQUIRE(ProjectStore::open(filename).serialize() == document.serialize());
+    auto options = renderPreset("custom");
+    options["format"] = "EXR";
+    RenderSnapshot snapshot(document, options, document.renderSettings.at("camera").get<std::string>());
+    REQUIRE(snapshot.document().version == 3);
+    const auto exported = meshSnapshot(snapshot.document());
+    REQUIRE(exported.at("lights").size() == 5);
+    for (const auto &light : exported.at("lights")) {
+        REQUIRE(light.at("position") == Json::array({1.2, 1.5, 2.4}));
+        REQUIRE(light.at("rotationZ") == 35);
+        REQUIRE(light.at("parameters").at("temperature") == 3400);
+    }
+    document.entities.back().parameters["temperature"] = 6500;
+    REQUIRE(snapshot.document().entities.back().parameters.at("temperature") == 3400);
+    attachEnvironment(document, importEnvironment(QStringLiteral(
+                                    LMX_SOURCE_DIR "/starter-environments/kiara_1_dawn_1k.hdr")));
+    REQUIRE(document.version == 3);
+    REQUIRE_NOTHROW(document.validate());
+    const auto legacy = kitchenExample();
+    REQUIRE_NOTHROW(legacy.validate());
+    auto legacyZeroDirection = legacy;
+    auto oldLight = entity("Light", "Luz antiga");
+    oldLight.parameters = {{"kind", "area"}, {"target", {0, 0, 0}}};
+    legacyZeroDirection.entities.push_back(oldLight);
+    REQUIRE_NOTHROW(legacyZeroDirection.validate());
+    auto downgraded = document;
+    downgraded.version = 2;
+    REQUIRE_THROWS(downgraded.validate());
+}
+TEST_CASE("Lighting rejects invalid temperature, geometry, direction and non-finite intensity",
+          "[lighting]") {
+    auto document = kitchenExample();
+    document.version = 3;
+    document.entities.push_back(lightEntity("led"));
+    const auto good = document;
+    for (const auto &[key, bad] :
+         std::vector<std::pair<std::string, Json>>{{"temperature", 500},
+                                                   {"temperature", 13000},
+                                                   {"power", -1},
+                                                   {"power", 100001},
+                                                   {"size", 0},
+                                                   {"sizeY", 0},
+                                                   {"radius", -1},
+                                                   {"sunAngle", 0},
+                                                   {"blend", 2},
+                                                   {"angle", 180},
+                                                   {"shape", "INVALID"},
+                                                   {"colorMode", "INVALID"},
+                                                   {"kind", "LASER"},
+                                                   {"target", Json::array({0, 0})},
+                                                   {"target", Json::array({0, 0, 2500})},
+                                                   {"color", Json::array({1, 0, -1})}}) {
+        INFO(key);
+        document = good;
+        document.entities.back().parameters[key] = bad;
+        REQUIRE_THROWS(document.validate());
+    }
+    document = good;
+    document.entities.back().parameters["power"] = std::numeric_limits<double>::quiet_NaN();
+    REQUIRE_THROWS(document.validate());
+}
 TEST_CASE("Render modes preserve distinct user quality contracts and reject unsafe settings") {
     const auto rapid = renderPreset("rapid"), normal = renderPreset("normal"), final = renderPreset("final");
     REQUIRE(rapid.at("samples") == 32);

@@ -1,4 +1,4 @@
-# Fila e galeria de renders — 0.7.0
+# Fila e galeria de renders — fontes 0.10.0
 
 O LibreMax conserva o editor nativo Qt/OpenCASCADE. O Blender Cycles calcula as imagens em um processo independente, sem janela ou terminal. Não é necessário importar a cena nem configurar o projeto no Blender. Esta prévia ainda exige que o Blender 5.2 LTS ou superior esteja instalado; o aplicativo procura o executável no PATH e nas instalações Windows e permite selecioná-lo quando necessário.
 
@@ -11,6 +11,8 @@ O LibreMax conserva o editor nativo Qt/OpenCASCADE. O Blender Cycles calcula as 
 5. Abra o resultado, ajuste o zoom, salve uma cópia ou repita usando a cena original. Tentar com CPU cria um novo pedido preservando o histórico anterior.
 
 Cada pedido mantém sua própria cópia do documento, materiais, assets e câmera. Alterações posteriores não modificam imagens já enviadas. Apenas um processo Cycles renderiza por vez, na ordem de envio. A preparação usa até dois workers; a tesselação também ocorre fora da thread da interface.
+
+Os scripts confiáveis `cycles_render.py` e `cycles_lights.py` acompanham cada pedido novo. Repetir o render usa essa cópia, incluindo o tradutor Kelvin/LED/sol, e preserva a cena original. Pedidos anteriores que usavam um script único continuam repetíveis.
 
 ## Modos e arquivos
 
@@ -47,7 +49,9 @@ O teste `--queue-smoke` usa Blender/Cycles real, cinco câmeras, imagens de 160 
 
 `--render-smoke` verifica imagem válida e preservação da imagem anterior após falha. Os testes do núcleo cobrem presets, parâmetros inválidos, snapshots e recuperação de registros interrompidos/corrompidos. A [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37018691178) passou com a fila, Blender oficial 5.2.1 e SHA256 conferido antes de extrair. Os instaladores continuam passando pelos testes de instalação, plugins, modelos, salvamento/reabertura e desinstalação.
 
-Esta entrega não completa toda a especificação de render. Permanecem pendentes: desfoque opcional de HDRI; canais adicionais de metalicidade, opacidade e emissão por mapa; painel completo de temperatura Kelvin, LED e Sun; validação exata de enquadramento entre viewport e Cycles; instâncias e tesselação própria de apresentação; políticas de cache; diagnóstico dedicado de versões/dispositivos; render Final em 4K; benchmarks de apartamentos grandes e QA com outras GPUs NVIDIA/AMD/Intel, incluindo HIP no Linux. O catálogo e a iluminação também condicionam o realismo. Não há comprovação de superioridade geral sobre o VDMax.
+Kelvin, LED contínuo, sol e os controles adicionais de área/ponto/spot estão integrados na fonte 0.10. O smoke nativo produz sete imagens reais e compara LED ligado/desligado e quente/frio. [Evidência e limites de iluminação](LIGHTING.md).
+
+Esta entrega não completa toda a especificação de render. Permanecem pendentes: desfoque opcional de HDRI; canais adicionais de metalicidade, opacidade e emissão por mapa; validação exata de enquadramento entre viewport e Cycles; instâncias e tesselação própria de apresentação; políticas de cache; diagnóstico dedicado de versões/dispositivos; render Final em 4K; benchmarks de apartamentos grandes e QA com outras GPUs NVIDIA/AMD/Intel, incluindo HIP no Linux. O catálogo e a iluminação também condicionam o realismo. Não há comprovação de superioridade geral sobre o VDMax.
 
 
 ## Reproduzir a verificação HIP no Windows

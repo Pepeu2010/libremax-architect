@@ -149,7 +149,8 @@ Document ProjectStore::open(const QString &path) {
         if (!data.contains(name))
             throw std::runtime_error("Entrada essencial ausente");
     const auto &manifest = data.at("manifest.json");
-    if (manifest.at("format") != "LibreMax" || (manifest.at("version") != 1 && manifest.at("version") != 2))
+    if (manifest.at("format") != "LibreMax" ||
+        (manifest.at("version") != 1 && manifest.at("version") != 2 && manifest.at("version") != 3))
         throw std::runtime_error("Versão de projeto não suportada; arquivo preservado");
     Json j = data.at("project.json");
     j["entities"] = data.at("scene.json").at("entities");

@@ -86,6 +86,9 @@ class MainWindow final : public QMainWindow {
     QComboBox *roomPicker;
     QCheckBox *advancedProperties;
     QPushButton *lightColor;
+    QComboBox *lightTone;
+    QSpinBox *lightKelvin;
+    QComboBox *lightShape;
     QColor selectedLightColor;
     QStackedWidget *workspace;
     QStackedWidget *rootPages;
@@ -107,6 +110,7 @@ class MainWindow final : public QMainWindow {
     void refreshScene();
     void refreshLibrary();
     void refreshInspector();
+    void refreshLightControls();
     void applyInspector();
     bool discardOrSave();
     void newRoom();
@@ -117,7 +121,7 @@ class MainWindow final : public QMainWindow {
     void focusRoom();
     void transform(const QString &mode);
     void automate(const std::string &kind);
-    void createLight();
+    Q_INVOKABLE void createLight();
     void createCamera();
     void simpleCamera();
     void importDxf();

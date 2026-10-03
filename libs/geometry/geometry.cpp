@@ -460,6 +460,7 @@ Json meshSnapshot(const Document &d) {
             Json j = {{"id", e.id},
                       {"name", e.name},
                       {"position", {e.transform.x / 1000, e.transform.y / 1000, e.transform.z / 1000}},
+                      {"rotationZ", e.transform.yaw},
                       {"parameters", e.parameters}};
             (e.type == "Light" ? lights : cameras).push_back(j);
         }

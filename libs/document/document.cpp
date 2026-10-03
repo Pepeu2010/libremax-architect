@@ -1,6 +1,7 @@
 #include "document.h"
 #include "library/model.h"
 #include "rendering/high_dynamic_image.h"
+#include "rendering/light_model.h"
 #include "rendering/render_options.h"
 #include <QCryptographicHash>
 #include <QRegularExpression>
@@ -81,7 +82,7 @@ void Document::validate() const {
         "Wall",           "HalfWall",   "Room",  "Floor",           "Ceiling",
         "Door",           "Window",     "Stair", "FurnitureModule", "DecorativeObject",
         "GeometryObject", "MeshObject", "Light", "Camera",          "Group"};
-    if ((version != 1 && version != 2) || QUuid(QString::fromStdString(id)).isNull() || name.empty() ||
+    if ((version < 1 || version > 3) || QUuid(QString::fromStdString(id)).isNull() || name.empty() ||
         name.size() > 512 || entities.size() > 10000)
         throw std::invalid_argument("Documento inválido ou versão não suportada");
     if (!materials.is_array() || materials.size() > 1000)
@@ -90,7 +91,7 @@ void Document::validate() const {
         throw std::invalid_argument("Configuração de render inválida");
     if (renderSettings.contains("cycles")) {
         validateRenderOptions(renderSettings.at("cycles"));
-        if (renderSettings.at("cycles").at("format") == "EXR" && version != 2)
+        if (renderSettings.at("cycles").at("format") == "EXR" && version < 2)
             throw std::invalid_argument("O EXR exige a versão 2 do projeto");
     }
     for (auto key : {"exposure", "environmentStrength"})
@@ -122,7 +123,7 @@ void Document::validate() const {
     const auto hdri = renderSettings.value("hdri", Json::object());
     std::string environmentHash;
     if (!hdri.empty()) {
-        if (version != 2)
+        if (version < 2)
             throw std::invalid_argument("O HDRI exige a versão 2 do projeto");
         environmentHash = hdri.at("asset").get<std::string>();
         if (!embeddedAssets.contains(environmentHash) || hdri.at("name").get<std::string>().size() > 512 ||
@@ -309,20 +310,9 @@ void Document::validate() const {
             for (const auto &v : target)
                 millimeters(v.get<double>());
             if (e.type == "Light") {
-                auto color = e.parameters.value("color", Json::array({1.0, 0.89, 0.73}));
-                if (!color.is_array() || color.size() != 3)
-                    throw std::invalid_argument("Cor de luz inválida");
-                for (const auto &value : color)
-                    if (!value.is_number() || !std::isfinite(value.get<double>()) ||
-                        value.get<double>() < 0 || value.get<double>() > 1)
-                        throw std::invalid_argument("Cor de luz inválida");
-                auto kind = e.parameters.value("kind", std::string("area"));
-                if ((kind != "area" && kind != "point" && kind != "spot") ||
-                    e.parameters.value("power", 500.0) < 0 || e.parameters.value("power", 500.0) > 100000 ||
-                    e.parameters.value("size", 1000.0) < 1 || e.parameters.value("angle", 45.0) < 1 ||
-                    e.parameters.value("angle", 45.0) > 179 || e.parameters.value("blend", 0.3) < 0 ||
-                    e.parameters.value("blend", 0.3) > 1)
-                    throw std::invalid_argument("Luz inválida");
+                validateLight(e);
+                if (advancedLight(e) && version < 3)
+                    throw std::invalid_argument("Esta iluminação exige um projeto da versão 3");
             }
             if (e.type == "Camera" &&
                 (e.parameters.value("lens", 28.0) < 1 || e.parameters.value("lens", 28.0) > 1000 ||
