@@ -20,8 +20,9 @@ O teste de projeto salvo agora preserva seus materiais, sem aplicar o pack padr�
 
 Relatórios locais: `build-render/instances-ui.log`, `instances-assembly.log`,
 `instances-45-verified/comparison.json`, `instances-45-polyhaven/comparison.json`
-e `instances-52-authored/comparison.json`. A CI acrescenta ambas as famílias nos
-dois motores. Publicação e CI ainda pendentes de confirmação nesta revisão.
+e `instances-52-authored/comparison.json`. A [CI Linux 0.13](https://github.com/Pepeu2010/libremax-architect/actions/runs/37139824263) passou: núcleo, formato, UI, montagem, tutorial, recuperação, fila, HDRI/EXR, sete luzes e ambos os cenários de instâncias nos motores 4.5.9/5.2.1. A [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37139824227) passou: Windows com instalação real e PATH sem SDK; Ubuntu instalado em runner novo, biblioteca/modos, seleção de cópias e remoção preservando projeto. O pacote Linux em staging também calculou os renders de fila/HDRI/EXR/luzes.
+
+A [prévia 0.13.0-preview.1](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.13.0-preview.1) distribui a fonte exata `8554c71422b9fb0af03ef1c519f8e7f1b8126654`. Os digests dos seis assets correspondem aos manifestos combinado e de plataforma; os três arquivos de checksum baixados também correspondem aos seus digests GitHub. Windows SHA256: `d3c30790f73178a9d8d87663bfbda36cfc90e27a7f680357fbdef01f1e787ab1`; Linux: `910a8c34d128522d3077f870b1f8bc8978beba43f004a4230357f742a2c48503`; fonte: `5e8c8f2a46dd72efa6420c075a5b21c6291837ed9d4c264d8fded9e320aae21d`. Os binários completos não foram baixados novamente no host neste ciclo; a verificação usa os digests GitHub e os manifestos pequenos baixados.
 [Implementação, reprodução e limites](SHARED_GEOMETRY.md). **Não comprova FPS,
 pico de RAM, qualidade Final pela UI nem aceitação física no i3/HD 520/8 GB.**
 

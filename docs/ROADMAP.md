@@ -15,6 +15,13 @@ Próximo bloco prioritário:
 7. Ampliar QA de recuperação para múltiplos projetos/versões e faltas de energia; caches/dirty flags/instancing/LOD e benchmark completo. Autosave configurável e recuperação após encerramento forçado passaram no host Windows.
 8. Aceitação cozinha, dormitório, DXF e rede realmente desabilitada; diagnóstico, audit de dependências, source/SHA256, deb e Flatpak completos.
 
+Fonte 0.13: protótipos de geometria e instâncias Cycles passaram nos testes
+Windows, com comparação contra o leitor anterior. Seleção, posição e histórico
+continuam independentes. [Provas e limites](SHARED_GEOMETRY.md). Próximos pontos
+de desempenho: validar cada modelo incorporado uma vez por documento, compartilhar
+também as apresentações entre cópias, separar LOD da vista e do render e medir
+apartamentos maiores. O gate físico i3/HD 520 permanece obrigatório.
+
 Não expandir para corte/nesting/peças/CNC/método construtivo/custos industriais. O gate 1.0 continua sendo o workflow completo e cada requisito essencial comprovado na matriz. O host local é Windows; CI remoto pode comprovar Ubuntu/Xvfb. Isso não substitui QA de Mint, Debian, Wayland e instalação em máquina limpa.
 
 Fontes 0.8: HDRI incorporado e EXR com prévia/galeria foram implementados e testados no Windows. [Evidência e limites](HDRI_EXR.md). Isso não encerra os gates de materiais, luzes, câmera, desempenho ou hardware.

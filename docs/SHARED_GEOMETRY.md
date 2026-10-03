@@ -53,9 +53,7 @@ Blender 4.5.9 e 5.2.1 CPU passaram com diferença média de **0,00428** e **0,00
 por canal, respectivamente; nenhum pixel passou de 24. As execuções também
 confirmaram preservação da imagem anterior após falha intencional. O núcleo passou
 com **43 casos / 2.798 verificações**, além de UI e montagem nativas.
-A CI inclui os dois cenários no Blender 4.5.9 e 5.2.1,
-com motores oficiais e verificação de checksum. Execuções pendentes só passam a
-ser evidência quando registradas no [relatório](TEST_REPORT.md).
+A [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37139824263) passou com ambos os cenários no Blender 4.5.9 e 5.2.1, usando motores oficiais com checksum verificado. No Linux, diferenças médias por canal: 0,01087/0,00931 para a fixture leve e 0,00431/0,00574 para a poltrona. A [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37139824227) passou em Windows e Ubuntu novo. A [prévia 0.13](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.13.0-preview.1) está publicada. [Relatório](TEST_REPORT.md).
 
 Essas imagens pequenas são testes técnicos. Não comprovam equivalência fotográfica,
 qualidade Final pela interface, FPS, pico de RAM nem aceitação física no
