@@ -1,3 +1,29 @@
+# Test report — montagem e modelos 0.15.0
+
+Windows Release: **50 testes / 3.018 verificações**, build e formato C++ passaram.
+UI, montagem com 203 miniaturas, tutorial, recuperação em outro processo e
+`apartment-tools-smoke` passaram: contorno em L, cantos editáveis, piso/forro,
+arraste de conjunto, alinhamento, histórico, importação real e arquivo portátil.
+Os seis formatos GLB/glTF/OBJ/FBX/STL/PLY passaram em Blender 4.5.9 e 5.2.1,
+incluindo mapas de cor e recusa de caminhos glTF inválidos.
+
+Três estilos distintos produziram imagens Cycles CPU de 320 × 180 / 8 amostras.
+A inspeção visual levou à correção do forro oculto e da potência excessiva de luz.
+As fotos pequenas são evidência do fluxo, não de qualidade final em Full HD.
+No benchmark isolado de 48 cortinas, a RX 7600 carregou a cena em 69 ms e editou
+com p50 de 29,27 ms e p95 de 30,48 ms. Malha completa: 439.872 triângulos;
+edição: 71.952. Isso não é uma medida de FPS nem comprova desempenho da HD 520.
+
+Logs: `build-render/Testing/Temporary/LastTest.log`, `ui-015.txt`,
+`assembly-015.txt`, `experience-015.txt`, `recovery-015.txt`,
+`apartment-tools-015-enclosed.txt`, `import-formats-45b/report.json` e
+`import-formats-52/report.json`.
+Os instaladores e a CI Linux desta fonte ainda aguardam execução.
+O usuário confirmou disponibilidade de notebook e VDMax;
+[teste físico e comparação](NOTEBOOK_VDMAX_TEST.md) continuam pendentes.
+
+---
+
 # Test report — dependências incluídas 0.14.0
 
 Instaladores Windows/Ubuntu da tag `v0.14.0-preview.3`, fonte

@@ -1,5 +1,13 @@
 # Dependências e distribuição
 
+A fonte 0.15 acrescenta 28 modelos originais LibreMax CC0-1.0, sem designs ou
+geometria VDMax. [Gerador](../scripts/create-home-collection.py),
+[procedência e hashes](../starter-models/home-provenance.json) e
+[malhas menores para edição](../starter-models/editor-lod-provenance.json).
+As licenças das fontes já integradas continuam preservadas abaixo. Modelos
+importados pelo usuário guardam sua procedência e não recebem licença CC0
+automaticamente.
+
 | Dependência direta | Uso | Licença indicada pelo projeto |
 |---|---|---|
 | Qt 6 Core/Gui/Widgets/Sql/Concurrent/Test | UI/modelo/processos/testes | LGPL-3.0 / GPL-3.0 |

@@ -1,7 +1,33 @@
 #include "model.h"
+#include <QCryptographicHash>
+#include <QMutex>
+#include <QMutexLocker>
 #include <cmath>
+#include <map>
+#include <set>
 #include <stdexcept>
 namespace lmx {
+std::vector<std::string> validatedModelMaterials(const QByteArray &bytes) {
+    static QMutex mutex;
+    static std::map<QByteArray, std::vector<std::string>> cache;
+    const auto digest = QCryptographicHash::hash(bytes, QCryptographicHash::Sha256);
+    {
+        QMutexLocker lock(&mutex);
+        auto found = cache.find(digest);
+        if (found != cache.end())
+            return found->second;
+    }
+    const auto model = readModel(bytes);
+    std::set<std::string> used;
+    for (const auto &part : model.at("parts"))
+        used.insert(part.at("material").get<std::string>());
+    std::vector<std::string> result(used.begin(), used.end());
+    QMutexLocker lock(&mutex);
+    if (cache.size() >= 128)
+        cache.clear();
+    cache[digest] = result;
+    return result;
+}
 Json readModel(const QByteArray &bytes) {
     if (bytes.isEmpty() || bytes.size() > 4 * 1024 * 1024)
         throw std::invalid_argument("Modelo 3D fora do limite");
@@ -23,6 +49,9 @@ Json readModel(const QByteArray &bytes) {
             !triangles.is_array() || triangles.empty() || triangles.size() > 200000 ||
             !part.at("material").is_string())
             throw std::invalid_argument("Malha 3D inválida");
+        if (part.at("material").get<std::string>().empty() ||
+            part.at("material").get<std::string>().size() > 128)
+            throw std::invalid_argument("Nome de acabamento da malha inválido");
         total += triangles.size();
         if (total > 200000)
             throw std::invalid_argument("Modelo 3D grande demais");

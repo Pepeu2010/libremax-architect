@@ -22,8 +22,10 @@
         "meshAsset": "b353e17d8bd97344becec0bf54e723b145b9f7cd71f20a1919a3c263a2164d4f",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "f4fada08b13042aa3359ac0cbb3684f90ca9c4c96c4571e0c9d9785f9bb87ea7"
+      },
+      "lodFile": "lod-modern-modern_arm_chair_01.json"
     }
   },
   {
@@ -49,8 +51,10 @@
         "meshAsset": "bfea9597682983ec1f3c106cd7559f054e68487089663a5864866d6610b3214a",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "7c89030eb7e4e23ad5b74b8f2cd4fec365edd0a13551ac7733b9f6dd627ed31f"
+      },
+      "lodFile": "lod-modern-mid_century_lounge_chair.json"
     }
   },
   {
@@ -76,8 +80,10 @@
         "meshAsset": "c812911c70d6d36bc9ad7977302be71cb5916b56d57f5501bdac132bf096aa8c",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "fbf41ebc012075cdb94b343dbe4198439a9129ef64ab843357e09996dd9eaa76"
+      },
+      "lodFile": "lod-modern-steel_frame_shelves_01.json"
     }
   },
   {
@@ -103,8 +109,10 @@
         "meshAsset": "91dfdb9deb079769066c8a7027b67202cc584c2508bbbe9b833ed27c0ddf1590",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "6ea945c71dc458c7530b835bf4371f4d3697ffdd706eb16166cd0396ee4256da"
+      },
+      "lodFile": "lod-modern-steel_frame_shelves_03.json"
     }
   },
   {
@@ -130,8 +138,10 @@
         "meshAsset": "e1905053fe59232849c151b36e7a748b95901cd4c3cdc53686e8f0b8fa5dc8f1",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "239fe39617324c200bc5ab4029620b3cf6e492f26a5e6c198bc5925627a9b30e"
+      },
+      "lodFile": "lod-modern-modern_coffee_table_01.json"
     }
   },
   {
@@ -157,8 +167,10 @@
         "meshAsset": "94da352d64852c0754f617bdd36653e8525e95ef2e5d71b10185735e105edf32",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "6744f38d1c6661ee428886a488102d41961b697f98a0ec0dbaef000037dd53d0"
+      },
+      "lodFile": "lod-modern-modern_coffee_table_02.json"
     }
   },
   {
@@ -184,8 +196,10 @@
         "meshAsset": "30b0e05030c1beabf629d66493097c6d8a8cf3b380938a9e42cbc99a1ef689d0",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "80921cf96c81cda0b85c139ce4713bf14cc9047f3be43604ad856a7250d5c25f"
+      },
+      "lodFile": "lod-modern-modern_wooden_cabinet.json"
     }
   },
   {
@@ -211,8 +225,10 @@
         "meshAsset": "7c704135c020a8a5114320c9227938b8164e30f01593e332d743550219c34c42",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "533023f217c0e58fc82993d89f6dcf44341fd36a19103ae623a3b0ebffd72803"
+      },
+      "lodFile": "lod-modern-outdoor_table_chair_set_01.json"
     }
   },
   {
@@ -238,8 +254,10 @@
         "meshAsset": "ccd7572248db54074cce434370125290ce3864ecc4478de8ed930d8e8685aadf",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "4a675abe4da4d1711262c8d087b3627c94e69263e756ae25608cb5f941260808"
+      },
+      "lodFile": "lod-modern-dining_chair_02.json"
     }
   },
   {
@@ -265,8 +283,10 @@
         "meshAsset": "78b874186cb86b868379a48f562f2799cde6f7c7aa2fef66e8059b8efd00561d",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "ca3765fda3a11654ea501ee87e55a3b84858a87fb11f2126aae688173d90adbd"
+      },
+      "lodFile": "lod-modern-coffee_table_round_01.json"
     }
   },
   {
@@ -292,8 +312,10 @@
         "meshAsset": "504ef7b045e5198ab7a43df99923fa4c24fbbd76c520b507944f8c9be74299af",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "03d2227a6102f298fd337bf31c5cd05f516d25d17e80c336c83c2483837a5360"
+      },
+      "lodFile": "lod-modern-side_table_01.json"
     }
   },
   {
@@ -319,8 +341,10 @@
         "meshAsset": "3a646dde1fedd2aac01af85f810c14f0f0248a87e56df786553009b8e3f37eae",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "c4d5cb0328fa4c3f688a5bc63437af56fc5e7c3325948e18968632955d7380ed"
+      },
+      "lodFile": "lod-modern-drawer_cabinet.json"
     }
   },
   {
@@ -346,8 +370,10 @@
         "meshAsset": "7809a777a741b39ccf5b8ea22d6f0dbe5722d92c91f0a085c9bc7a8341dbbcc6",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "18fd40c6ca1a8d18296da78d3432f7447982025445ad93e2774258d44c7f6dd9"
+      },
+      "lodFile": "lod-modern-metal_office_desk.json"
     }
   },
   {
@@ -373,8 +399,10 @@
         "meshAsset": "46269222b352a2421afbd54b70d0d49a7568570b7703e3dfe02ec0abad347784",
         "originalMaterials": true,
         "placement": "ceiling",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "9b75345e046805a18397f632fd8265b2a290d602676cb0a77948f66c45414dc6"
+      },
+      "lodFile": "lod-modern-modern_ceiling_lamp_01.json"
     }
   },
   {
@@ -400,8 +428,10 @@
         "meshAsset": "4c51c9d07b0b0cc4b2a53410a9fdb6a1d381cb1767dd096a2ab9601e941c4f7e",
         "originalMaterials": true,
         "placement": "surface",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "eee5161e937a3ed6af8c9112482ffd587a5215c40af0f7b3c4a65d6faac56eef"
+      },
+      "lodFile": "lod-modern-desk_lamp_arm_01.json"
     }
   },
   {
@@ -427,8 +457,10 @@
         "meshAsset": "3334ccb1ac5b985f6ec1f4d864158153826eb8172085f27d9d9ef5357a2a922a",
         "originalMaterials": true,
         "placement": "surface",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "e4e5dc6a3d79747519741090fb14f61ef4030aaf1255f44e7b57f3503bb071fc"
+      },
+      "lodFile": "lod-modern-ceramic_vase_02.json"
     }
   },
   {
@@ -454,8 +486,10 @@
         "meshAsset": "f526b67483ba65caf50f99fde3eec65c2d30d598cc5dff5da6b1dd0a7202a829",
         "originalMaterials": true,
         "placement": "surface",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "842985e1c691c17a2d4164f1b592f8d6a8a434a5d6073bd17d29128e6eeaf0da"
+      },
+      "lodFile": "lod-modern-ceramic_vase_03.json"
     }
   },
   {
@@ -481,8 +515,10 @@
         "meshAsset": "10fca2b8d57fa75730e51f6895d29b6dc72bd0d7e3c1ccefd5602e2de77a85b1",
         "originalMaterials": true,
         "placement": "surface",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "198a8985e4c5a8cc8a5bf7c3f753ea91af41f4a371523a704c72f06a7b0b0835"
+      },
+      "lodFile": "lod-modern-throw_pillows_01.json"
     }
   },
   {
@@ -508,8 +544,10 @@
         "meshAsset": "ff5653b317fdab4e10bdc7c653959fda8c2154c195e5919f92ec918de7eaff2b",
         "originalMaterials": true,
         "placement": "surface",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "734ed464ef1b50b4119b4a7ac63ecf32161a95365b3a20106c8bd74a0f38a004"
+      },
+      "lodFile": "lod-modern-potted_plant_04.json"
     }
   },
   {
@@ -535,8 +573,10 @@
         "meshAsset": "4de9f0c0a5c8d6f0933ed6c5efae6dd21aa3e284d2989e803638898883b199c1",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "c6456fc498c51817f0bf0211d113acb723688d0b49ec09150796d06abf96d1e7"
+      },
+      "lodFile": "lod-modern-round_wooden_table_02.json"
     }
   },
   {
@@ -562,8 +602,10 @@
         "meshAsset": "548dc345a04f5e63528d613ad3bf48d149e9143f5cd5be3dba978937fd14a906",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "f88e3440213c227f34ff06fed9496591e21269a5242b0d94765ccc124e33e60b"
+      },
+      "lodFile": "lod-modern-metal_stool_02.json"
     }
   },
   {
@@ -589,8 +631,10 @@
         "meshAsset": "1cd3fcbd03d8a40c34570f973dcef000aa664d9164ba6e3c58a1ed58ec9d39c9",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "11355146f77ad37284cc5951f8ccca211a10f5aed5b96c7ca745497f31010fcf"
+      },
+      "lodFile": "lod-modern-metal_stool_03.json"
     }
   },
   {
@@ -616,8 +660,10 @@
         "meshAsset": "c447187aa0e64309668bb9a809378f52fa0c25da0e3d9fc14d177b18cbc3bc1e",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "4db38e4aba125c1ee5a73b1e86ecd780bb216d26c954425bc157e64206b6ff97"
+      },
+      "lodFile": "lod-modern-wicker_basket_02.json"
     }
   },
   {
@@ -643,8 +689,10 @@
         "meshAsset": "14246ef6a8f2d0e5c06316e9b152d63163298df7cad912e33c61c36fa1974441",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "b98e46b2a015ea34e8c2a53a63303d35212b86c1aaa4ebc2b0df575b0fc0b006"
+      },
+      "lodFile": "lod-modern-side_table_tall_01.json"
     }
   }
 ]

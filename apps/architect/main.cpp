@@ -1,3 +1,4 @@
+#include "apartment_acceptance.h"
 #include "environment_acceptance.h"
 #include "first_run.h"
 #include "lighting_acceptance.h"
@@ -58,6 +59,10 @@ int main(int argc, char **argv) {
     QCommandLineParser parser;
     parser.setApplicationDescription("LibreMax Architect — native interior design");
     parser.addHelpOption();
+    parser.addOption(
+        {"apartment-tools-smoke",
+         "Verify room contours, grouped placement, actual model import, packs and 3 real photo styles",
+         "directory"});
     parser.addVersionOption();
     parser.addOption({"queue-smoke", "Verify native batch render queue, snapshots and gallery", "directory"});
     parser.addOption({"environment-smoke", "Verify native HDRI and real Cycles EXR queue", "directory"});
@@ -89,12 +94,13 @@ int main(int argc, char **argv) {
     parser.addOption({"blender", "Blender executable for render acceptance", "executable"});
     parser.addPositionalArgument("project", ".lmx project to open");
     parser.process(app);
-    bool test =
-        parser.isSet("lighting-smoke") || parser.isSet("environment-smoke") || parser.isSet("queue-smoke") ||
-        parser.isSet("installation-smoke") || parser.isSet("experience-smoke") ||
-        parser.isSet("modern-smoke") || parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") ||
-        parser.isSet("examples") || parser.isSet("render-smoke") || parser.isSet("instances-fixture") ||
-        parser.isSet("recovery-smoke") || parser.isSet("recovery-fixture") || parser.isSet("recovery-verify");
+    bool test = parser.isSet("apartment-tools-smoke") || parser.isSet("lighting-smoke") ||
+                parser.isSet("environment-smoke") || parser.isSet("queue-smoke") ||
+                parser.isSet("installation-smoke") || parser.isSet("experience-smoke") ||
+                parser.isSet("modern-smoke") || parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") ||
+                parser.isSet("examples") || parser.isSet("render-smoke") ||
+                parser.isSet("instances-fixture") || parser.isSet("recovery-smoke") ||
+                parser.isSet("recovery-fixture") || parser.isSet("recovery-verify");
     if (test)
         QStandardPaths::setTestModeEnabled(true);
     QTemporaryDir settingsDirectory;
@@ -408,6 +414,9 @@ int main(int argc, char **argv) {
         if (!parser.positionalArguments().isEmpty())
             window.loadProject(parser.positionalArguments().first());
         window.show();
+        if (parser.isSet("apartment-tools-smoke"))
+            lmx::startApartmentAcceptance(window, app, parser.value("apartment-tools-smoke"),
+                                          parser.value("blender"));
         if (parser.isSet("lighting-smoke"))
             lmx::startLightingAcceptance(window, app, parser.value("lighting-smoke"),
                                          parser.value("blender"));
@@ -546,13 +555,13 @@ int main(int argc, char **argv) {
                     if (!QMetaObject::invokeMethod(&window, "modernApartmentStarter", Qt::DirectConnection))
                         throw std::runtime_error("Modern apartment unavailable");
                     auto *list = window.findChild<QListWidget *>("assetList");
-                    if (!list || list->count() != 36)
+                    if (!list || list->count() != 64)
                         throw std::runtime_error("Modern collection filter failed");
                     for (int attempt = 0; attempt < 300; ++attempt) {
                         int ready = 0;
                         for (int i = 0; i < list->count(); ++i)
                             ready += list->item(i)->data(Qt::UserRole + 2).toBool();
-                        if (ready == 36)
+                        if (ready == 64)
                             break;
                         if (attempt == 299)
                             throw std::runtime_error("Modern geometry thumbnails missing");
@@ -645,7 +654,7 @@ int main(int argc, char **argv) {
                         throw std::runtime_error("Modern viewport reported a geometry or texture failure");
                     if (!window.screen()->grabWindow(window.winId()).save(directory + "/modern-catalog.png"))
                         throw std::runtime_error("Modern screenshot failed");
-                    std::cout << "MODERN_PASS: 36 models, thumbnails, wall/table/ceiling drop, undo/redo, "
+                    std::cout << "MODERN_PASS: 64 models, thumbnails, wall/table/ceiling drop, undo/redo, "
                                  "embedded textures, reopen\n";
                     app.exit(0);
                 } catch (const std::exception &e) {
@@ -665,7 +674,7 @@ int main(int argc, char **argv) {
                     };
                     auto *cad = window.cad();
                     auto *assets = window.findChild<QListWidget *>("assetList");
-                    ensure(assets && assets->count() == 175, "Expanded model catalog missing");
+                    ensure(assets && assets->count() == 203, "Expanded model catalog missing");
                     int ready = 0;
                     for (int attempt = 0; attempt < 300; ++attempt) {
                         ready = 0;
@@ -675,7 +684,7 @@ int main(int argc, char **argv) {
                             break;
                         QTest::qWait(100);
                     }
-                    ensure(ready == 175, "Native thumbnails missing for real models");
+                    ensure(ready == 203, "Native thumbnails missing for real models");
                     lmx::Document d;
                     lmx::addRectangularRoom(d, 4000, 3000, 2700, 120);
                     window.editor().load(d);
@@ -783,7 +792,7 @@ int main(int argc, char **argv) {
                     ensure(window.screen()->grabWindow(window.winId()).save(directory + "/apartment-900.png"),
                            "Compact screenshot failed");
                     std::cout
-                        << "ASSEMBLY_PASS: 175 thumbnails, wall ghost/drop, outside rejection, mouse "
+                        << "ASSEMBLY_PASS: 203 thumbnails, wall ghost/drop, outside rejection, mouse "
                            "move undo/redo, window wall attachment, ready mesh catalog, 3-room apartment "
                            "save/open, 900 px panels\n";
                     app.exit(0);
@@ -874,8 +883,8 @@ int main(int argc, char **argv) {
                             break;
                         QTest::qWait(100);
                     }
-                    ensure(ready == 175, "Shipped asset geometry thumbnails were not generated");
-                    std::cout << "THUMBNAILS_PASS: 175 actual geometry previews\n";
+                    ensure(ready == 203, "Shipped asset geometry thumbnails were not generated");
+                    std::cout << "THUMBNAILS_PASS: 203 actual geometry previews\n";
                     QListWidgetItem *asset = nullptr;
                     for (int i = 0; i < assets->count(); ++i)
                         if (assets->item(i)->data(Qt::UserRole).toString() == "base-1")

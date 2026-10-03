@@ -22,8 +22,10 @@
         "meshAsset": "716b4a786c1007b2405e4d18d33bbe3b560dc4f793297ed8fa1a38bcca26ab1b",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "dbf6fb044e583e66495ca81c0ec21e8f8b938547bb9ce28a16e3b6c9c92c1962"
+      },
+      "lodFile": "lod-current-sofa-compact.json"
     }
   },
   {
@@ -49,8 +51,10 @@
         "meshAsset": "1ebad7b89ad1a3b0351e196e725e145573aea641f65b5508f60d9061f86822e7",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "db0517c2b329b0b4d8f2c8e3d6f89490d7174cb5ca6d7dd9724c7a08fa008d8f"
+      },
+      "lodFile": "lod-current-sofa-chaise.json"
     }
   },
   {
@@ -76,8 +80,10 @@
         "meshAsset": "2b40a39597878b68caa0a8d5e6735dea5225f31d39db3efb9623fbdfcaf385e6",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "81fbd23cc780ea0ddf066a81daf1f03624b0e2e0eccbb3e344417d5d06b2030b"
+      },
+      "lodFile": "lod-current-bed-queen.json"
     }
   },
   {
@@ -103,8 +109,10 @@
         "meshAsset": "87c726211212c217d37d60e577419d1022dba61bd37d6776b7495f73a62632f0",
         "originalMaterials": true,
         "placement": "wall",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "77c4b52e5d6ac3eba9be590387b162dcac3204f2e0b4a8eefbd387d7c21c881b"
+      },
+      "lodFile": "lod-current-headboard.json"
     }
   },
   {
@@ -157,8 +165,10 @@
         "meshAsset": "64f53b19b5eaf16638d5014ce569ac32e67d2362e6ecf9f69002a591485d63ea",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "a7a778c534f19596ab1f00445ac8de0385f78c7eea89eebd475f35e554cbf209"
+      },
+      "lodFile": "lod-current-sideboard.json"
     }
   },
   {
@@ -184,8 +194,10 @@
         "meshAsset": "b0ce814f0b0e8991abd034aadd9196b8ce5cfbb55b9c00d2d788c069f85a8fba",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "95f7c64f4fc3542036b32b652179bb8521133056cec7998178d28e969eed4e62"
+      },
+      "lodFile": "lod-current-tv-console.json"
     }
   },
   {
@@ -211,8 +223,10 @@
         "meshAsset": "00ce35a6425b081c42a75ebd91f49280655fea72ea2b7bf84bf9167b6c28b094",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "f470ea954ad140a6689eeea6cd1f834f9cec92035d2f938529b625f443f48762"
+      },
+      "lodFile": "lod-current-dining-table.json"
     }
   },
   {
@@ -238,8 +252,10 @@
         "meshAsset": "78b2c16027a7de9ff4e51ee68773bc7bc877bf588e1d2085a6c19702bb47ca3f",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "33cc5dae90e3dec9954a6f77cce3bd7dc1a9916744514b47db0c70657effeaf4"
+      },
+      "lodFile": "lod-current-bar-stool.json"
     }
   },
   {
@@ -319,8 +335,10 @@
         "meshAsset": "f1a210d3fb8e18ad07646f94246ec9b489cd48b6b781cac339ec0961473fbe95",
         "originalMaterials": true,
         "placement": "floor",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "d6722583e7af3ec4009954115bf4b3324986981a8ee42d9b885e8dfc7952c4f4"
+      },
+      "lodFile": "lod-current-floor-lamp.json"
     }
   }
 ]

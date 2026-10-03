@@ -3,6 +3,7 @@
 #include "rendering/high_dynamic_image.h"
 #include "rendering/light_model.h"
 #include "rendering/render_options.h"
+#include "room_outline.h"
 #include <QCryptographicHash>
 #include <QRegularExpression>
 #include <QUuid>
@@ -147,6 +148,7 @@ void Document::validate() const {
             throw std::invalid_argument("Asset incorporado inválido");
     }
     std::set<std::string> materialIds, ids;
+    std::map<std::string, std::vector<std::string>> validatedModels;
     for (const auto &m : materials) {
         const auto mid = m.at("id").get<std::string>();
         const auto materialName = m.at("name").get<std::string>();
@@ -194,14 +196,41 @@ void Document::validate() const {
         if (!e.parameters.is_object() || !e.metadata.is_object() || e.parameters.dump().size() > 65536 ||
             e.metadata.dump().size() > 65536)
             throw std::invalid_argument("Parâmetros inválidos");
+        if (e.type == "Room" && e.parameters.contains("outline"))
+            validateOutline(roomOutline(e));
+        if (e.metadata.contains("roomEdge")) {
+            if (e.type != "Wall" || e.parent.empty() || at(e.parent).type != "Room" ||
+                !at(e.parent).parameters.contains("outline") ||
+                !e.metadata.at("roomEdge").is_number_integer())
+                throw std::invalid_argument("Trecho de parede sem contorno válido");
+            const auto edge = e.metadata.at("roomEdge").get<long long>();
+            if (edge < 0 || static_cast<size_t>(edge) >= roomOutline(at(e.parent)).size())
+                throw std::invalid_argument("Canto da parede fora do contorno");
+        }
+        if (e.parameters.value("roomOutline", false) &&
+            ((e.type != "Floor" && e.type != "Ceiling") || e.parent.empty() || at(e.parent).type != "Room" ||
+             !at(e.parent).parameters.contains("outline")))
+            throw std::invalid_argument("Piso ou forro sem contorno do cômodo");
         if (e.type == "MeshObject") {
             const auto hash = e.parameters.at("meshAsset").get<std::string>();
             if (!embeddedAssets.contains(hash))
                 throw std::invalid_argument("Modelo 3D incorporado ausente");
-            const auto model = readModel(embeddedAssets.at(hash));
-            for (const auto &part : model.at("parts"))
-                if (!materialIds.contains(part.at("material").get<std::string>()))
+            if (!validatedModels.contains(hash))
+                validatedModels[hash] = validatedModelMaterials(embeddedAssets.at(hash));
+            const auto &model = validatedModels.at(hash);
+            for (const auto &materialId : model)
+                if (!materialIds.contains(materialId))
                     throw std::invalid_argument("Acabamento do modelo 3D ausente");
+            if (e.parameters.contains("editMeshAsset")) {
+                const auto low = e.parameters.at("editMeshAsset").get<std::string>();
+                if (!embeddedAssets.contains(low))
+                    throw std::invalid_argument("Malha leve incorporada ausente");
+                if (!validatedModels.contains(low))
+                    validatedModels[low] = validatedModelMaterials(embeddedAssets.at(low));
+                for (const auto &materialId : validatedModels.at(low))
+                    if (!materialIds.contains(materialId))
+                        throw std::invalid_argument("Acabamento da malha leve ausente");
+            }
         }
         if (e.metadata.value("format", std::string{}) == "DXF") {
             const auto &primitives = e.parameters.at("primitives");
@@ -456,9 +485,9 @@ void addRectangularRoom(Document &d, double w, double depth, double h, double t,
     if (w < 500 || depth < 500 || h < 100 || t < 10 || t > w / 4 || t > depth / 4)
         throw std::invalid_argument("Medidas do ambiente inválidas");
     for (const auto &room : d.entities)
-        if (room.type == "Room" && std::abs(room.transform.yaw) < 0.001 &&
-            x < room.transform.x + room.width - 0.1 && room.transform.x < x + w - 0.1 &&
-            y < room.transform.y + room.depth - 0.1 && room.transform.y < y + depth - 0.1)
+        if (room.type == "Room" &&
+            roomFootprintsOverlap({{x, y}, {x + w, y}, {x + w, y + depth}, {x, y + depth}},
+                                  roomOutline(room, true)))
             throw std::invalid_argument(
                 "Este cômodo ocupa o espaço de outro. Escolha outro lado ou ajuste as medidas.");
     auto r = entity("Room", name);

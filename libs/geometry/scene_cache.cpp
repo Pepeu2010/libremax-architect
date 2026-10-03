@@ -1,4 +1,5 @@
 #include "scene_cache.h"
+#include <cmath>
 #include <gp_Ax1.hxx>
 #include <gp_Trsf.hxx>
 #include <numbers>
@@ -39,14 +40,38 @@ std::vector<Part> SceneGeometryCache::scene(const Document &d) {
             state.erase("transform");
             state.erase("parent");
             state["mirrored"] = e.transform.mirrored;
+            if (e.parameters.value("roomOutline", false))
+                state["outline"] = d.at(e.parent).parameters.at("outline");
             prototypeKey = state.dump();
             usedPrototypes.insert(prototypeKey);
         }
         Json key = Json::array({geometryState(e)});
-        if (e.type == "Wall" || e.type == "HalfWall")
+        if (e.parameters.value("roomOutline", false))
+            key.push_back(geometryState(d.at(e.parent)));
+        if (e.metadata.contains("roomEdge"))
+            key.push_back(geometryState(d.at(e.parent)));
+        if (e.type == "Wall" || e.type == "HalfWall") {
             for (const auto &opening : d.entities)
                 if (opening.parent == e.id && (opening.type == "Door" || opening.type == "Window"))
                     key.push_back(geometryState(opening));
+            if (!e.metadata.contains("roomEdge")) {
+                const auto angle = e.transform.yaw * std::numbers::pi / 180;
+                for (const auto &other : d.entities) {
+                    if (other.id == e.id || (other.type != "Wall" && other.type != "HalfWall"))
+                        continue;
+                    const auto a = other.transform.yaw * std::numbers::pi / 180;
+                    bool touches = false;
+                    for (int i = 0; i < 2; ++i)
+                        for (int j = 0; j < 2; ++j)
+                            touches |= std::hypot(e.transform.x + i * e.width * std::cos(angle) -
+                                                      other.transform.x - j * other.width * std::cos(a),
+                                                  e.transform.y + i * e.width * std::sin(angle) -
+                                                      other.transform.y - j * other.width * std::sin(a)) < .1;
+                    if (touches)
+                        key.push_back(geometryState(other));
+                }
+            }
+        }
         if (e.type == "Door" || e.type == "Window")
             key.push_back(geometryState(d.at(e.parent)));
         if (e.metadata.contains("automation"))

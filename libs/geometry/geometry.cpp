@@ -1,4 +1,5 @@
 #include "geometry.h"
+#include "document/room_outline.h"
 #include "library/model.h"
 #include "scene_cache.h"
 #include <BRepAlgoAPI_Cut.hxx>
@@ -12,6 +13,7 @@
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepPrimAPI_MakeCone.hxx>
 #include <BRepPrimAPI_MakeCylinder.hxx>
+#include <BRepPrimAPI_MakePrism.hxx>
 #include <BRepPrimAPI_MakeSphere.hxx>
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
@@ -147,6 +149,90 @@ std::vector<Part> buildEntity(const Document &doc, const Entity &e) {
         return out;
     if (e.type == "Wall" || e.type == "HalfWall") {
         auto s = box(0, -d / 2, 0, w, d, h);
+        if (!e.metadata.contains("roomEdge")) {
+            const auto angle = e.transform.yaw * std::numbers::pi / 180;
+            std::array<PlanPoint, 4> vertices{{{0, d / 2}, {w, d / 2}, {w, -d / 2}, {0, -d / 2}}};
+            bool joined = false;
+            for (int end = 0; end < 2; ++end) {
+                const PlanPoint joint{e.transform.x + end * w * std::cos(angle),
+                                      e.transform.y + end * w * std::sin(angle)};
+                std::vector<std::pair<PlanPoint, double>> neighbors;
+                for (const auto &other : doc.entities) {
+                    if (other.id == e.id || (other.type != "Wall" && other.type != "HalfWall") ||
+                        std::abs(other.transform.z - e.transform.z) > .1 || std::abs(other.height - h) > .1)
+                        continue;
+                    const auto a = other.transform.yaw * std::numbers::pi / 180;
+                    for (int endpoint = 0; endpoint < 2; ++endpoint) {
+                        PlanPoint p{other.transform.x + endpoint * other.width * std::cos(a),
+                                    other.transform.y + endpoint * other.width * std::sin(a)};
+                        if (std::hypot(p[0] - joint[0], p[1] - joint[1]) > .1)
+                            continue;
+                        const auto sign = endpoint == 0 ? 1.0 : -1.0;
+                        neighbors.push_back(
+                            {{sign * std::cos(a - angle), sign * std::sin(a - angle)}, other.depth});
+                    }
+                }
+                if (neighbors.size() != 1)
+                    continue;
+                const auto [direction, thickness] = neighbors.front();
+                if (std::abs(direction[1]) < .05)
+                    continue;
+                const auto inward = end == 0 ? 1.0 : -1.0;
+                for (double side : {1.0, -1.0}) {
+                    const double bx = side * inward * direction[1] * thickness / 2,
+                                 by = -side * inward * direction[0] * thickness / 2;
+                    const double x = end * w + bx + (side * d / 2 - by) * direction[0] / direction[1];
+                    if (std::abs(x - end * w) > 4 * std::max(d, thickness))
+                        continue;
+                    const int index = end == 0 ? (side > 0 ? 0 : 3) : (side > 0 ? 1 : 2);
+                    vertices[index] = {x, side * d / 2};
+                    joined = true;
+                }
+            }
+            if (joined) {
+                BRepBuilderAPI_MakePolygon wire;
+                for (auto p : vertices)
+                    wire.Add(gp_Pnt(p[0], p[1], 0));
+                wire.Close();
+                s = BRepPrimAPI_MakePrism(BRepBuilderAPI_MakeFace(wire.Wire()).Face(), gp_Vec(0, 0, h))
+                        .Shape();
+            }
+        }
+        if (e.metadata.contains("roomEdge")) {
+            const auto &room = doc.at(e.parent);
+            const auto p = roomOutline(room);
+            const auto edge = e.metadata.at("roomEdge").get<size_t>();
+            auto offset = [&](size_t i) {
+                const auto prev = p[(i + p.size() - 1) % p.size()], v = p[i], next = p[(i + 1) % p.size()];
+                const double a = std::hypot(v[0] - prev[0], v[1] - prev[1]),
+                             b = std::hypot(next[0] - v[0], next[1] - v[1]);
+                PlanPoint n1{-(v[1] - prev[1]) / a, (v[0] - prev[0]) / a},
+                    n2{-(next[1] - v[1]) / b, (next[0] - v[0]) / b};
+                const double denominator = 1 + n1[0] * n2[0] + n1[1] * n2[1];
+                if (denominator < .02)
+                    throw std::invalid_argument("Este canto é estreito demais para a parede.");
+                const double x = (n1[0] + n2[0]) * d / 2 / denominator,
+                             y = (n1[1] + n2[1]) * d / 2 / denominator;
+                const double angle = (room.transform.yaw - e.transform.yaw) * std::numbers::pi / 180;
+                return PlanPoint{x * std::cos(angle) - y * std::sin(angle),
+                                 x * std::sin(angle) + y * std::cos(angle)};
+            };
+            auto start = offset(edge), end = offset((edge + 1) % p.size());
+            const auto originalLength = std::hypot(p[(edge + 1) % p.size()][0] - p[edge][0],
+                                                   p[(edge + 1) % p.size()][1] - p[edge][1]);
+            if (e.metadata.value("edgeStart", 0.0) > .1)
+                start = {0, d / 2};
+            if (e.metadata.value("edgeEnd", originalLength) < originalLength - .1)
+                end = {0, d / 2};
+            BRepBuilderAPI_MakePolygon wire;
+            for (auto v : Outline{{start[0], start[1]},
+                                  {w + end[0], end[1]},
+                                  {w - end[0], -end[1]},
+                                  {-start[0], -start[1]}})
+                wire.Add(gp_Pnt(v[0], v[1], 0));
+            wire.Close();
+            s = BRepPrimAPI_MakePrism(BRepBuilderAPI_MakeFace(wire.Wire()).Face(), gp_Vec(0, 0, h)).Shape();
+        }
         for (const auto &o : doc.entities)
             if (o.parent == e.id && (o.type == "Door" || o.type == "Window"))
                 s = cut(s, box(o.parameters.value("offset", 0.0), -d / 2 - 1, o.parameters.value("sill", 0.0),
@@ -368,6 +454,14 @@ std::vector<Part> buildEntity(const Document &doc, const Entity &e) {
         return out;
     }
     if (e.type == "Floor" || e.type == "Ceiling" || e.type == "GeometryObject") {
+        if (e.parameters.value("roomOutline", false)) {
+            BRepBuilderAPI_MakePolygon wire;
+            for (auto p : roomOutline(doc.at(e.parent)))
+                wire.Add(gp_Pnt(p[0], p[1], 0));
+            wire.Close();
+            add(BRepPrimAPI_MakePrism(BRepBuilderAPI_MakeFace(wire.Wire()).Face(), gp_Vec(0, 0, h)).Shape());
+            return out;
+        }
         block(0, 0, 0, w, d, h);
         return out;
     }

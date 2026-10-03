@@ -1,0 +1,401 @@
+[
+  {
+    "id": "modern-modern_arm_chair_01",
+    "fullTriangles": 8916,
+    "editorTriangles": 1498,
+    "fullSha256": "b353e17d8bd97344becec0bf54e723b145b9f7cd71f20a1919a3c263a2164d4f",
+    "editorSha256": "f4fada08b13042aa3359ac0cbb3684f90ca9c4c96c4571e0c9d9785f9bb87ea7"
+  },
+  {
+    "id": "modern-mid_century_lounge_chair",
+    "fullTriangles": 6148,
+    "editorTriangles": 1499,
+    "fullSha256": "bfea9597682983ec1f3c106cd7559f054e68487089663a5864866d6610b3214a",
+    "editorSha256": "7c89030eb7e4e23ad5b74b8f2cd4fec365edd0a13551ac7733b9f6dd627ed31f"
+  },
+  {
+    "id": "modern-steel_frame_shelves_01",
+    "fullTriangles": 4348,
+    "editorTriangles": 1500,
+    "fullSha256": "c812911c70d6d36bc9ad7977302be71cb5916b56d57f5501bdac132bf096aa8c",
+    "editorSha256": "fbf41ebc012075cdb94b343dbe4198439a9129ef64ab843357e09996dd9eaa76"
+  },
+  {
+    "id": "modern-steel_frame_shelves_03",
+    "fullTriangles": 8396,
+    "editorTriangles": 1498,
+    "fullSha256": "91dfdb9deb079769066c8a7027b67202cc584c2508bbbe9b833ed27c0ddf1590",
+    "editorSha256": "6ea945c71dc458c7530b835bf4371f4d3697ffdd706eb16166cd0396ee4256da"
+  },
+  {
+    "id": "modern-modern_coffee_table_01",
+    "fullTriangles": 4504,
+    "editorTriangles": 1499,
+    "fullSha256": "e1905053fe59232849c151b36e7a748b95901cd4c3cdc53686e8f0b8fa5dc8f1",
+    "editorSha256": "239fe39617324c200bc5ab4029620b3cf6e492f26a5e6c198bc5925627a9b30e"
+  },
+  {
+    "id": "modern-modern_coffee_table_02",
+    "fullTriangles": 13645,
+    "editorTriangles": 1499,
+    "fullSha256": "94da352d64852c0754f617bdd36653e8525e95ef2e5d71b10185735e105edf32",
+    "editorSha256": "6744f38d1c6661ee428886a488102d41961b697f98a0ec0dbaef000037dd53d0"
+  },
+  {
+    "id": "modern-modern_wooden_cabinet",
+    "fullTriangles": 24976,
+    "editorTriangles": 1499,
+    "fullSha256": "30b0e05030c1beabf629d66493097c6d8a8cf3b380938a9e42cbc99a1ef689d0",
+    "editorSha256": "80921cf96c81cda0b85c139ce4713bf14cc9047f3be43604ad856a7250d5c25f"
+  },
+  {
+    "id": "modern-outdoor_table_chair_set_01",
+    "fullTriangles": 9828,
+    "editorTriangles": 1498,
+    "fullSha256": "7c704135c020a8a5114320c9227938b8164e30f01593e332d743550219c34c42",
+    "editorSha256": "533023f217c0e58fc82993d89f6dcf44341fd36a19103ae623a3b0ebffd72803"
+  },
+  {
+    "id": "modern-dining_chair_02",
+    "fullTriangles": 22013,
+    "editorTriangles": 1498,
+    "fullSha256": "ccd7572248db54074cce434370125290ce3864ecc4478de8ed930d8e8685aadf",
+    "editorSha256": "4a675abe4da4d1711262c8d087b3627c94e69263e756ae25608cb5f941260808"
+  },
+  {
+    "id": "modern-coffee_table_round_01",
+    "fullTriangles": 4044,
+    "editorTriangles": 1500,
+    "fullSha256": "78b874186cb86b868379a48f562f2799cde6f7c7aa2fef66e8059b8efd00561d",
+    "editorSha256": "ca3765fda3a11654ea501ee87e55a3b84858a87fb11f2126aae688173d90adbd"
+  },
+  {
+    "id": "modern-side_table_01",
+    "fullTriangles": 2756,
+    "editorTriangles": 1500,
+    "fullSha256": "504ef7b045e5198ab7a43df99923fa4c24fbbd76c520b507944f8c9be74299af",
+    "editorSha256": "03d2227a6102f298fd337bf31c5cd05f516d25d17e80c336c83c2483837a5360"
+  },
+  {
+    "id": "modern-drawer_cabinet",
+    "fullTriangles": 26406,
+    "editorTriangles": 2216,
+    "fullSha256": "3a646dde1fedd2aac01af85f810c14f0f0248a87e56df786553009b8e3f37eae",
+    "editorSha256": "c4d5cb0328fa4c3f688a5bc63437af56fc5e7c3325948e18968632955d7380ed"
+  },
+  {
+    "id": "modern-metal_office_desk",
+    "fullTriangles": 6898,
+    "editorTriangles": 1498,
+    "fullSha256": "7809a777a741b39ccf5b8ea22d6f0dbe5722d92c91f0a085c9bc7a8341dbbcc6",
+    "editorSha256": "18fd40c6ca1a8d18296da78d3432f7447982025445ad93e2774258d44c7f6dd9"
+  },
+  {
+    "id": "modern-modern_ceiling_lamp_01",
+    "fullTriangles": 5602,
+    "editorTriangles": 1498,
+    "fullSha256": "46269222b352a2421afbd54b70d0d49a7568570b7703e3dfe02ec0abad347784",
+    "editorSha256": "9b75345e046805a18397f632fd8265b2a290d602676cb0a77948f66c45414dc6"
+  },
+  {
+    "id": "modern-desk_lamp_arm_01",
+    "fullTriangles": 24102,
+    "editorTriangles": 1498,
+    "fullSha256": "4c51c9d07b0b0cc4b2a53410a9fdb6a1d381cb1767dd096a2ab9601e941c4f7e",
+    "editorSha256": "eee5161e937a3ed6af8c9112482ffd587a5215c40af0f7b3c4a65d6faac56eef"
+  },
+  {
+    "id": "modern-ceramic_vase_02",
+    "fullTriangles": 11128,
+    "editorTriangles": 1500,
+    "fullSha256": "3334ccb1ac5b985f6ec1f4d864158153826eb8172085f27d9d9ef5357a2a922a",
+    "editorSha256": "e4e5dc6a3d79747519741090fb14f61ef4030aaf1255f44e7b57f3503bb071fc"
+  },
+  {
+    "id": "modern-ceramic_vase_03",
+    "fullTriangles": 11136,
+    "editorTriangles": 1499,
+    "fullSha256": "f526b67483ba65caf50f99fde3eec65c2d30d598cc5dff5da6b1dd0a7202a829",
+    "editorSha256": "842985e1c691c17a2d4164f1b592f8d6a8a434a5d6073bd17d29128e6eeaf0da"
+  },
+  {
+    "id": "modern-throw_pillows_01",
+    "fullTriangles": 6362,
+    "editorTriangles": 1498,
+    "fullSha256": "10fca2b8d57fa75730e51f6895d29b6dc72bd0d7e3c1ccefd5602e2de77a85b1",
+    "editorSha256": "198a8985e4c5a8cc8a5bf7c3f753ea91af41f4a371523a704c72f06a7b0b0835"
+  },
+  {
+    "id": "modern-potted_plant_04",
+    "fullTriangles": 8929,
+    "editorTriangles": 1498,
+    "fullSha256": "ff5653b317fdab4e10bdc7c653959fda8c2154c195e5919f92ec918de7eaff2b",
+    "editorSha256": "734ed464ef1b50b4119b4a7ac63ecf32161a95365b3a20106c8bd74a0f38a004"
+  },
+  {
+    "id": "modern-round_wooden_table_02",
+    "fullTriangles": 4254,
+    "editorTriangles": 1500,
+    "fullSha256": "4de9f0c0a5c8d6f0933ed6c5efae6dd21aa3e284d2989e803638898883b199c1",
+    "editorSha256": "c6456fc498c51817f0bf0211d113acb723688d0b49ec09150796d06abf96d1e7"
+  },
+  {
+    "id": "modern-metal_stool_02",
+    "fullTriangles": 6532,
+    "editorTriangles": 1500,
+    "fullSha256": "548dc345a04f5e63528d613ad3bf48d149e9143f5cd5be3dba978937fd14a906",
+    "editorSha256": "f88e3440213c227f34ff06fed9496591e21269a5242b0d94765ccc124e33e60b"
+  },
+  {
+    "id": "modern-metal_stool_03",
+    "fullTriangles": 6576,
+    "editorTriangles": 1500,
+    "fullSha256": "1cd3fcbd03d8a40c34570f973dcef000aa664d9164ba6e3c58a1ed58ec9d39c9",
+    "editorSha256": "11355146f77ad37284cc5951f8ccca211a10f5aed5b96c7ca745497f31010fcf"
+  },
+  {
+    "id": "modern-wicker_basket_02",
+    "fullTriangles": 17850,
+    "editorTriangles": 1498,
+    "fullSha256": "c447187aa0e64309668bb9a809378f52fa0c25da0e3d9fc14d177b18cbc3bc1e",
+    "editorSha256": "4db38e4aba125c1ee5a73b1e86ecd780bb216d26c954425bc157e64206b6ff97"
+  },
+  {
+    "id": "modern-side_table_tall_01",
+    "fullTriangles": 6408,
+    "editorTriangles": 1500,
+    "fullSha256": "14246ef6a8f2d0e5c06316e9b152d63163298df7cad912e33c61c36fa1974441",
+    "editorSha256": "b98e46b2a015ea34e8c2a53a63303d35212b86c1aaa4ebc2b0df575b0fc0b006"
+  },
+  {
+    "id": "current-sofa-compact",
+    "fullTriangles": 6356,
+    "editorTriangles": 1498,
+    "fullSha256": "716b4a786c1007b2405e4d18d33bbe3b560dc4f793297ed8fa1a38bcca26ab1b",
+    "editorSha256": "dbf6fb044e583e66495ca81c0ec21e8f8b938547bb9ce28a16e3b6c9c92c1962"
+  },
+  {
+    "id": "current-sofa-chaise",
+    "fullTriangles": 7120,
+    "editorTriangles": 1498,
+    "fullSha256": "1ebad7b89ad1a3b0351e196e725e145573aea641f65b5508f60d9061f86822e7",
+    "editorSha256": "db0517c2b329b0b4d8f2c8e3d6f89490d7174cb5ca6d7dd9724c7a08fa008d8f"
+  },
+  {
+    "id": "current-bed-queen",
+    "fullTriangles": 4856,
+    "editorTriangles": 1498,
+    "fullSha256": "2b40a39597878b68caa0a8d5e6735dea5225f31d39db3efb9623fbdfcaf385e6",
+    "editorSha256": "81fbd23cc780ea0ddf066a81daf1f03624b0e2e0eccbb3e344417d5d06b2030b"
+  },
+  {
+    "id": "current-headboard",
+    "fullTriangles": 12300,
+    "editorTriangles": 1499,
+    "fullSha256": "87c726211212c217d37d60e577419d1022dba61bd37d6776b7495f73a62632f0",
+    "editorSha256": "77c4b52e5d6ac3eba9be590387b162dcac3204f2e0b4a8eefbd387d7c21c881b"
+  },
+  {
+    "id": "current-sideboard",
+    "fullTriangles": 15056,
+    "editorTriangles": 1498,
+    "fullSha256": "64f53b19b5eaf16638d5014ce569ac32e67d2362e6ecf9f69002a591485d63ea",
+    "editorSha256": "a7a778c534f19596ab1f00445ac8de0385f78c7eea89eebd475f35e554cbf209"
+  },
+  {
+    "id": "current-tv-console",
+    "fullTriangles": 15056,
+    "editorTriangles": 1497,
+    "fullSha256": "b0ce814f0b0e8991abd034aadd9196b8ce5cfbb55b9c00d2d788c069f85a8fba",
+    "editorSha256": "95f7c64f4fc3542036b32b652179bb8521133056cec7998178d28e969eed4e62"
+  },
+  {
+    "id": "current-dining-table",
+    "fullTriangles": 23684,
+    "editorTriangles": 1499,
+    "fullSha256": "00ce35a6425b081c42a75ebd91f49280655fea72ea2b7bf84bf9167b6c28b094",
+    "editorSha256": "f470ea954ad140a6689eeea6cd1f834f9cec92035d2f938529b625f443f48762"
+  },
+  {
+    "id": "current-bar-stool",
+    "fullTriangles": 5184,
+    "editorTriangles": 1499,
+    "fullSha256": "78b2c16027a7de9ff4e51ee68773bc7bc877bf588e1d2085a6c19702bb47ca3f",
+    "editorSha256": "33cc5dae90e3dec9954a6f77cce3bd7dc1a9916744514b47db0c70657effeaf4"
+  },
+  {
+    "id": "current-floor-lamp",
+    "fullTriangles": 16428,
+    "editorTriangles": 1498,
+    "fullSha256": "f1a210d3fb8e18ad07646f94246ec9b489cd48b6b781cac339ec0961473fbe95",
+    "editorSha256": "d6722583e7af3ec4009954115bf4b3324986981a8ee42d9b885e8dfc7952c4f4"
+  },
+  {
+    "id": "detail-ceramic_vase_01",
+    "fullTriangles": 10296,
+    "editorTriangles": 1499,
+    "fullSha256": "7aa4616da65969aae886df9101a2a8502982a93f3d65f67f388c62ca817dfca5",
+    "editorSha256": "d6bf459e2375030135e6e4a455e74da2f7a6dd10f6e837ab5fec8edbdceb80a5"
+  },
+  {
+    "id": "detail-ceramic_vase_04",
+    "fullTriangles": 9000,
+    "editorTriangles": 1499,
+    "fullSha256": "e4cd1b826272cab01869d976e8b734f3319598825873645f6e8d584cc39dc43b",
+    "editorSha256": "2c7826d1edf614cace45cc3f874bcf97357ebd3ea1c8cc38d69a2d295d605678"
+  },
+  {
+    "id": "detail-wall_clock",
+    "fullTriangles": 3658,
+    "editorTriangles": 1498,
+    "fullSha256": "a830f9afdd18517d4f3e958e505744ef48ea13ed04411f41f10179e94afa556c",
+    "editorSha256": "66b830c501b4b153f404f2eee9ac3effac480c5e062367ab9cdd1ac8e121f786"
+  },
+  {
+    "id": "detail-alarm_clock_01",
+    "fullTriangles": 8985,
+    "editorTriangles": 1498,
+    "fullSha256": "55bf9f0ebbda863d372d98bfbdbf81747379081a8d8df91581a83d5e51d66180",
+    "editorSha256": "8b351e9b3fd687f8e73c60c20e17c3a36fc987f27e0471c55e9cee35d1304fdc"
+  },
+  {
+    "id": "detail-wooden_bowl_01",
+    "fullTriangles": 14122,
+    "editorTriangles": 1500,
+    "fullSha256": "bd1491ad5aabee1832a680d5bc94fceae94e160feacf461f92e66a56d92cfb11",
+    "editorSha256": "d310cab367fd4ae18512872beca7421af42362d031b7611efd9056244fb5b948"
+  },
+  {
+    "id": "detail-wooden_bowl_02",
+    "fullTriangles": 4666,
+    "editorTriangles": 1499,
+    "fullSha256": "def4f105a37473ba03465531620ada1c560f4036c5d90766786341f41dfb6ac5",
+    "editorSha256": "4773677953122236efdf36966ce8e6e6a962db079f2a273d90414f1644d58a6c"
+  },
+  {
+    "id": "home-kitchen-island",
+    "fullTriangles": 2728,
+    "editorTriangles": 1497,
+    "fullSha256": "176b618383946a94f269782373cdd345823cef881ff29e8ab5e56be5e4b69f18",
+    "editorSha256": "cb40565acb12ac37b0a00a64ef82d47d4278a6a00f795051a150e1cf6c5ae45e"
+  },
+  {
+    "id": "home-wardrobe-sliding",
+    "fullTriangles": 3028,
+    "editorTriangles": 1498,
+    "fullSha256": "56f7dc20fe548e4e7ca0c9d82d033b392a5d12d9e7f6c1fcfc8fcf718de8e866",
+    "editorSha256": "23786aceafa40db78961ffb3678f8d669e7d9c4e05743befc05358a2ba86f631"
+  },
+  {
+    "id": "home-washer",
+    "fullTriangles": 2892,
+    "editorTriangles": 1498,
+    "fullSha256": "28a1b368cd87eef822a96749a6a32e598487549e87cb6a22ccb4bf7959f9b6f6",
+    "editorSha256": "f0758b448c10cbfed46b92af612184558f9fb34230db5d2097f1aa1599ee72cd"
+  },
+  {
+    "id": "home-fridge",
+    "fullTriangles": 2728,
+    "editorTriangles": 1498,
+    "fullSha256": "53572f2f99874312b160cc2aabb70f905352e0999e55731837a1b1b5a7c8e19e",
+    "editorSha256": "cde237aa7bbe4ec13a9a55aae4a7ed0167487e27a4614af78c19703e610788b3"
+  },
+  {
+    "id": "home-cooktop",
+    "fullTriangles": 6412,
+    "editorTriangles": 1498,
+    "fullSha256": "abaa7a45b1ee995558ee40fe340db70e4c9d614a8a7b94715374f7c71dab081e",
+    "editorSha256": "7292284bee6b7bff37db6bd035db6a6af78ee5e7581fa712037db214e601fa79"
+  },
+  {
+    "id": "home-vanity",
+    "fullTriangles": 5020,
+    "editorTriangles": 1498,
+    "fullSha256": "1315eb779c5e4f95d41fc1daecb4631ebea1fde7220919b8907c2d5a4d796c2a",
+    "editorSha256": "cc3fe69ba12eaf4bba4a499f61012aa854376b30c0c8917e3d7620b980b0f09f"
+  },
+  {
+    "id": "home-vanity-small",
+    "fullTriangles": 5020,
+    "editorTriangles": 1498,
+    "fullSha256": "ed38179ff9077e6604ee319ead68fefd4dbd6b4d0ca5c618ac7fc6dd31e57c89",
+    "editorSha256": "724184b964af0c41cbe36e85cc22a9293fa9d4e8464fc4db27f6ffb6bdd58d31"
+  },
+  {
+    "id": "home-toilet",
+    "fullTriangles": 2892,
+    "editorTriangles": 1499,
+    "fullSha256": "01548b8e6a74284660e4f0ae41c56f87dca4cef92917c60472173cd1ceb5d7c6",
+    "editorSha256": "a0ca576b47dfc4f0dbec08f4667dac01c6361fcded07d830d80233a6c3dea7d9"
+  },
+  {
+    "id": "home-shower",
+    "fullTriangles": 3056,
+    "editorTriangles": 1500,
+    "fullSha256": "e86a935a52e6fde5e0f34b72e099634583623f19488778ffa4fcefb23122411d",
+    "editorSha256": "3628f550262360c7f590d1762374568f5e5ed4e87e442f216052bc39c90cbf77"
+  },
+  {
+    "id": "home-curtain",
+    "fullTriangles": 9164,
+    "editorTriangles": 1499,
+    "fullSha256": "fa86d758201e5cd5720a6dd639a8ed3058df3754a354490a54e06142cbe82fc7",
+    "editorSha256": "db701f4bcd2627bb7bbb57c337f132e126c52a6195750499f5abff053050c397"
+  },
+  {
+    "id": "home-curtain-small",
+    "fullTriangles": 9164,
+    "editorTriangles": 1499,
+    "fullSha256": "fbe83667a1b4a179182417281e3d3cebd31d51c568322f34ebb42239fa9cea86",
+    "editorSha256": "60f3f6cfdce89d273f4edcb3edb56664af3f2e8bfda21a78c19eebee7e71f444"
+  },
+  {
+    "id": "home-air-conditioner",
+    "fullTriangles": 5948,
+    "editorTriangles": 1499,
+    "fullSha256": "f2922e4b4ab7f0dc038329e8fa6b43afa294f4a90b48604507f31a3591549006",
+    "editorSha256": "82ac235729487060b6ae03d77742a8080f608bc2c3df7b26a26953ce59fa8a03"
+  },
+  {
+    "id": "home-desk",
+    "fullTriangles": 4556,
+    "editorTriangles": 1498,
+    "fullSha256": "97936e74bcdef94cfeb04b17d371042bc35008fc1b5986fbebadc21a655d8b7f",
+    "editorSha256": "6866e3aaf788912a546ae24bed245f46019d849acf3839e99e4da50f0eec5679"
+  },
+  {
+    "id": "home-chair",
+    "fullTriangles": 3656,
+    "editorTriangles": 1499,
+    "fullSha256": "ba19ea5951cf420fc1a1b3d53f861b91953b6823fe4ef595e98ffd7ae8e72bdf",
+    "editorSha256": "cfed92df147325a1059deaca9066566b60b97ca700c4a25f6a3d09cf48221dcd"
+  },
+  {
+    "id": "home-table",
+    "fullTriangles": 3356,
+    "editorTriangles": 1499,
+    "fullSha256": "11dce1ceb7cf65907920246c238c974626e934002cd6ee736fe8421ad3d7aac5",
+    "editorSha256": "ee37884e31fbb733ce5439ab238df41537c9fab7cb377a9cbe0d1bb1b9503ef1"
+  },
+  {
+    "id": "home-shoe-storage",
+    "fullTriangles": 2728,
+    "editorTriangles": 1497,
+    "fullSha256": "1c15c5da94280f04ba3e6fd983487aa004e7cf213a7768c6faba7d4b8d23e5f2",
+    "editorSha256": "a058de4cc6c5a8fc04ea39c94c82577a00a423d0536a1c06c2aa505e91d1f415"
+  },
+  {
+    "id": "home-laundry-sink",
+    "fullTriangles": 5020,
+    "editorTriangles": 1497,
+    "fullSha256": "96237969d391c6c5cd166b772298ccdfcda3d8b62a93d08f0cb1a16ac6023df9",
+    "editorSha256": "0d5d04192f4f043cf0e551c74f41f9482161555b5914e76db04fb70ff3f6ba42"
+  },
+  {
+    "id": "home-towel-rail",
+    "fullTriangles": 2592,
+    "editorTriangles": 1499,
+    "fullSha256": "dece655dcb54f6cb65bffe8ba70b8c6609253e4d7194633b447713f1000bcd0f",
+    "editorSha256": "8b69c2246590b7138dd9bdaf3cc12295dfe0ed21f8b1520408ec62a1491b74d8"
+  }
+]

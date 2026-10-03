@@ -66,12 +66,18 @@ try {
         throw 'Desktop shortcut target differs from installed application.'
     }
     if (!(Test-Path -LiteralPath (Join-Path $menu 'LibreMax Architect.lnk'))) { throw 'Start menu shortcut missing.' }
+    if (!(Test-Path -LiteralPath (Join-Path $menu 'Testar notebook.lnk')) -or
+        !(Test-Path -LiteralPath (Join-Path $installation 'Testar-notebook.cmd')) -or
+        !(Test-Path -LiteralPath (Join-Path $installation 'share/libremax/scripts/benchmark-windows.ps1'))) {
+        throw 'Notebook test launcher or script missing.'
+    }
     if ((Get-ItemProperty -LiteralPath $registry).DisplayVersion -notlike "$expectedVersion *") { throw 'Installed version registration failed.' }
     Invoke-App -Arguments @('--installation-smoke', (Join-Path $evidence 'runtime')) -Name 'runtime'
     if ($Gui) {
         $env:QT_QPA_PLATFORM = 'windows'
         Invoke-App -Arguments @('--ui-smoke', (Join-Path $evidence 'expanded-library')) -Name 'expanded-library'
         Invoke-App -Arguments @('--modern-smoke', (Join-Path $evidence 'modern')) -Name 'modern'
+        Invoke-App -Arguments @('--apartment-tools-smoke', (Join-Path $evidence 'apartment-tools')) -Name 'apartment-tools'
         Invoke-App -Arguments @('--experience-smoke', (Join-Path $evidence 'experience')) -Name 'experience'
         Invoke-App -Arguments @('--recovery-smoke') -Name 'recovery'
     }

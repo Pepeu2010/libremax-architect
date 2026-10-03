@@ -666,7 +666,13 @@ TEST_CASE("Authored UV copies retain textures and normals while render definitio
     }
     const auto legacy = meshSnapshot(document), compact = meshSnapshot(document, true);
     REQUIRE(compact.at("meshes").size() * 3 == legacy.at("meshes").size());
-    REQUIRE(compact.at("assets").size() + 1 == legacy.at("assets").size());
+    REQUIRE(compact.at("assets").size() + 1 + (payload.editModel.isEmpty() ? 0 : 1) ==
+            legacy.at("assets").size());
+    REQUIRE_FALSE(
+        compact.at("assets").contains(payload.recipe.at("parameters").at("meshAsset").get<std::string>()));
+    if (!payload.editModel.isEmpty())
+        REQUIRE_FALSE(compact.at("assets").contains(
+            payload.recipe.at("parameters").at("editMeshAsset").get<std::string>()));
     REQUIRE_FALSE(compact.at("assets").empty());
     for (const auto &[hash, bytes] : compact.at("assets").items())
         REQUIRE(bytes == legacy.at("assets").at(hash));

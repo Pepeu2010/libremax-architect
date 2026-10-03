@@ -1,0 +1,422 @@
+[
+  {
+    "id": "home-kitchen-island",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "176b618383946a94f269782373cdd345823cef881ff29e8ab5e56be5e4b69f18",
+    "dimensionsMillimeters": [
+      1700.0,
+      960.0,
+      920.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 419829,
+    "triangles": 2728
+  },
+  {
+    "id": "home-kitchen-base",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "4366e5a6b60e8c069b453df6182852a90bfb6e40e074aa36ec23d7e69cc3d0d2",
+    "dimensionsMillimeters": [
+      800.0,
+      641.0,
+      850.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 358762,
+    "triangles": 2428
+  },
+  {
+    "id": "home-kitchen-tall",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "1710381d1cbb7198879db2aaaacb4bd86a834e907a3351b5bfeac30696f4acdb",
+    "dimensionsMillimeters": [
+      600.0,
+      641.0,
+      2200.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 365752,
+    "triangles": 2428
+  },
+  {
+    "id": "home-kitchen-upper",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "14184e4c8a0f22eb2ed17e6f1ed00b13d85dbd8aaf353c0a6bafc8261215cd19",
+    "dimensionsMillimeters": [
+      900.0,
+      381.0,
+      650.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 361370,
+    "triangles": 2428
+  },
+  {
+    "id": "home-wardrobe-sliding",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "56f7dc20fe548e4e7ca0c9d82d033b392a5d12d9e7f6c1fcfc8fcf718de8e866",
+    "dimensionsMillimeters": [
+      1800.0,
+      702.5,
+      2300.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 474537,
+    "triangles": 3028
+  },
+  {
+    "id": "home-wardrobe-compact",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "80b6ae0678e2045a3fabe442db3459f85b6b5e66f6204486e08a9e6ebf2ab144",
+    "dimensionsMillimeters": [
+      1200.0,
+      641.0,
+      2200.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 365622,
+    "triangles": 2428
+  },
+  {
+    "id": "home-washer",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "28a1b368cd87eef822a96749a6a32e598487549e87cb6a22ccb4bf7959f9b6f6",
+    "dimensionsMillimeters": [
+      600.0,
+      705.0,
+      860.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 410311,
+    "triangles": 2892
+  },
+  {
+    "id": "home-dishwasher",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "79c60725ed97e45c26d39eff28b9df265f87ebed6716094f6133f2e3210c483b",
+    "dimensionsMillimeters": [
+      600.0,
+      695.0,
+      860.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 263258,
+    "triangles": 1664
+  },
+  {
+    "id": "home-fridge",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "53572f2f99874312b160cc2aabb70f905352e0999e55731837a1b1b5a7c8e19e",
+    "dimensionsMillimeters": [
+      700.0,
+      760.0,
+      1850.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 421949,
+    "triangles": 2728
+  },
+  {
+    "id": "home-cooktop",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "abaa7a45b1ee995558ee40fe340db70e4c9d614a8a7b94715374f7c71dab081e",
+    "dimensionsMillimeters": [
+      600.0,
+      520.0,
+      48.5
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 861099,
+    "triangles": 6412
+  },
+  {
+    "id": "home-hood",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "10d7c12bdf92d4f2a61fed969e7007ec914b406e87350ace821ba47778b3417b",
+    "dimensionsMillimeters": [
+      800.0,
+      440.0,
+      670.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 309668,
+    "triangles": 2128
+  },
+  {
+    "id": "home-vanity",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "1315eb779c5e4f95d41fc1daecb4631ebea1fde7220919b8907c2d5a4d796c2a",
+    "dimensionsMillimeters": [
+      925.0,
+      520.0,
+      876.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 728232,
+    "triangles": 5020
+  },
+  {
+    "id": "home-vanity-small",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "ed38179ff9077e6604ee319ead68fefd4dbd6b4d0ca5c618ac7fc6dd31e57c89",
+    "dimensionsMillimeters": [
+      675.0,
+      520.0,
+      876.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 729062,
+    "triangles": 5020
+  },
+  {
+    "id": "home-toilet",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "01548b8e6a74284660e4f0ae41c56f87dca4cef92917c60472173cd1ceb5d7c6",
+    "dimensionsMillimeters": [
+      380.0,
+      631.0,
+      829.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 403340,
+    "triangles": 2892
+  },
+  {
+    "id": "home-toilet-wall",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "fb7f871d5c3fa50708a01bc810ccfb1affff121bbdd337c8d0c8f1d7072a9d81",
+    "dimensionsMillimeters": [
+      380.0,
+      532.0,
+      136.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 194012,
+    "triangles": 1528
+  },
+  {
+    "id": "home-shower",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "e86a935a52e6fde5e0f34b72e099634583623f19488778ffa4fcefb23122411d",
+    "dimensionsMillimeters": [
+      240.0,
+      430.0,
+      1745.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 401804,
+    "triangles": 3056
+  },
+  {
+    "id": "home-shower-screen",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "c87b951767219ab6d2aa717d88af81d19662c59794691ca86d067866a70e4dc4",
+    "dimensionsMillimeters": [
+      900.0,
+      35.0,
+      2100.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 164897,
+    "triangles": 900
+  },
+  {
+    "id": "home-curtain",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "fa86d758201e5cd5720a6dd639a8ed3058df3754a354490a54e06142cbe82fc7",
+    "dimensionsMillimeters": [
+      2409.0,
+      95.5,
+      2628.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 1689999,
+    "triangles": 9164
+  },
+  {
+    "id": "home-curtain-small",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "fbe83667a1b4a179182417281e3d3cebd31d51c568322f34ebb42239fa9cea86",
+    "dimensionsMillimeters": [
+      1509.0,
+      95.5,
+      2628.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 1685861,
+    "triangles": 9164
+  },
+  {
+    "id": "home-air-conditioner",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "f2922e4b4ab7f0dc038329e8fa6b43afa294f4a90b48604507f31a3591549006",
+    "dimensionsMillimeters": [
+      880.0,
+      249.0,
+      300.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 801018,
+    "triangles": 5948
+  },
+  {
+    "id": "home-desk",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "97936e74bcdef94cfeb04b17d371042bc35008fc1b5986fbebadc21a655d8b7f",
+    "dimensionsMillimeters": [
+      1200.0,
+      558.0,
+      775.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 670732,
+    "triangles": 4556
+  },
+  {
+    "id": "home-chair",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "ba19ea5951cf420fc1a1b3d53f861b91953b6823fe4ef595e98ffd7ae8e72bdf",
+    "dimensionsMillimeters": [
+      490.0,
+      495.0,
+      910.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 507121,
+    "triangles": 3656
+  },
+  {
+    "id": "home-table",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "11dce1ceb7cf65907920246c238c974626e934002cd6ee736fe8421ad3d7aac5",
+    "dimensionsMillimeters": [
+      1600.0,
+      860.0,
+      800.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 449105,
+    "triangles": 3356
+  },
+  {
+    "id": "home-shoe-storage",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "1c15c5da94280f04ba3e6fd983487aa004e7cf213a7768c6faba7d4b8d23e5f2",
+    "dimensionsMillimeters": [
+      820.0,
+      351.0,
+      997.5
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 421479,
+    "triangles": 2728
+  },
+  {
+    "id": "home-wall-shelf",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "fcf7ef768c21bcd5c76c40065bec133290c8efaa8484332530c663a96c06b93b",
+    "dimensionsMillimeters": [
+      1200.0,
+      260.0,
+      700.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 271619,
+    "triangles": 1500
+  },
+  {
+    "id": "home-laundry-sink",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "96237969d391c6c5cd166b772298ccdfcda3d8b62a93d08f0cb1a16ac6023df9",
+    "dimensionsMillimeters": [
+      650.0,
+      641.0,
+      1127.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 727547,
+    "triangles": 5020
+  },
+  {
+    "id": "home-pendant",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "d4090f85ae8aefaa6c69f177496b099db0f654464aac53b657479906563aa012",
+    "dimensionsMillimeters": [
+      320.0,
+      320.0,
+      679.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 287272,
+    "triangles": 2292
+  },
+  {
+    "id": "home-towel-rail",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "generator": "scripts/create-home-collection.py",
+    "preparedSha256": "dece655dcb54f6cb65bffe8ba70b8c6609253e4d7194633b447713f1000bcd0f",
+    "dimensionsMillimeters": [
+      574.0,
+      85.0,
+      472.0
+    ],
+    "dimensionBasis": "suggested",
+    "bytes": 361242,
+    "triangles": 2592
+  }
+]

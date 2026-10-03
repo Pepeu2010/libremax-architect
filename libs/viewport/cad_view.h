@@ -5,6 +5,8 @@
 #include "placement/placement.h"
 #include <AIS_InteractiveContext.hxx>
 #include <AIS_Shape.hxx>
+#include <AIS_TextLabel.hxx>
+#include <QPolygonF>
 #include <QTemporaryDir>
 #include <QWidget>
 #include <V3d_View.hxx>
@@ -31,6 +33,9 @@ class CadView final : public QWidget {
     Document current;
     QTemporaryDir textureCache;
     std::optional<gp_Pnt> wallStart;
+    std::vector<gp_Pnt> roomPoints;
+    std::vector<Handle(AIS_TextLabel)> measurements;
+    bool showMeasurements = true;
     QPoint last;
     bool top = true;
     bool cutaway = true;
@@ -39,6 +44,8 @@ class CadView final : public QWidget {
     std::function<std::optional<Asset>(const QString &)> findAsset;
     std::optional<Asset> placingAsset;
     std::optional<Entity> movingObject;
+    std::vector<Entity> movingSet;
+    std::vector<Entity> pendingSet;
     std::optional<Placement> pendingPlacement;
     QPoint pressed;
     QPointF grabOffset;
@@ -74,6 +81,10 @@ class CadView final : public QWidget {
     void beginPlacement(const QString &assetId);
     void scene(const Document &d);
     void setTool(const QString &mode);
+    void setMeasurements(bool enabled) {
+        showMeasurements = enabled;
+        scene(current);
+    }
     void setTop(bool enabled);
     void setPerformanceMode(int mode);
     int performanceMode() const { return performance; }
@@ -92,11 +103,14 @@ class CadView final : public QWidget {
     }
     void capture(const QString &path);
     QPoint project(double x, double y, double z = 0) const;
+    Json deviceDiagnostics() const;
   signals:
     void selected(const QStringList &ids);
     void wallCreated(double x1, double y1, double x2, double y2, bool half);
+    void roomCreated(const QPolygonF &outline);
     void assetDropped(const QString &id, const lmx::Entity &object);
     void objectMoved(const lmx::Entity &object);
+    void objectsMoved(const std::vector<lmx::Entity> &objects);
     void placementStatus(const QString &text, bool active, bool allowed);
     void coordinates(const QString &text);
     void failure(const QString &message);

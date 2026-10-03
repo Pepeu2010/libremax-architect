@@ -1,0 +1,794 @@
+[
+  {
+    "id": "home-kitchen-island",
+    "name": "Ilha de cozinha com tampo claro",
+    "category": "Cozinha",
+    "width": 1700.0,
+    "depth": 960.0,
+    "height": 920.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Ilha de cozinha com tampo claro",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-kitchen-island.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "176b618383946a94f269782373cdd345823cef881ff29e8ab5e56be5e4b69f18",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0,
+        "editMeshAsset": "cb40565acb12ac37b0a00a64ef82d47d4278a6a00f795051a150e1cf6c5ae45e"
+      },
+      "lodFile": "lod-home-kitchen-island.json"
+    }
+  },
+  {
+    "id": "home-kitchen-base",
+    "name": "Armário de cozinha com puxador fino",
+    "category": "Cozinha",
+    "width": 800.0,
+    "depth": 641.0,
+    "height": 850.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Armário de cozinha com puxador fino",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-kitchen-base.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "4366e5a6b60e8c069b453df6182852a90bfb6e40e074aa36ec23d7e69cc3d0d2",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "home-kitchen-tall",
+    "name": "Torre de cozinha contemporânea",
+    "category": "Cozinha",
+    "width": 600.0,
+    "depth": 641.0,
+    "height": 2200.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Torre de cozinha contemporânea",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-kitchen-tall.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "1710381d1cbb7198879db2aaaacb4bd86a834e907a3351b5bfeac30696f4acdb",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "home-kitchen-upper",
+    "name": "Armário aéreo de cozinha",
+    "category": "Cozinha",
+    "width": 900.0,
+    "depth": 381.0,
+    "height": 650.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Armário aéreo de cozinha",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-kitchen-upper.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "14184e4c8a0f22eb2ed17e6f1ed00b13d85dbd8aaf353c0a6bafc8261215cd19",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1400
+      }
+    }
+  },
+  {
+    "id": "home-wardrobe-sliding",
+    "name": "Guarda-roupa com portas de correr",
+    "category": "Dormitório",
+    "width": 1800.0,
+    "depth": 702.5,
+    "height": 2300.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Guarda-roupa com portas de correr",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-wardrobe-sliding.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "56f7dc20fe548e4e7ca0c9d82d033b392a5d12d9e7f6c1fcfc8fcf718de8e866",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0,
+        "editMeshAsset": "23786aceafa40db78961ffb3678f8d669e7d9c4e05743befc05358a2ba86f631"
+      },
+      "lodFile": "lod-home-wardrobe-sliding.json"
+    }
+  },
+  {
+    "id": "home-wardrobe-compact",
+    "name": "Guarda-roupa compacto de duas portas",
+    "category": "Dormitório",
+    "width": 1200.0,
+    "depth": 641.0,
+    "height": 2200.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Guarda-roupa compacto de duas portas",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-wardrobe-compact.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "80b6ae0678e2045a3fabe442db3459f85b6b5e66f6204486e08a9e6ebf2ab144",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "home-washer",
+    "name": "Máquina de lavar frontal",
+    "category": "Área de serviço",
+    "width": 600.0,
+    "depth": 705.0,
+    "height": 860.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Máquina de lavar frontal",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-washer.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "28a1b368cd87eef822a96749a6a32e598487549e87cb6a22ccb4bf7959f9b6f6",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0,
+        "editMeshAsset": "f0758b448c10cbfed46b92af612184558f9fb34230db5d2097f1aa1599ee72cd"
+      },
+      "lodFile": "lod-home-washer.json"
+    }
+  },
+  {
+    "id": "home-dishwasher",
+    "name": "Lava-louças com painel claro",
+    "category": "Cozinha",
+    "width": 600.0,
+    "depth": 695.0,
+    "height": 860.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Lava-louças com painel claro",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-dishwasher.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "79c60725ed97e45c26d39eff28b9df265f87ebed6716094f6133f2e3210c483b",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "home-fridge",
+    "name": "Geladeira com acabamento claro",
+    "category": "Cozinha",
+    "width": 700.0,
+    "depth": 760.0,
+    "height": 1850.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Geladeira com acabamento claro",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-fridge.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "53572f2f99874312b160cc2aabb70f905352e0999e55731837a1b1b5a7c8e19e",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0,
+        "editMeshAsset": "cde237aa7bbe4ec13a9a55aae4a7ed0167487e27a4614af78c19703e610788b3"
+      },
+      "lodFile": "lod-home-fridge.json"
+    }
+  },
+  {
+    "id": "home-cooktop",
+    "name": "Cooktop de indução com quatro zonas",
+    "category": "Cozinha",
+    "width": 600.0,
+    "depth": 520.0,
+    "height": 48.5,
+    "tags": "apartamento atual moderno contemporâneo compacto original Cooktop de indução com quatro zonas",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-cooktop.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "abaa7a45b1ee995558ee40fe340db70e4c9d614a8a7b94715374f7c71dab081e",
+        "originalMaterials": true,
+        "placement": "surface",
+        "defaultElevation": 0,
+        "editMeshAsset": "7292284bee6b7bff37db6bd035db6a6af78ee5e7581fa712037db214e601fa79"
+      },
+      "lodFile": "lod-home-cooktop.json"
+    }
+  },
+  {
+    "id": "home-hood",
+    "name": "Coifa de linhas retas",
+    "category": "Cozinha",
+    "width": 800.0,
+    "depth": 440.0,
+    "height": 670.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Coifa de linhas retas",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-hood.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "10d7c12bdf92d4f2a61fed969e7007ec914b406e87350ace821ba47778b3417b",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1600
+      }
+    }
+  },
+  {
+    "id": "home-vanity",
+    "name": "Gabinete de banheiro com cuba e torneira",
+    "category": "Banheiro",
+    "width": 925.0,
+    "depth": 520.0,
+    "height": 876.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Gabinete de banheiro com cuba e torneira",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-vanity.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "1315eb779c5e4f95d41fc1daecb4631ebea1fde7220919b8907c2d5a4d796c2a",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 350,
+        "editMeshAsset": "cc3fe69ba12eaf4bba4a499f61012aa854376b30c0c8917e3d7620b980b0f09f"
+      },
+      "lodFile": "lod-home-vanity.json"
+    }
+  },
+  {
+    "id": "home-vanity-small",
+    "name": "Gabinete compacto para lavabo",
+    "category": "Banheiro",
+    "width": 675.0,
+    "depth": 520.0,
+    "height": 876.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Gabinete compacto para lavabo",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-vanity-small.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "ed38179ff9077e6604ee319ead68fefd4dbd6b4d0ca5c618ac7fc6dd31e57c89",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 350,
+        "editMeshAsset": "724184b964af0c41cbe36e85cc22a9293fa9d4e8464fc4db27f6ffb6bdd58d31"
+      },
+      "lodFile": "lod-home-vanity-small.json"
+    }
+  },
+  {
+    "id": "home-toilet",
+    "name": "Vaso sanitário contemporâneo",
+    "category": "Banheiro",
+    "width": 380.0,
+    "depth": 631.0,
+    "height": 829.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Vaso sanitário contemporâneo",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-toilet.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "01548b8e6a74284660e4f0ae41c56f87dca4cef92917c60472173cd1ceb5d7c6",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0,
+        "editMeshAsset": "a0ca576b47dfc4f0dbec08f4667dac01c6361fcded07d830d80233a6c3dea7d9"
+      },
+      "lodFile": "lod-home-toilet.json"
+    }
+  },
+  {
+    "id": "home-toilet-wall",
+    "name": "Vaso sanitário suspenso",
+    "category": "Banheiro",
+    "width": 380.0,
+    "depth": 532.0,
+    "height": 136.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Vaso sanitário suspenso",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-toilet-wall.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "fb7f871d5c3fa50708a01bc810ccfb1affff121bbdd337c8d0c8f1d7072a9d81",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 220
+      }
+    }
+  },
+  {
+    "id": "home-shower",
+    "name": "Chuveiro com coluna e controle",
+    "category": "Banheiro",
+    "width": 240.0,
+    "depth": 430.0,
+    "height": 1745.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Chuveiro com coluna e controle",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-shower.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "e86a935a52e6fde5e0f34b72e099634583623f19488778ffa4fcefb23122411d",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 250,
+        "editMeshAsset": "3628f550262360c7f590d1762374568f5e5ed4e87e442f216052bc39c90cbf77"
+      },
+      "lodFile": "lod-home-shower.json"
+    }
+  },
+  {
+    "id": "home-shower-screen",
+    "name": "Painel de vidro para box",
+    "category": "Banheiro",
+    "width": 900.0,
+    "depth": 35.0,
+    "height": 2100.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Painel de vidro para box",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-shower-screen.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "c87b951767219ab6d2aa717d88af81d19662c59794691ca86d067866a70e4dc4",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "home-curtain",
+    "name": "Cortina de linho com pregas",
+    "category": "Decoração",
+    "width": 2409.0,
+    "depth": 95.5,
+    "height": 2628.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Cortina de linho com pregas",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-curtain.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "fa86d758201e5cd5720a6dd639a8ed3058df3754a354490a54e06142cbe82fc7",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 0,
+        "editMeshAsset": "db701f4bcd2627bb7bbb57c337f132e126c52a6195750499f5abff053050c397"
+      },
+      "lodFile": "lod-home-curtain.json"
+    }
+  },
+  {
+    "id": "home-curtain-small",
+    "name": "Cortina de linho para janela compacta",
+    "category": "Decoração",
+    "width": 1509.0,
+    "depth": 95.5,
+    "height": 2628.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Cortina de linho para janela compacta",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-curtain-small.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "fbe83667a1b4a179182417281e3d3cebd31d51c568322f34ebb42239fa9cea86",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 0,
+        "editMeshAsset": "60f3f6cfdce89d273f4edcb3edb56664af3f2e8bfda21a78c19eebee7e71f444"
+      },
+      "lodFile": "lod-home-curtain-small.json"
+    }
+  },
+  {
+    "id": "home-air-conditioner",
+    "name": "Ar-condicionado de parede",
+    "category": "Decoração",
+    "width": 880.0,
+    "depth": 249.0,
+    "height": 300.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Ar-condicionado de parede",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-air-conditioner.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "f2922e4b4ab7f0dc038329e8fa6b43afa294f4a90b48604507f31a3591549006",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 2100,
+        "editMeshAsset": "82ac235729487060b6ae03d77742a8080f608bc2c3df7b26a26953ce59fa8a03"
+      },
+      "lodFile": "lod-home-air-conditioner.json"
+    }
+  },
+  {
+    "id": "home-desk",
+    "name": "Escrivaninha compacta com gaveteiro",
+    "category": "Escritório",
+    "width": 1200.0,
+    "depth": 558.0,
+    "height": 775.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Escrivaninha compacta com gaveteiro",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-desk.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "97936e74bcdef94cfeb04b17d371042bc35008fc1b5986fbebadc21a655d8b7f",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0,
+        "editMeshAsset": "6866e3aaf788912a546ae24bed245f46019d849acf3839e99e4da50f0eec5679"
+      },
+      "lodFile": "lod-home-desk.json"
+    }
+  },
+  {
+    "id": "home-chair",
+    "name": "Cadeira de jantar estofada",
+    "category": "Sala",
+    "width": 490.0,
+    "depth": 495.0,
+    "height": 910.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Cadeira de jantar estofada",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-chair.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "ba19ea5951cf420fc1a1b3d53f861b91953b6823fe4ef595e98ffd7ae8e72bdf",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0,
+        "editMeshAsset": "cfed92df147325a1059deaca9066566b60b97ca700c4a25f6a3d09cf48221dcd"
+      },
+      "lodFile": "lod-home-chair.json"
+    }
+  },
+  {
+    "id": "home-table",
+    "name": "Mesa de jantar retangular com pedra",
+    "category": "Sala",
+    "width": 1600.0,
+    "depth": 860.0,
+    "height": 800.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Mesa de jantar retangular com pedra",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-table.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "11dce1ceb7cf65907920246c238c974626e934002cd6ee736fe8421ad3d7aac5",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0,
+        "editMeshAsset": "ee37884e31fbb733ce5439ab238df41537c9fab7cb377a9cbe0d1bb1b9503ef1"
+      },
+      "lodFile": "lod-home-table.json"
+    }
+  },
+  {
+    "id": "home-shoe-storage",
+    "name": "Sapateira estreita para entrada",
+    "category": "Decoração",
+    "width": 820.0,
+    "depth": 351.0,
+    "height": 997.5,
+    "tags": "apartamento atual moderno contemporâneo compacto original Sapateira estreita para entrada",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-shoe-storage.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "1c15c5da94280f04ba3e6fd983487aa004e7cf213a7768c6faba7d4b8d23e5f2",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0,
+        "editMeshAsset": "a058de4cc6c5a8fc04ea39c94c82577a00a423d0536a1c06c2aa505e91d1f415"
+      },
+      "lodFile": "lod-home-shoe-storage.json"
+    }
+  },
+  {
+    "id": "home-wall-shelf",
+    "name": "Prateleiras de madeira com estrutura fina",
+    "category": "Decoração",
+    "width": 1200.0,
+    "depth": 260.0,
+    "height": 700.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Prateleiras de madeira com estrutura fina",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-wall-shelf.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "fcf7ef768c21bcd5c76c40065bec133290c8efaa8484332530c663a96c06b93b",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1000
+      }
+    }
+  },
+  {
+    "id": "home-laundry-sink",
+    "name": "Tanque compacto com armário",
+    "category": "Área de serviço",
+    "width": 650.0,
+    "depth": 641.0,
+    "height": 1127.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Tanque compacto com armário",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-laundry-sink.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "96237969d391c6c5cd166b772298ccdfcda3d8b62a93d08f0cb1a16ac6023df9",
+        "originalMaterials": true,
+        "placement": "floor",
+        "defaultElevation": 0,
+        "editMeshAsset": "0d5d04192f4f043cf0e551c74f41f9482161555b5914e76db04fb70ff3f6ba42"
+      },
+      "lodFile": "lod-home-laundry-sink.json"
+    }
+  },
+  {
+    "id": "home-pendant",
+    "name": "Pendente de tecido para sala",
+    "category": "Decoração",
+    "width": 320.0,
+    "depth": 320.0,
+    "height": 679.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Pendente de tecido para sala",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-pendant.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "d4090f85ae8aefaa6c69f177496b099db0f654464aac53b657479906563aa012",
+        "originalMaterials": true,
+        "placement": "ceiling",
+        "defaultElevation": 0
+      }
+    }
+  },
+  {
+    "id": "home-towel-rail",
+    "name": "Toalheiro com toalha de linho",
+    "category": "Banheiro",
+    "width": 574.0,
+    "depth": 85.0,
+    "height": 472.0,
+    "tags": "apartamento atual moderno contemporâneo compacto original Toalheiro com toalha de linho",
+    "license": "CC0-1.0",
+    "author": "LibreMax contributors",
+    "origin": "LibreMax original design",
+    "date": "2026-10-03",
+    "recipe": {
+      "type": "MeshObject",
+      "material": "white",
+      "modelFile": "home-towel-rail.json",
+      "source": "LibreMax original design",
+      "author": "LibreMax contributors",
+      "collection": "apartment-modern",
+      "parameters": {
+        "meshAsset": "dece655dcb54f6cb65bffe8ba70b8c6609253e4d7194633b447713f1000bcd0f",
+        "originalMaterials": true,
+        "placement": "wall",
+        "defaultElevation": 1100,
+        "editMeshAsset": "8b69c2246590b7138dd9bdaf3cc12295dfe0ed21f8b1520408ec62a1491b74d8"
+      },
+      "lodFile": "lod-home-towel-rail.json"
+    }
+  }
+]

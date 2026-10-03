@@ -1,13 +1,18 @@
 #include "main_window.h"
+#include "commands/arrangement.h"
 #include "core/expression.h"
+#include "document/room_outline.h"
 #include "first_run.h"
 #include "geometry/geometry.h"
 #include "import/dxf.h"
+#include "import/model_import.h"
+#include "library/model_pack.h"
 #include "materials/texture.h"
 #include "persistence/project_store.h"
 #include "rendering/environment_map.h"
 #include "rendering/light_model.h"
 #include "rendering/render_progress.h"
+#include "rendering/room_look.h"
 #include "resource_paths.h"
 #include "studio_theme.h"
 #include <QActionGroup>
@@ -21,11 +26,13 @@
 #include <QDrag>
 #include <QFileDialog>
 #include <QFormLayout>
+#include <QHeaderView>
 #include <QInputDialog>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QMimeData>
 #include <QPlainTextEdit>
+#include <QProgressDialog>
 #include <QPushButton>
 #include <QResizeEvent>
 #include <QSaveFile>
@@ -36,6 +43,7 @@
 #include <QStandardItemModel>
 #include <QStandardPaths>
 #include <QStatusBar>
+#include <QTableWidget>
 #include <QThread>
 #include <QToolBar>
 #include <QToolButton>
@@ -137,7 +145,9 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory, bool welcome
         testLibraryDirectory = std::make_unique<QTemporaryDir>();
     const auto localRoot =
         testing ? (testRoot.isEmpty() ? testLibraryDirectory->path() : testRoot) : dataRoot();
-    library = std::make_unique<Library>(localRoot + "/library.db", resourceFile("starter-models"));
+    userModelsDirectory = localRoot + "/user-models";
+    library = std::make_unique<Library>(localRoot + "/library.db", resourceFile("starter-models"),
+                                        userModelsDirectory);
     projects = std::make_unique<ProjectLibrary>(localRoot + "/projects");
     render = std::make_unique<RenderQueue>(localRoot + "/renders");
     QFile catalog(resourceFile("starter-library/catalog.json"));
@@ -160,6 +170,10 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory, bool welcome
     if (!expanded.open(QIODevice::ReadOnly))
         throw std::runtime_error("Coleção ampliada não encontrada");
     library->seed(Json::parse(expanded.readAll().toStdString()));
+    QFile homeCollection(resourceFile("starter-models/home-catalog.json"));
+    if (!homeCollection.open(QIODevice::ReadOnly))
+        throw std::runtime_error("Coleção para apartamentos não encontrada");
+    library->seed(Json::parse(homeCollection.readAll().toStdString()));
     createShell();
     connect(&thumbnails, &AssetThumbnails::ready, this, [this](const QString &id, const QImage &image) {
         for (int i = 0; i < assets->count(); ++i) {
@@ -183,6 +197,16 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory, bool welcome
             });
         });
     connect(viewport, &CadView::selected, this, &MainWindow::selectIds);
+    connect(viewport, &CadView::roomCreated, this, [this](const QPolygonF &polygon) {
+        protect([&] {
+            Outline outline;
+            for (auto p : polygon)
+                outline.push_back({p.x(), p.y()});
+            editor_.apply(tr("Criar cômodo desenhado"),
+                          [&](Document &d) { addPolygonRoom(d, outline, 2700, 120, "Cômodo desenhado"); });
+            viewport->frame();
+        });
+    });
     connect(viewport, &CadView::assetDropped, this,
             [this](const QString &id, const Entity &object) { protect([&] { insertAsset(id, object); }); });
     connect(viewport, &CadView::objectMoved, this, [this](const Entity &object) {
@@ -202,6 +226,14 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory, bool welcome
         });
     connect(viewport, &CadView::coordinates, this,
             [this](const QString &text) { statusBar()->showMessage(text); });
+    connect(viewport, &CadView::objectsMoved, this, [this](const std::vector<Entity> &objects) {
+        protect([&] {
+            editor_.apply(tr("Mover conjunto de móveis"), [&](Document &d) {
+                for (const auto &object : objects)
+                    d.at(object.id) = object;
+            });
+        });
+    });
     connect(viewport, &CadView::failure, this, [this](const QString &text) {
         spdlog::error("Viewport: {}", text.toStdString());
         statusBar()->showMessage(text, 12000);
@@ -346,6 +378,10 @@ void MainWindow::createShell() {
     action(file, tr("Importar planta DXF…"), {}, [this] { importDxf(); });
     action(file, tr("Ativar materiais realistas"), {}, [this] { activatePbrMaterials(); });
     action(file, tr("Importar textura JPG/PNG…"), {}, [this] { importTexture(); });
+    action(file, tr("Adicionar modelo 3D…"), {}, [this] { importModel(); })->setObjectName("import3DModel");
+    action(file, tr("Instalar ou atualizar coleção…"), {}, [this] {
+        installCollection();
+    })->setObjectName("installModelCollection");
     auto *recent = file->addMenu(tr("Projetos recentes"));
     for (const auto &p : QSettings().value("recent").toStringList())
         action(recent, QFileInfo(p).fileName(), {}, [this, p] {
@@ -379,8 +415,34 @@ void MainWindow::createShell() {
     action(edit, tr("Excluir"), QKeySequence::Delete, [this] { transform("delete"); });
     action(edit, tr("Ocultar / mostrar"), {}, [this] { transform("visibility"); });
     action(edit, tr("Bloquear / desbloquear"), {}, [this] { transform("lock"); });
+    edit->addSeparator();
+    action(edit, tr("Juntar em conjunto"), QKeySequence("Ctrl+G"), [this] {
+        arrangeSelection("group");
+    })->setObjectName("groupSelection");
+    action(edit, tr("Separar conjunto"), QKeySequence("Ctrl+Shift+G"),
+           [this] { arrangeSelection("ungroup"); });
+    action(edit, tr("Mover seleção com medidas…"), {}, [this] { moveSelection(); });
+    auto *align = edit->addMenu(tr("Alinhar móveis"));
+    for (const auto &[label, id] :
+         std::vector<std::pair<QString, QString>>{{tr("Pela esquerda"), "left"},
+                                                  {tr("Pela direita"), "right"},
+                                                  {tr("Pelo fundo"), "back"},
+                                                  {tr("Pela frente"), "front"},
+                                                  {tr("Centralizar na horizontal"), "centerX"},
+                                                  {tr("Centralizar na vertical"), "centerY"},
+                                                  {tr("Espaçar na horizontal"), "spaceX"},
+                                                  {tr("Espaçar na vertical"), "spaceY"}})
+        action(align, label, {}, [this, id] { arrangeSelection(id); });
     auto *environment = menuBar()->addMenu(tr("&Ambiente"));
     action(environment, tr("Adicionar cômodo…"), {}, [this] { newRoom(); });
+    action(environment, tr("Desenhar contorno do cômodo"), {}, [this] {
+        viewport->setTop(true);
+        viewport->setTool("room");
+        statusBar()->showMessage(tr("Clique em cada canto; botão direito fecha o cômodo. Esc cancela."));
+    })->setObjectName("drawRoomOutline");
+    action(environment, tr("Ajustar cantos do cômodo…"), {}, [this] {
+        editRoomOutline();
+    })->setObjectName("editRoomOutline");
     auto *apartmentAction =
         action(environment, tr("Começar com apartamento de exemplo"), {}, [this] { apartmentStarter(); });
     apartmentAction->setObjectName("apartmentStarter");
@@ -429,6 +491,10 @@ void MainWindow::createShell() {
     auto *cameraMenu = menuBar()->addMenu(tr("&Câmeras"));
     action(cameraMenu, tr("Nova câmera…"), {}, [this] { createCamera(); });
     auto *viewMenu = menuBar()->addMenu(tr("&Vista"));
+    auto *measurements = action(viewMenu, tr("Mostrar medidas das paredes"), {}, [] {});
+    measurements->setCheckable(true);
+    measurements->setChecked(true);
+    connect(measurements, &QAction::toggled, viewport, &CadView::setMeasurements);
     action(viewMenu, tr("Planta superior"), QKeySequence("1"), [this] { viewport->setTop(true); });
     action(viewMenu, tr("Ver em 3D"), QKeySequence("3"), [this] { viewport->setTop(false); });
     action(viewMenu, tr("Enquadrar projeto"), QKeySequence("F"), [this] { viewport->frame(); });
@@ -598,6 +664,13 @@ void MainWindow::createShell() {
     search->setPlaceholderText(tr("Pesquisar móveis e objetos…"));
     search->setAccessibleName(tr("Pesquisar biblioteca"));
     libraryLayout->addWidget(search);
+    auto *addModels = new QPushButton(tr("Adicionar modelos…"));
+    addModels->setObjectName("addLibraryModels");
+    auto *modelsMenu = new QMenu(addModels);
+    action(modelsMenu, tr("Modelo baixado (GLB, OBJ e outros)…"), {}, [this] { importModel(); });
+    action(modelsMenu, tr("Coleção LibreMax (.lmaxpack)…"), {}, [this] { installCollection(); });
+    addModels->setMenu(modelsMenu);
+    libraryLayout->addWidget(addModels);
     category = new QComboBox;
     category->addItem(tr("Todos os ambientes"), "");
     category->addItem(tr("Apartamento atual"), "__modern");
@@ -605,7 +678,7 @@ void MainWindow::createShell() {
     category->addItem(tr("Objetos detalhados"), "__detail");
     category->setObjectName("libraryCategory");
     for (const auto &cat : {"Cozinha", "Dormitório", "Sala", "Banheiro", "Escritório", "Decoração",
-                            "Eletrodomésticos", "Portas e janelas"})
+                            "Eletrodomésticos", "Portas e janelas", "Área de serviço", "Meus modelos"})
         category->addItem(QString::fromUtf8(cat), QString::fromUtf8(cat));
     libraryLayout->addWidget(category);
     favoriteOnly = new QCheckBox(tr("Favoritos"));
@@ -948,6 +1021,17 @@ void MainWindow::createShell() {
     renderEnvironmentMode->addItem(tr("Cor sólida"), "solid");
     renderEnvironmentMode->addItem(tr("Luz de uma imagem (HDRI)"), "hdri");
     renderLayout->addRow(tr("Ambiente"), renderEnvironmentMode);
+    auto *roomStyle = new QComboBox;
+    roomStyle->setObjectName("roomPhotoStyle");
+    roomStyle->addItem(tr("Escolher um estilo pronto…"), "");
+    roomStyle->addItem(tr("Natural · madeira e luz suave"), "natural");
+    roomStyle->addItem(tr("Claro · pedra e luz do dia"), "bright");
+    roomStyle->addItem(tr("Aconchegante · luz quente"), "evening");
+    renderLayout->addRow(tr("Estilo do cômodo"), roomStyle);
+    connect(roomStyle, &QComboBox::activated, this, [this, roomStyle] {
+        if (!roomStyle->currentData().toString().isEmpty())
+            protect([&] { roomLook(roomStyle->currentData().toString()); });
+    });
     auto *importEnvironmentButton = new QPushButton(tr("Importar luz…"));
     importEnvironmentButton->setObjectName("importHdri");
     importEnvironmentButton->setToolTip(tr("Importa um panorama HDR ou EXR e o incorpora ao projeto."));
@@ -1294,6 +1378,10 @@ void MainWindow::refreshScene() {
             roomPicker->setCurrentIndex(index);
     }
     refreshing = true;
+    selectedIds.erase(
+        std::remove_if(selectedIds.begin(), selectedIds.end(),
+                       [&](const auto &id) { return !editor_.document().contains(id.toStdString()); }),
+        selectedIds.end());
     projectTitle->setText(q(editor_.document().name));
     projectTitle->setToolTip(q(editor_.document().name));
     {
@@ -1431,7 +1519,8 @@ void MainWindow::refreshLibrary() {
             thumbnails.request(a, [this](const Asset &asset) { return library->withPayload(asset); });
         item->setIcon(thumbnail.isNull() ? studioIcon("cube") : QIcon(QPixmap::fromImage(thumbnail)));
         item->setData(Qt::UserRole + 2, !thumbnail.isNull());
-        item->setToolTip(a.category + " · CC0 · " + tr("Arraste para inserir"));
+        item->setToolTip(a.category + " · " + q(a.recipe.value("license", std::string("CC0"))) + " · " +
+                         tr("Arraste para inserir"));
         item->setSizeHint({114, 174});
     }
     assets->verticalScrollBar()->setValue(0);
@@ -1449,9 +1538,9 @@ void MainWindow::refreshInspector() {
     if (selectedIds.size() == 1 && editor_.document().contains(selectedIds.first().toStdString()))
         e = &editor_.document().at(selectedIds.first().toStdString());
     auto *form = qobject_cast<QFormLayout *>(inspector->layout());
-    advancedProperties->setVisible(e != nullptr);
+    advancedProperties->setVisible(e && e->type != "Group");
     findChild<QPushButton *>("applyProperties")->setEnabled(e && !e->locked);
-    form->setRowVisible(material, e && e->type != "Light" && e->type != "Camera");
+    form->setRowVisible(material, e && e->type != "Light" && e->type != "Camera" && e->type != "Group");
     form->setRowVisible(handle, e && e->type == "FurnitureModule");
     form->setRowVisible(glass, e && e->type == "FurnitureModule");
     form->setRowVisible(originalModelColors, e && e->type == "MeshObject");
@@ -1461,7 +1550,9 @@ void MainWindow::refreshInspector() {
                             : selectedIds.isEmpty() ? tr("Selecione um objeto")
                                                     : tr("%1 objetos selecionados").arg(selectedIds.size()));
     hint->setText(
-        e && e->type == "Light"
+        e && e->type == "Group" ? tr("Arraste qualquer móvel do conjunto para mover todos juntos. Use Editar "
+                                     "para alinhar ou separar.")
+        : e && e->type == "Light"
             ? tr("O marcador mostra onde está a luz. Ajuste o brilho e crie uma prévia para ver o resultado.")
             : tr("Arraste para mover. Use centímetros para ajustar o tamanho. Ctrl+clique seleciona vários "
                  "itens."));
@@ -1494,6 +1585,8 @@ void MainWindow::refreshInspector() {
         if (key == "x" || key == "y" || key == "yaw" || key.startsWith("target") || key == "lens" ||
             key == "fstop" || key == "focusDistance")
             visible = visible && advancedProperties->isChecked();
+        if (e && e->type == "Group")
+            visible = key == "name";
         form->setRowVisible(field, visible);
         field->setEnabled(e && !e->locked);
         field->clear();
@@ -1612,6 +1705,8 @@ void MainWindow::applyInspector() {
         if (e.locked)
             throw std::invalid_argument("Desbloqueie o objeto antes de editar");
         e.name = fields["name"]->text().toStdString();
+        if (e.type == "Group")
+            return;
         auto value = [&](const char *key, double previous) {
             const QString name = key;
             const double unit =
@@ -1674,6 +1769,24 @@ void MainWindow::newRoom() {
     depth->setValue(3);
     layout->addRow(tr("Largura"), width);
     layout->addRow(tr("Comprimento"), depth);
+    auto *shape = new QComboBox;
+    shape->addItems({tr("Retangular"), tr("Em L")});
+    shape->setObjectName("roomShape");
+    auto *cutWidth = new QDoubleSpinBox, *cutDepth = new QDoubleSpinBox;
+    for (auto *input : {cutWidth, cutDepth}) {
+        input->setRange(.5, 49);
+        input->setDecimals(2);
+        input->setSuffix(tr(" m"));
+        input->setValue(1.5);
+        input->setEnabled(false);
+    }
+    layout->addRow(tr("Formato"), shape);
+    layout->addRow(tr("Largura do recuo"), cutWidth);
+    layout->addRow(tr("Comprimento do recuo"), cutDepth);
+    connect(shape, &QComboBox::currentIndexChanged, &dialog, [=](int index) {
+        cutWidth->setEnabled(index == 1);
+        cutDepth->setEnabled(index == 1);
+    });
     auto *neighbor = new QComboBox;
     neighbor->addItem(tr("Primeiro cômodo"), "");
     for (const auto &e : editor_.document().entities)
@@ -1715,11 +1828,77 @@ void MainWindow::newRoom() {
             y -= depth->value() * 1000;
     }
     editor_.apply(tr("Adicionar %1").arg(name->currentText()), [&](Document &d) {
-        addRectangularRoom(d, width->value() * 1000, depth->value() * 1000, 2700, 120, x, y,
-                           name->currentText().toStdString());
+        if (shape->currentIndex() == 0)
+            addPolygonRoom(d,
+                           {{x, y},
+                            {x + width->value() * 1000, y},
+                            {x + width->value() * 1000, y + depth->value() * 1000},
+                            {x, y + depth->value() * 1000}},
+                           2700, 120, name->currentText().toStdString());
+        else {
+            const double w = width->value() * 1000, h = depth->value() * 1000, cw = cutWidth->value() * 1000,
+                         ch = cutDepth->value() * 1000;
+            if (cw >= w - 100 || ch >= h - 100)
+                throw std::invalid_argument("O recuo precisa ser menor que o cômodo.");
+            addPolygonRoom(d,
+                           {{x, y},
+                            {x + w, y},
+                            {x + w, y + h - ch},
+                            {x + w - cw, y + h - ch},
+                            {x + w - cw, y + h},
+                            {x, y + h}},
+                           2700, 120, name->currentText().toStdString());
+        }
     });
     viewport->setTool("select");
     viewport->frame();
+}
+void MainWindow::editRoomOutline() {
+    auto id = roomPicker->currentData().toString().toStdString();
+    if (selectedIds.size() == 1 && editor_.document().at(selectedIds.front().toStdString()).type == "Room")
+        id = selectedIds.front().toStdString();
+    if (id.empty())
+        throw std::invalid_argument("Escolha o cômodo na lista acima da planta.");
+    const auto room = editor_.document().at(id);
+    if (!room.parameters.contains("outline"))
+        throw std::invalid_argument("Este ajuste é para cômodos em L ou desenhados pelo contorno.");
+    const auto outline = roomOutline(room);
+    QDialog dialog(this);
+    dialog.setObjectName("roomOutlineDialog");
+    dialog.setWindowTitle(tr("Ajustar cantos de %1").arg(q(room.name)));
+    dialog.resize(470, 440);
+    auto *layout = new QVBoxLayout(&dialog);
+    auto *help = new QLabel(tr("Medidas em metros, a partir do canto inicial do cômodo. Piso, forro e "
+                               "paredes acompanham o contorno."));
+    help->setWordWrap(true);
+    layout->addWidget(help);
+    auto *table = new QTableWidget(static_cast<int>(outline.size()), 2);
+    table->setObjectName("roomOutlinePoints");
+    table->setHorizontalHeaderLabels({tr("Distância horizontal (m)"), tr("Distância vertical (m)")});
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    for (size_t i = 0; i < outline.size(); ++i)
+        for (int axis = 0; axis < 2; ++axis)
+            table->setItem(static_cast<int>(i), axis,
+                           new QTableWidgetItem(QString::number(outline[i][axis] / 1000, 'f', 3)));
+    layout->addWidget(table);
+    auto *height = new QDoubleSpinBox;
+    height->setObjectName("roomOutlineHeight");
+    height->setRange(.5, 10);
+    height->setValue(room.height / 1000);
+    height->setSuffix(tr(" m de altura"));
+    layout->addWidget(height);
+    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel);
+    layout->addWidget(buttons);
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    if (dialog.exec() != QDialog::Accepted)
+        return;
+    Outline updated;
+    for (int row = 0; row < table->rowCount(); ++row)
+        updated.push_back({evaluate(table->item(row, 0)->text().replace(',', '.').toStdString()) * 1000,
+                           evaluate(table->item(row, 1)->text().replace(',', '.').toStdString()) * 1000});
+    editor_.apply(tr("Ajustar contorno do cômodo"),
+                  [&](Document &d) { editPolygonRoom(d, id, updated, height->value() * 1000); });
 }
 void MainWindow::focusRoom() {
     showEditorWorkspace();
@@ -1976,6 +2155,30 @@ void MainWindow::transform(const QString &mode) {
         }
     });
 }
+void MainWindow::arrangeSelection(const QString &mode) {
+    const auto selected = ids(selectedIds);
+    std::string group;
+    editor_.apply(tr("Organizar móveis"), [&](Document &d) {
+        if (mode == "group")
+            group = groupObjects(d, selected);
+        else if (mode == "ungroup")
+            ungroupObjects(d, selected);
+        else
+            arrangeObjects(d, selected, mode.toStdString());
+    });
+    if (!group.empty()) {
+        selectIds({q(group)});
+        viewport->select({group});
+    }
+}
+void MainWindow::moveSelection() {
+    std::vector<double> v{0, 0};
+    if (numericDialog(
+            this, tr("Mover os móveis juntos"),
+            {tr("Para a direita (cm; negativo = esquerda)"), tr("Para cima (cm; negativo = baixo)")}, v))
+        editor_.apply(tr("Mover seleção"),
+                      [&](Document &d) { moveObjects(d, ids(selectedIds), v[0] * 10, v[1] * 10); });
+}
 void MainWindow::automate(const std::string &kind) {
     std::vector<double> v{30, 20};
     if (numericDialog(this, tr("Automação"), {tr("Espessura (mm)"), tr("Avanço (mm)")}, v))
@@ -2144,6 +2347,14 @@ void MainWindow::createCamera() {
             d.entities.push_back(e);
         });
 }
+void MainWindow::roomLook(const QString &style) {
+    const auto id = roomPicker->currentData().toString().toStdString();
+    if (id.empty())
+        throw std::invalid_argument("Escolha o cômodo na lista acima da planta para aplicar o estilo.");
+    editor_.apply(tr("Preparar estilo de foto"),
+                  [&](Document &d) { applyRoomLook(d, id, style.toStdString()); });
+    statusBar()->showMessage(tr("Paredes, piso e luz preparados. Desfazer volta ao estilo anterior."), 10000);
+}
 void MainWindow::simpleCamera() {
     const auto &document = editor_.document();
     auto id = roomPicker->currentData().toString().toStdString();
@@ -2165,6 +2376,18 @@ void MainWindow::simpleCamera() {
         {"target", {room->transform.x + room->width * 0.5, room->transform.y + room->depth * 0.24, 1100}},
         {"lens", 20},
         {"fstop", 8}};
+    if (room->parameters.contains("outline")) {
+        const auto center = roomInteriorPoint(*room);
+        auto outline = roomOutline(*room, true);
+        double cameraY = center[1];
+        for (double offset = 100; offset < room->depth; offset += 100) {
+            if (!insideOutline(outline, {center[0], center[1] + offset}, -120))
+                break;
+            cameraY = center[1] + offset;
+        }
+        camera.transform = {center[0], cameraY, 1500, 0, false};
+        camera.parameters["target"] = {center[0], center[1], 1100};
+    }
     editor_.apply(tr("Preparar câmera do cômodo"), [&](Document &d) {
         d.entities.push_back(camera);
         d.renderSettings["camera"] = camera.id;
@@ -2352,6 +2575,127 @@ bool MainWindow::discardOrSave() {
     if (choice == QMessageBox::Save)
         return saveProject();
     return true;
+}
+void MainWindow::importModel(const QString &providedFile) {
+    const auto file =
+        providedFile.isEmpty()
+            ? QFileDialog::getOpenFileName(this, tr("Adicionar modelo 3D"), {},
+                                           tr("Modelos 3D (*.glb *.gltf *.obj *.fbx *.stl *.ply)"))
+            : providedFile;
+    if (file.isEmpty())
+        return;
+    const auto executable = BlenderBridge::findExecutable(blenderPath->text());
+    auto *job = new ModelImporter(this);
+    auto *progress =
+        new QProgressDialog(tr("Preparando o modelo e os acabamentos…"), tr("Cancelar"), 0, 0, this);
+    progress->setObjectName("modelImportProgress");
+    progress->setWindowTitle(tr("Adicionar modelo 3D"));
+    progress->setMinimumDuration(0);
+    progress->setAutoClose(false);
+    connect(progress, &QProgressDialog::canceled, job, &ModelImporter::cancel);
+    connect(job, &ModelImporter::failed, this, [this, job, progress](const QString &message) {
+        progress->close();
+        progress->deleteLater();
+        statusBar()->showMessage(message, 20000);
+        job->deleteLater();
+    });
+    connect(job, &ModelImporter::ready, this, [this, job, progress](Asset asset, const Json &details) {
+        progress->close();
+        progress->deleteLater();
+        job->deleteLater();
+        protect([&] {
+            QDialog dialog(this);
+            dialog.setObjectName("importModelDetails");
+            dialog.setWindowTitle(tr("Confira o tamanho do modelo"));
+            dialog.resize(450, 360);
+            auto *form = new QFormLayout(&dialog);
+            auto *name = new QLineEdit(asset.name);
+            name->setObjectName("importModelName");
+            form->addRow(tr("Nome no catálogo"), name);
+            auto *width = new QDoubleSpinBox, *depth = new QDoubleSpinBox, *height = new QDoubleSpinBox;
+            width->setObjectName("importModelWidth");
+            depth->setObjectName("importModelDepth");
+            height->setObjectName("importModelHeight");
+            for (auto *field : {width, depth, height}) {
+                field->setRange(.1, 10000);
+                field->setDecimals(2);
+                field->setSuffix(tr(" cm"));
+            }
+            width->setValue(asset.width / 10);
+            depth->setValue(asset.depth / 10);
+            height->setValue(asset.height / 10);
+            form->addRow(tr("Largura"), width);
+            form->addRow(tr("Comprimento"), depth);
+            form->addRow(tr("Altura"), height);
+            auto *placement = new QComboBox;
+            placement->setObjectName("importModelPlacement");
+            for (const auto &[label, id] :
+                 std::vector<std::pair<QString, QString>>{{tr("No piso"), "floor"},
+                                                          {tr("Na parede"), "wall"},
+                                                          {tr("Sobre uma mesa ou móvel"), "surface"},
+                                                          {tr("No teto"), "ceiling"}})
+                placement->addItem(label, id);
+            form->addRow(tr("Onde colocar"), placement);
+            auto *note =
+                new QLabel(details.value("simplified", false)
+                               ? tr("Este modelo foi simplificado para caber no arquivo e usar menos "
+                                    "memória. Confira as medidas antes de adicionar.")
+                               : tr("Confira as medidas: alguns arquivos usam unidades diferentes. A origem "
+                                    "e os acabamentos serão guardados junto com o modelo."));
+            note->setWordWrap(true);
+            form->addRow(note);
+            auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+            buttons->button(QDialogButtonBox::Ok)->setText(tr("Adicionar à biblioteca"));
+            form->addRow(buttons);
+            connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+            connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+            if (dialog.exec() != QDialog::Accepted)
+                return;
+            if (name->text().trimmed().isEmpty())
+                throw std::invalid_argument("Dê um nome para o modelo.");
+            asset.name = name->text().trimmed();
+            asset.width = width->value() * 10;
+            asset.depth = depth->value() * 10;
+            asset.height = height->value() * 10;
+            asset.recipe["parameters"]["placement"] = placement->currentData().toString().toStdString();
+            asset.recipe["importDetails"] = details;
+            storeUserAsset(*library, userModelsDirectory, asset);
+            category->setCurrentIndex(0);
+            search->setText(asset.name);
+            refreshLibrary();
+            viewport->beginPlacement(asset.id);
+            statusBar()->showMessage(tr("Modelo adicionado. Clique no cômodo para colocar."), 10000);
+        });
+    });
+    job->start(file, executable, resourceFile("scripts/import-model.py"));
+}
+void MainWindow::installCollection() {
+    const auto file = QFileDialog::getOpenFileName(this, tr("Instalar ou atualizar coleção"), {},
+                                                   tr("Coleções LibreMax (*.lmaxpack)"));
+    if (file.isEmpty())
+        return;
+    auto *progress = new QProgressDialog(tr("Verificando modelos e acabamentos…"), {}, 0, 0, this);
+    progress->setMinimumDuration(0);
+    progress->setAutoClose(false);
+    auto *watcher = new QFutureWatcher<ModelPack>(this);
+    connect(watcher, &QFutureWatcher<ModelPack>::finished, this, [this, watcher, progress] {
+        progress->close();
+        progress->deleteLater();
+        watcher->deleteLater();
+        protect([&] {
+            const auto pack = watcher->result();
+            installModelPack(*library, userModelsDirectory, pack);
+            category->setCurrentIndex(0);
+            search->clear();
+            refreshLibrary();
+            statusBar()->showMessage(tr("%1: %2 modelos instalados, versão %3.")
+                                         .arg(pack.name)
+                                         .arg(pack.assets.size())
+                                         .arg(pack.version),
+                                     15000);
+        });
+    });
+    watcher->setFuture(QtConcurrent::run([file] { return readModelPack(file); }));
 }
 void MainWindow::importDxf() {
     auto filename =

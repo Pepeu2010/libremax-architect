@@ -1,4 +1,5 @@
 #include "placement.h"
+#include "document/room_outline.h"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -9,6 +10,15 @@ namespace {
 struct Point {
     double x, y;
 };
+bool visible(const Document &d, const Entity &e) {
+    bool result = e.visible;
+    auto parent = e.parent;
+    while (!parent.empty()) {
+        result &= d.at(parent).visible;
+        parent = d.at(parent).parent;
+    }
+    return result;
+}
 Point local(const Transform &t, double x, double y) {
     const double a = t.yaw * std::numbers::pi / 180, c = std::cos(a), s = std::sin(a);
     return {(x - t.x) * c + (y - t.y) * s, -(x - t.x) * s + (y - t.y) * c};
@@ -48,7 +58,7 @@ bool overlap(const Entity &a, const Entity &b) {
 }
 std::string obstruction(const Document &d, const Entity &object) {
     for (const auto &other : d.entities) {
-        if (other.id == object.id || !other.visible || other.type == "Room" || other.type == "Group" ||
+        if (other.id == object.id || !visible(d, other) || other.type == "Room" || other.type == "Group" ||
             other.type == "Floor" || other.type == "Ceiling" || other.type == "Camera" ||
             other.type == "Light" || other.type == "Door" || other.type == "Window" ||
             other.metadata.contains("automation") ||
@@ -66,7 +76,7 @@ std::string obstruction(const Document &d, const Entity &object) {
     }
     // Reserve the opening itself; the swing area is not simulated.
     for (const auto &opening : d.entities) {
-        if (!opening.visible || (opening.type != "Door" && opening.type != "Window") ||
+        if (!visible(d, opening) || (opening.type != "Door" && opening.type != "Window") ||
             opening.id == object.id)
             continue;
         const auto &wall = d.at(opening.parent);
@@ -86,13 +96,10 @@ bool contained(const Document &d, const Entity &e) {
         if (r.type != "Room")
             continue;
         rooms = true;
-        bool inside = true;
-        for (auto p : corners(e)) {
-            auto q = local(r.transform, p.x, p.y);
-            if (q.x < -1 || q.y < -1 || q.x > r.width + 1 || q.y > r.depth + 1)
-                inside = false;
-        }
-        if (inside)
+        Outline footprint;
+        for (auto p : corners(e))
+            footprint.push_back({p.x, p.y});
+        if (footprintInside(roomOutline(r, true), footprint))
             return true;
     }
     return !rooms;
@@ -137,23 +144,29 @@ Placement placeObject(const Document &d, Entity object, double x, double y, bool
     const double reach = wallOnly ? 600 : 350;
     if (nearest && (best <= reach || !wallHint.empty()) && mode != "surface" && mode != "rug") {
         const auto &wall = *nearest;
+        if (!opening && mode == "wall" &&
+            (e.transform.z < wall.transform.z || e.transform.z + e.height > wall.transform.z + wall.height)) {
+            result.message = "A altura do item ultrapassa esta parede.";
+            return result;
+        }
         if (e.width > wall.width + 0.1) {
             result.message = "Este móvel é mais largo que a parede.";
             return result;
         }
         double side = hit.y >= 0 ? 1 : -1;
-        if (!wall.parent.empty() && d.contains(wall.parent) && d.at(wall.parent).type == "Room") {
+        if (wall.metadata.contains("roomEdge"))
+            side = 1;
+        if (!wall.metadata.contains("roomEdge") && !wall.parent.empty() && d.contains(wall.parent) &&
+            d.at(wall.parent).type == "Room") {
             const auto &room = d.at(wall.parent);
-            auto center = world(room.transform, room.width / 2, room.depth / 2);
-            side = local(wall.transform, center.x, center.y).y >= 0 ? 1 : -1;
+            auto center = roomInteriorPoint(room);
+            side = local(wall.transform, center[0], center[1]).y >= 0 ? 1 : -1;
         }
         for (const auto &room : d.entities)
             if (room.type == "Room") {
-                auto inside = local(room.transform, x, y);
-                if (inside.x > wall.depth / 2 && inside.y > wall.depth / 2 &&
-                    inside.x < room.width - wall.depth / 2 && inside.y < room.depth - wall.depth / 2) {
-                    auto middle = world(room.transform, room.width / 2, room.depth / 2);
-                    side = local(wall.transform, middle.x, middle.y).y >= 0 ? 1 : -1;
+                if (insideOutline(roomOutline(room, true), {x, y}, -0.1)) {
+                    auto left = world(wall.transform, std::clamp(hit.x, 0.0, wall.width), wall.depth / 2 + 5);
+                    side = insideOutline(roomOutline(room, true), {left.x, left.y}) ? 1 : -1;
                     break;
                 }
             }
@@ -231,8 +244,7 @@ Placement placeObject(const Document &d, Entity object, double x, double y, bool
         for (const auto &other : d.entities) {
             if (other.type != "Room")
                 continue;
-            auto p = local(other.transform, x, y);
-            if (p.x >= 0 && p.y >= 0 && p.x <= other.width && p.y <= other.depth) {
+            if (insideOutline(roomOutline(other, true), {x, y})) {
                 room = &other;
                 break;
             }
@@ -254,9 +266,18 @@ Placement placeObject(const Document &d, Entity object, double x, double y, bool
                 (!support || other.transform.z + other.height > support->transform.z + support->height))
                 support = &other;
         }
-        if (support)
+        if (support) {
+            Outline top, footprint;
+            for (auto p : corners(*support))
+                top.push_back({p.x, p.y});
+            for (auto p : corners(e))
+                footprint.push_back({p.x, p.y});
+            if (!footprintInside(top, footprint)) {
+                result.message = "O item precisa caber inteiro sobre o móvel.";
+                return result;
+            }
             e.transform.z = support->transform.z + support->height + 2;
-        else
+        } else
             e.transform.z = e.parameters.value("defaultElevation", 0.0);
     }
     e.metadata.erase("placementWall");

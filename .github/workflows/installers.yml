@@ -74,6 +74,7 @@ jobs:
           sudo apt-get install -y xvfb libgl1-mesa-dri libxrender1 libxi6 libxxf86vm1 libxfixes3 libxkbcommon0 libegl1 libsm6
           cmake --install build-linux --prefix "$PWD/build-linux/stage"
           QT_QPA_PLATFORM=offscreen ./build-linux/stage/bin/libremax-architect --installation-smoke build-linux/bundled-runtime-evidence
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build-linux/stage/bin/libremax-architect --apartment-tools-smoke build-linux/bundled-runtime-evidence/apartment-tools
           xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build-linux/stage/bin/libremax-architect --render-smoke build-linux/bundled-runtime-evidence/render --render-project build-linux/stage/share/libremax/examples/apartamento-moderno.lmx --render-size 320x180 --render-samples 8
           bash scripts/verify-cycles-linux.sh ./build-linux/stage/bin/libremax-architect build-linux/queue-evidence
           cpack --config build-linux/CPackConfig.cmake -G DEB -B dist/linux
@@ -110,6 +111,7 @@ jobs:
           xvfb-run -a env QT_QPA_PLATFORM=xcb LIBGL_ALWAYS_SOFTWARE=1 /usr/bin/libremax-architect --render-smoke evidence/bundled-render --render-project /usr/share/libremax/examples/apartamento-moderno.lmx --render-size 320x180 --render-samples 8
           xvfb-run -a env QT_QPA_PLATFORM=xcb LIBGL_ALWAYS_SOFTWARE=1 /usr/bin/libremax-architect --ui-smoke evidence/expanded-library
           xvfb-run -a env QT_QPA_PLATFORM=xcb LIBGL_ALWAYS_SOFTWARE=1 /usr/bin/libremax-architect --modern-smoke evidence/native
+          xvfb-run -a env QT_QPA_PLATFORM=xcb LIBGL_ALWAYS_SOFTWARE=1 /usr/bin/libremax-architect --apartment-tools-smoke evidence/apartment-tools
           cp evidence/runtime/portable-project.lmx evidence/preserve-me.lmx
           sudo apt-get remove -y libremax-architect
           test -f evidence/preserve-me.lmx
@@ -139,5 +141,6 @@ jobs:
         run: |
           git archive --format=tar.gz --prefix=LibreMax-Architect/ --output=release/LibreMax-Architect-Source.tar.gz HEAD
           python3 scripts/prepare-blender-runtime.py --source-only --output release/Blender-4.5.9-Source.tar.xz
-          (cd release && sha256sum *.exe *.deb *.tar.gz *.tar.xz > SHA256SUMS.txt)
+          cp collections/Apartamento-contemporaneo-1.lmaxpack release/
+          (cd release && sha256sum *.exe *.deb *.tar.gz *.tar.xz *.lmaxpack > SHA256SUMS.txt)
           gh release create "$GITHUB_REF_NAME" release/* --verify-tag --prerelease --title "LibreMax Architect $GITHUB_REF_NAME — Instaladores Windows e Linux" --notes-file INSTALADOR/RELEASE_NOTES.md

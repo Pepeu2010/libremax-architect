@@ -1453,8 +1453,10 @@
         "meshAsset": "7aa4616da65969aae886df9101a2a8502982a93f3d65f67f388c62ca817dfca5",
         "originalMaterials": true,
         "placement": "surface",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "d6bf459e2375030135e6e4a455e74da2f7a6dd10f6e837ab5fec8edbdceb80a5"
+      },
+      "lodFile": "lod-detail-ceramic_vase_01.json"
     }
   },
   {
@@ -1480,8 +1482,10 @@
         "meshAsset": "e4cd1b826272cab01869d976e8b734f3319598825873645f6e8d584cc39dc43b",
         "originalMaterials": true,
         "placement": "surface",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "2c7826d1edf614cace45cc3f874bcf97357ebd3ea1c8cc38d69a2d295d605678"
+      },
+      "lodFile": "lod-detail-ceramic_vase_04.json"
     }
   },
   {
@@ -1507,8 +1511,10 @@
         "meshAsset": "a830f9afdd18517d4f3e958e505744ef48ea13ed04411f41f10179e94afa556c",
         "originalMaterials": true,
         "placement": "wall",
-        "defaultElevation": 1200
-      }
+        "defaultElevation": 1200,
+        "editMeshAsset": "66b830c501b4b153f404f2eee9ac3effac480c5e062367ab9cdd1ac8e121f786"
+      },
+      "lodFile": "lod-detail-wall_clock.json"
     }
   },
   {
@@ -1534,8 +1540,10 @@
         "meshAsset": "55bf9f0ebbda863d372d98bfbdbf81747379081a8d8df91581a83d5e51d66180",
         "originalMaterials": true,
         "placement": "surface",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "8b351e9b3fd687f8e73c60c20e17c3a36fc987f27e0471c55e9cee35d1304fdc"
+      },
+      "lodFile": "lod-detail-alarm_clock_01.json"
     }
   },
   {
@@ -1561,8 +1569,10 @@
         "meshAsset": "bd1491ad5aabee1832a680d5bc94fceae94e160feacf461f92e66a56d92cfb11",
         "originalMaterials": true,
         "placement": "surface",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "d310cab367fd4ae18512872beca7421af42362d031b7611efd9056244fb5b948"
+      },
+      "lodFile": "lod-detail-wooden_bowl_01.json"
     }
   },
   {
@@ -1588,8 +1598,10 @@
         "meshAsset": "def4f105a37473ba03465531620ada1c560f4036c5d90766786341f41dfb6ac5",
         "originalMaterials": true,
         "placement": "surface",
-        "defaultElevation": 0
-      }
+        "defaultElevation": 0,
+        "editMeshAsset": "4773677953122236efdf36966ce8e6e6a962db079f2a273d90414f1644d58a6c"
+      },
+      "lodFile": "lod-detail-wooden_bowl_02.json"
     }
   },
   {

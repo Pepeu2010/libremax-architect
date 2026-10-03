@@ -6,6 +6,12 @@ Editor desktop open source de interiores, com C++20, Qt 6 e OpenCASCADE. Linux �
 
 ![Coleção Apartamento atual no programa nativo](docs/screenshots/modern-catalog.png)
 
+A fonte 0.15 acrescenta [cômodos com contorno, conjuntos, importação 3D,
+coleções, estilos de foto e malhas leves](docs/APARTMENT_TOOLS.md). O catálogo
+tem 203 itens e 64 modelos em Apartamento atual. A publicação dos novos
+instaladores depende dos gates desta versão; o link acima identifica a versão
+anterior já publicada.
+
 A direção visual atual usa grafite neutro, violeta e cobre, com logo próprio, abertura breve e opção para desativar animações. A tela inicial reúne projetos recentes e ações para criar, abrir ou experimentar um apartamento.
 
 A imagem acima é uma captura do programa compilado no Windows, com viewport OpenCASCADE; não é um mockup. Build, testes, interface nativa com Xvfb/Mesa, pacote Debian e iluminação Cycles CPU passaram na [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37144046955). A instalação Windows e Ubuntu 24.04 em runner novo passou na [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37144046796), incluindo render com o Blender do próprio pacote. O apartamento com Kelvin/LED também gerou [uma imagem 4K](docs/LIGHTING.md#apartamento-em-4k), 512 amostras máximas e 12 reflexões, na RX 7600/HIP deste Windows. Esse teste pelo pipeline não comprova equivalência fotográfica, todas as câmeras ou outros drivers/GPUs.
@@ -14,7 +20,7 @@ Ampliações atuais: [60 novos modelos, fontes e modos de desempenho](docs/MODEL
 
 A versão 0.11 acrescenta [barra de progresso, tempo decorrido e previsão do Cycles](docs/RENDER_PROGRESS.md), na galeria e durante a edição. Os instaladores Windows e Ubuntu passaram nos testes de publicação.
 
-Alvo mínimo confirmado: **i3-6006U / Intel HD Graphics 520 / 8 GB de RAM**. A versão 0.12 começa em Leve nas CPUs de até quatro threads e acrescenta o caminho Blender 4.5 LTS/CPU. [Requisito e teste físico pendente](docs/MINIMUM_HARDWARE.md).
+Alvo mínimo exigido: **i3-6006U / Intel HD Graphics 520 / 8 GB de RAM**. A versão 0.12 começa em Leve nas CPUs de até quatro threads e acrescenta o caminho Blender 4.5 LTS/CPU. [Requisito e teste físico pendente](docs/MINIMUM_HARDWARE.md).
 
 A versão 0.13 acrescenta [geometria compartilhada no editor e no Cycles](docs/SHARED_GEOMETRY.md), reduzindo reconstruções ao mover cópias e o tamanho dos pacotes de render. Os instaladores acima passaram nos gates Windows/Ubuntu e os digests publicados correspondem aos manifestos de checksum.
 
@@ -22,9 +28,9 @@ A versão 0.14 inclui [Blender/Cycles, Python interno e bibliotecas](docs/BUNDLE
 
 Já disponível neste ciclo:
 
-- Desenhar cadeias de paredes e muretas; criar ambiente retangular com piso e forro.
+- Desenhar cadeias de paredes e muretas; criar cômodos retangulares, em L ou com contorno livre, editar cantos e acompanhar medidas de parede. Piso e forro seguem o contorno.
 - Inserir portas e janelas com recortes booleanos reais, vinculadas à parede.
-- Biblioteca local SQLite/FTS5 com busca sem acentos, filtros, favoritos e recentes; 175 itens: 25 receitas próprias, porta/janela, 52 modelos 3D Kenney, 53 KayKit, 31 Poly Haven e 12 designs contemporâneos LibreMax CC0. O filtro **Apartamento atual** reúne 36 modelos, incluindo sofás, cama queen, móveis ripados, espelho, banquetas e decoração. Os modelos Poly Haven preservam mapas/UVs; os designs originais usam acabamentos procedurais no Cycles.
+- Biblioteca local SQLite/FTS5 com busca sem acentos, filtros, favoritos e recentes; 203 itens: 25 receitas próprias, porta/janela e 176 modelos prontos, incluindo 40 designs originais LibreMax CC0. O filtro **Apartamento atual** reúne 64 modelos. Os modelos Poly Haven preservam mapas/UVs; os designs originais usam acabamentos procedurais no Cycles.
 - Modos Leve, Equilibrado e Mais detalhes em Vista; texturas/suavização da tela e workers de miniaturas ajustáveis, preservando o render final.
 - Tutorial de 15 capítulos na primeira abertura, reaberto em Ajuda ou na tela inicial. Biblioteca de projetos locais com imagem, nome, data e aviso de arquivo movido.
 - Catálogo carregado ao entrar no editor; busca sem carregar todas as malhas, miniaturas em 1, 2 ou 4 workers conforme o modo de edição e cache de geometria para evitar reconstruir sólidos inalterados. Essas melhorias não constituem benchmark de apartamentos grandes.
@@ -34,6 +40,9 @@ Já disponível neste ciclo:
 - Inspecionar sólidos em planta superior e 3D; orbit, pan, zoom, seleção, ocultação, bloqueio, duplicação e espelhamento de móveis.
 - Gerar tampos, rodatampos, rodapés, rodaforros, painel lateral e envelopamento sobre fontes associadas. A cobertura ainda é restrita aos casos documentados em [AUTOMATIONS](docs/AUTOMATIONS.md).
 - Importar DXF ASCII com layers e unidade; incorporar texturas JPG/PNG ao projeto.
+- Importar GLB/glTF, OBJ, FBX, STL e PLY pela interface e instalar/atualizar coleções `.lmaxpack` locais, com validação e modelos incorporados ao projeto.
+- Agrupar, separar, mover, alinhar e distribuir conjuntos de móveis, com colisão, encaixe e Desfazer/Refazer.
+- Escolher estilos Natural, Claro ou Aconchegante para materiais e luz do cômodo. Em Leve, 57 modelos têm malha de edição reduzida; o render preserva a malha completa.
 - Salvar/abrir `.lmx` ZIP versionado, backup `.bak`, undo/redo, autosave configurável (1–60 minutos) e recuperação de versões locais.
 - Criar câmeras e luzes ponto/spot/painel/LED/sol; escolher tons de luz ou Kelvin, dimensões em centímetros, raio, feixe e sombra solar. Marcadores selecionáveis ajudam a localizar as luzes. Renderizar com Blender/Cycles em processo separado, PNG/JPEG, presets, seleção de câmera, exposição, luz ambiente, denoise e descoberta GPU com fallback CPU.
 - Fila persistente de renders, quatro modos (Rápido/Normal/Final/Personalizado), várias câmeras, cancelamento e repetição com CPU. Galeria com miniaturas, histórico, imagens e logs; a edição continua durante o render. [Arquitetura e validação](docs/RENDER_PIPELINE.md).
@@ -41,7 +50,7 @@ Já disponível neste ciclo:
 - HDRI local incorporado ao `.lmx`, luz do dia incluída, rotação e controle do fundo. EXR float 32 bits em Personalizado, com prévia PNG na galeria. [Uso e limites](docs/HDRI_EXR.md).
 - Workspace escuro de render com zoom/pan, Ajustar, 1:1 e exportação de cópia PNG/JPEG; materiais PBR incorporados de madeira/pedra, céu natural/sol e câmera fotográfica no Cycles.
 
-Faltam recursos essenciais: detecção de regiões, junções avançadas, cotas, snap completo de desenho, escadas L/U, geometria livre/perfis/sancas, importadores 3D pela interface, atualização remota de packs, catálogo fotográfico extenso, agrupamento/gizmos. A coleção Kenney é estilizada; a nova coleção detalhada não cobre todos os móveis de um apartamento. O encaixe usa volumes aproximados. Veja [limites de montagem](docs/ASSEMBLY.md) e [ROADMAP](docs/ROADMAP.md).
+Faltam recursos essenciais: detecção de regiões, junções T/X gerais, edição conjunta de paredes compartilhadas, cotas livres/impressão, snap completo de desenho, escadas L/U, geometria livre/perfis/sancas, DAE/STEP/IGES, atualização remota de packs, catálogo fotográfico extenso e gizmos. A coleção Kenney é estilizada; a coleção detalhada não cobre todos os móveis de um apartamento. O encaixe usa volumes aproximados. Veja [limites de montagem](docs/APARTMENT_TOOLS.md) e [ROADMAP](docs/ROADMAP.md).
 
 Para apresentação, abra `examples/cozinha.lmx`, escolha **Céu natural** e a qualidade desejada no Render. Em outros projetos, **Ativar texturas reais** incorpora mapas de carvalho e pedra. Exposição e direção do sol são editáveis; abertura e foco ficam nas propriedades da câmera. [Guia de render](docs/RENDERING.md).
 
@@ -50,6 +59,8 @@ Para apresentação, abra `examples/cozinha.lmx`, escolha **Céu natural** e a q
 Abra [INSTALADOR](INSTALADOR/README.md) e escolha [Windows](INSTALADOR/windows/README.md) ou [Linux](INSTALADOR/linux/README.md). Os arquivos `.exe` e `.deb` ficam nas [Releases](https://github.com/Pepeu2010/libremax-architect/releases). É preciso acesso ao repositório privado.
 
 Os instaladores 0.14 incluem modelos, texturas, exemplos e Blender 4.5.9 LTS/Cycles. O motor é configurado automaticamente; abra Criar imagem para renderizar. Uma instalação externa continua opcional nos ajustes. [Dependências incluídas e testes](docs/BUNDLED_RUNTIME.md). A versão é uma prévia em desenvolvimento.
+
+Para validar o notebook i3/HD 520/8 GB após instalar a versão 0.15, use **Testar notebook** no menu Iniciar. [Instruções e comparação com VDMax](docs/NOTEBOOK_VDMAX_TEST.md).
 
 ## Compilar e executar
 

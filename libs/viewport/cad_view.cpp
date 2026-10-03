@@ -1,4 +1,6 @@
 #include "cad_view.h"
+#include "commands/arrangement.h"
+#include "document/room_outline.h"
 #include "geometry/geometry.h"
 #include <AIS_TexturedShape.hxx>
 #include <Aspect_DisplayConnection.hxx>
@@ -22,6 +24,7 @@
 #include <QWheelEvent>
 #include <Standard_Failure.hxx>
 #include <Standard_Version.hxx>
+#include <TColStd_IndexedDataMapOfStringString.hxx>
 #include <gp_Circ.hxx>
 #if OCC_VERSION_HEX < 0x070900
 #include <Graphic3d_Texture2Dmanual.hxx>
@@ -106,6 +109,8 @@ void CadView::setPerformanceMode(int mode) {
     }
 }
 void CadView::scene(const Document &d) {
+    movingSet.clear();
+    pendingSet.clear();
     current = d;
     movingObject.reset();
     pendingPlacement.reset();
@@ -113,11 +118,25 @@ void CadView::scene(const Document &d) {
         return;
     try {
         clearPreview();
+        for (const auto &label : measurements)
+            context->Remove(label, false);
+        measurements.clear();
         owners.clear();
         std::set<std::string> alive;
         std::map<std::string, int> indices;
-        for (const auto &part : geometryCache.scene(d)) {
+        auto displayDocument = d;
+        if (performance == 0)
+            for (auto &object : displayDocument.entities)
+                if (object.type == "MeshObject" && object.parameters.contains("editMeshAsset"))
+                    object.parameters["meshAsset"] = object.parameters.at("editMeshAsset");
+        for (const auto &part : geometryCache.scene(displayDocument)) {
             const auto &owner = d.at(part.owner);
+            bool locked = owner.locked;
+            auto parent = owner.parent;
+            while (!parent.empty()) {
+                locked |= d.at(parent).locked;
+                parent = d.at(parent).parent;
+            }
             if (cutaway && owner.type == "Ceiling")
                 continue;
             const Entity *wall = &owner;
@@ -141,7 +160,7 @@ void CadView::scene(const Document &d) {
             const auto displayId = part.owner + "/" + std::to_string(indices[part.owner]++);
             alive.insert(displayId);
             const auto key = std::to_string(reinterpret_cast<std::uintptr_t>(part.shape.TShape().get())) +
-                             mat.dump() + (owner.locked ? "/locked" : "/editable") + "/performance/" +
+                             mat.dump() + (locked ? "/locked" : "/editable") + "/performance/" +
                              std::to_string(performance);
             auto existing = displayed.find(displayId);
             if (existing != displayed.end() && existing->second.key == key) {
@@ -209,7 +228,7 @@ void CadView::scene(const Document &d) {
             context->Display(shape, false);
             ++presentationBuilds;
             context->SetLocation(shape, placement);
-            if (d.at(part.owner).locked)
+            if (locked)
                 context->Deactivate(shape);
             owners.emplace(shape.get(), part.owner);
             displayed[displayId] = {key, shape, placement};
@@ -289,6 +308,25 @@ void CadView::scene(const Document &d) {
             context->Remove(entry.second.shape, false);
             return true;
         });
+        if (top && showMeasurements)
+            for (const auto &wall : d.entities) {
+                if (!wall.visible || (wall.type != "Wall" && wall.type != "HalfWall"))
+                    continue;
+                const auto a = wall.transform.yaw * std::numbers::pi / 180;
+                Handle(AIS_TextLabel) label = new AIS_TextLabel;
+                label->SetText(TCollection_ExtendedString(
+                    QString::number(wall.width / 1000, 'f', 2).append(" m").toUtf8().constData()));
+                label->SetPosition(gp_Pnt(wall.transform.x + wall.width / 2 * std::cos(a) - 180 * std::sin(a),
+                                          wall.transform.y + wall.width / 2 * std::sin(a) + 180 * std::cos(a),
+                                          wall.transform.z + wall.height + 10));
+                label->SetColor(Quantity_Color(.84, .80, 1.0, Quantity_TOC_RGB));
+                label->SetDisplayType(Aspect_TODT_SUBTITLE);
+                label->SetColorSubTitle(Quantity_Color(.09, .09, .12, Quantity_TOC_RGB));
+                label->SetHeight(14);
+                context->Display(label, false);
+                context->Deactivate(label);
+                measurements.push_back(label);
+            }
         view->Redraw();
     } catch (const Standard_Failure &e) {
         emit failure(QString::fromUtf8(e.GetMessageString()));
@@ -334,6 +372,9 @@ void CadView::clearPreview() {
     }
 }
 void CadView::setTool(const QString &mode) {
+    movingSet.clear();
+    pendingSet.clear();
+    roomPoints.clear();
     tool = mode;
     wallStart.reset();
     clearPreview();
@@ -492,8 +533,15 @@ void CadView::selection() {
     std::set<std::string> ids;
     for (context->InitSelected(); context->MoreSelected(); context->NextSelected()) {
         auto it = owners.find(context->SelectedInteractive().get());
-        if (it != owners.end())
-            ids.insert(it->second);
+        if (it != owners.end()) {
+            auto id = it->second;
+            auto parent = current.at(id).parent;
+            while (!parent.empty() && current.at(parent).type == "Group") {
+                id = parent;
+                parent = current.at(parent).parent;
+            }
+            ids.insert(id);
+        }
     }
     QStringList result;
     for (const auto &id : ids)
@@ -504,11 +552,18 @@ void CadView::select(const std::vector<std::string> &ids) {
     if (context.IsNull())
         return;
     context->ClearSelected(false);
-    for (const auto &[object, id] : owners)
-        if (std::find(ids.begin(), ids.end(), id) != ids.end()) {
+    for (const auto &[object, id] : owners) {
+        auto parent = id;
+        bool included = false;
+        while (!parent.empty()) {
+            included |= std::find(ids.begin(), ids.end(), parent) != ids.end();
+            parent = current.at(parent).parent;
+        }
+        if (included) {
             Handle(AIS_InteractiveObject) handle = const_cast<AIS_InteractiveObject *>(object);
             context->AddOrRemoveSelected(handle, false);
         }
+    }
     view->Redraw();
 }
 void CadView::mousePressEvent(QMouseEvent *e) {
@@ -526,6 +581,25 @@ void CadView::mousePressEvent(QMouseEvent *e) {
             setTool("select");
             emit assetDropped(id, object);
         }
+        return;
+    }
+    if (e->button() == Qt::RightButton && tool == "room") {
+        if (roomPoints.size() >= 3) {
+            QPolygonF outline;
+            for (const auto &p : roomPoints)
+                outline << QPointF(p.X(), p.Y());
+            setTool("select");
+            emit roomCreated(outline);
+        } else {
+            roomPoints.clear();
+            clearPreview();
+        }
+        return;
+    }
+    if (e->button() == Qt::LeftButton && tool == "room") {
+        auto p = position(e->pos());
+        if (roomPoints.empty() || p.Distance(roomPoints.back()) >= 100)
+            roomPoints.push_back(p);
         return;
     }
     if (e->button() == Qt::RightButton && tool != "select") {
@@ -552,8 +626,12 @@ void CadView::mousePressEvent(QMouseEvent *e) {
     if (e->button() == Qt::LeftButton && tool == "select") {
         context->MoveTo(qRound(e->pos().x() * devicePixelRatioF()),
                         qRound(e->pos().y() * devicePixelRatioF()), view, false);
-        context->SelectDetected(e->modifiers() & Qt::ControlModifier ? AIS_SelectionScheme_Add
-                                                                     : AIS_SelectionScheme_Replace);
+        const bool keepSelection = context->HasDetected() &&
+                                   context->IsSelected(context->DetectedInteractive()) &&
+                                   !(e->modifiers() & Qt::ControlModifier);
+        if (!keepSelection)
+            context->SelectDetected(e->modifiers() & Qt::ControlModifier ? AIS_SelectionScheme_Add
+                                                                         : AIS_SelectionScheme_Replace);
         view->Redraw();
         selection();
         movingObject.reset();
@@ -561,6 +639,24 @@ void CadView::mousePressEvent(QMouseEvent *e) {
             auto owner = owners.find(context->DetectedInteractive().get());
             if (owner != owners.end() && movable(current.at(owner->second))) {
                 movingObject = current.at(owner->second);
+                movingSet.clear();
+                pendingSet.clear();
+                std::set<std::string> members;
+                auto group = movingObject->parent;
+                if (!group.empty() && current.at(group).type == "Group") {
+                    auto found = arrangementMembers(current, {group});
+                    members.insert(found.begin(), found.end());
+                    select({group});
+                    emit selected({QString::fromStdString(group)});
+                } else {
+                    for (context->InitSelected(); context->MoreSelected(); context->NextSelected()) {
+                        auto selected = owners.find(context->SelectedInteractive().get());
+                        if (selected != owners.end() && movable(current.at(selected->second)))
+                            members.insert(selected->second);
+                    }
+                }
+                for (const auto &id : members)
+                    movingSet.push_back(current.at(id));
                 const auto point = position(e->pos(), false);
                 const double a = movingObject->transform.yaw * std::numbers::pi / 180;
                 grabOffset = {
@@ -587,6 +683,43 @@ void CadView::mouseMoveEvent(QMouseEvent *e) {
         moved = true;
         auto raw = position(e->pos(), false);
         auto [surface, wall] = surfacePosition(e->pos());
+        if (movingSet.size() > 1) {
+            const double a = movingObject->transform.yaw * std::numbers::pi / 180;
+            const double dx = raw.X() + grabOffset.x() - movingObject->transform.x -
+                              (movingObject->width * std::cos(a) - movingObject->depth * std::sin(a)) / 2;
+            const double dy = raw.Y() + grabOffset.y() - movingObject->transform.y -
+                              (movingObject->width * std::sin(a) + movingObject->depth * std::cos(a)) / 2;
+            try {
+                pendingSet = placedTogether(current, movingSet, dx, dy);
+                if (preview.IsNull() || previewKey != "moving-set") {
+                    clearPreview();
+                    std::vector<Part> parts;
+                    for (auto object : movingSet) {
+                        if (performance == 0 && object.parameters.contains("editMeshAsset"))
+                            object.parameters["meshAsset"] = object.parameters.at("editMeshAsset");
+                        auto geometry = buildEntity(current, object);
+                        parts.insert(parts.end(), geometry.begin(), geometry.end());
+                    }
+                    preview = new AIS_Shape(compound(parts));
+                    preview->SetColor(Quantity_NOC_CYAN1);
+                    preview->SetTransparency(.45);
+                    context->Display(preview, false);
+                    context->Deactivate(preview);
+                    previewKey = "moving-set";
+                }
+                gp_Trsf transform;
+                transform.SetTranslation(gp_Vec(dx, dy, 0));
+                context->SetLocation(preview, TopLoc_Location(transform));
+                view->Redraw();
+                emit placementStatus(
+                    tr("Movendo %1 móveis juntos · solte para colocar").arg(pendingSet.size()), true, true);
+            } catch (const std::exception &error) {
+                pendingSet.clear();
+                clearPreview();
+                emit placementStatus(QString::fromUtf8(error.what()), true, false);
+            }
+            return;
+        }
         auto placement =
             placeObject(current, *movingObject, wall.empty() ? raw.X() + grabOffset.x() : surface.X(),
                         wall.empty() ? raw.Y() + grabOffset.y() : surface.Y(), assist, wall);
@@ -607,7 +740,23 @@ void CadView::mouseMoveEvent(QMouseEvent *e) {
         view->Rotation(e->pos().x(), e->pos().y());
         return;
     }
-    if (wallStart) {
+    if (tool == "room" && !roomPoints.empty()) {
+        clearPreview();
+        BRepBuilderAPI_MakePolygon wire;
+        for (auto v : roomPoints)
+            wire.Add(v);
+        if (p.Distance(roomPoints.back()) > 1)
+            wire.Add(p);
+        if (wire.IsDone()) {
+            preview = new AIS_Shape(wire.Shape());
+            preview->SetColor(Quantity_NOC_CYAN1);
+            context->Display(preview, false);
+            context->Deactivate(preview);
+            view->Redraw();
+        }
+        emit coordinates(tr("%1 cantos · clique para continuar · botão direito para fechar · Esc cancela")
+                             .arg(roomPoints.size()));
+    } else if (wallStart) {
         clearPreview();
         if (p.Distance(*wallStart) > 0.1) {
             preview = new AIS_Shape(BRepBuilderAPI_MakeEdge(*wallStart, p).Shape());
@@ -627,6 +776,19 @@ void CadView::mouseMoveEvent(QMouseEvent *e) {
 void CadView::mouseReleaseEvent(QMouseEvent *event) {
     if (event->button() != Qt::LeftButton || !movingObject)
         return;
+    if (movingSet.size() > 1) {
+        auto placed = pendingSet;
+        const bool commit = moved && !placed.empty();
+        movingSet.clear();
+        pendingSet.clear();
+        movingObject.reset();
+        moved = false;
+        clearPreview();
+        emit placementStatus({}, false, true);
+        if (commit)
+            emit objectsMoved(placed);
+        return;
+    }
     auto pending = pendingPlacement;
     const bool commit = moved && pending && pending->allowed;
     movingObject.reset();
@@ -702,6 +864,16 @@ void CadView::dropEvent(QDropEvent *e) {
 void CadView::capture(const QString &path) {
     if (view.IsNull() || !view->Dump(QFile::encodeName(path).constData()))
         throw std::runtime_error("Não foi possível capturar viewport");
+}
+Json CadView::deviceDiagnostics() const {
+    Json result = Json::object();
+    if (view.IsNull())
+        return result;
+    TColStd_IndexedDataMapOfStringString values;
+    view->DiagnosticInformation(values, Graphic3d_DiagnosticInfo_Device);
+    for (int i = 1; i <= values.Extent(); ++i)
+        result[values.FindKey(i).ToCString()] = values.FindFromIndex(i).ToCString();
+    return result;
 }
 QPoint CadView::project(double x, double y, double z) const {
     int px = 0, py = 0;

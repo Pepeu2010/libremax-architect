@@ -32,10 +32,14 @@ jobs:
         run: |
           sudo apt-get install -y libxrender1 libxi6 libxxf86vm1 libxfixes3 libxkbcommon0 libegl1 libsm6
           bash scripts/verify-cycles-linux.sh
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build/libremax-architect --apartment-tools-smoke build/apartment-tools-evidence --blender "$PWD/build/blender-runtime/blender-5.2.1-linux-x64/blender"
+          python3 scripts/verify-model-import.py --blender "$PWD/build/blender-runtime/blender-5.2.1-linux-x64/blender" --evidence build/import-formats-52
       - name: Blender 4.5 LTS compatibility with real CPU renders
         timeout-minutes: 15
         run: |
           bash scripts/verify-cycles-linux.sh ./build/libremax-architect build/compatibility-45-evidence 4.5.9
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build/libremax-architect --apartment-tools-smoke build/apartment-tools-45-evidence --blender "$PWD/build/blender-runtime/blender-4.5.9-linux-x64/blender"
+          python3 scripts/verify-model-import.py --blender "$PWD/build/blender-runtime/blender-4.5.9-linux-x64/blender" --evidence build/import-formats-45
           xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build/libremax-architect --render-smoke build/compatibility-45-evidence/sky --blender "$PWD/build/blender-runtime/blender-4.5.9-linux-x64/blender" --render-device CPU --render-size 320x180 --render-samples 8 --render-project examples/apartamento-moderno.lmx
       - name: Shared meshes and archived-reader parity in both Cycles versions
         timeout-minutes: 15
@@ -51,6 +55,10 @@ jobs:
         with:
           name: linux-evidence-and-deb
           path: |
+            build/apartment-tools-evidence
+            build/apartment-tools-45-evidence
+            build/import-formats-52
+            build/import-formats-45
             build/evidence
             build/assembly-evidence
             build/modern-evidence

@@ -11,21 +11,24 @@ struct Asset {
     bool favorite = false;
     QByteArray model;
     std::map<std::string, QByteArray> textures;
+    QByteArray editModel = {};
 };
 class Library {
     QString connection;
     QSqlDatabase db;
     QString modelDirectory;
+    QString userModelDirectory;
     struct Payload {
         QByteArray model;
         std::map<std::string, QByteArray> textures;
+        QByteArray editModel;
     };
     mutable QMutex payloadMutex;
     mutable std::map<std::string, Payload> payloadCache;
     mutable qint64 payloadBytes = 0;
 
   public:
-    explicit Library(const QString &path, const QString &models = {});
+    explicit Library(const QString &path, const QString &models = {}, const QString &userModels = {});
     ~Library();
     Library(const Library &) = delete;
     Library &operator=(const Library &) = delete;

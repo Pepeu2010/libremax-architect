@@ -23,8 +23,8 @@ void exec(QSqlDatabase &db, const QString &sql) {
     check(q);
 }
 } // namespace
-Library::Library(const QString &path, const QString &models)
-    : connection(QString::fromStdString(uuid())), modelDirectory(models) {
+Library::Library(const QString &path, const QString &models, const QString &userModels)
+    : connection(QString::fromStdString(uuid())), modelDirectory(models), userModelDirectory(userModels) {
     QDir().mkpath(QFileInfo(path).absolutePath());
     db = QSqlDatabase::addDatabase("QSQLITE", connection);
     db.setDatabaseName(path);
@@ -114,7 +114,7 @@ std::vector<Asset> Library::search(const QString &text, const QString &category,
         sql += " AND a.category=?";
     if (favorites)
         sql += " AND EXISTS(SELECT 1 FROM favorites f WHERE f.asset_id=a.id)";
-    sql += recent ? " ORDER BY r.used DESC LIMIT 200" : " ORDER BY a.name LIMIT 200";
+    sql += recent ? " ORDER BY r.used DESC LIMIT 200" : " ORDER BY a.name LIMIT 5000";
     QSqlQuery q(db);
     q.prepare(sql);
     if (!text.trimmed().isEmpty()) {
@@ -149,20 +149,23 @@ std::vector<Asset> Library::search(const QString &text, const QString &category,
 }
 Asset Library::withPayload(Asset asset) const {
     if (asset.recipe.contains("modelFile") && asset.model.isEmpty()) {
-        const auto expected = asset.recipe.at("parameters").at("meshAsset").get<std::string>();
+        const auto expected = asset.recipe.at("parameters").at("meshAsset").get<std::string>() +
+                              asset.recipe.at("parameters").value("editMeshAsset", std::string{});
         {
             QMutexLocker lock(&payloadMutex);
             auto found = payloadCache.find(expected);
             if (found != payloadCache.end()) {
                 asset.model = found->second.model;
                 asset.textures = found->second.textures;
+                asset.editModel = found->second.editModel;
                 return asset;
             }
         }
         const auto name = QString::fromStdString(asset.recipe.at("modelFile").get<std::string>());
-        if (modelDirectory.isEmpty() || !QRegularExpression("^[A-Za-z0-9_-]+\\.json$").match(name).hasMatch())
+        const auto directory = asset.recipe.value("userModel", false) ? userModelDirectory : modelDirectory;
+        if (directory.isEmpty() || !QRegularExpression("^[A-Za-z0-9_-]+\\.json$").match(name).hasMatch())
             throw std::invalid_argument("Caminho do modelo 3D inválido");
-        QFile file(QDir(modelDirectory).filePath(name));
+        QFile file(QDir(directory).filePath(name));
         if (!file.open(QIODevice::ReadOnly) || file.size() > 4 * 1024 * 1024)
             throw std::runtime_error("Modelo 3D indisponível");
         asset.model = file.readAll();
@@ -180,7 +183,7 @@ Asset Library::withPayload(Asset asset) const {
                          .match(QString::fromStdString(textureHash))
                          .hasMatch())
                     throw std::invalid_argument("Referência de textura inválida");
-                QFile texture(QDir(modelDirectory).filePath(QString::fromStdString(textureHash) + ".png"));
+                QFile texture(QDir(directory).filePath(QString::fromStdString(textureHash) + ".png"));
                 if (!texture.open(QIODevice::ReadOnly) || texture.size() > 4 * 1024 * 1024)
                     throw std::runtime_error("Textura do modelo indisponível");
                 auto bytes = texture.readAll();
@@ -189,7 +192,20 @@ Asset Library::withPayload(Asset asset) const {
                     throw std::runtime_error("Integridade da textura inválida");
                 asset.textures[textureHash] = bytes;
             }
-        qint64 size = asset.model.size();
+        if (asset.recipe.contains("lodFile") && asset.editModel.isEmpty()) {
+            const auto lodName = QString::fromStdString(asset.recipe.at("lodFile"));
+            if (!QRegularExpression("^[A-Za-z0-9_-]+\\.json$").match(lodName).hasMatch())
+                throw std::invalid_argument("Caminho da malha leve inválido");
+            QFile low(QDir(directory).filePath(lodName));
+            if (!low.open(QIODevice::ReadOnly) || low.size() > 4 * 1024 * 1024)
+                throw std::runtime_error("Malha leve indisponível");
+            asset.editModel = low.readAll();
+            if (QCryptographicHash::hash(asset.editModel, QCryptographicHash::Sha256).toHex().toStdString() !=
+                asset.recipe.at("parameters").at("editMeshAsset").get<std::string>())
+                throw std::runtime_error("Integridade da malha leve inválida");
+            readModel(asset.editModel);
+        }
+        qint64 size = asset.model.size() + asset.editModel.size();
         for (const auto &[key, bytes] : asset.textures)
             size += bytes.size();
         QMutexLocker lock(&payloadMutex);
@@ -198,7 +214,7 @@ Asset Library::withPayload(Asset asset) const {
                 payloadCache.clear();
                 payloadBytes = 0;
             }
-            payloadCache[expected] = {asset.model, asset.textures};
+            payloadCache[expected] = {asset.model, asset.textures, asset.editModel};
             payloadBytes += size;
         }
     }
@@ -230,7 +246,9 @@ Entity Library::instantiate(const Asset &a, double x, double y) {
     e.transform.x = millimeters(x);
     e.transform.y = millimeters(y);
     e.transform.z = e.parameters.value("defaultElevation", 0.0);
-    e.metadata = {{"asset", a.id.toStdString()}, {"license", "CC0-1.0"}, {"author", "LibreMax contributors"}};
+    e.metadata = {{"asset", a.id.toStdString()},
+                  {"license", a.recipe.value("license", std::string("CC0-1.0"))},
+                  {"author", "LibreMax contributors"}};
     if (a.recipe.contains("source")) {
         e.metadata["source"] = a.recipe.at("source");
         e.metadata["author"] = a.recipe.value("author", std::string("Kenney"));
@@ -247,6 +265,16 @@ void Library::attachModel(Document &d, const Asset &a) {
     // Validate in a candidate first: corrupt maps must never partially modify a project.
     auto candidate = d;
     candidate.embeddedAssets[hash] = a.model;
+    if (a.recipe.at("parameters").contains("editMeshAsset")) {
+        if (a.editModel.isEmpty())
+            throw std::invalid_argument("Malha leve do modelo ausente");
+        const auto lowHash =
+            QCryptographicHash::hash(a.editModel, QCryptographicHash::Sha256).toHex().toStdString();
+        if (lowHash != a.recipe.at("parameters").at("editMeshAsset").get<std::string>())
+            throw std::invalid_argument("Malha leve adulterada");
+        readModel(a.editModel);
+        candidate.embeddedAssets[lowHash] = a.editModel;
+    }
     for (const auto &[textureHash, bytes] : a.textures) {
         if (QCryptographicHash::hash(bytes, QCryptographicHash::Sha256).toHex().toStdString() != textureHash)
             throw std::invalid_argument("Textura do modelo adulterada");
