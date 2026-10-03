@@ -1,18 +1,31 @@
-# LibreMax Architect 0.7.0 — Prévia dos instaladores
+# LibreMax Architect 0.8.0 — Prévia HDRI e EXR
 
-Escolha um dos arquivos abaixo em Assets:
+Baixe o arquivo do seu sistema em Assets:
 
-- **Windows:** `LibreMax-Architect-0.7.0-Windows-x64-Setup.exe`. Instalador em português, atalhos e desinstalação; bibliotecas incluídas.
-- **Linux:** `LibreMax-Architect-0.7.0-Linux-Ubuntu24.04-amd64.deb`. Ubuntu 24.04 / base do Mint 22, x86-64; dependências instaladas pelo apt.
+- **Windows 64 bits:** `LibreMax-Architect-0.8.0-Windows-x64-Setup.exe`. Instalação em português, atalhos e bibliotecas incluídas.
+- **Ubuntu 24.04 / base do Linux Mint 22, x86-64:** `LibreMax-Architect-0.8.0-Linux-Ubuntu24.04-amd64.deb`. Instale com `sudo apt install ./LibreMax-Architect-0.8.0-Linux-Ubuntu24.04-amd64.deb`. Mint 22 não teve teste próprio.
 
-Inclui tutorial, logo com abertura breve, projetos recentes, exemplos, 115 itens no catálogo e coleção Apartamento atual com 36 modelos detalhados. Salve projetos em um único arquivo `.lmx`.
+Esta prévia inclui os recursos anteriores: tutorial completo de primeira abertura, logo animada, biblioteca de projetos recentes, arquivo único `.lmx`, exemplos, 115 itens e 36 modelos da coleção Apartamento atual.
 
-Novidade desta prévia: quatro modos de render, fila de câmeras, cópias imutáveis da cena, galeria persistente e repetição com CPU. É possível continuar editando enquanto o Cycles trabalha.
+Novidades:
 
-Para render com Cycles, instale o Blender 5.2 LTS+ e selecione seu executável no painel Render. Ele é executado em segundo plano. O Blender não está incluído neste instalador.
+- Importar iluminação HDR/EXR ou usar o panorama de luz do dia incluído. Girar a luz e mostrar/ocultar o panorama na imagem.
+- Salvar o panorama dentro do projeto portátil v2, com importação em segundo plano. Leitura dos projetos v1 preservada.
+- Exportar EXR linear FLOAT32 no modo Personalizado, com prévia PNG na galeria. Salvar cópia preserva o EXR original.
+- Publicação e cópia das imagens em segundo plano, mantendo a edição disponível.
 
-Os jobs desta Release verificam o instalador Windows com PATH sem ferramentas de desenvolvimento e o pacote Linux em um runner novo, incluindo SQLite/FTS, modelos, codecs de imagem, salvamento/reabertura e desinstalação. A interface Linux é verificada com Xvfb/Mesa. Esses testes não comprovam desempenho em todos os computadores ou GPUs. Mint 22 não teve execução própria.
+**Para fotos realistas, instale o Blender 5.2 LTS+ separadamente** e selecione seu executável no painel Render. O LibreMax usa Cycles real em segundo plano; Blender não acompanha o instalador.
 
-Prévia em desenvolvimento; faltam recursos da master spec. Windows sem assinatura digital nesta versão. Wayland usa XWayland. A fila/galeria persistente já está integrada. HDRI, EXR, todos os canais PBR e QA de outras GPUs ainda estão pendentes. Há evidência CPU no Windows/Linux e HIP na RX 7600 deste host Windows, em prévia de 640 × 360.
+Verificações desta revisão:
 
-`LibreMax-Architect-Source.tar.gz` contém o código correspondente. `SHA256SUMS.txt` permite conferir os downloads. O instalador Windows também inclui licenças disponíveis e um manifesto de dependências em `share/doc/libremax-architect/runtime-manifest.json`; veja [licenças e fontes das dependências](https://github.com/Pepeu2010/libremax-architect/blob/main/INSTALADOR/windows/DEPENDENCIES.md).
+- Núcleo Windows: 34 casos e 1.829 assertions; interface, tutorial, montagem, modelos, recuperação, fila e galeria passaram.
+- CPU real no Windows e Ubuntu: quatro renders de HDRI/EXR, rotação medida nos pixels, transparência, galeria persistente e cópia do original.
+- Apartamento com HDRI na RX 7600 / HIP deste Windows: 640 × 360 / 32 amostras, sem fallback CPU.
+- [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37089024012): Qt 6.4 / OpenEXR 3.1, interface Mesa/Xvfb e pacote Debian.
+- [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37089055737): instalação Windows com PATH sem SDK, instalação Linux em runner novo e desinstalação preservando projetos.
+
+Prévia em desenvolvimento. Faltam recursos da master spec, incluindo desfoque HDRI, todos os canais PBR e controles de luz/câmera. Não há prova de qualidade Final 4K ou superioridade sobre concorrentes. Outras GPUs físicas e outros sistemas ainda precisam de testes. Windows sem assinatura digital; Linux usa X11/XWayland.
+
+Projetos v2 com HDRI/EXR exigem LibreMax 0.8+. Versões antigas recusam esse formato. O instalador não converte seus projetos automaticamente.
+
+`LibreMax-Architect-Source.tar.gz` contém o código exato da revisão compilada `ed2e007fef2d51e3f16237faad73d5ef0ce75954`. Confira os downloads com `SHA256SUMS.txt`. As dependências Windows têm manifesto e licenças em `share/doc/libremax-architect`. [Guias separados por sistema](https://github.com/Pepeu2010/libremax-architect/tree/main/INSTALADOR).

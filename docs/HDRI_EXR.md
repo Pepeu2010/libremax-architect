@@ -25,3 +25,5 @@ A reabertura da fila preservou as prévias e os snapshots conservaram o estado a
 Também passou um render do apartamento moderno com o panorama incorporado, 640 × 360 / 32 amostras, na **AMD Radeon RX 7600 / HIP**, Blender 5.2.1 LTS, sem fallback CPU. O teste usa o apartamento existente e um container de aceitação que incorpora o mesmo HDRI validado pela interface. Uma falha posterior de câmera preservou o SHA256 da imagem: `2a49af242b9068baaf33b0cb7c6198be63d18445fae664df09ca4fedcc73779c`. É uma prévia pequena; não comprova qualidade Final 4K ou superioridade sobre outro produto.
 
 ![Prévia do apartamento calculada com Cycles HIP e HDRI](screenshots/hdri-apartment-hip.png)
+
+A [CI Ubuntu 24.04](https://github.com/Pepeu2010/libremax-architect/actions/runs/37089024012), commit `ed2e007`, também passou com Qt 6.4 e OpenEXR 3.1. Os quatro renders reais tiveram diferença média de rotação 30,2549/255 e picos EXR 1,98709 / 92,3524. A fila, os pixels transparentes, a cópia EXR, a galeria e os smokes nativos passaram. Isso verifica CPU/Mesa/Xvfb; não comprova GPUs físicas Linux.

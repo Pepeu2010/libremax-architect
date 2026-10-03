@@ -1,10 +1,10 @@
 # Build e plataformas
 
-Fonte C++20, CMake ≥3.24, Ninja, Qt ≥6.4 (Core/Gui/Widgets/Sql/Concurrent/Test), OpenCASCADE, nlohmann/json, spdlog, libzip e Catch2. Preferir Catch2 3; aceitar 2.13 em distribuições com pacote antigo. Dependências não são baixadas pelo aplicativo em runtime.
+Fonte C++20, CMake ≥3.24, Ninja, Qt ≥6.4 (Core/Gui/Widgets/Sql/Concurrent/Test), OpenCASCADE, nlohmann/json, spdlog, libzip, FreeImage, OpenEXR ≥3 e Catch2. Preferir Catch2 3; aceitar 2.13 em distribuições com pacote antigo. Dependências não são baixadas pelo aplicativo em runtime.
 
 Para usar sem compilar, veja [INSTALADOR](../INSTALADOR/README.md). O fluxo abaixo é para desenvolvimento.
 
-## Reproduzir os instaladores 0.7.0
+## Reproduzir os instaladores
 
 Compile uma cópia limpa da tag publicada com `-DLMX_DEPLOYMENT_BUILD=ON`. Essa opção exige recursos instalados em `share/libremax` e gera executável Windows sem terminal. Não use a opção para abrir um binário solto na pasta de build.
 
@@ -12,7 +12,7 @@ No Windows, acrescente NSIS e Python ao toolchain UCRT64. Configure/compile em `
 
 ```powershell
 ./scripts/package-windows.ps1 -ToolPrefix 'C:/caminho/msys64/ucrt64' -Python 'C:/caminho/msys64/ucrt64/bin/python.exe'
-./scripts/verify-windows-installer.ps1 -Installer dist/windows/LibreMax-Architect-0.7.0-Windows-x64-Setup.exe -Gui
+./scripts/verify-windows-installer.ps1 -Installer dist/windows/LibreMax-Architect-0.8.0-Windows-x64-Setup.exe -Gui
 ```
 
 O verificador exige um usuário sem instalação/atalhos LibreMax existentes. Instala em uma pasta nova, limpa o PATH do processo de teste, verifica catálogo/SQLite/modelos/codecs/projeto, desinstala e confirma que um projeto permanece. `-Blender 'C:/caminho/blender.exe'` também verifica Cycles CPU. Os logs ficam em `build-install/installation-evidence`. Não modifica o PATH global.
@@ -31,7 +31,7 @@ A [workflow dos instaladores](../.github/workflows/installers.yml) valida Window
 
 Linux: `bash scripts/bootstrap.sh`, `bash scripts/build.sh`, `bash scripts/test.sh`. Qt SQL SQLite deve conter FTS5. O viewport inicial Linux usa X11/Xw_Window; em Wayland usar XWayland (`QT_QPA_PLATFORM=xcb`). Wayland nativo ainda não validado. Debian 12/Qt6.4, Debian 13, Ubuntu 24.04+ e Mint correspondentes precisam de execução real antes de declarados suportados.
 
-Windows de validação: MSYS2 UCRT64 isolado em `~/.codex/tmp/lmx-tools/msys64`. Pacotes GCC, CMake, Ninja, Qt6, OpenCASCADE, libzip, Catch2, spdlog e nlohmann-json. Não alterar PATH global; no PowerShell:
+Windows de validação: MSYS2 UCRT64 isolado em `~/.codex/tmp/lmx-tools/msys64`. Pacotes GCC, CMake, Ninja, Qt6, OpenCASCADE, libzip, Catch2, spdlog, nlohmann-json, FreeImage e OpenEXR. Não alterar PATH global; no PowerShell:
 
 ```powershell
 $toolBin = "$env:USERPROFILE\.codex\tmp\lmx-tools\msys64\ucrt64\bin"
@@ -57,3 +57,5 @@ No ciclo 0.3, `starter-materials` é instalado com os recursos. `package-source.
 0.4 instala também `starter-models` e o pacote de fontes inclui `starter-models.tar.gz`. Rode `--assembly-smoke build/assembly-evidence` para a montagem nativa; abra `examples/apartamento.lmx` para experimentar. O bootstrap instala zipcmp/zipmerge/ziptool exigidos pelo CMake libzip e os pacotes de desenvolvimento TBB/FreeImage referenciados pelo OpenCASCADE da distribuição. O CI fixa clang-format 23.1.1, igual ao formatador usado localmente.
 
 0.6 usa `build-modern` neste host para manter a versão de teste separada do executável anterior. `run-windows.ps1` prefere essa pasta quando o binário existe; `-BuildDirectory build` escolhe outra compilação explicitamente. Não recompilar o mesmo executável enquanto ele ou seus testes estiverem rodando no Windows. `--modern-smoke build-modern/modern-evidence` verifica os modelos detalhados, colocação e arquivo independente; `--experience-smoke build-modern/experience-evidence` verifica tutorial, novo projeto, salvamento e biblioteca inicial. [Resultados e limites](CYCLE_06.md).
+
+0.8 usa FreeImage para HDR e OpenEXR diretamente para EXR FLOAT32. O bootstrap instala `libopenexr-dev`; no UCRT64 use `mingw-w64-ucrt-x86_64-openexr` e `mingw-w64-ucrt-x86_64-freeimage`. O pacote inclui `starter-environments`, e `--installation-smoke` importa o HDRI instalado e salva/reabre um projeto v2 portátil. `--environment-smoke build/environment-evidence --blender /caminho/blender` verifica quatro renders reais e a galeria EXR; no Linux execute com Xvfb/Mesa como na CI.
