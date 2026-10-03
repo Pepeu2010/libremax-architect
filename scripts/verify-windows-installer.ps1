@@ -29,13 +29,25 @@ $savedPlugins = $env:QT_PLUGIN_PATH
 $installed = $false
 function Invoke-App([string[]]$Arguments, [string]$Name) {
     $quoted = foreach ($argument in $Arguments) { '"' + $argument + '"' }
-    $process = Start-Process -FilePath (Join-Path $installation 'bin/libremax-architect.exe') -ArgumentList ($quoted -join ' ') -PassThru -WindowStyle Hidden -RedirectStandardOutput (Join-Path $evidence "$Name.stdout.txt") -RedirectStandardError (Join-Path $evidence "$Name.stderr.txt")
+    # Hide the console without suppressing the Qt window required by native GUI tests.
+    $start = [Diagnostics.ProcessStartInfo]::new()
+    $start.FileName = Join-Path $installation 'bin/libremax-architect.exe'
+    $start.Arguments = $quoted -join ' '
+    $start.UseShellExecute = $false
+    $start.CreateNoWindow = $true
+    $start.RedirectStandardOutput = $true
+    $start.RedirectStandardError = $true
+    $process = [Diagnostics.Process]::Start($start)
+    $stdout = $process.StandardOutput.ReadToEndAsync()
+    $stderr = $process.StandardError.ReadToEndAsync()
     if (!$process.WaitForExit(180000)) {
         $process.Kill()
         throw ('Installed application check timed out: ' + $Name)
     }
     $process.WaitForExit()
     $process.Refresh()
+    [IO.File]::WriteAllText((Join-Path $evidence "$Name.stdout.txt"), $stdout.GetAwaiter().GetResult())
+    [IO.File]::WriteAllText((Join-Path $evidence "$Name.stderr.txt"), $stderr.GetAwaiter().GetResult())
     if ($process.ExitCode -ne 0) {
         Get-Content -LiteralPath (Join-Path $evidence "$Name.stderr.txt")
         throw ('Installed application check failed: ' + $Name + ' exit ' + $process.ExitCode)

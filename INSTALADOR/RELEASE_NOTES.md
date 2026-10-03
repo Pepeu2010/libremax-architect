@@ -1,31 +1,26 @@
-# LibreMax Architect 0.8.0 — Prévia HDRI e EXR
+# LibreMax Architect 0.9.0 — Mais modelos e modos de edição
 
 Baixe o arquivo do seu sistema em Assets:
 
-- **Windows 64 bits:** `LibreMax-Architect-0.8.0-Windows-x64-Setup.exe`. Instalação em português, atalhos e bibliotecas incluídas.
-- **Ubuntu 24.04 / base do Linux Mint 22, x86-64:** `LibreMax-Architect-0.8.0-Linux-Ubuntu24.04-amd64.deb`. Instale com `sudo apt install ./LibreMax-Architect-0.8.0-Linux-Ubuntu24.04-amd64.deb`. Mint 22 não teve teste próprio.
+- **Windows 64 bits:** `LibreMax-Architect-0.9.0-Windows-x64-Setup.exe`.
+- **Ubuntu 24.04, x86-64:** `LibreMax-Architect-0.9.0-Linux-Ubuntu24.04-amd64.deb`. Instale com `sudo apt install ./LibreMax-Architect-0.9.0-Linux-Ubuntu24.04-amd64.deb`. Mint 22 compartilha essa base, mas não teve teste próprio.
 
-Esta prévia inclui os recursos anteriores: tutorial completo de primeira abertura, logo animada, biblioteca de projetos recentes, arquivo único `.lmx`, exemplos, 115 itens e 36 modelos da coleção Apartamento atual.
+O catálogo passa de 115 para **175 itens**, incluindo **148 modelos 3D prontos**. São 60 novos modelos CC0: 53 KayKit estilizados e sete Poly Haven com texturas. Sofás, camas, cadeiras, mesas, prateleiras, tapetes, quadros, plantas e decoração acompanham o instalador. Não precisam de download ao inserir. As medidas preparadas são sugestões para apartamentos.
 
-Novidades:
+Na biblioteca, escolha **Modelos leves**, **Apartamento atual** ou **Objetos detalhados**. No menu **Vista → Desempenho durante edição**, escolha Leve, Equilibrado ou Mais detalhes. O modo Leve reduz texturas e suavização na tela e limita a geração de miniaturas a um worker. A foto final mantém as malhas e os materiais originais. A escolha fica salva neste computador.
 
-- Importar iluminação HDR/EXR ou usar o panorama de luz do dia incluído. Girar a luz e mostrar/ocultar o panorama na imagem.
-- Salvar o panorama dentro do projeto portátil v2, com importação em segundo plano. Leitura dos projetos v1 preservada.
-- Exportar EXR linear FLOAT32 no modo Personalizado, com prévia PNG na galeria. Salvar cópia preserva o EXR original.
-- Publicação e cópia das imagens em segundo plano, mantendo a edição disponível.
+A atualização também evita recalcular todo o catálogo a cada miniatura concluída. Os modelos e as texturas usados continuam incorporados ao arquivo único `.lmx`.
 
-**Para fotos realistas, instale o Blender 5.2 LTS+ separadamente** e selecione seu executável no painel Render. O LibreMax usa Cycles real em segundo plano; Blender não acompanha o instalador.
+Os recursos anteriores permanecem: tutorial de 15 capítulos, logo animada, projetos recentes, montagem com encaixe, fila e galeria Cycles, iluminação HDRI e exportação EXR. **Para fotos realistas, instale Blender 5.2 LTS+ separadamente** e selecione seu executável no painel Render.
 
-Verificações desta revisão:
+Verificação local: 35 testes e 2.191 verificações no Windows. O fluxo nativo passou com 175 miniaturas, três modos, colocação de sofá no piso e relógio na parede, salvamento e reabertura. Também passou com o processo limitado a dois núcleos lógicos, mantendo a RX 7600. Esse ensaio não representa um computador antigo completo.
 
-- Núcleo Windows: 34 casos e 1.829 assertions; interface, tutorial, montagem, modelos, recuperação, fila e galeria passaram.
-- CPU real no Windows e Ubuntu: quatro renders de HDRI/EXR, rotação medida nos pixels, transparência, galeria persistente e cópia do original.
-- Apartamento com HDRI na RX 7600 / HIP deste Windows: 640 × 360 / 32 amostras, sem fallback CPU.
-- [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37089024012): Qt 6.4 / OpenEXR 3.1, interface Mesa/Xvfb e pacote Debian.
-- [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37089055737): instalação Windows com PATH sem SDK, instalação Linux em runner novo e desinstalação preservando projetos.
+Os instaladores desta revisão são publicados somente após os testes de instalação Windows e Ubuntu. As execuções e resultados estão no [relatório de testes](https://github.com/Pepeu2010/libremax-architect/blob/main/docs/TEST_REPORT.md).
 
-Prévia em desenvolvimento. Faltam recursos da master spec, incluindo desfoque HDRI, todos os canais PBR e controles de luz/câmera. Não há prova de qualidade Final 4K ou superioridade sobre concorrentes. Outras GPUs físicas e outros sistemas ainda precisam de testes. Windows sem assinatura digital; Linux usa X11/XWayland.
+Prévia em desenvolvimento. Compatibilidade com todos os computadores, GPUs integradas, pouca RAM e grandes apartamentos não está comprovada. Há pacotes Windows x86-64 e Ubuntu amd64; não há pacote macOS, ARM ou 32 bits. O viewport precisa de OpenGL e driver funcional. CPU no render permite usar GPUs sem backend Cycles compatível, desde que o Blender seja compatível com o sistema e o processador. Windows sem assinatura digital; Linux usa X11/XWayland.
 
-Projetos v2 com HDRI/EXR exigem LibreMax 0.8+. Versões antigas recusam esse formato. O instalador não converte seus projetos automaticamente.
+Faltam recursos da master spec, incluindo desfoque HDRI, todos os canais PBR e controles de luz/câmera. A coleção leve é estilizada. Não há prova de qualidade Final 4K ou superioridade sobre concorrentes.
 
-`LibreMax-Architect-Source.tar.gz` contém o código exato da revisão compilada `ed2e007fef2d51e3f16237faad73d5ef0ce75954`. Confira os downloads com `SHA256SUMS.txt`. As dependências Windows têm manifesto e licenças em `share/doc/libremax-architect`. [Guias separados por sistema](https://github.com/Pepeu2010/libremax-architect/tree/main/INSTALADOR).
+Projetos v2 com HDRI/EXR exigem LibreMax 0.8+. O instalador não converte seus projetos automaticamente.
+
+`LibreMax-Architect-Source.tar.gz` contém o código exato da revisão compilada `8ae679d43c5df1bb417d6663792b1a47124ce8d6`. Confira os downloads com `SHA256SUMS.txt`. As dependências Windows têm manifesto e licenças em `share/doc/libremax-architect`. [Guias separados por sistema](https://github.com/Pepeu2010/libremax-architect/tree/main/INSTALADOR).
