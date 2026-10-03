@@ -54,3 +54,26 @@ tenha a versão fixada e conserve o manifesto e as licenças.
 O motor incluído aumenta o tamanho do download e o espaço ocupado. Blender 4.5
 mantém o caminho CPU destinado ao i3-6006U/HD 520/8 GB. A inclusão do motor não
 substitui o [teste físico de desempenho ainda pendente](MINIMUM_HARDWARE.md).
+
+## Resultado da prévia 0.14
+
+Fonte compilada: `5257f576bdc99b4fabc1666ae62ac77382038220`, tag
+[`v0.14.0-preview.3`](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.14.0-preview.3).
+[Instalação Windows e Ubuntu limpos](https://github.com/Pepeu2010/libremax-architect/actions/runs/37144046796)
+passou com descoberta automática, render real do apartamento em CPU,
+320 × 180/oito amostras, remoção do motor e preservação de projeto.
+No Windows, o PATH do teste continha apenas pastas do sistema. No Ubuntu,
+o `.deb` foi instalado em runner separado e também passou pela UI/biblioteca.
+
+O build local passou em 43 testes/2.798 verificações, além de rejeitar checksum
+inválido, saída já preenchida e distribuição sem motor. O filtro Debian manteve
+as bibliotecas obrigatórias em 12 verificações de limites. A
+[CI Linux completa](https://github.com/Pepeu2010/libremax-architect/actions/runs/37144046955)
+também passou, incluindo renders reais nos motores 4.5 e 5.2.
+
+Downloads publicados: Windows **481.352.906 bytes**; Ubuntu **587.061.390 bytes**.
+Os digests GitHub dos sete assets correspondem aos manifestos combinado e de
+plataforma. Os três manifestos foram baixados e seus hashes também conferidos.
+Os instaladores publicados completos não foram baixados novamente no host;
+a instalação real ocorreu nos gates de CI. O Setup local, separado desses
+assets, também foi gerado e seu payload renderizou com PATH limpo.

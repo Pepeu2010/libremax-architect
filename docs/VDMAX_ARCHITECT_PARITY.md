@@ -1,6 +1,6 @@
 # Matriz de paridade — VDMax 3.0 Arquitetos e Decoradores
 
-Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. LibreMax: prévia 0.13.0 com instaladores Windows e Ubuntu publicados. **Não há paridade completa nem release 1.0.**
+Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. LibreMax: prévia 0.14.0 com instaladores Windows e Ubuntu publicados, incluindo Blender/Cycles. **Não há paridade completa nem release 1.0.**
 
 Complemento visual em 2026-09-30: [auditoria](VISUAL_REFERENCE_AUDIT.md), 11 imagens inspecionadas de 47 referências indexadas. `visual_refs` indica somente essas imagens consultadas; não promove paridade funcional automaticamente.
 
@@ -70,7 +70,7 @@ Fontes oficiais consultadas:
 | P03 | Projetos | Crash recovery | Requisito da spec | Seleção de versão, diálogo, descarte seguro, skip de corruptos | `[recovery]` + `--recovery-smoke` (processo morto e outro iniciado) | FUNCTIONAL | SPEC | Um projeto via UI comprovado; múltiplas versões via core; energia/interrupção durante escrita não testadas | — |
 | P04 | Projetos | Backup da biblioteca | Requisito da spec | — | — | NOT_STARTED | SPEC | — | — |
 | X01 | Produto | Offline completo | Exigência LibreMax | Edição, biblioteca, save/open/render locais | Rede desabilitada a executar | IN_PROGRESS | SPEC | Não declarar offline testado por ausência de código de rede | — |
-| X02 | Produto | Pacotes Linux | Exigência LibreMax | CMake install/CPack e `.deb` publicado 0.13; dependências runtime declaradas | CI Linux 37139824263 + instalação Ubuntu novo 37139824227 | FUNCTIONAL | SPEC | Ubuntu 24.04 amd64, UI Mesa/Xvfb, modelos e desinstalação preservando projeto; Mint, ARM, AppImage e hardware físico adicional pendentes | — |
+| X02 | Produto | Pacotes Linux | Exigência LibreMax | CMake install/CPack e `.deb` publicado 0.14; Blender incluído, dependências do sistema declaradas | CI Linux 37144046955 + instalação Ubuntu novo 37144046796 | FUNCTIONAL | SPEC | Ubuntu 24.04 amd64, render automático, UI Mesa/Xvfb, modelos e desinstalação preservando projeto; Mint, ARM, AppImage e hardware físico adicional pendentes | — |
 
 Fora de escopo: plano de corte, nesting, BOM industrial, ERP/MRP, CNC, custos de matéria-prima, etiquetas e produção. Nenhuma dessas funções é incluída no roadmap.
 

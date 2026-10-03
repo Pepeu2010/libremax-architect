@@ -1,3 +1,33 @@
+# Test report — dependências incluídas 0.14.0
+
+Instaladores Windows/Ubuntu da tag `v0.14.0-preview.3`, fonte
+`5257f576bdc99b4fabc1666ae62ac77382038220`, incluem Blender 4.5.9 LTS,
+Cycles, Python e as bibliotecas da distribuição oficial.
+[CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37144046796)
+passou: instalação real em Windows com PATH limpo e Ubuntu separado, descoberta
+do motor dentro do pacote, render CPU do apartamento sem `--blender`,
+320 × 180/oito amostras, erro de câmera preservando a imagem anterior e
+desinstalação removendo o motor sem remover um projeto. Ubuntu também passou
+na UI e na montagem dos modelos modernos.
+
+Windows local: 43 testes/2.798 verificações, compilação e formato C++ passaram.
+Arquivo com checksum errado, destino de motor já preenchido e build de
+distribuição sem motor foram rejeitados. O filtro de dependências Debian passou
+em 12 verificações que preservam CPU/Python e limitam a exclusão a quatro plugins
+de drivers opcionais de GPU. O Setup local foi gerado; o payload final também
+executou descoberta e render com PATH limitado ao sistema.
+
+A [CI Linux completa](https://github.com/Pepeu2010/libremax-architect/actions/runs/37144046955)
+passou em núcleo, formatação, interface, montagem, tutorial, recuperação,
+fila/galeria, HDRI/EXR, luzes e instâncias nos motores 4.5/5.2.
+Os sete assets da Release e os três manifestos de checksum baixados tiveram
+digests conferidos. Não houve novo download dos instaladores completos no host;
+a validação usa os digests GitHub/manifestos e a instalação nos runners.
+[Distribuição, tamanhos e limites](BUNDLED_RUNTIME.md).
+O teste físico i3-6006U/HD 520/8 GB continua pendente.
+
+---
+
 # Test report — geometria compartilhada 0.13.0
 
 Windows Release: **43 testes / 2.798 verificações** passaram. Build, formatação
