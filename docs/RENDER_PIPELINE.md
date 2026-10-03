@@ -21,7 +21,7 @@ Cada pedido mantém sua própria cópia do documento, materiais, assets e câmer
 | Final | 512 | 12 | 1920 × 1080 |
 | Personalizado | Ajustável, 1–4096 | Ajustável, 0–64 | Ajustável, 16–8192 pixels por eixo |
 
-Os três presets ativam denoise. Personalizado permite alterar reflexões de luz indireta, reflexos, vidro e transparência, clamp, limiar de ruído e denoise. Os tamanhos predefinidos incluem paisagem, retrato, quadrado e A4. PNG e JPEG são suportados; fundo transparente seleciona PNG automaticamente. JPEG desativa transparência.
+Os três presets ativam denoise. Personalizado permite alterar reflexões de luz indireta, reflexos, vidro e transparência, clamp, limiar de ruído e denoise. Os tamanhos predefinidos incluem paisagem, retrato, quadrado e A4. PNG e JPEG são suportados; Personalizado também oferece EXR float de 32 bits com prévia integrada. Fundo transparente preserva PNG/EXR e troca JPEG por PNG. [HDRI/EXR](HDRI_EXR.md). JPEG desativa transparência.
 
 As configurações e metadados das imagens concluídas ficam no projeto `.lmx`. Imagens, cópias usadas para repetir o render e logs ficam na pasta de dados local do aplicativo, em `renders/<UUID>`. O `.lmx` não incorpora a galeria completa: mover o projeto para outro computador preserva a cena e os metadados, mas as imagens devem ser copiadas separadamente.
 
@@ -47,7 +47,7 @@ O teste `--queue-smoke` usa Blender/Cycles real, cinco câmeras, imagens de 160 
 
 `--render-smoke` verifica imagem válida e preservação da imagem anterior após falha. Os testes do núcleo cobrem presets, parâmetros inválidos, snapshots e recuperação de registros interrompidos/corrompidos. A [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37018691178) passou com a fila, Blender oficial 5.2.1 e SHA256 conferido antes de extrair. Os instaladores continuam passando pelos testes de instalação, plugins, modelos, salvamento/reabertura e desinstalação.
 
-Esta entrega não completa toda a especificação de render. Permanecem pendentes: HDRI; EXR; canais adicionais de metalicidade, opacidade e emissão por mapa; painel completo de temperatura Kelvin, LED e Sun; validação exata de enquadramento entre viewport e Cycles; instâncias e tesselação própria de apresentação; políticas de cache; diagnóstico dedicado de versões/dispositivos; render Final em 4K; benchmarks de apartamentos grandes e QA com outras GPUs NVIDIA/AMD/Intel, incluindo HIP no Linux. O catálogo e a iluminação também condicionam o realismo. Não há comprovação de superioridade geral sobre o VDMax.
+Esta entrega não completa toda a especificação de render. Permanecem pendentes: desfoque opcional de HDRI; canais adicionais de metalicidade, opacidade e emissão por mapa; painel completo de temperatura Kelvin, LED e Sun; validação exata de enquadramento entre viewport e Cycles; instâncias e tesselação própria de apresentação; políticas de cache; diagnóstico dedicado de versões/dispositivos; render Final em 4K; benchmarks de apartamentos grandes e QA com outras GPUs NVIDIA/AMD/Intel, incluindo HIP no Linux. O catálogo e a iluminação também condicionam o realismo. Não há comprovação de superioridade geral sobre o VDMax.
 
 
 ## Reproduzir a verificação HIP no Windows

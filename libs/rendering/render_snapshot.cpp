@@ -7,6 +7,8 @@ RenderSnapshot::RenderSnapshot(const Document &document, Json options, const std
         throw std::invalid_argument("Escolha uma câmera disponível");
     scene.renderSettings["camera"] = camera;
     scene.renderSettings["cycles"] = settings;
+    if (settings.at("format") == "EXR")
+        scene.version = 2;
     scene.renderSettings["denoise"] = settings.at("denoise");
 }
 } // namespace lmx

@@ -1,5 +1,6 @@
 #include "document.h"
 #include "library/model.h"
+#include "rendering/high_dynamic_image.h"
 #include "rendering/render_options.h"
 #include <QCryptographicHash>
 #include <QRegularExpression>
@@ -80,15 +81,18 @@ void Document::validate() const {
         "Wall",           "HalfWall",   "Room",  "Floor",           "Ceiling",
         "Door",           "Window",     "Stair", "FurnitureModule", "DecorativeObject",
         "GeometryObject", "MeshObject", "Light", "Camera",          "Group"};
-    if (version != 1 || QUuid(QString::fromStdString(id)).isNull() || name.empty() || name.size() > 512 ||
-        entities.size() > 10000)
+    if ((version != 1 && version != 2) || QUuid(QString::fromStdString(id)).isNull() || name.empty() ||
+        name.size() > 512 || entities.size() > 10000)
         throw std::invalid_argument("Documento inválido ou versão não suportada");
     if (!materials.is_array() || materials.size() > 1000)
         throw std::invalid_argument("Materiais inválidos");
     if (!renderSettings.is_object())
         throw std::invalid_argument("Configuração de render inválida");
-    if (renderSettings.contains("cycles"))
+    if (renderSettings.contains("cycles")) {
         validateRenderOptions(renderSettings.at("cycles"));
+        if (renderSettings.at("cycles").at("format") == "EXR" && version != 2)
+            throw std::invalid_argument("O EXR exige a versão 2 do projeto");
+    }
     for (auto key : {"exposure", "environmentStrength"})
         if (!std::isfinite(renderSettings.at(key).get<double>()))
             throw std::invalid_argument("Configuração de render inválida");
@@ -103,14 +107,41 @@ void Document::validate() const {
     const auto environment = renderSettings.value("environmentMode", std::string("studio"));
     const auto elevation = renderSettings.value("sunElevation", 35.0);
     const auto rotation = renderSettings.value("sunRotation", 30.0);
-    if ((environment != "studio" && environment != "sky") || !std::isfinite(elevation) ||
-        !std::isfinite(rotation) || elevation < 1 || elevation > 89 || rotation < 0 || rotation > 360)
+    if ((environment != "studio" && environment != "sky" && environment != "solid" &&
+         environment != "hdri") ||
+        !std::isfinite(elevation) || !std::isfinite(rotation) || elevation < 1 || elevation > 89 ||
+        rotation < 0 || rotation > 360)
         throw std::invalid_argument("Configuração de céu inválida");
-    qint64 assetTotal = 0;
+    const auto background = renderSettings.value("backgroundColor", Json::array({0.7, 0.8, 1.0}));
+    if (!background.is_array() || background.size() != 3)
+        throw std::invalid_argument("Cor de fundo inválida");
+    for (const auto &channel : background)
+        if (!channel.is_number() || !std::isfinite(channel.get<double>()) || channel.get<double>() < 0 ||
+            channel.get<double>() > 1)
+            throw std::invalid_argument("Cor de fundo inválida");
+    const auto hdri = renderSettings.value("hdri", Json::object());
+    std::string environmentHash;
+    if (!hdri.empty()) {
+        if (version != 2)
+            throw std::invalid_argument("O HDRI exige a versão 2 do projeto");
+        environmentHash = hdri.at("asset").get<std::string>();
+        if (!embeddedAssets.contains(environmentHash) || hdri.at("name").get<std::string>().size() > 512 ||
+            !hdri.at("visible").is_boolean() || !std::isfinite(hdri.at("rotation").get<double>()) ||
+            std::abs(hdri.at("rotation").get<double>()) > 360 ||
+            inspectHighDynamicImage(embeddedAssets.at(environmentHash)).format.toStdString() !=
+                hdri.at("format").get<std::string>())
+            throw std::invalid_argument("Imagem de luz incorporada inválida");
+    }
+    if (environment == "hdri" && environmentHash.empty())
+        throw std::invalid_argument("Importe uma imagem de luz antes de usar HDRI");
+    qint64 assetTotal = 0, ordinaryAssetTotal = 0;
     for (const auto &[hash, bytes] : embeddedAssets) {
         assetTotal += bytes.size();
+        if (hash != environmentHash)
+            ordinaryAssetTotal += bytes.size();
         if (!QRegularExpression("^[a-f0-9]{64}$").match(QString::fromStdString(hash)).hasMatch() ||
-            bytes.size() > 16 * 1024 * 1024 || assetTotal > 48 * 1024 * 1024 ||
+            bytes.size() > (hash == environmentHash ? 64 : 16) * 1024 * 1024 ||
+            assetTotal > 112 * 1024 * 1024 || ordinaryAssetTotal > 48 * 1024 * 1024 ||
             QCryptographicHash::hash(bytes, QCryptographicHash::Sha256).toHex().toStdString() != hash)
             throw std::invalid_argument("Asset incorporado inválido");
     }
@@ -330,7 +361,7 @@ void Document::validate() const {
         }
     }
 }
-Json Document::serialize() const {
+Json Document::serialize(bool includeAssetBytes) const {
     Json list = Json::array();
     for (const auto &e : entities) {
         Json children = Json::array();
@@ -356,8 +387,9 @@ Json Document::serialize() const {
                         {"metadata", e.metadata}});
     }
     Json assets = Json::object();
-    for (const auto &[hash, bytes] : embeddedAssets)
-        assets[hash] = bytes.toBase64().toStdString();
+    if (includeAssetBytes)
+        for (const auto &[hash, bytes] : embeddedAssets)
+            assets[hash] = bytes.toBase64().toStdString();
     return {{"version", version},
             {"uuid", id},
             {"name", name},
@@ -367,7 +399,7 @@ Json Document::serialize() const {
             {"embeddedAssets", assets},
             {"renderSettings", renderSettings}};
 }
-Document Document::deserialize(const Json &j) {
+Document Document::deserialize(const Json &j, const std::map<std::string, QByteArray> *assetBytes) {
     Document d;
     if (j.at("units") != "mm")
         throw std::invalid_argument("Unidade interna deve ser mm");
@@ -379,6 +411,11 @@ Document Document::deserialize(const Json &j) {
     const auto storedAssets = j.value("embeddedAssets", Json::object());
     if (!storedAssets.is_object() || storedAssets.size() > 120)
         throw std::invalid_argument("Lista de assets inválida");
+    if (assetBytes) {
+        if (!storedAssets.empty() || assetBytes->size() > 120)
+            throw std::invalid_argument("Lista de assets divergente");
+        d.embeddedAssets = *assetBytes;
+    }
     for (const auto &[hash, value] : storedAssets.items()) {
         auto text = value.get<std::string>();
         auto decoded = QByteArray::fromBase64Encoding(QByteArray::fromStdString(text),

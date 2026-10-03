@@ -1,8 +1,10 @@
-# Render de apresentação — 0.7.0
+# Render de apresentação — fontes 0.8.0
 
 O objetivo atual é uma aparência fotográfica com a geometria do projeto. Cycles calcula iluminação indireta, sombras, reflexos e transmissão; a qualidade depende da cena, materiais, iluminação e resolução. Um projeto com modelos simples continua mostrando esses limites.
 
 **Preparar:** o apartamento de exemplo tem câmera e luzes de teto prontas; **Preparar câmera do cômodo** cria uma câmera para o cômodo escolhido. Para texturas PBR, abra a cozinha de exemplo (já com seis mapas PBR incorporados) ou clique Render → Ativar texturas reais. Isso atualiza carvalho e pedra em placas no projeto. Selecione a câmera por UUID; escolha Luz neutra ou Céu natural. No céu, altura e direção do sol controlam entrada de luz pelas aberturas. Intensidade ambiente (0–5), exposição (-8 a +8 EV) e denoise entram no histórico/arquivo `.lmx`, junto ao modo de ambiente e sol. Arquivos antigos continuam usando Luz neutra quando os campos novos estão ausentes.
+
+**Luz de ambiente e EXR:** use **Usar luz do dia** ou importe HDR/EXR. O panorama acompanha o arquivo `.lmx`. Em Personalizado, EXR preserva os valores de luz; a galeria mostra uma prévia PNG. [Guia e limites](HDRI_EXR.md).
 
 **Câmera:** posição, alvo e lente, abertura f/ (1–64) e foco em mm (100–10.000.000) no inspector. Quando o arquivo antigo não especifica foco, o renderer foca no alvo. Sensor 36 mm, DOF e diafragma de sete lâminas; exemplo em f/8 para manter o ambiente legível. A câmera principal foi nivelada para linhas verticais naturais.
 

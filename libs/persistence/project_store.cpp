@@ -21,14 +21,15 @@
 
 namespace lmx {
 namespace {
-constexpr zip_uint64_t maxEntry = 16 * 1024 * 1024, maxTotal = 64 * 1024 * 1024;
+constexpr zip_uint64_t maxEntry = 16 * 1024 * 1024, maxEnvironment = 64 * 1024 * 1024,
+                       maxTotal = 128 * 1024 * 1024;
 const std::set<std::string> required = {"manifest.json",  "scene.json",    "project.json",
                                         "materials.json", "lighting.json", "cameras.json"};
 using Archive = std::unique_ptr<zip_t, decltype(&zip_discard)>;
 std::string readRaw(zip_t *archive, zip_uint64_t index) {
     zip_stat_t st;
     zip_stat_init(&st);
-    if (zip_stat_index(archive, index, 0, &st) != 0 || st.size > maxEntry ||
+    if (zip_stat_index(archive, index, 0, &st) != 0 || st.size > maxEnvironment ||
         st.encryption_method != ZIP_EM_NONE)
         throw std::runtime_error("Entrada ZIP inválida");
     std::unique_ptr<zip_file_t, decltype(&zip_fclose)> file(zip_fopen_index(archive, index, 0), zip_fclose);
@@ -106,9 +107,10 @@ Document ProjectStore::open(const QString &path) {
     Archive archive(raw, zip_discard);
     auto count = zip_get_num_entries(raw, 0);
     if (count < static_cast<zip_int64_t>(required.size()) || count > 128)
-        throw std::runtime_error("Entradas inesperadas no projeto v1");
+        throw std::runtime_error("Entradas inesperadas no projeto");
     std::map<std::string, Json> data;
-    Json assets = Json::object();
+    std::map<std::string, QByteArray> assets;
+    std::set<std::string> environments;
     std::set<std::string> names;
     zip_uint64_t total = 0;
     for (zip_uint64_t i = 0; i < static_cast<zip_uint64_t>(count); ++i) {
@@ -116,7 +118,8 @@ Document ProjectStore::open(const QString &path) {
         zip_stat_init(&st);
         if (zip_stat_index(raw, i, 0, &st) != 0 || !st.name || !names.insert(st.name).second)
             throw std::runtime_error("Nome ZIP não permitido");
-        bool asset = QRegularExpression("^custom-(assets/[a-f0-9]{64}\\.png|models/[a-f0-9]{64}\\.json)$")
+        bool asset = QRegularExpression("^custom-(assets/[a-f0-9]{64}\\.png|models/"
+                                        "[a-f0-9]{64}\\.json|environments/[a-f0-9]{64}\\.(hdr|exr))$")
                          .match(QString::fromUtf8(st.name))
                          .hasMatch();
         if (!asset && !required.contains(st.name))
@@ -126,13 +129,19 @@ Document ProjectStore::open(const QString &path) {
         zip_file_get_external_attributes(raw, i, 0, &os, &attrs);
         if (os == ZIP_OPSYS_UNIX && ((attrs >> 16) & 0170000) == 0120000)
             throw std::runtime_error("Symlink não permitido");
-        if (st.size > maxEntry || total > maxTotal - st.size)
+        if (st.size >
+                (QString::fromUtf8(st.name).startsWith("custom-environments/") ? maxEnvironment : maxEntry) ||
+            total > maxTotal - st.size)
             throw std::runtime_error("Projeto excede limites");
         total += st.size;
         if (asset) {
             std::string name = st.name;
             auto bytes = readRaw(raw, i);
-            assets[name.substr(14, 64)] = QByteArray::fromStdString(bytes).toBase64().toStdString();
+            const auto hash = QString::fromStdString(name).section('/', 1).section('.', 0, 0).toStdString();
+            if (!assets.emplace(hash, QByteArray::fromStdString(bytes)).second)
+                throw std::runtime_error("Asset duplicado no projeto");
+            if (name.starts_with("custom-environments/"))
+                environments.insert(name);
         } else
             data.emplace(st.name, read(raw, i));
     }
@@ -140,14 +149,21 @@ Document ProjectStore::open(const QString &path) {
         if (!data.contains(name))
             throw std::runtime_error("Entrada essencial ausente");
     const auto &manifest = data.at("manifest.json");
-    if (manifest.at("format") != "LibreMax" || manifest.at("version") != 1)
+    if (manifest.at("format") != "LibreMax" || (manifest.at("version") != 1 && manifest.at("version") != 2))
         throw std::runtime_error("Versão de projeto não suportada; arquivo preservado");
     Json j = data.at("project.json");
     j["entities"] = data.at("scene.json").at("entities");
     j["materials"] = data.at("materials.json");
-    j["embeddedAssets"] = assets;
-    auto d = Document::deserialize(j);
-    if (manifest.at("project") != d.id)
+    j["embeddedAssets"] = Json::object();
+    auto d = Document::deserialize(j, &assets);
+    const auto hdri = d.renderSettings.value("hdri", Json::object());
+    const std::set<std::string> expectedEnvironments =
+        hdri.empty() ? std::set<std::string>{}
+                     : std::set<std::string>{"custom-environments/" + hdri.at("asset").get<std::string>() +
+                                             "." + hdri.at("format").get<std::string>()};
+    if (environments != expectedEnvironments)
+        throw std::runtime_error("Panorama incorporado divergente");
+    if (manifest.at("project") != d.id || manifest.at("version") != d.version)
         throw std::runtime_error("Identidade do container divergente");
     Json hashes = Json::array();
     for (const auto &[hash, bytes] : d.embeddedAssets) {
@@ -172,7 +188,7 @@ void ProjectStore::save(const QString &path, const Document &d, bool backup) {
     QFileInfo info(path);
     if (!QDir(info.absolutePath()).exists())
         throw std::runtime_error("Diretório de destino não existe");
-    auto j = d.serialize();
+    auto j = d.serialize(false);
     Json lights = Json::array(), cameras = Json::array();
     for (const auto &e : j["entities"]) {
         if (e["type"] == "Light")
@@ -191,7 +207,8 @@ void ProjectStore::save(const QString &path, const Document &d, bool backup) {
     }
     std::map<std::string, std::string> entries = {
         {"manifest.json",
-         Json({{"format", "LibreMax"}, {"version", 1}, {"project", d.id}, {"assets", hashes}}).dump()},
+         Json({{"format", "LibreMax"}, {"version", d.version}, {"project", d.id}, {"assets", hashes}})
+             .dump()},
         {"scene.json", Json({{"entities", j["entities"]}}).dump()},
         {"project.json", project.dump()},
         {"materials.json", d.materials.dump()},
@@ -202,8 +219,15 @@ void ProjectStore::save(const QString &path, const Document &d, bool backup) {
         for (const auto &object : d.entities)
             if (object.type == "MeshObject" && object.parameters.at("meshAsset").get<std::string>() == hash)
                 model = true;
-        entries[(model ? "custom-models/" : "custom-assets/") + hash + (model ? ".json" : ".png")] =
-            bytes.toStdString();
+        const auto hdri = d.renderSettings.value("hdri", Json::object());
+        const bool environment = !hdri.empty() && hdri.at("asset") == hash;
+        entries[(environment ? "custom-environments/"
+                 : model     ? "custom-models/"
+                             : "custom-assets/") +
+                hash +
+                (environment ? "." + hdri.at("format").get<std::string>()
+                 : model     ? ".json"
+                             : ".png")] = bytes.toStdString();
     }
     QTemporaryDir temp(info.absolutePath() + "/.libremax-XXXXXX");
     if (!temp.isValid())
@@ -215,7 +239,7 @@ void ProjectStore::save(const QString &path, const Document &d, bool backup) {
     if (!archive)
         throw std::runtime_error("Falha ao criar ZIP");
     for (const auto &[name, data] : entries) {
-        if (data.size() > maxEntry)
+        if (data.size() > (name.starts_with("custom-environments/") ? maxEnvironment : maxEntry))
             throw std::runtime_error("Projeto grande demais");
         auto *source = zip_source_buffer(archive.get(), data.data(), data.size(), 0);
         if (!source)
@@ -231,7 +255,8 @@ void ProjectStore::save(const QString &path, const Document &d, bool backup) {
         zip_discard(raw);
         throw std::runtime_error("Falha ao finalizar ZIP: " + message);
     }
-    if (open(filename).serialize() != j)
+    const auto verified = open(filename);
+    if (verified.serialize(false) != j || verified.embeddedAssets != d.embeddedAssets)
         throw std::runtime_error("Validação do temporário falhou");
     QFile ready(filename);
     if (!ready.open(QIODevice::ReadOnly))

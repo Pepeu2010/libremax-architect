@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(LibreMaxArchitect VERSION 0.7.0 LANGUAGES CXX)
+project(LibreMaxArchitect VERSION 0.8.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
@@ -9,7 +9,13 @@ find_package(OpenCASCADE REQUIRED COMPONENTS FoundationClasses ModelingData Mode
 find_package(nlohmann_json 3.10 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(libzip CONFIG REQUIRED)
+find_path(FREEIMAGE_INCLUDE_DIR FreeImage.h REQUIRED)
+find_library(FREEIMAGE_LIBRARY NAMES freeimage FreeImage REQUIRED)
+find_package(OpenEXR 3 REQUIRED)
 add_library(lmx_core
+  libs/rendering/render_result.cpp libs/rendering/render_result.h
+  libs/rendering/environment_map.cpp libs/rendering/environment_map.h
+  libs/rendering/high_dynamic_image.cpp libs/rendering/high_dynamic_image.h
   libs/rendering/render_options.cpp libs/rendering/render_options.h
   libs/rendering/render_snapshot.cpp libs/rendering/render_snapshot.h
   libs/rendering/render_scene_exporter.cpp libs/rendering/render_scene_exporter.h
@@ -33,6 +39,8 @@ add_library(lmx_core
   libs/rendering/render_job.cpp libs/rendering/render_job.h)
 target_include_directories(lmx_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 target_include_directories(lmx_core SYSTEM PUBLIC ${OpenCASCADE_INCLUDE_DIR})
+target_include_directories(lmx_core PRIVATE ${FREEIMAGE_INCLUDE_DIR})
+target_link_libraries(lmx_core PUBLIC ${FREEIMAGE_LIBRARY} OpenEXR::OpenEXR)
 target_link_libraries(lmx_core PUBLIC Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Sql Qt6::Concurrent nlohmann_json::nlohmann_json spdlog::spdlog libzip::zip
   TKernel TKMath TKG2d TKG3d TKGeomBase TKBRep TKGeomAlgo TKTopAlgo TKPrim TKBO TKBool TKMesh TKService TKV3d TKOpenGl)
 if(MSVC)
@@ -45,6 +53,7 @@ add_executable(libremax-architect apps/architect/main.cpp apps/architect/main_wi
 target_sources(libremax-architect PRIVATE apps/architect/render_preview.cpp apps/architect/render_preview.h)
 target_sources(libremax-architect PRIVATE apps/architect/render_gallery.cpp apps/architect/render_gallery.h)
 target_sources(libremax-architect PRIVATE apps/architect/queue_acceptance.cpp apps/architect/queue_acceptance.h)
+target_sources(libremax-architect PRIVATE apps/architect/environment_acceptance.cpp apps/architect/environment_acceptance.h)
 target_sources(libremax-architect PRIVATE apps/architect/project_home.cpp apps/architect/project_home.h apps/architect/first_run.cpp apps/architect/first_run.h)
 qt_add_resources(libremax-architect studio_icons PREFIX "/studio" BASE resources
   FILES resources/arrow-down.png resources/arrow-up.png resources/check.png resources/brand/libremax-mark.png resources/brand/apartment-preview.png)
@@ -61,6 +70,7 @@ if(BUILD_TESTING)
   endif()
   add_executable(lmx_tests tests/main.cpp tests/test_core.cpp tests/test_render.cpp)
   target_link_libraries(lmx_tests PRIVATE lmx_core Catch2::Catch2)
+  target_include_directories(lmx_tests PRIVATE ${FREEIMAGE_INCLUDE_DIR})
   target_compile_definitions(lmx_tests PRIVATE LMX_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
   add_test(NAME core COMMAND lmx_tests)
   set_tests_properties(core PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")

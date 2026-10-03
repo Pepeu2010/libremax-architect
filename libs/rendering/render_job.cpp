@@ -14,8 +14,7 @@ RenderJob::RenderJob(QObject *parent) : QObject(parent) {
             finish(false, tr("Cancelado"), code);
             return;
         }
-        QImageReader reader(renderedFile);
-        if (code != 0 || !normalExit || !reader.canRead() || reader.size() != resolution) {
+        if (code != 0 || !normalExit) {
             finish(false,
                    tr("O mecanismo de render não produziu uma imagem válida. Veja os detalhes ou tente com "
                       "CPU."),
@@ -23,20 +22,23 @@ RenderJob::RenderJob(QObject *parent) : QObject(parent) {
             return;
         }
         emit stage("Saving");
-        QFile image(renderedFile);
-        QSaveFile destination(output);
-        destination.setDirectWriteFallback(false);
-        if (!image.open(QIODevice::ReadOnly) || !destination.open(QIODevice::WriteOnly)) {
-            finish(false, tr("Não foi possível salvar a imagem renderizada."), code);
-            return;
-        }
-        const auto bytes = image.readAll();
-        image.close();
-        if (destination.write(bytes) != bytes.size() || !destination.commit()) {
-            finish(false, tr("Falha ao salvar a imagem; versão anterior preservada."), code);
-            return;
-        }
-        finish(true, {}, code);
+        disconnect(&publishing, nullptr, this, nullptr);
+        connect(&publishing, &QFutureWatcher<PublishedRender>::finished, this, [this, code] {
+            const auto result = publishing.result();
+            // A completed atomic publication wins a cancellation arriving after commit.
+            if (result.error.isEmpty()) {
+                cancelled = false;
+                display = result.preview;
+            }
+            finish(result.error.isEmpty(), result.error, code);
+        });
+        auto directory = work;
+        const auto source = renderedFile, preview = renderedPreview, destination = output;
+        const auto size = resolution;
+        auto cancellation = publicationCancelled;
+        publishing.setFuture(QtConcurrent::run([directory, source, preview, destination, size, cancellation] {
+            return publishRender(source, preview, destination, size, *cancellation);
+        }));
     });
 }
 void RenderJob::consumeOutput(const QString &text) {
@@ -82,11 +84,13 @@ void RenderJob::finish(bool success, const QString &message, int code) {
 RenderJob::~RenderJob() {
     disconnect(&bridge, nullptr, this, nullptr);
     disconnect(&preparing, nullptr, this, nullptr);
+    disconnect(&publishing, nullptr, this, nullptr);
     cancel();
     preparing.waitForFinished();
+    publishing.waitForFinished();
 }
 bool RenderJob::busy() const {
-    return active || preparing.isRunning() || bridge.busy();
+    return active || preparing.isRunning() || publishing.isRunning() || bridge.busy();
 }
 void RenderJob::start(const Document &snapshot, const QString &blender, const QString &script,
                       const QString &destination, int width, int height, int samples, const QString &device) {
@@ -98,6 +102,8 @@ void RenderJob::start(const Document &snapshot, const QString &blender, const QS
     if (width < 16 || height < 16 || width > 8192 || height > 8192 || samples < 1 || samples > 4096)
         throw std::runtime_error("Configuração de render inválida");
     cancelled = false;
+    publicationCancelled = std::make_shared<std::atomic_bool>(false);
+    display.clear();
     lineBuffer.clear();
     engineInfo = Json::object();
     output = destination;
@@ -108,7 +114,9 @@ void RenderJob::start(const Document &snapshot, const QString &blender, const QS
     resolution = {width, height};
     const bool jpeg = destination.endsWith(".jpg", Qt::CaseInsensitive) ||
                       destination.endsWith(".jpeg", Qt::CaseInsensitive);
-    renderedFile = work->filePath(jpeg ? "render.jpg" : "render.png");
+    const bool exr = destination.endsWith(".exr", Qt::CaseInsensitive);
+    renderedFile = work->filePath(exr ? "render.exr" : jpeg ? "render.jpg" : "render.png");
+    renderedPreview = exr ? work->filePath("preview.png") : QString{};
     emit state(tr("Preparando"));
     emit stage("Exporting");
     disconnect(&preparing, &QFutureWatcher<QString>::finished, this, nullptr);
@@ -125,10 +133,13 @@ void RenderJob::start(const Document &snapshot, const QString &blender, const QS
                 }
                 emit state(tr("Renderizando"));
                 emit stage("Rendering");
-                bridge.start(blender, script,
-                             {"--scene", work->filePath("scene.json"), "--output", renderedFile, "--width",
-                              QString::number(width), "--height", QString::number(height), "--samples",
-                              QString::number(samples), "--device", device});
+                QStringList arguments{
+                    "--scene",   work->filePath("scene.json"), "--output", renderedFile,
+                    "--width",   QString::number(width),       "--height", QString::number(height),
+                    "--samples", QString::number(samples),     "--device", device};
+                if (!renderedPreview.isEmpty())
+                    arguments << "--preview" << renderedPreview;
+                bridge.start(blender, script, arguments);
             });
     auto directory = work;
     preparing.setFuture(QtConcurrent::run([snapshot, directory]() -> QString {
@@ -142,6 +153,8 @@ void RenderJob::start(const Document &snapshot, const QString &blender, const QS
 }
 void RenderJob::cancel() {
     cancelled = true;
+    if (publicationCancelled)
+        publicationCancelled->store(true);
     bridge.cancel();
 }
 } // namespace lmx

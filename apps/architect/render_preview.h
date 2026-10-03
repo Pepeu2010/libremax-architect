@@ -23,7 +23,7 @@ class RenderPreview final : public QWidget {
 
   public:
     explicit RenderPreview(QWidget *parent = nullptr);
-    void open(const QString &path);
+    void open(const QString &path, const QString &label = {});
     QSize imageSize() const;
   signals:
     void backToGallery();

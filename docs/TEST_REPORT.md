@@ -1,3 +1,11 @@
+# Test report — HDRI e EXR 0.8.0
+
+Build Release no Windows: **34 casos / 1.829 assertions** aprovados. Importação HDR/EXR em ponto flutuante, projeto v2 portátil, snapshots e publicação segura testados. O fluxo nativo completou quatro renders Cycles CPU, verificou rotação nos pixels, fundo oculto, alpha, originais EXR FLOAT32, histórico, miniaturas e cópia pela galeria byte a byte. UI, montagem, modelos modernos, tutorial, recuperação e fila de cinco câmeras passaram. A prévia do apartamento com HDRI também passou na RX 7600 / HIP, 640 × 360 / 32 amostras, sem fallback e com preservação da imagem após falha. [Capturas, números e limites](HDRI_EXR.md).
+
+CI Linux e instaladores 0.8 ainda estão pendentes. Resultados anteriores abaixo referem-se às versões publicadas indicadas.
+
+---
+
 # Test report — fila e galeria 0.7.0
 
 Verificado no host Windows em 02/10/2026: **31 casos / 1.737 assertions** aprovados. A fila nativa com Blender 5.2.1 LTS/Cycles CPU passou com cinco câmeras, snapshots imutáveis, edição durante o render, progresso de amostras, cancelamento na fila e durante o processo, falha intencional, repetição CPU, reabertura do histórico e metadados no `.lmx`. Imagens positivas: 160 × 90, oito amostras; o caso de cancelamento inicia 640 × 360/1024 e interrompe o processo.

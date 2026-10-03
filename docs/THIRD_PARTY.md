@@ -10,6 +10,8 @@
 | spdlog/fmt | Logs | MIT |
 | Catch2 | Testes | BSL-1.0 |
 | Blender/Cycles | Processo externo | GPL |
+| FreeImage | Validação HDR em ponto flutuante | FreeImage Public License / GPL |
+| OpenEXR / Imath | Validação EXR em ponto flutuante | BSD-3-Clause |
 
 Fontes: [Qt](https://doc.qt.io/qt-6/licensing.html), [OCCT](https://dev.opencascade.org/resources/licensing), [libzip](https://libzip.org/license/), [SQLite](https://sqlite.org/copyright.html), [JSON](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT), [spdlog](https://github.com/gabime/spdlog/blob/v1.x/LICENSE), [Catch2](https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt), [Blender](https://www.blender.org/about/license/).
 
@@ -18,6 +20,10 @@ As dependências são vinculadas dinamicamente onde distribuídas, exceto core p
 ## Texturas distribuídas
 
 `starter-materials`: seis mapas CC0-1.0, Oak Veneer 03 (Jenelle van Heerden) e Marble 01 (Rob Tuytel), Poly Haven. Proveniência, escala e hashes em [catálogo](../starter-materials/catalog.json) e [avisos](../starter-materials/README.md). Licença dos assets: [Poly Haven](https://polyhaven.com/license). Não incluem renders promocionais, logotipos ou imagens do VDMax.
+
+## Panoramas de luz distribuídos
+
+`starter-environments` inclui Kiara 1 Dawn (Greg Zaal / Poly Haven), CC0-1.0, em HDR 1K. [Procedência, licença e hashes](../starter-environments/README.md). A validação usa FreeImage, já presente entre as dependências transitivas do viewport. O aplicativo agora a vincula diretamente para decodificar HDR sem converter os valores de luz para 8 bits. EXR usa diretamente OpenEXR/Imath, com leitura de canais FLOAT por linha. [Biblioteca OpenEXR](https://github.com/AcademySoftwareFoundation/openexr). [Licença FreeImage](https://freeimage.sourceforge.io/license.html).
 
 ## Modelos distribuídos
 

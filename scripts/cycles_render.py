@@ -14,6 +14,7 @@ def arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('--scene', required=True)
     parser.add_argument('--output', required=True)
+    parser.add_argument('--preview')
     parser.add_argument('--width', type=int, default=1920)
     parser.add_argument('--height', type=int, default=1080)
     parser.add_argument('--samples', type=int, default=128)
@@ -185,15 +186,18 @@ def main():
     print('LIBREMAX_RENDER_DEVICE', scene.cycles.device, flush=True)
     materials = {}
     texture_paths = {}
+    environment = settings.get('hdri', {})
+    environment_hash = environment.get('asset') if settings.get('environmentMode') == 'hdri' else None
     texture_hashes = {entry[channel] for entry in package['materials']
                       for channel in ('baseColorTexture', 'roughnessTexture', 'normalTexture') if channel in entry}
     for digest, encoded in package.get('assets', {}).items():
         data = base64.b64decode(encoded, validate=True)
         if hashlib.sha256(data).hexdigest() != digest or len(digest) != 64 or any(c not in '0123456789abcdef' for c in digest):
             raise ValueError('Invalid asset hash')
-        if digest not in texture_hashes:
+        if digest not in texture_hashes and digest != environment_hash:
             continue
-        texture_path = os.path.join(os.path.dirname(args.scene), digest + '.png')
+        extension = '.' + environment['format'] if digest == environment_hash else '.png'
+        texture_path = os.path.join(os.path.dirname(args.scene), digest + extension)
         with open(texture_path, 'wb') as stream:
             stream.write(data)
         texture_paths[digest] = texture_path
@@ -248,7 +252,7 @@ def main():
     camera.dof.focus_distance = camera_entry['parameters'].get('focusDistance', (target - obj.location).length * 1000) / 1000
     camera.dof.aperture_blades = 7
     scene.world.use_nodes = True
-    scene.world.node_tree.nodes['Background'].inputs['Color'].default_value = (0.7, 0.8, 1.0, 1.0)
+    scene.world.node_tree.nodes['Background'].inputs['Color'].default_value = (*settings.get('backgroundColor', [0.7, 0.8, 1.0]), 1.0)
     scene.world.node_tree.nodes['Background'].inputs['Strength'].default_value = settings.get('environmentStrength', 0.2)
     if settings.get('environmentMode', 'studio') == 'sky':
         sky = scene.world.node_tree.nodes.new('ShaderNodeTexSky')
@@ -258,6 +262,31 @@ def main():
         sky.sun_size = math.radians(0.526)
         sky.sun_intensity = 1
         scene.world.node_tree.links.new(sky.outputs['Color'], scene.world.node_tree.nodes['Background'].inputs['Color'])
+    if settings.get('environmentMode') == 'hdri':
+        if environment_hash not in texture_paths:
+            raise ValueError('Embedded HDRI missing')
+        world = scene.world.node_tree
+        texture = world.nodes.new('ShaderNodeTexEnvironment')
+        texture.image = bpy.data.images.load(texture_paths[environment_hash], check_existing=True)
+        texture.image.colorspace_settings.name = 'Linear Rec.709'
+        texture.projection = 'EQUIRECTANGULAR'
+        coordinate = world.nodes.new('ShaderNodeTexCoord')
+        mapping = world.nodes.new('ShaderNodeMapping')
+        mapping.inputs['Rotation'].default_value[2] = math.radians(environment.get('rotation', 0))
+        world.links.new(coordinate.outputs['Generated'], mapping.inputs['Vector'])
+        world.links.new(mapping.outputs['Vector'], texture.inputs['Vector'])
+        world.links.new(texture.outputs['Color'], world.nodes['Background'].inputs['Color'])
+        if not environment.get('visible', True):
+            camera_background = world.nodes.new('ShaderNodeBackground')
+            camera_background.inputs['Color'].default_value = (*settings.get('backgroundColor', [0.7, 0.8, 1.0]), 1.0)
+            camera_background.inputs['Strength'].default_value = 1
+            rays = world.nodes.new('ShaderNodeLightPath')
+            mix = world.nodes.new('ShaderNodeMixShader')
+            world.links.new(rays.outputs['Is Camera Ray'], mix.inputs[0])
+            world.links.new(world.nodes['Background'].outputs['Background'], mix.inputs[1])
+            world.links.new(camera_background.outputs['Background'], mix.inputs[2])
+            world.links.new(mix.outputs[0], world.nodes['World Output'].inputs['Surface'])
+        print('LIBREMAX_HDRI', environment_hash, list(texture.image.size), environment.get('rotation', 0), environment.get('visible', True), flush=True)
     print('LIBREMAX_PHOTOGRAPHIC', 'PBR maps', len(texture_paths), 'environment', settings.get('environmentMode', 'studio'), 'UV physical scale', 'beveled geometry', 'fstop', camera.dof.aperture_fstop, flush=True)
     print('LIBREMAX_SETTINGS', camera_entry['id'], 'exposure', scene.view_settings.exposure,
           'environment', settings.get('environmentStrength', 0.2), 'denoise', scene.cycles.use_denoising,
@@ -265,7 +294,12 @@ def main():
     scene.render.resolution_x = args.width
     scene.render.resolution_y = args.height
     scene.render.resolution_percentage = 100
-    scene.render.image_settings.file_format = 'JPEG' if args.output.lower().endswith(('.jpg', '.jpeg')) else 'PNG'
+    is_exr = args.output.lower().endswith('.exr')
+    scene.render.image_settings.file_format = 'OPEN_EXR' if is_exr else 'JPEG' if args.output.lower().endswith(('.jpg', '.jpeg')) else 'PNG'
+    scene.render.image_settings.color_mode = 'RGBA' if is_exr or scene.render.film_transparent else 'RGB'
+    scene.render.image_settings.color_depth = '32' if is_exr else '8'
+    if is_exr:
+        scene.render.image_settings.exr_codec = 'ZIP'
     scene.render.filepath = os.path.abspath(args.output)
     scene.render.use_file_extension = False
     bpy.ops.wm.save_as_mainfile(filepath=os.path.join(os.path.dirname(args.scene), 'scene.blend'))
@@ -289,6 +323,13 @@ def main():
             'device': 'CPU', 'backend': 'CPU', 'devices': [], 'samples': scene.cycles.samples,
             'maxBounces': scene.cycles.max_bounces, 'fallback': True}), flush=True)
         bpy.ops.render.render(write_still=True)
+    if is_exr:
+        if not args.preview:
+            raise ValueError('EXR requires an integrated preview path')
+        scene.render.image_settings.file_format = 'PNG'
+        scene.render.image_settings.color_mode = 'RGBA' if scene.render.film_transparent else 'RGB'
+        scene.render.image_settings.color_depth = '8'
+        bpy.data.images['Render Result'].save_render(os.path.abspath(args.preview), scene=scene)
     print('LIBREMAX_COMPLETED', scene.render.filepath, flush=True)
 
 if __name__ == '__main__':

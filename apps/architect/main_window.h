@@ -68,6 +68,11 @@ class MainWindow final : public QMainWindow {
     QDoubleSpinBox *renderExposure;
     QDoubleSpinBox *renderEnvironment;
     QComboBox *renderEnvironmentMode;
+    QWidget *hdriControls;
+    QLabel *hdriStatus;
+    QDoubleSpinBox *hdriRotation;
+    QCheckBox *hdriVisible;
+    QPushButton *backgroundColor;
     QDoubleSpinBox *renderSunElevation;
     QDoubleSpinBox *renderSunRotation;
     QCheckBox *renderDenoise;
@@ -119,6 +124,8 @@ class MainWindow final : public QMainWindow {
     void importTexture();
     Q_INVOKABLE void activatePbrMaterials();
     void renderScene();
+    std::uint64_t environmentImportGeneration = 0;
+    void importHdri(const QString &filename = {});
     Json selectedRenderOptions() const;
     void refreshRenderQueue();
     Q_INVOKABLE void showRenderGallery();

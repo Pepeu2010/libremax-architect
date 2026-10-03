@@ -5,6 +5,7 @@
 #include "import/dxf.h"
 #include "materials/texture.h"
 #include "persistence/project_store.h"
+#include "rendering/environment_map.h"
 #include "resource_paths.h"
 #include "studio_theme.h"
 #include <QActionGroup>
@@ -30,6 +31,7 @@
 #include <QScrollBar>
 #include <QSettings>
 #include <QSignalBlocker>
+#include <QStandardItemModel>
 #include <QStandardPaths>
 #include <QStatusBar>
 #include <QToolBar>
@@ -787,7 +789,8 @@ void MainWindow::createShell() {
     renderLayout->addRow(tr("Tamanho da imagem"), renderSize);
     renderFormat = new QComboBox;
     renderFormat->setObjectName("renderFormat");
-    renderFormat->addItems({"PNG", "JPEG"});
+    renderFormat->addItems({"PNG", "JPEG", "EXR"});
+    renderFormat->setToolTip(tr("EXR preserva a luz em alta precisão. Disponível em Personalizado."));
     renderLayout->addRow(tr("Formato"), renderFormat);
     customRender = new QWidget;
     customRender->setObjectName("customRender");
@@ -829,12 +832,12 @@ void MainWindow::createShell() {
         renderValues[key] = field;
         customLayout->addRow(label, field);
     }
-    auto *transparent = new QCheckBox(tr("Fundo transparente (PNG)"));
+    auto *transparent = new QCheckBox(tr("Fundo transparente"));
     transparent->setObjectName("renderTransparent");
     customLayout->addRow(transparent);
     connect(transparent, &QCheckBox::toggled, this, [this](bool checked) {
         if (!refreshing) {
-            if (checked) {
+            if (checked && renderFormat->currentText() == "JPEG") {
                 QSignalBlocker blocker(renderFormat);
                 renderFormat->setCurrentText("PNG");
             }
@@ -863,7 +866,69 @@ void MainWindow::createShell() {
     renderEnvironmentMode->setAccessibleName(tr("Tipo de iluminação ambiente"));
     renderEnvironmentMode->addItem(tr("Luz neutra"), "studio");
     renderEnvironmentMode->addItem(tr("Céu natural"), "sky");
+    renderEnvironmentMode->addItem(tr("Cor sólida"), "solid");
+    renderEnvironmentMode->addItem(tr("Luz de uma imagem (HDRI)"), "hdri");
     renderLayout->addRow(tr("Ambiente"), renderEnvironmentMode);
+    auto *importEnvironmentButton = new QPushButton(tr("Importar luz…"));
+    importEnvironmentButton->setObjectName("importHdri");
+    importEnvironmentButton->setToolTip(tr("Importa um panorama HDR ou EXR e o incorpora ao projeto."));
+    renderLayout->addRow(importEnvironmentButton);
+    connect(importEnvironmentButton, &QPushButton::clicked, this, [this] { importHdri(); });
+    auto *daylight = new QPushButton(tr("Usar luz do dia"));
+    daylight->setObjectName("useDaylightHdri");
+    renderLayout->addRow(daylight);
+    connect(daylight, &QPushButton::clicked, this,
+            [this] { importHdri(resourceFile("starter-environments/kiara_1_dawn_1k.hdr")); });
+    hdriControls = new QWidget;
+    hdriControls->setObjectName("hdriControls");
+    auto *environmentLayout = new QFormLayout(hdriControls);
+    environmentLayout->setContentsMargins(0, 0, 0, 0);
+    environmentLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);
+    hdriStatus = new QLabel;
+    hdriStatus->setObjectName("hdriStatus");
+    hdriStatus->setTextFormat(Qt::PlainText);
+    hdriStatus->setWordWrap(true);
+    hdriStatus->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+    environmentLayout->addRow(hdriStatus);
+    hdriRotation = new QDoubleSpinBox;
+    hdriRotation->setObjectName("hdriRotation");
+    hdriRotation->setRange(-360, 360);
+    hdriRotation->setSuffix(tr("°"));
+    environmentLayout->addRow(tr("Girar a luz"), hdriRotation);
+    hdriVisible = new QCheckBox(tr("Mostrar na imagem"));
+    hdriVisible->setObjectName("hdriVisible");
+    environmentLayout->addRow(hdriVisible);
+    renderLayout->addRow(hdriControls);
+    for (auto *field :
+         {static_cast<QWidget *>(hdriRotation), static_cast<QWidget *>(renderEnvironmentMode)}) {
+        field->setMinimumWidth(76);
+        field->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+    }
+    connect(hdriRotation, &QDoubleSpinBox::editingFinished, this, [this] {
+        if (!refreshing)
+            protect([&] { applyRenderSettings(); });
+    });
+    connect(hdriVisible, &QCheckBox::toggled, this, [this] {
+        if (!refreshing)
+            protect([&] { applyRenderSettings(); });
+    });
+    backgroundColor = new QPushButton(tr("Escolher cor…"));
+    backgroundColor->setObjectName("renderBackgroundColor");
+    renderLayout->addRow(tr("Cor de fundo"), backgroundColor);
+    connect(backgroundColor, &QPushButton::clicked, this, [this] {
+        const auto rgb =
+            editor_.document().renderSettings.value("backgroundColor", Json::array({0.7, 0.8, 1.0}));
+        const auto color = QColorDialog::getColor(
+            QColor::fromRgbF(rgb[0].get<double>(), rgb[1].get<double>(), rgb[2].get<double>()), this,
+            tr("Cor de fundo"), QColorDialog::DontUseNativeDialog);
+        if (color.isValid())
+            protect([&] {
+                editor_.apply(tr("Cor de fundo"), [&](Document &document) {
+                    document.renderSettings["backgroundColor"] = {color.redF(), color.greenF(),
+                                                                  color.blueF()};
+                });
+            });
+    });
     renderSunElevation = new QDoubleSpinBox;
     renderSunElevation->setObjectName("renderSunElevation");
     renderSunElevation->setRange(1, 89);
@@ -985,8 +1050,17 @@ void MainWindow::createShell() {
             protect([&] { applyRenderSettings(); });
     });
     connect(renderEnvironmentMode, &QComboBox::currentIndexChanged, this, [this] {
-        if (!refreshing)
-            protect([&] { applyRenderSettings(); });
+        if (refreshing)
+            return;
+        if (renderEnvironmentMode->currentData() == "hdri" &&
+            editor_.document().renderSettings.value("hdri", Json::object()).empty()) {
+            QSignalBlocker blocker(renderEnvironmentMode);
+            renderEnvironmentMode->setCurrentIndex(renderEnvironmentMode->findData(
+                q(editor_.document().renderSettings.value("environmentMode", std::string("studio")))));
+            importHdri();
+            return;
+        }
+        protect([&] { applyRenderSettings(); });
     });
     for (auto *field : {renderSunElevation, renderSunRotation})
         connect(field, &QDoubleSpinBox::editingFinished, this,
@@ -1002,6 +1076,10 @@ void MainWindow::createShell() {
     connect(renderQuality, &QComboBox::currentIndexChanged, this, [this] {
         if (refreshing)
             return;
+        if (renderQuality->currentData() != "custom" && renderFormat->currentText() == "EXR") {
+            QSignalBlocker blocker(renderFormat);
+            renderFormat->setCurrentText("PNG");
+        }
         const auto preset = renderPreset(renderQuality->currentData().toString());
         QSignalBlocker blockSize(renderSize);
         renderSize->setCurrentIndex(
@@ -1053,18 +1131,35 @@ void MainWindow::createShell() {
     connect(gallery, &RenderGallery::saveImage, this, [this](const QString &source) {
         protect([&] {
             const auto extension = QFileInfo(source).suffix();
-            const auto destination =
-                QFileDialog::getSaveFileName(this, tr("Salvar cópia da imagem"), "Imagem." + extension,
-                                             tr("Imagem (*.%1)").arg(extension));
+            const auto pictures = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
+            const auto suggestion = QDir(pictures).exists() ? QDir(pictures).filePath("Imagem." + extension)
+                                                            : "Imagem." + extension;
+            const auto destination = QFileDialog::getSaveFileName(
+                this, tr("Salvar cópia da imagem"), suggestion, tr("Imagem (*.%1)").arg(extension));
             if (destination.isEmpty())
                 return;
-            QFile input(source);
-            QSaveFile output(destination);
-            if (!input.open(QIODevice::ReadOnly) || !output.open(QIODevice::WriteOnly))
-                throw std::runtime_error("Não foi possível salvar a cópia");
-            const auto data = input.readAll();
-            if (output.write(data) != data.size() || !output.commit())
-                throw std::runtime_error("Não foi possível salvar a cópia");
+            auto *watcher = new QFutureWatcher<QString>(this);
+            statusBar()->showMessage(tr("Salvando a cópia. Você pode continuar editando."));
+            connect(watcher, &QFutureWatcher<QString>::finished, this, [this, watcher] {
+                const auto error = watcher->result();
+                watcher->deleteLater();
+                statusBar()->showMessage(error.isEmpty() ? tr("Cópia da imagem salva.") : error, 10000);
+            });
+            watcher->setFuture(QtConcurrent::run([source, destination]() -> QString {
+                QFile input(source);
+                QSaveFile output(destination);
+                output.setDirectWriteFallback(false);
+                if (!input.open(QIODevice::ReadOnly) || !output.open(QIODevice::WriteOnly))
+                    return tr("Não foi possível salvar a cópia.");
+                while (!input.atEnd()) {
+                    const auto bytes = input.read(1024 * 1024);
+                    if (bytes.isEmpty() || output.write(bytes) != bytes.size())
+                        return tr("Falha ao salvar a cópia; arquivo anterior preservado.");
+                }
+                input.close();
+                return output.commit() ? QString{}
+                                       : tr("Falha ao salvar a cópia; arquivo anterior preservado.");
+            }));
         });
     });
     renderScroll->setWidget(renderPanel);
@@ -1154,13 +1249,24 @@ void MainWindow::refreshScene() {
             transparent->setChecked(options.at("transparent").get<bool>());
         }
         const bool custom = renderQuality->currentData() == "custom";
+        qobject_cast<QStandardItemModel *>(renderFormat->model())->item(2)->setEnabled(custom);
         customRender->setVisible(custom);
         renderSize->setEnabled(!custom);
         renderDenoise->setEnabled(custom);
         gallery->setProject(editor_.document().id);
 
         renderEnvironmentMode->setCurrentIndex(
-            settings.value("environmentMode", std::string("studio")) == "sky" ? 1 : 0);
+            renderEnvironmentMode->findData(q(settings.value("environmentMode", std::string("studio")))));
+        const auto environment = settings.value("hdri", Json::object());
+        hdriControls->setVisible(renderEnvironmentMode->currentData() == "hdri");
+        hdriStatus->setText(environment.empty() ? tr("Importe um panorama de luz.")
+                                                : q(environment.at("name").get<std::string>()));
+        hdriRotation->setValue(environment.value("rotation", 0.0));
+        hdriVisible->setChecked(environment.value("visible", true));
+        qobject_cast<QFormLayout *>(renderEnvironmentMode->parentWidget()->layout())
+            ->setRowVisible(backgroundColor, renderEnvironmentMode->currentData() == "solid" ||
+                                                 (renderEnvironmentMode->currentData() == "hdri" &&
+                                                  !hdriVisible->isChecked()));
         renderSunElevation->setValue(settings.value("sunElevation", 35.0));
         renderSunRotation->setValue(settings.value("sunRotation", 30.0));
         auto *layout = qobject_cast<QFormLayout *>(renderEnvironmentMode->parentWidget()->layout());
@@ -1170,6 +1276,9 @@ void MainWindow::refreshScene() {
         if (!render->busy())
             renderState->setText(renderCamera->count() ? tr("Pronto para renderizar")
                                                        : tr("Crie uma câmera no menu Câmeras para começar."));
+        auto *scroll = findChild<QScrollArea *>("renderScroll");
+        scroll->setMinimumWidth(scroll->widget()->minimumSizeHint().width() +
+                                scroll->verticalScrollBar()->sizeHint().width() + 2 * scroll->frameWidth());
     }
     viewport->scene(editor_.document());
     material->clear();
@@ -1794,6 +1903,49 @@ Json MainWindow::selectedRenderOptions() const {
     validateRenderOptions(options);
     return options;
 }
+void MainWindow::importHdri(const QString &provided) {
+    const auto filename = provided.isEmpty()
+                              ? QFileDialog::getOpenFileName(this, tr("Importar panorama de luz"), {},
+                                                             tr("Panorama HDR/EXR (*.hdr *.exr)"))
+                              : provided;
+    if (filename.isEmpty())
+        return;
+    struct Result {
+        ImportedEnvironment environment;
+        QString error;
+    };
+    const auto project = editor_.document().id;
+    const auto generation = ++environmentImportGeneration;
+    auto *watcher = new QFutureWatcher<Result>(this);
+    statusBar()->showMessage(tr("Lendo a imagem de luz. Você pode continuar editando."));
+    connect(watcher, &QFutureWatcher<Result>::finished, this, [this, watcher, project, generation] {
+        const auto result = watcher->result();
+        watcher->deleteLater();
+        if (generation != environmentImportGeneration)
+            return;
+        if (editor_.document().id != project) {
+            statusBar()->showMessage(tr("O projeto mudou. Importe a imagem de luz no projeto desejado."),
+                                     7000);
+            return;
+        }
+        if (!result.error.isEmpty()) {
+            statusBar()->showMessage(result.error, 10000);
+            return;
+        }
+        protect([&] {
+            editor_.apply(tr("Importar imagem de luz"),
+                          [&](Document &document) { attachEnvironment(document, result.environment); });
+        });
+        statusBar()->showMessage(tr("Imagem de luz incorporada ao projeto."), 7000);
+    });
+    watcher->setFuture(QtConcurrent::run([filename]() -> Result {
+        try {
+            return {importEnvironment(filename), {}};
+        } catch (const std::exception &error) {
+            return {{}, QString::fromUtf8(error.what())};
+        }
+    }));
+}
 void MainWindow::renderScene() {
     if (renderCamera->currentData().toString().isEmpty())
         throw std::runtime_error("Prepare uma câmera do cômodo antes de criar a imagem.");
@@ -1859,8 +2011,14 @@ void MainWindow::applyRenderSettings() {
         d.renderSettings["environmentMode"] = renderEnvironmentMode->currentData().toString().toStdString();
         d.renderSettings["sunElevation"] = renderSunElevation->value();
         d.renderSettings["sunRotation"] = renderSunRotation->value();
+        if (d.renderSettings.contains("hdri")) {
+            d.renderSettings["hdri"]["rotation"] = hdriRotation->value();
+            d.renderSettings["hdri"]["visible"] = hdriVisible->isChecked();
+        }
         d.renderSettings["denoise"] = options.at("denoise");
         d.renderSettings["cycles"] = options;
+        if (options.at("format") == "EXR" || d.renderSettings.at("environmentMode") == "solid")
+            d.version = 2;
     });
 }
 void MainWindow::showRenderImage(const QString &filename) {
@@ -1869,7 +2027,17 @@ void MainWindow::showRenderImage(const QString &filename) {
         connect(preview, &RenderPreview::backToGallery, this, &MainWindow::showRenderGallery);
         workspace->addWidget(preview);
     }
-    preview->open(filename);
+    QString label;
+    for (const auto &entry : render->entries()) {
+        const auto id = q(entry.at("id").get<std::string>());
+        if (render->displayPath(id) == filename) {
+            label = q(entry.at("cameraName").get<std::string>());
+            if (entry.at("options").at("format") == "EXR")
+                label += tr(" · EXR (prévia)");
+            break;
+        }
+    }
+    preview->open(filename, label);
     previewAction->setEnabled(true);
     workspace->setCurrentWidget(preview);
 }

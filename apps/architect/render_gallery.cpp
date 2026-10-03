@@ -84,7 +84,7 @@ RenderGallery::RenderGallery(RenderQueue &renderQueue, QWidget *parent)
         if (open->isEnabled())
             open->click();
     });
-    connect(open, &QPushButton::clicked, this, [this] { emit openImage(queue.imagePath(selectedId())); });
+    connect(open, &QPushButton::clicked, this, [this] { emit openImage(queue.displayPath(selectedId())); });
     connect(saveCopy, &QPushButton::clicked, this, [this] { emit saveImage(queue.imagePath(selectedId())); });
     connect(cancel, &QPushButton::clicked, this, [this] { emit cancelImage(selectedId()); });
     connect(repeat, &QAction::triggered, this, [this] { emit retryImage(selectedId(), false); });
@@ -140,7 +140,7 @@ void RenderGallery::refresh() {
                          .arg(date.toString("dd/MM/yyyy HH:mm"), status));
         row->setToolTip(text(entry, "error"));
         if (state == "Completed" && row->icon().isNull()) {
-            QImageReader reader(queue.imagePath(id));
+            QImageReader reader(queue.displayPath(id));
             reader.setScaledSize(reader.size().scaled({112, 72}, Qt::KeepAspectRatio));
             const auto image = reader.read();
             if (!image.isNull())
@@ -173,7 +173,7 @@ void RenderGallery::selectionChanged() {
     const bool available = found != entries.end();
     const auto state = available ? text(*found, "state") : QString{};
     const bool complete = available && state == "Completed" && QFileInfo::exists(queue.imagePath(id));
-    open->setEnabled(complete);
+    open->setEnabled(complete && QFileInfo::exists(queue.displayPath(id)));
     saveCopy->setEnabled(complete);
     folder->setEnabled(complete);
     cancel->setEnabled(available && !done(state));

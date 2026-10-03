@@ -34,6 +34,7 @@ class RenderQueue final : public QObject {
     QString active() const { return activeId; }
     std::vector<Json> entries(const std::string &project = {}) const;
     QString imagePath(const QString &id) const;
+    QString displayPath(const QString &id) const;
     QString snapshotPath(const QString &id) const;
     QString logPath(const QString &id) const;
   signals:

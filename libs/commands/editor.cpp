@@ -31,7 +31,8 @@ void Editor::apply(const QString &name, const std::function<void(Document &)> &c
     Document next = document_;
     change(next);
     next.validate();
-    if (next.serialize() != document_.serialize())
+    if (next.embeddedAssets != document_.embeddedAssets ||
+        next.serialize(false) != document_.serialize(false))
         history.push(new Change(*this, document_, std::move(next), name));
 }
 } // namespace lmx

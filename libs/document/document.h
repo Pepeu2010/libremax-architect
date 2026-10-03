@@ -33,8 +33,9 @@ struct Document {
     const Entity &at(const std::string &id) const;
     bool contains(const std::string &id) const;
     void validate() const;
-    Json serialize() const;
-    static Document deserialize(const Json &json);
+    Json serialize(bool includeAssetBytes = true) const;
+    static Document deserialize(const Json &json,
+                                const std::map<std::string, QByteArray> *assetBytes = nullptr);
 };
 std::string uuid();
 double millimeters(double value);

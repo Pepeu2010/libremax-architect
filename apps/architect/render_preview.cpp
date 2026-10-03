@@ -1,4 +1,5 @@
 #include "render_preview.h"
+#include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QGraphicsPixmapItem>
@@ -7,6 +8,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSaveFile>
+#include <QStandardPaths>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QWheelEvent>
@@ -57,7 +59,10 @@ RenderPreview::RenderPreview(QWidget *parent) : QWidget(parent) {
     button(tr("Salvar cópia…"), "exportRenderImage", [this] {
         if (filename.isEmpty())
             return;
-        const auto destination = QFileDialog::getSaveFileName(this, tr("Salvar cópia do render"), filename,
+        const auto pictures = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
+        const auto suggestion =
+            QDir(pictures).exists() ? QDir(pictures).filePath("Imagem.png") : "Imagem.png";
+        const auto destination = QFileDialog::getSaveFileName(this, tr("Salvar cópia do render"), suggestion,
                                                               tr("PNG (*.png);;JPEG (*.jpg)"));
         if (destination.isEmpty())
             return;
@@ -74,7 +79,7 @@ RenderPreview::RenderPreview(QWidget *parent) : QWidget(parent) {
     layout->addLayout(tools);
     layout->addWidget(canvas, 1);
 }
-void RenderPreview::open(const QString &path) {
+void RenderPreview::open(const QString &path, const QString &label) {
     QImageReader reader(path);
     const auto size = reader.size();
     if (!reader.canRead() || size.width() > 8192 || size.height() > 8192 || size.isEmpty())
@@ -86,8 +91,10 @@ void RenderPreview::open(const QString &path) {
     scene.clear();
     scene.addPixmap(QPixmap::fromImage(image));
     scene.setSceneRect(QRectF(QPointF(0, 0), QSizeF(image.size())));
-    caption->setText(
-        tr("%1  ·  %2 × %3 px").arg(QFileInfo(path).fileName()).arg(size.width()).arg(size.height()));
+    caption->setText(tr("%1  ·  %2 × %3 px")
+                         .arg(label.isEmpty() ? QFileInfo(path).fileName() : label)
+                         .arg(size.width())
+                         .arg(size.height()));
     caption->setToolTip(path);
     QTimer::singleShot(0, canvas, [this] { canvas->fit(); });
 }

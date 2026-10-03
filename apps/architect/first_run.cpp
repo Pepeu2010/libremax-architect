@@ -129,7 +129,10 @@ void showTutorial(QWidget *parent) {
          "Ativar materiais realistas incorpora mapas de madeira e pedra. Importar textura permite usar uma "
          "imagem sua, que fica dentro do arquivo do projeto.\n\nIluminação oferece luz de área, ponto e "
          "spot. Área produz uma luz ampla; ponto ilumina em várias direções; spot cria um feixe. Céu natural "
-         "controla sol e luz do dia. Comece com a iluminação do exemplo e ajuste a exposição aos poucos."},
+         "controla sol e luz do dia. Use Usar luz do dia para adicionar uma iluminação pronta. Importar luz "
+         "aceita panoramas HDR/EXR, que acompanham o projeto salvo. Girar a luz muda a direção; Mostrar na "
+         "imagem controla o fundo sem apagar a iluminação. Comece com o exemplo e ajuste a exposição aos "
+         "poucos."},
         {"11. Prepare uma câmera", "A câmera escolhe o que aparece na foto.",
          "Selecione o cômodo e use Preparar câmera do cômodo em 4 Foto. O programa cria uma câmera com um "
          "enquadramento inicial.\n\nEscolha a câmera no painel Criar imagem. Nos ajustes avançados, Lente "

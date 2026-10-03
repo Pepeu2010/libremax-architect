@@ -55,8 +55,10 @@ void validateRenderOptions(const Json &o) {
     const auto preset = o.at("preset").get<std::string>();
     if ((preset != "rapid" && preset != "normal" && preset != "final" && preset != "custom") ||
         (o.at("device") != "CPU" && o.at("device") != "AUTO") ||
-        (o.at("format") != "PNG" && o.at("format") != "JPEG") || !o.at("denoise").is_boolean() ||
-        !o.at("transparent").is_boolean() || (o.at("transparent") == true && o.at("format") != "PNG"))
+        (o.at("format") != "PNG" && o.at("format") != "JPEG" && o.at("format") != "EXR") ||
+        !o.at("denoise").is_boolean() || !o.at("transparent").is_boolean() ||
+        (o.at("transparent") == true && o.at("format") == "JPEG") ||
+        (o.at("format") == "EXR" && preset != "custom"))
         throw std::invalid_argument("Modo ou formato de render inválido");
 }
 QString renderStateLabel(const QString &state) {

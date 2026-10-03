@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QImageReader>
+#include <QRegularExpression>
 #include <QSaveFile>
 #include <QTimer>
 #include <QUuid>
@@ -43,6 +44,11 @@ RenderQueue::RenderQueue(QString directory, QObject *parent) : QObject(parent), 
             if (record.at("version") != 1 || string(record.at("id")) != id)
                 continue;
             validateRenderOptions(record.at("options"));
+            if (record.contains("preview") &&
+                (!record.at("preview").is_string() || !QRegularExpression("^preview-[a-f0-9]{64}\\.png$")
+                                                           .match(string(record.at("preview")))
+                                                           .hasMatch()))
+                throw std::invalid_argument("Prévia de render inválida");
             for (const auto *key :
                  {"project", "projectName", "camera", "cameraName", "created", "state", "blender"})
                 if (!record.at(key).is_string())
@@ -99,15 +105,18 @@ RenderQueue::RenderQueue(QString directory, QObject *parent) : QObject(parent), 
                 entry["error"] = message.toStdString();
                 entry["engine"] = job.engine();
                 entry["finished"] = now().toStdString();
-                if (success)
+                if (success) {
                     entry["progress"] = 100;
+                    if (entry.at("options").at("format") == "EXR")
+                        entry["preview"] = QFileInfo(job.previewPath()).fileName().toStdString();
+                }
                 setState(id, success ? "Completed" : stopped ? "Cancelled" : "Failed");
                 snapshots.erase(id);
                 prepared.erase(id);
                 cancelled.erase(id);
                 activeId.clear();
                 if (success)
-                    emit completed(id, imagePath(id));
+                    emit completed(id, displayPath(id));
                 emit changed();
                 QTimer::singleShot(0, this, &RenderQueue::dispatch);
             });
@@ -120,8 +129,18 @@ RenderQueue::~RenderQueue() {
 }
 QString RenderQueue::imagePath(const QString &id) const {
     const auto &record = records.at(id);
-    return QDir(root).filePath(
-        id + (record.at("options").at("format") == "JPEG" ? "/output/result.jpg" : "/output/result.png"));
+    const auto format = record.at("options").at("format");
+    return QDir(root).filePath(id + "/output/result." +
+                               (format == "EXR"    ? "exr"
+                                : format == "JPEG" ? "jpg"
+                                                   : "png"));
+}
+QString RenderQueue::displayPath(const QString &id) const {
+    const auto &record = records.at(id);
+    if (record.at("options").at("format") != "EXR")
+        return imagePath(id);
+    return record.contains("preview") ? QDir(root).filePath(id + "/output/" + string(record.at("preview")))
+                                      : QString{};
 }
 QString RenderQueue::snapshotPath(const QString &id) const {
     return QDir(root).filePath(id + "/scene/snapshot.lmx");
@@ -287,6 +306,8 @@ void RenderQueue::remove(const QString &id) {
     save(id);
     // Only our result is removed. Keep snapshot/logs for diagnosis; never delete a project file.
     QFile::remove(imagePath(id));
+    if (records.at(id).at("options").at("format") == "EXR")
+        QFile::remove(displayPath(id));
     records.erase(id);
     emit changed();
 }

@@ -1,14 +1,18 @@
-# Formato `.lmx` v1
+# Formato `.lmx` v1 e v2
 
 ZIP com `manifest.json`, `project.json`, `scene.json`, `materials.json`, `lighting.json`, `cameras.json` e opcionais `custom-assets/<sha256>.png` / `custom-models/<sha256>.json`.
+
+O leitor atual aceita v1 e v2. Importar HDRI promove o documento para v2 e acrescenta `custom-environments/<sha256>.hdr` ou `.exr`. O manifesto e o documento devem indicar a mesma versão. `renderSettings.hdri` guarda hash, formato, nome, dimensões, rotação e visibilidade na câmera. Os bytes originais são incorporados sem conversão para PNG. Os snapshots da fila carregam a mesma cópia. Aplicativos anteriores que aceitam apenas v1 recusam v2 e preservam o arquivo; use o aplicativo atualizado para abrir esses projetos.
+
+O HDRI permite até 64 MiB e 16 milhões de pixels, com dimensões de até 8192 por eixo. Texturas/modelos conservam os limites individuais de 16 MiB e total de 48 MiB. O total de assets, incluindo o panorama, é limitado a 112 MiB; o ZIP descompactado a 128 MiB. HDR/EXR inválidos são recusados na importação; EXR deep/multipart não são suportados. Nenhum arquivo do ZIP é extraído para um caminho fornecido pelo usuário.
 
 Manifest: `format=LibreMax`, `version=1`, UUID do projeto e lista ordenada de hashes incorporados. Project: UUID/nome/unidade/versão e `renderSettings` opcional no formato v1: câmera por UUID, exposição EV, intensidade ambiente e denoise. Projetos v1 anteriores usam valores padrão quando o campo está ausente. Câmera removida limpa a referência; undo restaura. Valores fora dos limites ou câmera inexistente são recusados. Scene: entidades e filhos derivados. Lighting/cameras são índices redundantes validados contra scene. Materiais referenciam hashes; bytes essenciais de texturas estão dentro do ZIP. Não armazenar apenas o caminho original.
 
 Geometria interna em mm, entrada numérica arredondada para 0,1 mm. Ângulos em graus. Estado completo de comandos também inclui assets incorporados. Essas cópias podem consumir memória em projetos com muitas imagens.
 
-Até 128 entradas, 16 MiB por entrada, 64 MiB descompactados, 128 MiB no arquivo; nomes essenciais ou padrões estritos de hash PNG/modelo JSON. Sem extração em caminhos arbitrários. Todos os assets incorporados precisam corresponder ao SHA256. JSON máximo 64 níveis; validação semântica exige referências, dimensões e enumerações válidas.
+Até 128 entradas e 128 MiB no arquivo; os limites por tipo estão descritos acima. Nomes essenciais ou padrões estritos de hash PNG/modelo JSON/HDR/EXR. Sem extração em caminhos arbitrários. Todos os assets incorporados precisam corresponder ao SHA256. JSON máximo 64 níveis; validação semântica exige referências, dimensões e enumerações válidas.
 
-Save: validar documento → gerar ZIP temporário → reabrir/validar equivalência → copiar versão anterior para `.bak` atomicamente → QSaveFile → flush → fsync/_commit → atomic commit. No POSIX também fsync do diretório. Não há teste de queda física de energia; testes atuais cobrem falha de documento inválido e container truncado. Versões futuras são recusadas, preservando o arquivo. Migrations reais só serão introduzidas quando existir v2.
+Save: validar documento → gerar ZIP temporário → reabrir/validar equivalência → copiar versão anterior para `.bak` atomicamente → QSaveFile → flush → fsync/_commit → atomic commit. No POSIX também fsync do diretório. Não há teste de queda física de energia; testes atuais cobrem falha de documento inválido e container truncado. Versões futuras são recusadas, preservando o arquivo. A promoção v1 para v2 conserva entidades, materiais e assets anteriores.
 
 Galeria/renders/miniaturas ainda não são incorporados. As malhas do catálogo são incorporadas desde 0.4. Autosave escreve containers completos em diretório de recuperação, mantendo cinco por UUID. A recuperação oferece seleção de projeto/versão quando há várias cópias. Save manual e fechamento normal limpam somente os snapshots do UUID atual; arquivos corrompidos são ignorados e preservados. Testes de múltiplas versões pela UI ainda precisam ser ampliados.
 

@@ -20,7 +20,7 @@ jobs:
             mingw-w64-ucrt-x86_64-opencascade mingw-w64-ucrt-x86_64-libzip
             mingw-w64-ucrt-x86_64-catch mingw-w64-ucrt-x86_64-spdlog
             mingw-w64-ucrt-x86_64-nlohmann-json mingw-w64-ucrt-x86_64-nsis
-            mingw-w64-ucrt-x86_64-python
+            mingw-w64-ucrt-x86_64-python mingw-w64-ucrt-x86_64-openexr
       - name: Build and core verification
         shell: msys2 {0}
         run: |
