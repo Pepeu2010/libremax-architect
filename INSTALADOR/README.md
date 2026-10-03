@@ -4,8 +4,8 @@ Escolha seu sistema. Os arquivos para baixar ficam nas [Releases do projeto](htt
 
 | Sistema | Instalador | Guia |
 |---|---|---|
-| Windows 64 bits | `LibreMax-Architect-0.9.0-Windows-x64-Setup.exe` | [Windows](windows/README.md) |
-| Ubuntu 24.04 / Linux Mint 22, 64 bits | `LibreMax-Architect-0.9.0-Linux-Ubuntu24.04-amd64.deb` | [Linux](linux/README.md) |
+| Windows 64 bits | `LibreMax-Architect-0.10.0-Windows-x64-Setup.exe` | [Windows](windows/README.md) |
+| Ubuntu 24.04 / Linux Mint 22, 64 bits | `LibreMax-Architect-0.10.0-Linux-Ubuntu24.04-amd64.deb` | [Linux](linux/README.md) |
 
 Esta é uma **prévia em desenvolvimento**. Modelos, texturas, tutorial e exemplos acompanham o aplicativo. Para gerar fotos com Cycles, instale o Blender 5.2 LTS ou superior e selecione seu executável no painel Render. O LibreMax executa o render em segundo plano.
 

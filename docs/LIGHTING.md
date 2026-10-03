@@ -41,4 +41,24 @@ Continuar editando a temperatura durante os renders preservou os snapshots origi
 
 O mesmo projeto LED produziu uma imagem 320 × 180 / 16 amostras pelo pipeline QProcess na RX 7600 deste Windows. O Blender confirmou GPU/HIP sem fallback; uma falha posterior preservou a imagem anterior. `build-lighting/hip-report.txt` registra o resultado. Isso verifica essa fonte e esse hardware, sem ampliar a conclusão para GPUs não testadas.
 
-CI Linux e pacote instalado 0.10 ainda em validação. Fontes em desenvolvimento; os instaladores publicados permanecem 0.9. Há outros requisitos abertos da master spec: materiais/mapas adicionais, HDRI blur, câmera/enquadramento, instâncias/tesselação e render Final/4K, além de hardware físico adicional.
+A [CI Linux 0.10](https://github.com/Pepeu2010/libremax-architect/actions/runs/37125774451) passou com núcleo, formato, smokes nativos, fila, HDRI/EXR e as sete imagens de iluminação Cycles CPU/Mesa/Xvfb. A [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37125785735) passou: Windows com PATH sem SDK e os 148 modelos; `.deb` instalado em runner Ubuntu 24.04 novo com biblioteca, três modos, colocação, salvamento e desinstalação preservando projetos. O pacote Linux em staging também executou os sete renders. No host Windows, o payload empacotado executou criação/edição e sete imagens CPU, além do LED HIP, com PATH sem SDK. Essas verificações usam a revisão `7c5a662e85a3b35c672f2065dbf459baf47b1fad`.
+
+## Apartamento em 4K
+
+Os instaladores e o código da revisão verificada estão na [Release 0.10.0-rc.1](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.10.0-rc.1). Os hashes dos seis assets remotos coincidiram com os arquivos locais; os dois binários vieram da CI acima. [Checksums e relatório](TEST_REPORT.md).
+
+O apartamento moderno existente, com áreas em 4000 K e uma fita LED de teto em 3000 K, gerou **3840 × 2160**, denoise, 512 amostras máximas/adaptive sampling e 12 reflexões via `RenderJob`/QProcess. O motor confirmou GPU/HIP sem fallback. O tempo informado pelo Blender foi **08:08,98**; não inclui toda a preparação nativa. Driver RX 7600: 32.0.32015.2008. O teste negativo seguinte preservou o hash da imagem, `a4bc54b4911ef7576a2395a0eb72de606bba65b79c8ef412dc8fa0db1d610165`.
+
+![Apartamento em 4K calculado pelo Cycles HIP](screenshots/lighting-apartment-4k.png)
+
+Este é um teste dos parâmetros de apresentação e saída 4K pelo pipeline, não do gesto de selecionar Final na galeria. Não verifica todas as câmeras, materiais, GPUs nem equivalência a fotografia. O sofá e alguns móveis continuam simples; a tonalidade quente e os acabamentos precisam de direção de cena. A maior resolução não acrescenta detalhes ausentes nos modelos.
+
+Reprodução no host Windows, a partir da raiz do repositório:
+
+```powershell
+./build-render/libremax-architect.exe --lighting-smoke build-lighting/native-release --blender 'C:/Program Files/Blender Foundation/Blender 5.2/blender.exe'
+python docs/fixtures/lighting-apartment-4k.py
+./build-render/libremax-architect.exe --render-smoke build-lighting/apartment-4k --blender 'C:/Program Files/Blender Foundation/Blender 5.2/blender.exe' --render-device AUTO --expect-render-gpu --render-size 3840x2160 --render-samples 512 --render-project build-lighting/apartamento-iluminado.lmx
+```
+
+O gerador prepara somente a cena de aceitação; o leitor de produção valida o container antes do render. A amostra não acompanha o catálogo do instalador. Há outros requisitos abertos da master spec: materiais/mapas adicionais, HDRI blur, câmera/enquadramento, instâncias/tesselação, seleção Final pela interface e hardware físico adicional.

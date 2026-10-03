@@ -51,7 +51,9 @@ O teste `--queue-smoke` usa Blender/Cycles real, cinco câmeras, imagens de 160 
 
 Kelvin, LED contínuo, sol e os controles adicionais de área/ponto/spot estão integrados na fonte 0.10. O smoke nativo produz sete imagens reais e compara LED ligado/desligado e quente/frio. [Evidência e limites de iluminação](LIGHTING.md).
 
-Esta entrega não completa toda a especificação de render. Permanecem pendentes: desfoque opcional de HDRI; canais adicionais de metalicidade, opacidade e emissão por mapa; validação exata de enquadramento entre viewport e Cycles; instâncias e tesselação própria de apresentação; políticas de cache; diagnóstico dedicado de versões/dispositivos; render Final em 4K; benchmarks de apartamentos grandes e QA com outras GPUs NVIDIA/AMD/Intel, incluindo HIP no Linux. O catálogo e a iluminação também condicionam o realismo. Não há comprovação de superioridade geral sobre o VDMax.
+O pipeline também produziu o apartamento moderno com Kelvin/LED em 3840 × 2160, 512 amostras máximas e 12 reflexões, com denoise e HIP na RX 7600 deste Windows. O tempo no motor foi 08:08,98. É evidência da saída com parâmetros de apresentação, sem verificar o gesto de selecionar Final na galeria nem equivalência fotográfica. [Imagem e reprodução](LIGHTING.md#apartamento-em-4k).
+
+Esta entrega não completa toda a especificação de render. Permanecem pendentes: desfoque opcional de HDRI; canais adicionais de metalicidade, opacidade e emissão por mapa; validação exata de enquadramento entre viewport e Cycles; instâncias e tesselação própria de apresentação; políticas de cache; diagnóstico dedicado de versões/dispositivos; seleção Final pela interface e QA amplo de apresentação; benchmarks de apartamentos grandes e QA com outras GPUs NVIDIA/AMD/Intel, incluindo HIP no Linux. O catálogo e a iluminação também condicionam o realismo. Não há comprovação de superioridade geral sobre o VDMax.
 
 
 ## Reproduzir a verificação HIP no Windows

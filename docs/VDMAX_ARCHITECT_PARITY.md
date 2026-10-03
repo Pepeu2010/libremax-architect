@@ -1,6 +1,6 @@
 # Matriz de paridade — VDMax 3.0 Arquitetos e Decoradores
 
-Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. Fontes LibreMax: 0.10.0 em validação; instaladores publicados 0.9.0. **Não há paridade completa nem release 1.0.**
+Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. LibreMax: prévia 0.10.0 com instaladores Windows e Ubuntu publicados. **Não há paridade completa nem release 1.0.**
 
 Complemento visual em 2026-09-30: [auditoria](VISUAL_REFERENCE_AUDIT.md), 11 imagens inspecionadas de 47 referências indexadas. `visual_refs` indica somente essas imagens consultadas; não promove paridade funcional automaticamente.
 
@@ -64,13 +64,13 @@ Fontes oficiais consultadas:
 | R01 | Luz | Iluminação | Render calcula iluminação | Ponto/spot/área/LED/sol persistentes; Kelvin, cor, medidas, raio, feixe e sombra; marcadores no editor | `[lighting]` + lighting-smoke Cycles CPU + LED HIP RX 7600 | IN_PROGRESS | P,SPEC | Sete imagens reais e comparação LED quente/frio/desligado; HDRI e céu integrados; QA amplo e material emissivo por mapa pendentes | LIGHT-02,LIGHT-03 |
 | R02 | Câmeras | Câmeras | Requisito da spec | Posição/alvo/lente, abertura/foco e seleção por UUID; exposição/ambiente/denoise persistentes | `[render]` | IN_PROGRESS | SPEC | Seletor integrado e roundtrip testados; preset por cômodo implementado; posicionamento interativo completo falta | RENDER-06 |
 | R03 | Render | Ray tracing | Ray-trace com qualidade variável | QProcess + snapshot + Cycles + denoise, exposição/ambiente, GPU/CPU | Smoke QProcess/Cycles CPU | IN_PROGRESS | P | Fila e galeria persistentes implementadas; HDRI/EXR integrados e testados no Windows; faltam mapas PBR adicionais e QA amplo de GPUs físicas | RENDER-06,RENDER-08 |
-| R04 | Render | Exportar imagens | Resultado de apresentação | PNG/JPEG e EXR float32 com prévia integrada, galeria e exportação de cópia | Smoke 1280×720/128 CPU + inspeção visual | FUNCTIONAL | P,SPEC | PNG 1280×720 e cópia pela UI testados; JPEG pela UI e 1080p/4K pendentes | RENDER-08,VISUAL-03 |
+| R04 | Render | Exportar imagens | Resultado de apresentação | PNG/JPEG e EXR float32 com prévia integrada, galeria e exportação de cópia | Smoke 1280×720/128 CPU + pipeline 3840×2160/512 HIP + inspeção visual | FUNCTIONAL | P,SPEC | Cópia pela UI e saída 4K testadas; JPEG pela UI, seleção Final e QA amplo de apresentação pendentes | RENDER-08,VISUAL-03 |
 | P01 | Projetos | Salvar/abrir | Requisito da spec | Container ZIP v1/v2/v3, HDRI e novas luzes, UUIDs, modelos e mapas incorporados, backup, validação e atomic replace; home com recentes | `[persistence][lighting]` + UI/modern/experience/lighting smoke | IN_PROGRESS | SPEC | Imagens de render não incorporadas; HDRI/EXR preservam v3; índice local não é backup | — |
 | P02 | Projetos | Autosave | Requisito da spec | Intervalo configurável 1–60 min, 5 snapshots por UUID | `[recovery]` + encerramento forçado/reinício | FUNCTIONAL | SPEC | Timer configurável implementado; QA de configuração pela UI pendente | — |
 | P03 | Projetos | Crash recovery | Requisito da spec | Seleção de versão, diálogo, descarte seguro, skip de corruptos | `[recovery]` + `--recovery-smoke` (processo morto e outro iniciado) | FUNCTIONAL | SPEC | Um projeto via UI comprovado; múltiplas versões via core; energia/interrupção durante escrita não testadas | — |
 | P04 | Projetos | Backup da biblioteca | Requisito da spec | — | — | NOT_STARTED | SPEC | — | — |
 | X01 | Produto | Offline completo | Exigência LibreMax | Edição, biblioteca, save/open/render locais | Rede desabilitada a executar | IN_PROGRESS | SPEC | Não declarar offline testado por ausência de código de rede | — |
-| X02 | Produto | Pacotes Linux | Exigência LibreMax | CMake install/CPack e `.deb` publicado 0.9; dependências runtime declaradas | CI Linux 37121303969 + instalação Ubuntu novo 37121304063 | FUNCTIONAL | SPEC | Ubuntu 24.04 amd64, UI Mesa/Xvfb, modelos e desinstalação preservando projeto; Mint, ARM, AppImage e hardware físico adicional pendentes | — |
+| X02 | Produto | Pacotes Linux | Exigência LibreMax | CMake install/CPack e `.deb` publicado 0.10; dependências runtime declaradas | CI Linux 37125774451 + instalação Ubuntu novo 37125785735 | FUNCTIONAL | SPEC | Ubuntu 24.04 amd64, UI Mesa/Xvfb, modelos e desinstalação preservando projeto; Mint, ARM, AppImage e hardware físico adicional pendentes | — |
 
 Fora de escopo: plano de corte, nesting, BOM industrial, ERP/MRP, CNC, custos de matéria-prima, etiquetas e produção. Nenhuma dessas funções é incluída no roadmap.
 
@@ -82,4 +82,4 @@ Atualização 0.8: [HDRI/EXR](HDRI_EXR.md), incluindo projeto v2, snapshot, Cycl
 
 Atualização 0.9: [modelos e desempenho](MODEL_LIBRARIES_PERFORMANCE.md), com 60 modelos novos, 175 itens, 148 malhas e três modos de edição. Pacotes Windows/Ubuntu publicados após os gates de instalação.
 
-Atualização 0.10: [iluminação](LIGHTING.md), com cinco tipos, Kelvin, emissor LED real, editor em centímetros e projeto v3. CI e instaladores desta versão ainda em validação; não altera os gates de paridade integral.
+Atualização 0.10: [iluminação](LIGHTING.md), com cinco tipos, Kelvin, emissor LED real, editor em centímetros e projeto v3. CI e instaladores Windows/Ubuntu passaram; uma saída 4K/512 com LED foi calculada por HIP na RX 7600 deste Windows. Não altera os gates de paridade integral.
