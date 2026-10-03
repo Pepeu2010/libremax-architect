@@ -128,7 +128,8 @@ void CadView::scene(const Document &d) {
                 if (std::sin(angle) - std::cos(angle) > 0.01)
                     continue;
             }
-            Handle(AIS_Shape) shape = new AIS_Shape(part.shape);
+            const auto localShape = part.shape.Located(TopLoc_Location());
+            const auto placement = part.shape.Location();
             Json mat;
             for (const auto &m : d.materials)
                 if (m.at("id") == part.material) {
@@ -144,11 +145,16 @@ void CadView::scene(const Document &d) {
                              std::to_string(performance);
             auto existing = displayed.find(displayId);
             if (existing != displayed.end() && existing->second.key == key) {
+                if (existing->second.placement != placement) {
+                    context->SetLocation(existing->second.shape, placement);
+                    existing->second.placement = placement;
+                }
                 owners.emplace(existing->second.shape.get(), part.owner);
                 continue;
             }
             if (existing != displayed.end())
                 context->Remove(existing->second.shape, false);
+            Handle(AIS_Shape) shape = new AIS_Shape(localShape);
             const bool modelTexture = owner.type == "MeshObject" && mat.value("modelUV", false);
             const bool textured = performance != 0 && mat.contains("baseColorTexture") &&
                                   (owner.type != "MeshObject" || modelTexture);
@@ -177,7 +183,7 @@ void CadView::scene(const Document &d) {
                     if (mat.contains("alphaCutoff"))
                         aspect->SetAlphaMode(Graphic3d_AlphaMode_Mask, mat.at("alphaCutoff").get<float>());
                 } else {
-                    Handle(AIS_TexturedShape) textured = new AIS_TexturedShape(part.shape);
+                    Handle(AIS_TexturedShape) textured = new AIS_TexturedShape(localShape);
                     textured->SetTextureFileName(QFile::encodeName(filename).constData());
                     textured->SetTextureMapOn();
                     textured->SetTextureScale(true, mat.value("textureScale", 1000.0),
@@ -201,10 +207,12 @@ void CadView::scene(const Document &d) {
                 shape->SetDisplayMode(AIS_Shaded);
             shape->SetOwnDeviationCoefficient(performance == 0 ? 0.01 : performance == 1 ? 0.001 : 0.0002);
             context->Display(shape, false);
+            ++presentationBuilds;
+            context->SetLocation(shape, placement);
             if (d.at(part.owner).locked)
                 context->Deactivate(shape);
             owners.emplace(shape.get(), part.owner);
-            displayed[displayId] = {key, shape};
+            displayed[displayId] = {key, shape, placement};
         }
         // Light helpers are editor aids only; they never enter geometry/export snapshots.
         for (const auto &light : d.entities) {
@@ -273,7 +281,7 @@ void CadView::scene(const Document &d) {
             if (light.locked)
                 context->Deactivate(helper);
             owners.emplace(helper.get(), light.id);
-            displayed[displayId] = {key, helper};
+            displayed[displayId] = {key, helper, {}};
         }
         std::erase_if(displayed, [&](const auto &entry) {
             if (alive.contains(entry.first))

@@ -1,6 +1,7 @@
 #include "commands/editor.h"
 #include "document/examples.h"
 #include "geometry/geometry.h"
+#include "materials/texture.h"
 #include "persistence/project_store.h"
 #include "rendering/environment_map.h"
 #include "rendering/high_dynamic_image.h"
@@ -25,6 +26,37 @@
 #include <catch2/catch.hpp>
 #endif
 using namespace lmx;
+TEST_CASE("Shared render packets retain PBR and HDRI assets and legacy world-mapped CAD surfaces",
+          "[instances][materials]") {
+    auto document = kitchenExample();
+    attachPbrMaterials(document, readPbrMaterials(QStringLiteral(LMX_SOURCE_DIR "/starter-materials")));
+    attachEnvironment(document, importEnvironment(QStringLiteral(
+                                    LMX_SOURCE_DIR "/starter-environments/kiara_1_dawn_1k.hdr")));
+    const auto legacy = meshSnapshot(document), compact = meshSnapshot(document, true);
+    REQUIRE(compact.at("assets") == legacy.at("assets"));
+    REQUIRE(compact.at("instances").size() == legacy.at("meshes").size());
+    std::size_t mappedParts = 0;
+    for (std::size_t i = 0; i < compact.at("instances").size(); ++i) {
+        const auto &world = legacy.at("meshes")[i];
+        const auto material = std::find_if(document.materials.begin(), document.materials.end(),
+                                           [&](const auto &m) { return m.at("id") == world.at("material"); });
+        REQUIRE(material != document.materials.end());
+        if (!material->contains("baseColorTexture") && !material->contains("roughnessTexture") &&
+            !material->contains("normalTexture"))
+            continue;
+        const auto &instance = compact.at("instances")[i];
+        const auto &meshes = compact.at("meshes");
+        const auto definition = std::find_if(
+            meshes.begin(), meshes.end(), [&](const auto &m) { return m.at("id") == instance.at("mesh"); });
+        REQUIRE(definition != meshes.end());
+        REQUIRE(definition->at("vertices") == world.at("vertices"));
+        REQUIRE(definition->at("triangles") == world.at("triangles"));
+        REQUIRE(instance.at("matrix") ==
+                Json::array({{1., 0., 0., 0.}, {0., 1., 0., 0.}, {0., 0., 1., 0.}, {0., 0., 0., 1.}}));
+        ++mappedParts;
+    }
+    REQUIRE(mappedParts > 0);
+}
 TEST_CASE("Cycles progress keeps tile completion separate from current samples and final publication",
           "[progress]") {
     CyclesProgress tracker;

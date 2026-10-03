@@ -40,7 +40,11 @@
 #include <QThread>
 #include <QTimer>
 #include <QWizard>
+#include <algorithm>
+#include <cmath>
 #include <iostream>
+#include <map>
+#include <numbers>
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/spdlog.h>
 
@@ -75,6 +79,9 @@ int main(int argc, char **argv) {
     parser.addOption({"expect-render-gpu", "Require the acceptance image to actually use a GPU"});
     parser.addOption({"render-samples", "Acceptance Cycles samples", "samples", "16"});
     parser.addOption({"render-project", "Use a saved .lmx for render acceptance", "project"});
+    parser.addOption({"instances-fixture", "Write a portable repeated-model render fixture", "directory"});
+    parser.addOption({"instances-model", "Fixture family: light or authored", "family", "light"});
+    parser.addOption({"render-script", "Archived script override for render-smoke only", "script"});
     parser.addOption({"preview-image", "Exercise native image viewer with an existing real render", "image"});
     parser.addOption({"recovery-smoke", "Kill a child process and verify recovery in a fresh process"});
     parser.addOption({"recovery-fixture", "Internal crash acceptance writer", "directory"});
@@ -82,12 +89,12 @@ int main(int argc, char **argv) {
     parser.addOption({"blender", "Blender executable for render acceptance", "executable"});
     parser.addPositionalArgument("project", ".lmx project to open");
     parser.process(app);
-    bool test = parser.isSet("lighting-smoke") || parser.isSet("environment-smoke") ||
-                parser.isSet("queue-smoke") || parser.isSet("installation-smoke") ||
-                parser.isSet("experience-smoke") || parser.isSet("modern-smoke") ||
-                parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") || parser.isSet("examples") ||
-                parser.isSet("render-smoke") || parser.isSet("recovery-smoke") ||
-                parser.isSet("recovery-fixture") || parser.isSet("recovery-verify");
+    bool test =
+        parser.isSet("lighting-smoke") || parser.isSet("environment-smoke") || parser.isSet("queue-smoke") ||
+        parser.isSet("installation-smoke") || parser.isSet("experience-smoke") ||
+        parser.isSet("modern-smoke") || parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") ||
+        parser.isSet("examples") || parser.isSet("render-smoke") || parser.isSet("instances-fixture") ||
+        parser.isSet("recovery-smoke") || parser.isSet("recovery-fixture") || parser.isSet("recovery-verify");
     if (test)
         QStandardPaths::setTestModeEnabled(true);
     QTemporaryDir settingsDirectory;
@@ -105,6 +112,76 @@ int main(int argc, char **argv) {
         spdlog::rotating_logger_mt("libremax", (logs + "/libremax.log").toStdString(), 1024 * 1024, 3);
     spdlog::set_default_logger(logger);
     try {
+        if (parser.isSet("render-script") && !parser.isSet("render-smoke"))
+            throw std::invalid_argument("render-script is restricted to render-smoke acceptance");
+        if (parser.isSet("instances-fixture")) {
+            const auto directory = QDir(parser.value("instances-fixture")).absolutePath();
+            QDir().mkpath(directory);
+            QTemporaryDir database;
+            lmx::Library library(database.filePath("models.db"), lmx::resourcePath("starter-models"));
+            const auto family = parser.value("instances-model");
+            if (family != "light" && family != "authored")
+                throw std::invalid_argument("Fixture family must be light or authored");
+            QFile catalog(lmx::resourcePath(family == "authored" ? "starter-models/modern-catalog.json"
+                                                                 : "starter-models/catalog.json"));
+            if (!catalog.open(QIODevice::ReadOnly))
+                throw std::runtime_error("Fixture catalog unavailable");
+            library.seed(lmx::Json::parse(catalog.readAll().toStdString()));
+            const auto assets = library.search({}, {}, false, false, false);
+            const auto asset = std::find_if(assets.begin(), assets.end(), [&](const auto &a) {
+                return family == "authored" ? a.id == "modern-modern_arm_chair_01" : a.id.contains("chair");
+            });
+            if (asset == assets.end())
+                throw std::runtime_error("Ready chair fixture unavailable");
+            const auto payload = library.withPayload(*asset);
+            auto document = lmx::kitchenExample();
+            std::erase_if(document.entities,
+                          [](const auto &e) { return e.type != "Camera" && e.type != "Light"; });
+            lmx::Library::attachModel(document, payload);
+            for (int i = 0; i < 32; ++i) {
+                auto object = lmx::Library::instantiate(payload, (i % 8) * 750, (i / 8) * 800);
+                object.transform.yaw = i * 13;
+                object.transform.mirrored = i >= 30;
+                if (i == 29)
+                    object.width *= 1.2;
+                document.entities.push_back(object);
+            }
+            for (auto &e : document.entities)
+                if (e.type == "Camera") {
+                    e.transform = {9000, -6500, 7000, 0, false};
+                    e.parameters["target"] = {2750, 1250, 350};
+                }
+            auto floor = lmx::entity("Floor", "Piso");
+            floor.width = 8000;
+            floor.depth = 5500;
+            floor.height = 80;
+            floor.transform = {-1000, -1000, -80, 0, false};
+            document.entities.push_back(floor);
+            lmx::ProjectStore::save(directory + "/repeated-models.lmx", document, false);
+            const auto legacy = lmx::meshSnapshot(document), compact = lmx::meshSnapshot(document, true);
+            std::map<std::string, std::size_t> users;
+            for (const auto &instance : compact.at("instances"))
+                ++users[instance.at("mesh").get<std::string>()];
+            std::size_t linked = 0;
+            for (const auto &[mesh, count] : users)
+                if (count > 1)
+                    linked += count;
+            const auto statistics = lmx::Json{
+                {"objects", legacy.at("meshes").size()},
+                {"definitions", compact.at("meshes").size()},
+                {"linkedObjects", linked},
+                {"legacyBytes", legacy.dump().size()},
+                {"compactBytes",
+                 compact.dump().size()}}.dump(2);
+            QFile report(directory + "/fixture.json");
+            if (!report.open(QIODevice::WriteOnly) ||
+                report.write(statistics.data(), statistics.size()) != static_cast<qint64>(statistics.size()))
+                throw std::runtime_error("Fixture report could not be written");
+            std::cout << "INSTANCE_FIXTURE_PASS: " << legacy.at("meshes").size() << " objects, "
+                      << compact.at("meshes").size() << " definitions; " << legacy.dump().size() << " versus "
+                      << compact.dump().size() << " bytes\n";
+            return 0;
+        }
         if (parser.isSet("installation-smoke")) {
             const auto output = QDir(parser.value("installation-smoke")).absolutePath();
             QDir().mkpath(output);
@@ -214,6 +291,9 @@ int main(int argc, char **argv) {
             return 0;
         }
         if (parser.isSet("render-smoke")) {
+            const auto script = parser.isSet("render-script")
+                                    ? QFileInfo(parser.value("render-script")).absoluteFilePath()
+                                    : lmx::resourcePath("scripts/cycles_render.py");
             const auto renderDevice = parser.value("render-device");
             if (renderDevice != "CPU" && renderDevice != "AUTO")
                 throw std::runtime_error("Use render device CPU or AUTO");
@@ -227,7 +307,9 @@ int main(int argc, char **argv) {
             auto document = parser.isSet("render-project")
                                 ? lmx::ProjectStore::open(parser.value("render-project"))
                                 : lmx::kitchenExample();
-            lmx::attachPbrMaterials(document, lmx::readPbrMaterials(lmx::resourcePath("starter-materials")));
+            if (!parser.isSet("render-project"))
+                lmx::attachPbrMaterials(document,
+                                        lmx::readPbrMaterials(lmx::resourcePath("starter-materials")));
             lmx::ProjectStore::save(directory + "/render-project.lmx", document, false);
             lmx::RenderJob job;
             bool checkingFailure = false;
@@ -275,17 +357,16 @@ int main(int argc, char **argv) {
                 checkingFailure = true;
                 std::erase_if(document.entities, [](const auto &e) { return e.type == "Camera"; });
                 document.renderSettings["camera"] = "";
-                job.start(document, parser.value("blender"), lmx::resourcePath("scripts/cycles_render.py"),
-                          path, renderWidth, renderHeight, renderSamples, renderDevice);
+                job.start(document, parser.value("blender"), script, path, renderWidth, renderHeight,
+                          renderSamples, renderDevice);
             });
             QTimer::singleShot(600000, &app, [&] {
                 job.cancel();
                 std::cerr << "Render acceptance timeout\n";
                 app.exit(1);
             });
-            job.start(document, parser.value("blender"), lmx::resourcePath("scripts/cycles_render.py"),
-                      directory + "/cycles-kitchen.png", renderWidth, renderHeight, renderSamples,
-                      renderDevice);
+            job.start(document, parser.value("blender"), script, directory + "/cycles-kitchen.png",
+                      renderWidth, renderHeight, renderSamples, renderDevice);
             return app.exec();
         }
         lmx::applyStudioPalette();
@@ -1052,6 +1133,48 @@ int main(int argc, char **argv) {
                            "Placed expanded models did not remain portable");
                     std::cout << "EXPANDED_PLACEMENT_PASS: native KayKit sofa and detailed wall clock, "
                                  "wall attachment, embedded meshes/textures and save/reopen\n";
+                    lmx::Document copies;
+                    auto cabinet = lmx::entity("FurnitureModule", "Armário");
+                    cabinet.width = 800;
+                    cabinet.depth = 550;
+                    cabinet.height = 720;
+                    copies.entities.push_back(cabinet);
+                    cabinet.id = lmx::uuid();
+                    cabinet.transform.x = 1500;
+                    copies.entities.push_back(cabinet);
+                    const auto movedId = copies.entities.front().id;
+                    window.cad()->setTool("select");
+                    window.editor().load(copies);
+                    const auto presentations = window.cad()->presentationBuildCount();
+                    window.editor().apply("Move repeated cabinet", [&](lmx::Document &d) {
+                        d.at(movedId).transform = {2500, 1500, 0, 37, false};
+                    });
+                    ensure(window.cad()->presentationBuildCount() == presentations,
+                           "Moving a repeated cabinet rebuilt its display geometry");
+                    auto clickCabinet = [&] {
+                        window.cad()->frame();
+                        QTest::qWait(100);
+                        const auto &e = window.editor().document().at(movedId);
+                        const auto angle = e.transform.yaw * std::numbers::pi / 180;
+                        const auto pixel = window.cad()->project(
+                            e.transform.x + 400 * std::cos(angle) - 275 * std::sin(angle),
+                            e.transform.y + 400 * std::sin(angle) + 275 * std::cos(angle), 720);
+                        QSignalSpy selected(window.cad(), &lmx::CadView::selected);
+                        QTest::mouseMove(window.cad(), pixel);
+                        QTest::mouseClick(window.cad(), Qt::LeftButton, Qt::NoModifier, pixel);
+                        ensure(!selected.empty() && selected.back().front().toStringList().contains(
+                                                        QString::fromStdString(movedId)),
+                               "Picking did not follow the moved shared geometry");
+                    };
+                    clickCabinet();
+                    window.editor().history.undo();
+                    clickCabinet();
+                    window.editor().history.redo();
+                    clickCabinet();
+                    ensure(window.cad()->presentationBuildCount() == presentations,
+                           "Undo/redo rebuilt unchanged repeated geometry");
+                    std::cout << "INSTANCE_VIEWPORT_PASS: moved/rotated copies reuse presentation; "
+                                 "native picking and undo/redo follow their actual locations\n";
                     std::cout << "PERFORMANCE_PASS: 3 native modes, project and render mesh preserved, "
                                  "105 lightweight models and 7 detailed additions\n";
                     std::cout << "UI_SMOKE_PASS: wall draw, library double-click and drop/ghost, "

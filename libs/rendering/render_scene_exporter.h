@@ -4,6 +4,6 @@
 namespace lmx {
 class RenderSceneExporter {
   public:
-    static void exportScene(const Document &document, const QString &filename);
+    static void exportScene(const Document &document, const QString &filename, bool instances = false);
 };
 } // namespace lmx

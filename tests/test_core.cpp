@@ -545,6 +545,153 @@ TEST_CASE("Scene cache reuses solids and invalidates walls, openings and associa
     door->visible = false;
     REQUIRE(cache.scene(document).size() == buildScene(document).size());
 }
+TEST_CASE("Repeated ready models share solids while movement, variants and visibility stay independent",
+          "[performance][instances]") {
+    QTemporaryDir dir;
+    Library library(dir.filePath("instances.db"), QStringLiteral(LMX_SOURCE_DIR) + "/starter-models");
+    QFile catalog(QStringLiteral(LMX_SOURCE_DIR) + "/starter-models/catalog.json");
+    REQUIRE(catalog.open(QIODevice::ReadOnly));
+    library.seed(Json::parse(catalog.readAll().toStdString()));
+    auto assets = library.search();
+    auto asset =
+        std::find_if(assets.begin(), assets.end(), [](const auto &a) { return a.id.contains("chair"); });
+    REQUIRE(asset != assets.end());
+    Document document;
+    Library::attachModel(document, *asset);
+    for (int i = 0; i < 32; ++i) {
+        auto object = Library::instantiate(*asset, (i % 8) * 900, (i / 8) * 1000);
+        object.transform.yaw = i * 17;
+        document.entities.push_back(object);
+    }
+    SceneGeometryCache cache;
+    const auto original = cache.scene(document);
+    REQUIRE(cache.prototypeBuildCount() == 1);
+    const auto partsPerObject = original.size() / 32;
+    REQUIRE(partsPerObject > 0);
+    for (std::size_t i = partsPerObject; i < original.size(); ++i)
+        REQUIRE(original[i].shape.TShape() == original[i % partsPerObject].shape.TShape());
+    document.entities[0].transform = {4200, -1800, 350, 37, false};
+    const auto moved = cache.scene(document);
+    REQUIRE(cache.prototypeBuildCount() == 1);
+    REQUIRE(moved.front().shape.TShape() == original.front().shape.TShape());
+    const auto reference = buildEntity(document, document.entities[0]);
+    for (std::size_t i = 0; i < partsPerObject; ++i) {
+        Bnd_Box actual, expected;
+        BRepBndLib::Add(moved[i].shape, actual);
+        BRepBndLib::Add(reference[i].shape, expected);
+        double a[6], b[6];
+        actual.Get(a[0], a[1], a[2], a[3], a[4], a[5]);
+        expected.Get(b[0], b[1], b[2], b[3], b[4], b[5]);
+        for (int k = 0; k < 6; ++k)
+            REQUIRE(std::abs(a[k] - b[k]) < 0.001);
+    }
+    document.entities[1].transform.mirrored = true;
+    document.entities[2].width *= 1.25;
+    const auto variants = cache.scene(document);
+    REQUIRE(cache.prototypeBuildCount() == 3);
+    REQUIRE(variants[partsPerObject].shape.TShape() != variants.front().shape.TShape());
+    REQUIRE(variants[partsPerObject * 2].shape.TShape() != variants.front().shape.TShape());
+    document.entities[1].visible = false;
+    document.entities[2].visible = false;
+    REQUIRE(cache.scene(document).size() == partsPerObject * 30);
+    document.entities[1].visible = true;
+    cache.scene(document);
+    REQUIRE(cache.prototypeBuildCount() == 4); // Hidden variants were released.
+
+    const auto expanded = meshSnapshot(document);
+    const auto compact = meshSnapshot(document, true);
+    REQUIRE(compact.at("schema") == 2);
+    REQUIRE(compact.at("instances").size() == expanded.at("meshes").size());
+    REQUIRE(compact.at("meshes").size() < expanded.at("meshes").size() / 4);
+    REQUIRE(compact.at("assets").empty()); // Model source lives in the .lmx, not the render packet.
+    double worstVertexError = 0, worstNormalError = 0;
+    for (std::size_t i = 0; i < compact.at("instances").size(); ++i) {
+        const auto &instance = compact.at("instances")[i];
+        const auto &world = expanded.at("meshes")[i];
+        const auto &definitions = compact.at("meshes");
+        const auto definition = std::find_if(definitions.begin(), definitions.end(), [&](const auto &m) {
+            return m.at("id") == instance.at("mesh");
+        });
+        REQUIRE(definition != definitions.end());
+        REQUIRE(instance.at("owner") == world.at("owner"));
+        REQUIRE(definition->at("material") == world.at("material"));
+        REQUIRE(definition->at("triangles") == world.at("triangles"));
+        if (definition->contains("uvs"))
+            REQUIRE(definition->at("uvs") == world.at("uvs"));
+        const auto &matrix = instance.at("matrix");
+        for (std::size_t v = 0; v < world.at("vertices").size(); ++v)
+            for (int row = 0; row < 3; ++row) {
+                double value = matrix[row][3].get<double>(), normal = 0;
+                for (int col = 0; col < 3; ++col) {
+                    value +=
+                        matrix[row][col].get<double>() * definition->at("vertices")[v][col].get<double>();
+                    if (definition->contains("normals"))
+                        normal +=
+                            matrix[row][col].get<double>() * definition->at("normals")[v][col].get<double>();
+                }
+                worstVertexError =
+                    std::max(worstVertexError, std::abs(value - world.at("vertices")[v][row].get<double>()));
+                if (definition->contains("normals"))
+                    worstNormalError = std::max(worstNormalError,
+                                                std::abs(normal - world.at("normals")[v][row].get<double>()));
+            }
+    }
+    REQUIRE(worstVertexError < 1e-8);
+    REQUIRE(worstNormalError < 1e-5);
+    const auto legacyBytes = expanded.dump().size(), compactBytes = compact.dump().size();
+    REQUIRE(compactBytes < legacyBytes / 4);
+    std::cout << "INSTANCE_PACKET_PASS: " << expanded.at("meshes").size() << " objects; "
+              << compact.at("meshes").size() << " definitions; " << legacyBytes << " versus " << compactBytes
+              << " bytes; vertex error " << worstVertexError << '\n';
+}
+TEST_CASE("Authored UV copies retain textures and normals while render definitions are shared",
+          "[instances][materials]") {
+    QTemporaryDir dir;
+    Library library(dir.filePath("authored.db"), QStringLiteral(LMX_SOURCE_DIR) + "/starter-models");
+    QFile catalog(QStringLiteral(LMX_SOURCE_DIR) + "/starter-models/modern-catalog.json");
+    REQUIRE(catalog.open(QIODevice::ReadOnly));
+    library.seed(Json::parse(catalog.readAll().toStdString()));
+    const auto assets = library.search({}, {}, false, false, false);
+    const auto asset = std::find_if(assets.begin(), assets.end(),
+                                    [](const auto &a) { return a.id == "modern-modern_arm_chair_01"; });
+    REQUIRE(asset != assets.end());
+    Document document;
+    const auto payload = library.withPayload(*asset);
+    Library::attachModel(document, payload);
+    for (int i = 0; i < 6; ++i) {
+        auto object = Library::instantiate(payload, i * 800, i * 230);
+        object.transform.yaw = i * 37;
+        object.transform.mirrored = i >= 4;
+        document.entities.push_back(object);
+    }
+    const auto legacy = meshSnapshot(document), compact = meshSnapshot(document, true);
+    REQUIRE(compact.at("meshes").size() * 3 == legacy.at("meshes").size());
+    REQUIRE(compact.at("assets").size() + 1 == legacy.at("assets").size());
+    REQUIRE_FALSE(compact.at("assets").empty());
+    for (const auto &[hash, bytes] : compact.at("assets").items())
+        REQUIRE(bytes == legacy.at("assets").at(hash));
+    double worstError = 0;
+    for (std::size_t i = 0; i < compact.at("instances").size(); ++i) {
+        const auto &instance = compact.at("instances")[i];
+        const auto &definitions = compact.at("meshes");
+        const auto part = std::find_if(definitions.begin(), definitions.end(),
+                                       [&](const auto &m) { return m.at("id") == instance.at("mesh"); });
+        REQUIRE(part != definitions.end());
+        const auto &world = legacy.at("meshes")[i];
+        REQUIRE(part->at("uvs") == world.at("uvs"));
+        REQUIRE(part->at("triangles") == world.at("triangles"));
+        for (std::size_t v = 0; v < world.at("normals").size(); ++v)
+            for (int row = 0; row < 3; ++row) {
+                double normal = 0;
+                for (int col = 0; col < 3; ++col)
+                    normal += instance.at("matrix")[row][col].get<double>() *
+                              part->at("normals")[v][col].get<double>();
+                worstError =
+                    std::max(worstError, std::abs(normal - world.at("normals")[v][row].get<double>()));
+            }
+    }
+    REQUIRE(worstError < 1e-5);
+}
 TEST_CASE("wall vertical workflow keeps UUID across commands and project reopening",
           "[persistence][commands]") {
     application();

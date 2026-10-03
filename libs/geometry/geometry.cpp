@@ -1,5 +1,6 @@
 #include "geometry.h"
 #include "library/model.h"
+#include "scene_cache.h"
 #include <BRepAlgoAPI_Cut.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -19,11 +20,14 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Compound.hxx>
+#include <algorithm>
 #include <cmath>
 #include <gp_Circ.hxx>
 #include <gp_Pnt2d.hxx>
 #include <gp_Trsf.hxx>
+#include <map>
 #include <numbers>
+#include <set>
 #include <stdexcept>
 
 namespace lmx {
@@ -370,22 +374,8 @@ std::vector<Part> buildEntity(const Document &doc, const Entity &e) {
     throw std::invalid_argument("Geometria não suportada");
 }
 std::vector<Part> buildScene(const Document &d) {
-    std::vector<Part> all;
-    for (const auto &e : d.entities)
-        if (e.visible) {
-            bool hidden = false;
-            auto parent = e.parent;
-            while (!parent.empty()) {
-                const auto &p = d.at(parent);
-                hidden |= !p.visible;
-                parent = p.parent;
-            }
-            if (hidden)
-                continue;
-            auto parts = buildEntity(d, e);
-            all.insert(all.end(), parts.begin(), parts.end());
-        }
-    return all;
+    SceneGeometryCache cache;
+    return cache.scene(d);
 }
 Entity automation(const Document &d, const std::vector<std::string> &ids, const std::string &kind,
                   double thickness, double overhang) {
@@ -404,18 +394,58 @@ Entity automation(const Document &d, const std::vector<std::string> &ids, const 
     e.metadata = {{"automation", kind}, {"sources", sources}};
     return e;
 }
-Json meshSnapshot(const Document &d) {
+Json meshSnapshot(const Document &d, bool instances) {
     d.validate();
     Json meshes = Json::array();
+    Json placements = Json::array();
+    std::map<std::string, std::string> definitions;
     for (const auto &part : buildScene(d)) {
-        if (d.at(part.owner).type != "MeshObject") {
-            BRepMesh_IncrementalMesh mesher(part.shape, 1.0, false, 0.35, true);
+        const auto &owner = d.at(part.owner);
+        const auto material = std::find_if(d.materials.begin(), d.materials.end(),
+                                           [&](const auto &m) { return m.at("id") == part.material; });
+        if (material == d.materials.end())
+            throw std::invalid_argument("Material de componente não encontrado");
+        const bool mapped = material->contains("baseColorTexture") ||
+                            material->contains("roughnessTexture") || material->contains("normalTexture");
+        bool authoredUV = owner.type == "MeshObject" && material->value("modelUV", false);
+        if (authoredUV)
+            for (TopExp_Explorer it(part.shape, TopAbs_FACE); it.More(); it.Next()) {
+                TopLoc_Location location;
+                const auto mesh = BRep_Tool::Triangulation(TopoDS::Face(it.Current()), location);
+                authoredUV &= !mesh.IsNull() && mesh->HasUVNodes();
+            }
+        // Legacy generated UVs depend on world position. Keep those meshes expanded.
+        const bool share = instances && (!mapped || authoredUV);
+        const auto shape = share ? part.shape.Located(TopLoc_Location()) : part.shape;
+        const auto key = std::to_string(reinterpret_cast<std::uintptr_t>(shape.TShape().get())) + "/" +
+                         part.material + "/" + owner.type;
+        if (instances) {
+            const auto transform = share ? part.shape.Location().Transformation() : gp_Trsf{};
+            Json matrix = Json::array();
+            for (int row = 1; row <= 4; ++row) {
+                Json values = Json::array();
+                for (int column = 1; column <= 4; ++column)
+                    values.push_back(row == 4 ? (column == 4 ? 1.0 : 0.0)
+                                              : transform.Value(row, column) / (column == 4 ? 1000.0 : 1.0));
+                matrix.push_back(std::move(values));
+            }
+            auto definition = share ? definitions.find(key) : definitions.end();
+            const auto meshId = definition == definitions.end() ? "mesh-" + std::to_string(meshes.size())
+                                                                : definition->second;
+            placements.push_back({{"mesh", meshId}, {"owner", part.owner}, {"matrix", std::move(matrix)}});
+            if (definition != definitions.end())
+                continue;
+            if (share)
+                definitions[key] = meshId;
+        }
+        if (owner.type != "MeshObject") {
+            BRepMesh_IncrementalMesh mesher(shape, 1.0, false, 0.35, true);
             if (!mesher.IsDone())
                 throw std::runtime_error("Falha de tesselação");
         }
         Json vertices = Json::array(), triangles = Json::array(), uvs = Json::array(),
              normals = Json::array();
-        for (TopExp_Explorer it(part.shape, TopAbs_FACE); it.More(); it.Next()) {
+        for (TopExp_Explorer it(shape, TopAbs_FACE); it.More(); it.Next()) {
             auto face = TopoDS::Face(it.Current());
             TopLoc_Location loc;
             auto mesh = BRep_Tool::Triangulation(face, loc);
@@ -425,7 +455,7 @@ Json meshSnapshot(const Document &d) {
             for (int i = 1; i <= mesh->NbNodes(); ++i) {
                 auto p = mesh->Node(i).Transformed(loc.Transformation());
                 vertices.push_back({p.X() / 1000, p.Y() / 1000, p.Z() / 1000});
-                if (d.at(part.owner).type == "MeshObject") {
+                if (owner.type == "MeshObject") {
                     if (mesh->HasUVNodes()) {
                         const auto uv = mesh->UVNode(i);
                         uvs.push_back({uv.X(), uv.Y()});
@@ -444,14 +474,15 @@ Json meshSnapshot(const Document &d) {
                 triangles.push_back({offset + a - 1, offset + b - 1, offset + c - 1});
             }
         }
-        meshes.push_back({{"owner", part.owner},
-                          {"kind", d.at(part.owner).type},
-                          {"material", part.material},
-                          {"vertices", vertices},
-                          {"triangles", triangles}});
-        if (uvs.size() == vertices.size() && !uvs.empty())
+        const auto vertexCount = vertices.size();
+        meshes.push_back({{"owner", part.owner}, {"kind", owner.type}, {"material", part.material}});
+        meshes.back()["vertices"] = std::move(vertices);
+        meshes.back()["triangles"] = std::move(triangles);
+        if (instances)
+            meshes.back()["id"] = "mesh-" + std::to_string(meshes.size() - 1);
+        if (uvs.size() == vertexCount && !uvs.empty())
             meshes.back()["uvs"] = std::move(uvs);
-        if (normals.size() == vertices.size() && !normals.empty())
+        if (normals.size() == vertexCount && !normals.empty())
             meshes.back()["normals"] = std::move(normals);
     }
     Json lights = Json::array(), cameras = Json::array();
@@ -464,12 +495,28 @@ Json meshSnapshot(const Document &d) {
                       {"parameters", e.parameters}};
             (e.type == "Light" ? lights : cameras).push_back(j);
         }
-    return {{"schema", 1},
-            {"materials", d.materials},
-            {"meshes", meshes},
-            {"lights", lights},
-            {"cameras", cameras},
-            {"assets", d.serialize()["embeddedAssets"]},
-            {"renderSettings", d.renderSettings}};
+    Json assets = Json::object();
+    if (instances) {
+        std::set<std::string> required;
+        for (const auto &material : d.materials)
+            for (const auto *channel : {"baseColorTexture", "roughnessTexture", "normalTexture"})
+                if (material.contains(channel))
+                    required.insert(material.at(channel).get<std::string>());
+        if (d.renderSettings.value("environmentMode", "studio") == "hdri")
+            required.insert(d.renderSettings.at("hdri").at("asset").get<std::string>());
+        for (const auto &hash : required)
+            assets[hash] = d.embeddedAssets.at(hash).toBase64().toStdString();
+    } else
+        assets = d.serialize()["embeddedAssets"];
+    Json result = {{"schema", instances ? 2 : 1},
+                   {"materials", d.materials},
+                   {"lights", lights},
+                   {"cameras", cameras},
+                   {"renderSettings", d.renderSettings}};
+    result["meshes"] = std::move(meshes);
+    result["assets"] = std::move(assets);
+    if (instances)
+        result["instances"] = std::move(placements);
+    return result;
 }
 } // namespace lmx

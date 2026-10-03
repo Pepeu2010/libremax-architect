@@ -141,10 +141,14 @@ void RenderJob::start(const Document &snapshot, const QString &blender, const QS
                     arguments << "--preview" << renderedPreview;
                 bridge.start(blender, script, arguments);
             });
+    QFile scriptSource(script);
+    const bool instances =
+        scriptSource.open(QIODevice::ReadOnly) &&
+        scriptSource.read(1024 * 1024).replace("\r\n", "\n").contains("\nLIBREMAX_SCENE_SCHEMA = 2\n");
     auto directory = work;
-    preparing.setFuture(QtConcurrent::run([snapshot, directory]() -> QString {
+    preparing.setFuture(QtConcurrent::run([snapshot, directory, instances]() -> QString {
         try {
-            RenderSceneExporter::exportScene(snapshot, directory->filePath("scene.json"));
+            RenderSceneExporter::exportScene(snapshot, directory->filePath("scene.json"), instances);
             return {};
         } catch (const std::exception &e) {
             return QString::fromUtf8(e.what());

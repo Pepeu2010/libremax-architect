@@ -16,6 +16,8 @@ A versão 0.11 acrescenta [barra de progresso, tempo decorrido e previsão do Cy
 
 Alvo mínimo confirmado: **i3-6006U / Intel HD Graphics 520 / 8 GB de RAM**. A versão 0.12 começa em Leve nas CPUs de até quatro threads e acrescenta o caminho Blender 4.5 LTS/CPU. [Requisito e teste físico pendente](docs/MINIMUM_HARDWARE.md).
 
+A fonte 0.13 acrescenta [geometria compartilhada no editor e no Cycles](docs/SHARED_GEOMETRY.md), reduzindo reconstruções ao mover cópias e o tamanho dos pacotes de render. A publicação de novos instaladores exige os gates de instalação; a release acima continua sendo a última publicada.
+
 Já disponível neste ciclo:
 
 - Desenhar cadeias de paredes e muretas; criar ambiente retangular com piso e forro.

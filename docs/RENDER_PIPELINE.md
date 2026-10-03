@@ -33,6 +33,11 @@ A galeria persiste ao reabrir o programa. Pedidos interrompidos são identificad
 
 ## Arquitetura implementada
 
+Na fonte 0.13, o exporter usa malhas compartilhadas e matrizes quando o leitor
+suporta schema 2. Scripts arquivados da versão anterior recebem schema 1.
+Modelos importados com UVs próprias mantêm texturas e normais; CAD com mapas por
+posição no mundo conserva o caminho expandido. [Instâncias, testes e limites](SHARED_GEOMETRY.md).
+
 `RenderSnapshot` copia e valida o documento e os parâmetros. `RenderQueue` mantém registros JSON atômicos e ordem FIFO. `RenderSceneExporter` exporta a malha e os assets do snapshot em um worker. `RenderJob` coordena exportação, progresso e validação da saída. `BlenderBridge` é o único responsável pelo QProcess. `RenderGallery` apresenta os resultados na interface.
 
 Blender recebe argumentos separados, sem shell. O script Python é um recurso distribuído, não é montado com texto do usuário. O processo recebe prioridade reduzida e até oito threads CPU. No Windows, um Job Object interrompe os processos associados ao fechar o aplicativo; no Linux, o processo recebe um sinal quando o pai termina. Cancelar também interrompe o processo ativo.

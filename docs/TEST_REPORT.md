@@ -1,3 +1,32 @@
+# Test report — geometria compartilhada 0.13.0
+
+Windows Release: **43 testes / 2.798 verificações** passaram. Build, formatação
+C++, compilação dos scripts Python e diff passaram. Protótipos, movimento/rotação,
+dimensões, espelhamento, ocultação, UVs/normais, texturas e HDRI foram verificados.
+A interface manteve apresentações ao mover/girar/desfazer/refazer armários e
+selecionou cada cópia em sua posição correta. O smoke de montagem passou com
+catálogo, encaixe, rejeição fora do ambiente, janela, arquivo portátil e 900 pixels.
+
+Blender 4.5.9 CPU: fixture leve com 32 cadeiras e piso, **33 objetos / 4 definições /
+31 objetos ligados**; pacote **582.423 → 55.078 bytes**. A poltrona Poly Haven com
+mapas/UVs/normais próprias manteve **65 partes / 7 definições / 62 partes ligadas**,
+com pacote **32.797.740 → 4.185.147 bytes**. O mesmo cenário passou no Blender
+5.2.1 CPU. Comparação com o leitor 0.12 arquivado, 480 × 270 / 32 amostras:
+diferenças médias por canal de 0–255 de **0,01087** (leve/4.5), **0,00428**
+(Poly Haven/4.5) e **0,00652** (Poly Haven/5.2). Os dois leitores renderizaram e
+preservaram a imagem após erro intencional. O apartamento salvo também passou
+no Blender 5.2 CPU, 320 × 180 / oito amostras, mantendo seus 21 mapas existentes.
+O teste de projeto salvo agora preserva seus materiais, sem aplicar o pack padrão.
+
+Relatórios locais: `build-render/instances-ui.log`, `instances-assembly.log`,
+`instances-45-verified/comparison.json`, `instances-45-polyhaven/comparison.json`
+e `instances-52-authored/comparison.json`. A CI acrescenta ambas as famílias nos
+dois motores. Publicação e CI ainda pendentes de confirmação nesta revisão.
+[Implementação, reprodução e limites](SHARED_GEOMETRY.md). **Não comprova FPS,
+pico de RAM, qualidade Final pela UI nem aceitação física no i3/HD 520/8 GB.**
+
+---
+
 # Test report — caminho para hardware mínimo 0.12.0
 
 Alvo obrigatório confirmado pelo usuário: **i3-6006U, Intel HD Graphics 520 e 8 GB de RAM**. O hardware físico ainda não foi testado. [Caminho implementado, fontes oficiais e aceitação](MINIMUM_HARDWARE.md).

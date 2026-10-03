@@ -1,4 +1,7 @@
 #include "scene_cache.h"
+#include <gp_Ax1.hxx>
+#include <gp_Trsf.hxx>
+#include <numbers>
 #include <set>
 namespace lmx {
 namespace {
@@ -16,8 +19,8 @@ Json geometryState(const Entity &e) {
 std::vector<Part> SceneGeometryCache::scene(const Document &d) {
     std::vector<Part> result;
     std::set<std::string> alive;
+    std::set<std::string> usedPrototypes;
     for (const auto &e : d.entities) {
-        alive.insert(e.id);
         bool visible = e.visible;
         auto parent = e.parent;
         while (!parent.empty()) {
@@ -27,6 +30,18 @@ std::vector<Part> SceneGeometryCache::scene(const Document &d) {
         }
         if (!visible)
             continue;
+        alive.insert(e.id);
+        const bool canShare = e.type != "Wall" && e.type != "HalfWall" && e.type != "Door" &&
+                              e.type != "Window" && !e.metadata.contains("automation");
+        std::string prototypeKey;
+        if (canShare) {
+            auto state = geometryState(e);
+            state.erase("transform");
+            state.erase("parent");
+            state["mirrored"] = e.transform.mirrored;
+            prototypeKey = state.dump();
+            usedPrototypes.insert(prototypeKey);
+        }
         Json key = Json::array({geometryState(e)});
         if (e.type == "Wall" || e.type == "HalfWall")
             for (const auto &opening : d.entities)
@@ -40,13 +55,30 @@ std::vector<Part> SceneGeometryCache::scene(const Document &d) {
         const auto fingerprint = key.dump();
         auto &entry = entries[e.id];
         if (entry.key != fingerprint) {
-            auto parts = buildEntity(d, e);
+            std::vector<Part> parts;
+            if (canShare) {
+                auto prototype = prototypes.find(prototypeKey);
+                if (prototype == prototypes.end()) {
+                    auto local = e;
+                    local.transform.x = local.transform.y = local.transform.z = local.transform.yaw = 0;
+                    prototype = prototypes.emplace(prototypeKey, buildEntity(d, local)).first;
+                    ++prototypeBuilds;
+                }
+                gp_Trsf placement;
+                placement.SetRotation(gp_Ax1(gp_Pnt(0, 0, 0), gp_Dir(0, 0, 1)),
+                                      e.transform.yaw * std::numbers::pi / 180);
+                placement.SetTranslationPart(gp_Vec(e.transform.x, e.transform.y, e.transform.z));
+                for (const auto &part : prototype->second)
+                    parts.push_back({part.shape.Moved(TopLoc_Location(placement)), part.material, e.id});
+            } else
+                parts = buildEntity(d, e);
             entry = {fingerprint, std::move(parts)};
             ++builds;
         }
         result.insert(result.end(), entry.parts.begin(), entry.parts.end());
     }
     std::erase_if(entries, [&](const auto &entry) { return !alive.contains(entry.first); });
+    std::erase_if(prototypes, [&](const auto &entry) { return !usedPrototypes.contains(entry.first); });
     return result;
 }
 } // namespace lmx

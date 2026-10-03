@@ -23,9 +23,11 @@ class CadView final : public QWidget {
     struct DisplayEntry {
         std::string key;
         Handle(AIS_Shape) shape;
+        TopLoc_Location placement;
     };
     std::map<std::string, DisplayEntry> displayed;
     std::map<const AIS_InteractiveObject *, std::string> owners;
+    std::size_t presentationBuilds = 0;
     Document current;
     QTemporaryDir textureCache;
     std::optional<gp_Pnt> wallStart;
@@ -76,6 +78,7 @@ class CadView final : public QWidget {
     void setPerformanceMode(int mode);
     int performanceMode() const { return performance; }
     int multisampling() const;
+    std::size_t presentationBuildCount() const { return presentationBuilds; }
     void setCutaway(bool enabled) {
         cutaway = enabled;
         scene(current);

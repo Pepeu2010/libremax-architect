@@ -16,6 +16,10 @@ O [i3-6006U](https://www.intel.com/content/www/us/en/products/sku/91157/intel-co
 
 ## Aceitação no notebook
 
+A fonte 0.13 também reutiliza sólidos ao mover/girar cópias e malhas no Cycles,
+com preservação de modelos e texturas. Isso reduz trabalho e pacotes repetidos;
+não substitui as medições de fluidez e RAM abaixo. [Provas e limites](SHARED_GEOMETRY.md).
+
 Antes de declarar suporte confirmado, executar no hardware real:
 
 1. Instalar e abrir o aplicativo com driver Intel funcional; registrar sistema, versão do driver e resolução da tela.

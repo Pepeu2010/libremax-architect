@@ -1,6 +1,6 @@
 # Matriz de paridade — VDMax 3.0 Arquitetos e Decoradores
 
-Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. LibreMax: prévia 0.10.0 com instaladores Windows e Ubuntu publicados. **Não há paridade completa nem release 1.0.**
+Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. LibreMax: prévia 0.12.0 com instaladores Windows e Ubuntu publicados; fonte 0.13 em verificação. **Não há paridade completa nem release 1.0.**
 
 Complemento visual em 2026-09-30: [auditoria](VISUAL_REFERENCE_AUDIT.md), 11 imagens inspecionadas de 47 referências indexadas. `visual_refs` indica somente essas imagens consultadas; não promove paridade funcional automaticamente.
 
@@ -73,6 +73,11 @@ Fontes oficiais consultadas:
 | X02 | Produto | Pacotes Linux | Exigência LibreMax | CMake install/CPack e `.deb` publicado 0.10; dependências runtime declaradas | CI Linux 37125774451 + instalação Ubuntu novo 37125785735 | FUNCTIONAL | SPEC | Ubuntu 24.04 amd64, UI Mesa/Xvfb, modelos e desinstalação preservando projeto; Mint, ARM, AppImage e hardware físico adicional pendentes | — |
 
 Fora de escopo: plano de corte, nesting, BOM industrial, ERP/MRP, CNC, custos de matéria-prima, etiquetas e produção. Nenhuma dessas funções é incluída no roadmap.
+
+Fonte 0.13: [geometria compartilhada](SHARED_GEOMETRY.md) no editor e no pacote
+Cycles, com seleção independente e compatibilidade com leitores arquivados.
+Essa cobertura atende parte do requisito de instâncias da arquitetura de render;
+não altera os gates abertos de paridade, mapeamento CAD, GPUs e hardware mínimo.
 
 Pesquisa adicional de arrasto/encaixe, catálogo e comparação de limites: [VDMAX_RESEARCH_04](VDMAX_RESEARCH_04.md). Testes executados neste ciclo: [CYCLE_04](CYCLE_04.md).
 

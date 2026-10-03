@@ -8,9 +8,7 @@ import hashlib
 import math
 import bpy
 import bmesh
-from mathutils import Vector, Matrix
-
-LIBREMAX_SCENE_SCHEMA = 2
+from mathutils import Vector
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from cycles_lights import translate_light
 
@@ -141,7 +139,7 @@ def main():
     args = arguments()
     with open(args.scene, encoding='utf-8') as stream:
         package = json.load(stream)
-    if package['schema'] not in (1, LIBREMAX_SCENE_SCHEMA):
+    if package['schema'] != 1:
         raise ValueError('Unsupported scene schema')
     bpy.ops.object.select_all(action='SELECT')
     bpy.ops.object.delete(use_global=False)
@@ -218,27 +216,8 @@ def main():
         surface_maps(entry, material, shader, texture_paths)
         materials[entry['id']] = material
     material_entries = {entry['id']: entry for entry in package['materials']}
-    if package['schema'] == 1:
-        for part in package['meshes']:
-            obj = photographic_mesh(part, material_entries[part['material']], materials[part['material']])
-            obj['libremaxOwner'] = part['owner']
-    else:
-        templates = {}
-        for part in package['meshes']:
-            templates[part['id']] = photographic_mesh(part, material_entries[part['material']], materials[part['material']])
-        objects = []
-        for placement in package['instances']:
-            obj = templates[placement['mesh']].copy()
-            obj.name = placement['owner'] + ':' + placement['mesh']
-            obj.matrix_world = Matrix(placement['matrix'])
-            obj['libremaxOwner'] = placement['owner']
-            obj['libremaxMesh'] = placement['mesh']
-            scene.collection.objects.link(obj)
-            objects.append(obj)
-        for obj in templates.values():
-            bpy.data.objects.remove(obj, do_unlink=True)
-        print('LIBREMAX_INSTANCES', json.dumps({'definitions': len(templates), 'objects': len(objects),
-            'linkedObjects': sum(obj.data.users > 1 for obj in objects)}), flush=True)
+    for part in package['meshes']:
+        photographic_mesh(part, material_entries[part['material']], materials[part['material']])
     for entry in package['lights']:
         translate_light(entry, scene)
     selected_id = settings.get('camera', '')
