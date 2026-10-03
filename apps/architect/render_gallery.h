@@ -2,6 +2,7 @@
 #include "rendering/render_queue.h"
 #include <QLabel>
 #include <QListWidget>
+#include <QProgressBar>
 #include <QPushButton>
 #include <QToolButton>
 #include <QWidget>
@@ -12,11 +13,15 @@ class RenderGallery final : public QWidget {
     std::string project;
     QListWidget *images;
     QLabel *summary, *details;
+    QWidget *progressPanel;
+    QLabel *progressStatus, *timing;
+    QProgressBar *progress;
     QPushButton *open, *saveCopy, *cancel;
     QToolButton *more;
     QAction *repeat, *cpu, *folder, *logs, *erase;
     std::map<QString, QListWidgetItem *> rows;
     void selectionChanged();
+    void refreshTiming();
 
   public:
     explicit RenderGallery(RenderQueue &queue, QWidget *parent = nullptr);

@@ -76,6 +76,8 @@ QScrollBar::add-page, QScrollBar::sub-page { background: transparent; }
 QProgressBar { background: #1c1728; border: 1px solid #594969; border-radius: 3px; max-height: 5px; min-height: 5px; }
 QProgressBar::chunk { background: #b49aea; border-radius: 2px; }
 QProgressBar#renderProgress { min-height: 22px; max-height: 22px; text-align: center; color: #f5f0fb; }
+QProgressBar#galleryRenderProgress { min-height: 24px; max-height: 24px; text-align: center; color: #f5f0fb; }
+QProgressBar#galleryRenderProgress::chunk, QProgressBar#renderProgress::chunk { background: #675589; }
 QSpinBox { background: #15151f; border: 1px solid #4c455e; padding: 7px; border-radius: 5px; min-height: 18px; }
 QSpinBox:focus { border-color: #b8adff; }
 QSpinBox::up-button, QSpinBox::down-button { width: 18px; border-left: 1px solid #454056; background: #2c283b; }

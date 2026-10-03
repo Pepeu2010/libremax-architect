@@ -44,6 +44,13 @@ RenderQueue::RenderQueue(QString directory, QObject *parent) : QObject(parent), 
             if (record.at("version") != 1 || string(record.at("id")) != id)
                 continue;
             validateRenderOptions(record.at("options"));
+            for (const auto *key : {"elapsedMs", "remainingMs", "remainingUpdatedElapsedMs"})
+                if (record.contains(key) &&
+                    (!record[key].is_number_integer() || record[key].get<qint64>() < -1 ||
+                     record[key].get<qint64>() > 604800000))
+                    throw std::invalid_argument("Tempo de render inválido");
+            if (record.contains("estimatedFinish") && !record["estimatedFinish"].is_string())
+                throw std::invalid_argument("Previsão de render inválida");
             if (record.contains("preview") &&
                 (!record.at("preview").is_string() || !QRegularExpression("^preview-[a-f0-9]{64}\\.png$")
                                                            .match(string(record.at("preview")))
@@ -74,16 +81,29 @@ RenderQueue::RenderQueue(QString directory, QObject *parent) : QObject(parent), 
             break;
     }
     connect(&job, &RenderJob::stage, this, [this](const QString &state) {
-        if (!activeId.isEmpty())
+        if (!activeId.isEmpty()) {
+            auto &entry = records.at(activeId);
+            entry["elapsedMs"] = elapsed.elapsed();
+            entry["remainingMs"] = -1;
+            entry.erase("estimatedFinish");
             setState(activeId, state);
+        }
     });
-    connect(&job, &RenderJob::progress, this, [this](int current, int total) {
+    connect(&job, &RenderJob::progress, this, [this](int current, int total, int percent, qint64 remaining) {
         if (activeId.isEmpty())
             return;
         auto &entry = records.at(activeId);
         entry["sample"] = current;
         entry["total"] = total;
-        entry["progress"] = current * 100 / total;
+        entry["progress"] = percent;
+        entry["elapsedMs"] = elapsed.elapsed();
+        entry["remainingMs"] = remaining;
+        entry["remainingUpdatedElapsedMs"] = elapsed.elapsed();
+        if (remaining >= 0)
+            entry["estimatedFinish"] =
+                QDateTime::currentDateTimeUtc().addMSecs(remaining).toString(Qt::ISODateWithMs).toStdString();
+        else
+            entry.erase("estimatedFinish");
         save(activeId);
         emit changed();
     });
@@ -105,6 +125,9 @@ RenderQueue::RenderQueue(QString directory, QObject *parent) : QObject(parent), 
                 entry["error"] = message.toStdString();
                 entry["engine"] = job.engine();
                 entry["finished"] = now().toStdString();
+                entry["elapsedMs"] = elapsed.elapsed();
+                entry["remainingMs"] = -1;
+                entry.erase("estimatedFinish");
                 if (success) {
                     entry["progress"] = 100;
                     if (entry.at("options").at("format") == "EXR")
@@ -120,6 +143,15 @@ RenderQueue::RenderQueue(QString directory, QObject *parent) : QObject(parent), 
                 emit changed();
                 QTimer::singleShot(0, this, &RenderQueue::dispatch);
             });
+    auto *heartbeat = new QTimer(this);
+    heartbeat->setInterval(1000);
+    connect(heartbeat, &QTimer::timeout, this, [this] {
+        if (activeId.isEmpty())
+            return;
+        records.at(activeId)["elapsedMs"] = elapsed.elapsed();
+        emit timingChanged();
+    });
+    heartbeat->start();
 }
 RenderQueue::~RenderQueue() {
     stopping = true;
@@ -254,6 +286,7 @@ void RenderQueue::dispatch() {
         activeId = id;
         auto &entry = records.at(id);
         entry["started"] = now().toStdString();
+        elapsed.start();
         try {
             const auto &options = entry.at("options");
             job.start(snapshots.at(id)->document(), string(entry.at("blender")),

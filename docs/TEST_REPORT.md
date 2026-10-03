@@ -1,3 +1,13 @@
+# Test report — progresso de render 0.11.0
+
+Windows Release: **40 testes / 2.269 verificações** passaram. Build, formatação C++ e `git diff --check` passaram. Os testes de núcleo verificaram amostras e transições de partes de imagem baseadas no log 4K anterior, limites de tempo, previsões inválidas/ausentes/vencidas e duração congelada. O estado de carregar kernels de denoise já não oculta a estimativa durante o cálculo.
+
+O teste nativo `--queue-smoke` calculou quatro imagens reais Cycles CPU e confirmou FIFO, edição sem alterar snapshots, falha, repetição com CPU, cancelamento na fila e durante execução. Durante o pedido longo, a barra mostrou **6%**, **22s decorridos** e **4min30s restantes estimados**, com horário aproximado do cálculo. O contador avançou a cada segundo, a duração concluída persistiu após reabrir e as ferramentas voltaram ao sair da galeria. Layout e tempos passaram em **1440 × 900 e 900 × 650**. [Capturas e semântica dos tempos](RENDER_PROGRESS.md).
+
+Os instaladores 0.11 aguardam a CI Windows/Ubuntu. Esta revisão não repete o render 4K nem verifica outras GPUs; a estimativa do motor pode variar e não prevê o tempo adicional de finalização.
+
+---
+
 # Test report — iluminação 0.10.0
 
 Windows Release: **37 testes / 2.233 verificações** passaram. O teste nativo criou cinco tipos de luz pela interface, editou Kelvin, dimensões em centímetros, raio, feixe, formato, sombra do sol e giro; verificou undo/redo e projeto v3 portátil. O layout de 900 pixels preservou controles e rótulos sem rolagem horizontal. Sete renders reais Cycles CPU passaram: LED quente/frio/desligado, ponto, spot, painel retangular e sol; o último em EXR. A comparação de pixels confirmou emissão LED e alteração da cor refletida. Edição durante a fila preservou os snapshots v3. Biblioteca completa, modos de edição, coleção moderna, colocação e tutorial passaram na regressão nativa. [Capturas e detalhes](LIGHTING.md).

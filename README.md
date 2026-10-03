@@ -12,6 +12,8 @@ A imagem acima é uma captura do programa compilado no Windows, com viewport Ope
 
 Ampliações atuais: [60 novos modelos, fontes e modos de desempenho](docs/MODEL_LIBRARIES_PERFORMANCE.md) e [iluminação Kelvin, LED e sol](docs/LIGHTING.md). No host de desenvolvimento, `Abrir LibreMax.cmd` abre a build atualizada.
 
+A fonte 0.11 acrescenta [barra de progresso, tempo decorrido e previsão do Cycles](docs/RENDER_PROGRESS.md), na galeria e durante a edição. Os instaladores desta revisão aguardam os testes de publicação.
+
 Já disponível neste ciclo:
 
 - Desenhar cadeias de paredes e muretas; criar ambiente retangular com piso e forro.
@@ -29,6 +31,7 @@ Já disponível neste ciclo:
 - Salvar/abrir `.lmx` ZIP versionado, backup `.bak`, undo/redo, autosave configurável (1–60 minutos) e recuperação de versões locais.
 - Criar câmeras e luzes ponto/spot/painel/LED/sol; escolher tons de luz ou Kelvin, dimensões em centímetros, raio, feixe e sombra solar. Marcadores selecionáveis ajudam a localizar as luzes. Renderizar com Blender/Cycles em processo separado, PNG/JPEG, presets, seleção de câmera, exposição, luz ambiente, denoise e descoberta GPU com fallback CPU.
 - Fila persistente de renders, quatro modos (Rápido/Normal/Final/Personalizado), várias câmeras, cancelamento e repetição com CPU. Galeria com miniaturas, histórico, imagens e logs; a edição continua durante o render. [Arquitetura e validação](docs/RENDER_PIPELINE.md).
+- Barra de progresso com tempo decorrido, restante estimado e horário aproximado do cálculo; duração registrada no histórico. Em renders divididos em partes, concluir a primeira parte não completa a barra. [Uso e limites da estimativa](docs/RENDER_PROGRESS.md).
 - HDRI local incorporado ao `.lmx`, luz do dia incluída, rotação e controle do fundo. EXR float 32 bits em Personalizado, com prévia PNG na galeria. [Uso e limites](docs/HDRI_EXR.md).
 - Workspace escuro de render com zoom/pan, Ajustar, 1:1 e exportação de cópia PNG/JPEG; materiais PBR incorporados de madeira/pedra, céu natural/sol e câmera fotográfica no Cycles.
 

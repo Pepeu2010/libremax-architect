@@ -1,6 +1,7 @@
 #pragma once
 #include "blender_bridge.h"
 #include "document/document.h"
+#include "render_progress.h"
 #include "render_result.h"
 #include <QFutureWatcher>
 #include <QObject>
@@ -23,6 +24,7 @@ class RenderJob final : public QObject {
     bool cancelled = false;
     QString lineBuffer;
     Json engineInfo;
+    CyclesProgress progressTracker;
     void consumeOutput(const QString &text);
     void finish(bool success, const QString &message, int exitCode = 0);
 
@@ -39,7 +41,7 @@ class RenderJob final : public QObject {
     void state(const QString &state);
     void log(const QString &text);
     void completed(const QString &path);
-    void progress(int sample, int total);
+    void progress(int sample, int total, int percent, qint64 remainingMs);
     void stage(const QString &stage);
     void finished(bool success, bool cancelled, const QString &message, int exitCode);
 };

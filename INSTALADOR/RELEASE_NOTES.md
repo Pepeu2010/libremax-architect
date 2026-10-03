@@ -1,28 +1,18 @@
-# LibreMax Architect 0.10.0 — Iluminação mais simples
+# LibreMax Architect 0.11.0 — Progresso e tempo de render
 
 Baixe o arquivo do seu sistema em Assets:
 
-- **Windows 64 bits:** `LibreMax-Architect-0.10.0-Windows-x64-Setup.exe`.
-- **Ubuntu 24.04, x86-64:** `LibreMax-Architect-0.10.0-Linux-Ubuntu24.04-amd64.deb`. Instale com `sudo apt install ./LibreMax-Architect-0.10.0-Linux-Ubuntu24.04-amd64.deb`. Mint 22 compartilha essa base, mas não teve teste próprio.
+- **Windows 64 bits:** `LibreMax-Architect-0.11.0-Windows-x64-Setup.exe`.
+- **Ubuntu 24.04, x86-64:** `LibreMax-Architect-0.11.0-Linux-Ubuntu24.04-amd64.deb`. Instale com `sudo apt install ./LibreMax-Architect-0.11.0-Linux-Ubuntu24.04-amd64.deb`.
 
-Em **Iluminação → Nova luz**, escolha spot, fita LED, painel de luz, ponto ou sol. A fonte começa perto do teto do cômodo atual. Escolha Quente, Aconchegante, Neutra, Luz do dia, Fria ou uma temperatura Kelvin específica. Os tamanhos aparecem em centímetros; as propriedades incluem raio, feixe, formato e suavidade da sombra solar. Marcadores amarelos ajudam a localizar a fonte no editor e não aparecem na foto. O painel estreito apresenta rótulos acima dos controles, com rolagem vertical.
+Ao gerar uma imagem, **Suas imagens** mostra uma barra visível, o tempo decorrido, o restante estimado e o horário aproximado de terminar o cálculo. Esses tempos também aparecem no painel **Criar imagem** enquanto você edita o apartamento. O histórico guarda a duração da execução após terminar, cancelar ou falhar.
 
-A fita LED é uma superfície emissiva contínua real no Cycles. Kelvin usa o cálculo nativo de cor do Blender. Brilho altera a intensidade na imagem; não equivale automaticamente ao consumo elétrico de uma lâmpada comercial.
+A previsão vem do Cycles e pode mudar durante o render. Preparação sem estimativa mostra atividade; denoise e salvamento mostram finalização. O horário previsto se refere ao cálculo, com finalização depois. Em imagens divididas em partes, acabar a primeira parte não completa a barra; 100% exige uma saída válida. Uma tentativa reiniciada com CPU reinicia progresso e previsão. A galeria em janela de 900 pixels preserva a barra e as duas linhas de tempo; voltar ao projeto restaura as ferramentas de montagem.
 
-Os recursos anteriores permanecem: **175 itens / 148 modelos 3D**, coleções leves e detalhadas, modos Leve/Equilibrado/Mais detalhes, tutorial de 15 capítulos, logo animada, projetos recentes, montagem com encaixe, fila e galeria Cycles, HDRI e EXR. Modelos e texturas acompanham o instalador. **Para renderizar, instale Blender 5.2 LTS+ separadamente** e selecione seu executável no painel Render.
+Verificação local Windows: **40 testes / 2.269 verificações** passaram. O teste nativo usou Cycles real, confirmou a evolução do relógio, previsão positiva, duração persistida, layouts de 1440 e 900 pixels, cancelamento, falha, repetição com CPU e preservação dos snapshots. [Capturas e detalhes](https://github.com/Pepeu2010/libremax-architect/blob/main/docs/RENDER_PROGRESS.md). Os instaladores são publicados após os testes Windows e Ubuntu da CI; execuções e limites ficam no [relatório](https://github.com/Pepeu2010/libremax-architect/blob/main/docs/TEST_REPORT.md).
 
-**Projetos com as novas luzes usam `.lmx` v3 e exigem LibreMax 0.10+.** Projetos antigos v1/v2 continuam abrindo. Use Salvar como para conservar uma cópia anterior. HDRI, EXR e snapshots preservam v3; não há downgrade automático. Pedidos na fila arquivam também o tradutor de iluminação, permitindo repetir a cena original.
+Inclui os recursos anteriores: **175 itens / 148 modelos 3D**, coleção Apartamento atual, modos Leve/Equilibrado/Mais detalhes, montagem com encaixe, Kelvin/LED/sol, tutorial, projetos recentes, fila/galeria, HDRI e EXR. Modelos, texturas e exemplos acompanham o instalador. **Para renderizar, instale Blender 5.2 LTS+ separadamente** e selecione seu executável no painel Render. Projetos `.lmx` v1/v2/v3 continuam suportados; luzes v3 exigem LibreMax 0.10+.
 
-Verificação local: **37 testes / 2.233 verificações**. Cinco tipos criados/editados pela interface, undo/redo, arquivo portátil v3 e layout de 900 pixels passaram. Sete renders reais Cycles CPU compararam LED ligado/desligado e quente/frio, além de ponto, spot, área e sol/EXR. A RX 7600 deste Windows calculou o LED via HIP sem fallback, em 320 × 180 / 16 amostras. Biblioteca, montagem, tutorial, fila, HDRI e EXR passaram na regressão.
+Prévia em desenvolvimento. Pacotes Windows x86-64 e Ubuntu 24.04 amd64; Mint 22 compartilha a base, sem teste próprio. O viewport exige OpenGL e driver funcional. Não há comprovação para todos os computadores, GPUs, pouca RAM ou apartamentos grandes. A revisão anterior produziu uma saída 4K na RX 7600/HIP; esta alteração não repete esse teste nem comprova equivalência fotográfica ou paridade integral com a master spec.
 
-Os instaladores desta revisão são publicados somente após os testes Windows e Ubuntu. As execuções e resultados estão no [relatório de testes](https://github.com/Pepeu2010/libremax-architect/blob/main/docs/TEST_REPORT.md).
-
-A [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37125774451) e a [CI dos instaladores Windows/Ubuntu](https://github.com/Pepeu2010/libremax-architect/actions/runs/37125785735) passaram. O pacote Linux em staging produziu as sete imagens Cycles CPU. O payload Windows também passou em criação/edição e renders CPU/HIP no host, com PATH sem SDK.
-
-O apartamento moderno com Kelvin e LED produziu **3840 × 2160 / 512 amostras máximas / 12 reflexões**, com denoise e GPU/HIP confirmado. O motor levou 8min09s nesta RX 7600; o teste de falha preservou a imagem. Isso verifica uma saída 4K pelo pipeline, sem comprovar todos os materiais/câmeras nem o gesto de selecionar Final na galeria. [Imagem e reprodução](https://github.com/Pepeu2010/libremax-architect/blob/main/docs/LIGHTING.md).
-
-Prévia em desenvolvimento. Não há comprovação de compatibilidade com todos os computadores, GPUs integradas, pouca RAM ou apartamentos grandes. Há pacotes Windows x86-64 e Ubuntu amd64; não há pacote macOS, ARM ou 32 bits. O viewport exige OpenGL e driver funcional. CPU permite renderizar sem backend GPU Cycles, desde que o Blender seja compatível com sistema/processador. Windows sem assinatura digital; Linux usa X11/XWayland.
-
-Faltam requisitos da master spec, incluindo desfoque HDRI, canais PBR adicionais, enquadramento exato de câmera, instâncias e tesselação de apresentação. A coleção leve é estilizada. A saída 4K verificada não comprova equivalência a fotografia ou superioridade sobre concorrentes; outras GPUs e HIP no Linux continuam sem teste físico.
-
-`LibreMax-Architect-Source.tar.gz` contém o código exato da revisão compilada `7c5a662e85a3b35c672f2065dbf459baf47b1fad`. Confira downloads com `SHA256SUMS.txt`. Dependências Windows têm manifesto e licenças em `share/doc/libremax-architect`. [Guias separados por sistema](https://github.com/Pepeu2010/libremax-architect/tree/main/INSTALADOR).
+`LibreMax-Architect-Source.tar.gz` contém o código exato da tag desta publicação. Confira downloads com `SHA256SUMS.txt`. Dependências Windows têm manifesto e licenças em `share/doc/libremax-architect`. [Guias separados por sistema](https://github.com/Pepeu2010/libremax-architect/tree/main/INSTALADOR).

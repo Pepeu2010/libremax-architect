@@ -1,6 +1,7 @@
 #pragma once
 #include "render_job.h"
 #include "render_snapshot.h"
+#include <QElapsedTimer>
 #include <QThreadPool>
 #include <deque>
 #include <set>
@@ -14,6 +15,7 @@ class RenderQueue final : public QObject {
     std::deque<QString> waiting;
     QThreadPool preparationPool;
     RenderJob job;
+    QElapsedTimer elapsed;
     bool stopping = false;
     std::uint64_t nextOrder = 0;
     void prepare(const QString &id, const QString &blender, const QString &script);
@@ -39,6 +41,7 @@ class RenderQueue final : public QObject {
     QString logPath(const QString &id) const;
   signals:
     void changed();
+    void timingChanged();
     void log(const QString &text);
     void completed(const QString &id, const QString &image);
     void warning(const QString &message);

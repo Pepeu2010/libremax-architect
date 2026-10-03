@@ -79,7 +79,7 @@ class MainWindow final : public QMainWindow {
     QPushButton *renderStart;
     QPushButton *renderCancel;
     QProgressBar *renderProgress;
-    QLabel *renderState;
+    QLabel *renderState, *renderTiming;
     QLabel *projectTitle;
     QLabel *libraryCount;
     QLabel *placementBanner;

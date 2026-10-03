@@ -1,5 +1,6 @@
 #include "render_gallery.h"
 #include "rendering/render_options.h"
+#include "rendering/render_progress.h"
 #include <QDateTime>
 #include <QDesktopServices>
 #include <QFileInfo>
@@ -41,6 +42,28 @@ RenderGallery::RenderGallery(RenderQueue &renderQueue, QWidget *parent)
     summary->setWordWrap(true);
     summary->setProperty("role", "muted");
     layout->addWidget(summary);
+    progressPanel = new QWidget;
+    progressPanel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    auto *progressLayout = new QVBoxLayout(progressPanel);
+    progressLayout->setContentsMargins(0, 0, 0, 0);
+    progressLayout->setSpacing(8);
+    progressStatus = new QLabel;
+    progressStatus->setObjectName("galleryRenderStatus");
+    progressStatus->setWordWrap(true);
+    progressLayout->addWidget(progressStatus);
+    progress = new QProgressBar;
+    progress->setObjectName("galleryRenderProgress");
+    progress->setAccessibleName(tr("Progresso da imagem em renderização"));
+    progress->setTextVisible(true);
+    progressLayout->addWidget(progress);
+    timing = new QLabel;
+    timing->setObjectName("galleryRenderTiming");
+    timing->setWordWrap(true);
+    timing->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    timing->setTextFormat(Qt::PlainText);
+    timing->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    progressLayout->addWidget(timing);
+    layout->addWidget(progressPanel);
     images = new QListWidget;
     images->setObjectName("renderImages");
     images->setAccessibleName(tr("Fila e imagens deste projeto"));
@@ -97,6 +120,7 @@ RenderGallery::RenderGallery(RenderQueue &renderQueue, QWidget *parent)
     connect(logs, &QAction::triggered, this,
             [this] { QDesktopServices::openUrl(QUrl::fromLocalFile(queue.logPath(selectedId()))); });
     connect(&queue, &RenderQueue::changed, this, &RenderGallery::refresh);
+    connect(&queue, &RenderQueue::timingChanged, this, &RenderGallery::refreshTiming);
     refresh();
 }
 QString RenderGallery::selectedId() const {
@@ -128,10 +152,7 @@ void RenderGallery::refresh() {
         const auto &options = entry.at("options");
         auto status = renderStateLabel(state);
         if (entry.value("progress", -1) >= 0 && !done(state))
-            status += QString(" · %1% · %2/%3 amostras")
-                          .arg(entry.at("progress").get<int>())
-                          .arg(entry.value("sample", 0))
-                          .arg(entry.value("total", 0));
+            status += QString(" · %1% do cálculo").arg(entry.at("progress").get<int>());
         const auto date = QDateTime::fromString(text(entry, "created"), Qt::ISODateWithMs).toLocalTime();
         row->setText(QString("%1\n%2 · %3 × %4 · %5\n%6")
                          .arg(text(entry, "cameraName"), mode(options))
@@ -166,6 +187,7 @@ void RenderGallery::refresh() {
     selectionChanged();
 }
 void RenderGallery::selectionChanged() {
+    refreshTiming();
     const auto id = selectedId();
     const auto entries = queue.entries(project);
     const auto found = std::find_if(entries.begin(), entries.end(),
@@ -182,5 +204,27 @@ void RenderGallery::selectionChanged() {
     erase->setEnabled(available && done(state));
     logs->setEnabled(available && QFileInfo::exists(queue.logPath(id)));
     details->setText(available ? text(*found, "error") : tr("Nenhuma imagem selecionada."));
+}
+void RenderGallery::refreshTiming() {
+    const auto entries = queue.entries(project);
+    auto found = std::find_if(entries.begin(), entries.end(),
+                              [&](const auto &entry) { return text(entry, "id") == queue.active(); });
+    if (found == entries.end())
+        found = std::find_if(entries.begin(), entries.end(),
+                             [&](const auto &entry) { return text(entry, "id") == selectedId(); });
+    progressPanel->setVisible(found != entries.end());
+    if (found == entries.end())
+        return;
+    const auto state = text(*found, "state");
+    const auto value = found->value("progress", -1);
+    const bool unknown = value < 0 && !done(state);
+    progress->setRange(0, unknown ? 0 : 100);
+    if (!unknown)
+        progress->setValue(std::max(0, value));
+    progress->setFormat(state == "Completed"   ? tr("Concluído · 100%")
+                        : state == "Rendering" ? tr("%p% do cálculo")
+                                               : renderStateLabel(state));
+    progressStatus->setText(QString("%1 · %2").arg(text(*found, "cameraName"), renderStateLabel(state)));
+    timing->setText(renderTimingText(*found));
 }
 } // namespace lmx

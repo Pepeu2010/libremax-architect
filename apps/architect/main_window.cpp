@@ -7,6 +7,7 @@
 #include "persistence/project_store.h"
 #include "rendering/environment_map.h"
 #include "rendering/light_model.h"
+#include "rendering/render_progress.h"
 #include "resource_paths.h"
 #include "studio_theme.h"
 #include <QActionGroup>
@@ -211,6 +212,7 @@ MainWindow::MainWindow(bool test, const QString &recoveryDirectory, bool welcome
         return std::nullopt;
     });
     connect(render.get(), &RenderQueue::changed, this, &MainWindow::refreshRenderQueue);
+    connect(render.get(), &RenderQueue::timingChanged, this, &MainWindow::refreshRenderQueue);
     connect(render.get(), &RenderQueue::log, renderLog, &QPlainTextEdit::appendPlainText);
     connect(render.get(), &RenderQueue::warning, this,
             [this](const QString &message) { statusBar()->showMessage(message, 10000); });
@@ -464,6 +466,7 @@ void MainWindow::createShell() {
                               "completa e os pacotes Linux ainda estão em desenvolvimento."));
     });
     auto *projectBar = addToolBar(tr("Projeto"));
+    projectBar->setObjectName("projectToolbar");
     auto *homeAction = projectBar->addAction(tr("Meus projetos"));
     homeAction->setObjectName("projectHomeAction");
     connect(homeAction, &QAction::triggered, this, [this] { protect([&] { showHome(); }); });
@@ -504,6 +507,7 @@ void MainWindow::createShell() {
     });
     addToolBarBreak();
     auto *toolbar = addToolBar(tr("Projeto e desenho"));
+    toolbar->setObjectName("drawingToolbar");
     toolbar->setMovable(false);
     toolbar->setIconSize({20, 20});
     toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -562,6 +566,7 @@ void MainWindow::createShell() {
     });
     addToolBarBreak();
     auto *placementBar = addToolBar(tr("Montagem"));
+    placementBar->setObjectName("placementToolbar");
     placementBar->setMovable(false);
     auto *assistance = new QCheckBox(tr("Encaixar nas paredes"));
     assistance->setChecked(true);
@@ -1063,6 +1068,11 @@ void MainWindow::createShell() {
     renderProgress->setValue(0);
     renderProgress->setAccessibleName(tr("Estado do render"));
     renderLayout->addRow(renderProgress);
+    renderTiming = new QLabel;
+    renderTiming->setObjectName("renderTiming");
+    renderTiming->setWordWrap(true);
+    renderTiming->setTextFormat(Qt::PlainText);
+    renderLayout->addRow(renderTiming);
     renderStart = new QPushButton(tr("Enviar para renderizar"));
     renderStart->setObjectName("startRender");
     renderStart->setProperty("role", "primary");
@@ -2240,6 +2250,7 @@ void MainWindow::showEditorWorkspace() {
     if (galleryMode)
         restoreState(editorLayout);
     galleryMode = false;
+    findChild<QWidget *>("workflowSteps")->show();
     placementBanner->show();
     workspace->setCurrentWidget(viewport);
 }
@@ -2249,6 +2260,10 @@ void MainWindow::showRenderGallery() {
         galleryMode = true;
         for (auto *dock : findChildren<QDockWidget *>())
             dock->hide();
+        for (auto *toolbar : findChildren<QToolBar *>())
+            if (toolbar->objectName() != "projectToolbar")
+                toolbar->hide();
+        findChild<QWidget *>("workflowSteps")->hide();
         placementBanner->hide();
     }
     gallery->setProject(editor_.document().id);
@@ -2265,14 +2280,21 @@ void MainWindow::refreshRenderQueue() {
     if (entry == entries.end()) {
         renderProgress->setRange(0, 100);
         renderProgress->setValue(0);
+        renderProgress->setFormat(render->busy() ? tr("Na fila") : tr("Pronto"));
         renderState->setText(render->busy() ? tr("Preparando imagens. Você pode continuar editando.")
                                             : tr("Pronto. Abra Suas imagens para ver os resultados."));
+        renderTiming->setText(render->busy() ? tr("A estimativa aparece quando o cálculo começar.")
+                                             : QString{});
         return;
     }
     const auto progress = entry->value("progress", -1);
     renderProgress->setRange(0, progress < 0 ? 0 : 100);
     if (progress >= 0)
         renderProgress->setValue(progress);
+    renderProgress->setFormat(entry->at("state") == "Rendering"
+                                  ? tr("%p% do cálculo")
+                                  : renderStateLabel(q(entry->at("state").get<std::string>())));
+    renderTiming->setText(renderTimingText(*entry));
     renderState->setText(QString("%1 · %2").arg(q(entry->at("cameraName").get<std::string>()),
                                                 renderStateLabel(q(entry->at("state").get<std::string>()))));
 }
@@ -2512,6 +2534,7 @@ void MainWindow::rememberProject() {
 }
 void MainWindow::enterEditor() {
     galleryMode = false;
+    findChild<QWidget *>("workflowSteps")->show();
     placementBanner->show();
     statusBar()->show();
     for (auto *action : menuBar()->actions())

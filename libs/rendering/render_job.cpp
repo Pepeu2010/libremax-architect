@@ -50,14 +50,13 @@ void RenderJob::consumeOutput(const QString &text) {
     while ((newline = lineBuffer.indexOf('\n')) >= 0) {
         const auto line = lineBuffer.left(newline);
         lineBuffer.remove(0, newline + 1);
-        static const QRegularExpression samples("(?:Sample|Rendering)\\s+(\\d+)\\s*/\\s*(\\d+)");
-        auto match = samples.match(line);
-        if (match.hasMatch()) {
-            const auto current = match.captured(1).toInt(), total = match.captured(2).toInt();
-            if (total > 0 && current >= 0 && current <= total)
-                emit progress(current, total);
+        if (line.startsWith("LIBREMAX_GPU_FALLBACK")) {
+            progressTracker = {};
+            emit progress(0, 0, -1, -1);
         }
-        if (line.contains("Denoising", Qt::CaseInsensitive))
+        if (const auto update = progressTracker.consume(line))
+            emit progress(update->sample, update->total, update->percent, update->remainingMs);
+        if (isCyclesDenoising(line))
             emit stage("Denoising");
         if (line.startsWith("LIBREMAX_ENGINE ")) {
             try {
@@ -106,6 +105,7 @@ void RenderJob::start(const Document &snapshot, const QString &blender, const QS
     display.clear();
     lineBuffer.clear();
     engineInfo = Json::object();
+    progressTracker = {};
     output = destination;
     work = std::make_shared<QTemporaryDir>();
     if (!work->isValid())

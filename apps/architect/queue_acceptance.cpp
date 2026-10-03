@@ -1,6 +1,7 @@
 #include "queue_acceptance.h"
 #include "main_window.h"
 #include "persistence/project_store.h"
+#include "rendering/render_progress.h"
 #include <QApplication>
 #include <QDir>
 #include <QElapsedTimer>
@@ -11,6 +12,7 @@
 #include <QSignalSpy>
 #include <QTest>
 #include <QTimer>
+#include <QToolBar>
 #include <iostream>
 namespace lmx {
 namespace {
@@ -30,6 +32,7 @@ struct Acceptance {
     QString previousActive;
     QString activeCancel;
     int phase = 0, ticks = 0;
+    qint64 observedElapsed = -1;
     QElapsedTimer elapsed;
 };
 } // namespace
@@ -155,6 +158,10 @@ void startQueueAcceptance(MainWindow &window, QApplication &app, const QString &
                             ensure(image.size() == QSize(160, 90), "Queue output resolution incorrect");
                             ensure(entry.contains("engine") && entry.at("engine").contains("blender"),
                                    "Engine provenance missing");
+                            ensure(entry.value("elapsedMs", qint64{0}) > 0 &&
+                                       entry.value("remainingMs", qint64{0}) == -1 &&
+                                       entry.at("progress") == 100,
+                                   "Completed timing was not frozen or estimate remained active");
                         } else if (entry.at("state") == "Cancelled")
                             ++cancelled;
                         else if (entry.at("state") == "Failed")
@@ -191,6 +198,9 @@ void startQueueAcceptance(MainWindow &window, QApplication &app, const QString &
                     ensure(reopened.entries(window.editor().document().id).size() == 7,
                            "Gallery history did not survive reopening");
                     ensure(!reopened.busy(), "Completed jobs restarted automatically");
+                    ensure(reopened.entries(window.editor().document().id).front().at("elapsedMs") ==
+                               entries.front().at("elapsedMs"),
+                           "Completed duration did not survive reopening");
                     ProjectStore::save(directory + "/edited-project.lmx", window.editor().document(), false);
                     auto saved = ProjectStore::open(directory + "/edited-project.lmx");
                     ensure(saved.renderSettings.at("renderHistory").size() == 5,
@@ -234,6 +244,56 @@ void startQueueAcceptance(MainWindow &window, QApplication &app, const QString &
                         poll->start();
                         return;
                     }
+                    const auto records = queue.entries();
+                    const auto active = std::find_if(records.begin(), records.end(), [&](const auto &entry) {
+                        return id(entry) == state->activeCancel;
+                    });
+                    ensure(active != records.end(), "Active progress record missing");
+                    if (active->value("remainingMs", qint64{-1}) <= 0 || active->value("progress", -1) <= 0) {
+                        poll->start();
+                        return;
+                    }
+                    if (state->observedElapsed < 0) {
+                        state->observedElapsed = active->at("elapsedMs").get<qint64>();
+                        poll->start();
+                        return;
+                    }
+                    if (active->at("elapsedMs").get<qint64>() - state->observedElapsed < 1000) {
+                        poll->start();
+                        return;
+                    }
+                    auto *bar = window.findChild<QProgressBar *>("galleryRenderProgress");
+                    auto *timing = window.findChild<QLabel *>("galleryRenderTiming");
+                    std::cout << "TIMING_DIAGNOSTIC: " << active->at("state") << " progress "
+                              << active->value("progress", -1) << " elapsed " << active->at("elapsedMs")
+                              << " remaining " << active->at("remainingMs") << " label "
+                              << (timing ? timing->text().toStdString() : "missing") << '\n'
+                              << std::flush;
+                    ensure(bar && bar->isVisible() && bar->maximum() == 100 && bar->value() < 100,
+                           "Active gallery progress bar hidden or premature completion");
+                    ensure(timing && timing->text().contains("Decorrido:") &&
+                               timing->text().contains("restante estimado:") &&
+                               timing->text().contains("aproximadamente"),
+                           "Native render timing missing");
+                    ensure(window.findChild<QLabel *>("renderTiming")->text() == timing->text(),
+                           "Editor and gallery render times differ");
+                    window.resize(1440, 900);
+                    QTest::qWait(80);
+                    window.screen()->grabWindow(window.winId()).save(directory + "/render-progress.png");
+                    window.resize(900, 650);
+                    QTest::qWait(80);
+                    window.screen()->grabWindow(window.winId()).save(directory + "/render-progress-900.png");
+                    std::cout << "PROGRESS_LAYOUT: bar " << bar->width() << " timing " << timing->height()
+                              << " required " << timing->heightForWidth(timing->width()) << '\n'
+                              << std::flush;
+                    ensure(bar->width() >= 400 && timing->wordWrap() &&
+                               timing->height() >= timing->heightForWidth(timing->width()),
+                           "Compact render timing clipped");
+                    window.screen()->grabWindow(window.winId()).save(directory + "/render-progress-900.png");
+                    std::cout << "RENDER_TIMING_PASS: visible progress, engine ETA, advancing elapsed time, "
+                                 "1440/900 px, completed duration persisted; "
+                              << timing->text().toStdString() << '\n'
+                              << std::flush;
                     auto *images = window.findChild<QListWidget *>("renderImages");
                     for (int i = 0; i < images->count(); ++i)
                         if (images->item(i)->data(Qt::UserRole).toString() == state->activeCancel)
@@ -254,6 +314,14 @@ void startQueueAcceptance(MainWindow &window, QApplication &app, const QString &
                            "Active process cancellation failed");
                     ensure(!QFileInfo::exists(queue.imagePath(state->activeCancel)),
                            "Cancelled job left a completed image");
+                    ensure(cancelled->value("elapsedMs", qint64{0}) > 0 &&
+                               cancelled->value("remainingMs", qint64{0}) == -1,
+                           "Cancelled render kept a live estimate");
+                    QTest::mouseClick(window.findChild<QPushButton *>("galleryBack"), Qt::LeftButton);
+                    ensure(window.findChild<QWidget *>("workflowSteps")->isVisible() &&
+                               window.findChild<QToolBar *>("drawingToolbar")->isVisible() &&
+                               window.findChild<QToolBar *>("placementToolbar")->isVisible(),
+                           "Returning to the editor lost its tools");
                     std::cout << "QUEUE_PASS: five cameras, FIFO, responsive editing, immutable snapshots, "
                                  "queued and running cancellation, error, CPU retry, durable gallery, "
                                  "project metadata; ticks "

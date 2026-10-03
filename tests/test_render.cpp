@@ -5,6 +5,7 @@
 #include "rendering/environment_map.h"
 #include "rendering/high_dynamic_image.h"
 #include "rendering/light_model.h"
+#include "rendering/render_progress.h"
 #include "rendering/render_queue.h"
 #include "rendering/render_result.h"
 #include "rendering/render_snapshot.h"
@@ -24,6 +25,66 @@
 #include <catch2/catch.hpp>
 #endif
 using namespace lmx;
+TEST_CASE("Cycles progress keeps tile completion separate from current samples and final publication",
+          "[progress]") {
+    CyclesProgress tracker;
+    auto update = tracker.consume("LIBREMAX_STATS Remaining: 06:27.79 | Rendered 0/4 Tiles, Sample 96/512");
+    REQUIRE(update);
+    REQUIRE(update->percent == 4);
+    REQUIRE(update->remainingMs == 387790);
+    REQUIRE(tracker.consume("Rendered 0/4 Tiles, Sample 512/512")->percent == 25);
+    REQUIRE(tracker.consume("Rendered 1/4 Tiles, Sample 512/512")->percent == 25);
+    REQUIRE(tracker.consume("Rendered 1/4 Tiles, Sample 1/512")->percent == 25);
+    REQUIRE(tracker.consume("Rendered 1/4 Tiles, Sample 256/512")->percent == 37);
+    REQUIRE(tracker.consume("Rendered 1/4 Tiles, Sample 512/512")->percent == 50);
+    REQUIRE(tracker.consume("Rendered 2/4 Tiles, Sample 512/512")->percent == 50);
+    REQUIRE(tracker.consume("Rendered 3/4 Tiles, Sample 1/512")->percent == 75);
+    REQUIRE(tracker.consume("Rendered 3/4 Tiles, Sample 512/512")->percent == 99);
+    REQUIRE(tracker.consume("Rendered 3/4 Tiles, Sample 0/512")->percent == 99);
+    REQUIRE_FALSE(tracker.consume("LIBREMAX_STATS ViewLayer | Denoising"));
+    REQUIRE_FALSE(isCyclesDenoising("LIBREMAX_STATS Mem: 56M | Loading denoising kernels"));
+    REQUIRE(isCyclesDenoising("LIBREMAX_STATS Mem: 226M | ViewLayer | Denoising"));
+    REQUIRE_FALSE(isCyclesDenoising("LIBREMAX_STATS Mem: 238M | Sample 1/512"));
+    tracker = {};
+    REQUIRE(tracker.consume("Rendering 1/128")->percent == 0);
+    REQUIRE(tracker.consume("Rendering 128/128")->percent == 99);
+}
+TEST_CASE("Engine estimates parse hours and milliseconds and never synthesize time from sample count",
+          "[progress]") {
+    CyclesProgress tracker;
+    REQUIRE(tracker.consume("Remaining: 01:02:03.25 | Sample 2/8")->remainingMs == 3723250);
+    REQUIRE(tracker.consume("Remaining: 00:00.00 | Sample 3/8")->remainingMs == 0);
+    REQUIRE(tracker.consume("Sample 4/8")->remainingMs == -1);
+    REQUIRE(tracker.consume("Remaining: 00:99.9 | Sample 5/8")->remainingMs == -1);
+    REQUIRE(tracker.consume("Remaining: 999:00:00 | Sample 6/8")->remainingMs == -1);
+    REQUIRE_FALSE(tracker.consume("Sample 9/8"));
+    REQUIRE_FALSE(tracker.consume("Sample 0/0"));
+    REQUIRE_FALSE(tracker.consume("Rendered 5/4 Tiles, Sample 1/8"));
+    REQUIRE(renderDuration(3723250) == "1h 2min 3s");
+}
+TEST_CASE("Render timing hides stale predictions and finalization estimates and freezes completed durations",
+          "[progress]") {
+    Json entry = {{"state", "Queued"}};
+    REQUIRE(renderTimingText(entry).contains("Aguardando"));
+    entry = {{"state", "Rendering"},
+             {"started", "2026-10-03T14:00:00.000Z"},
+             {"elapsedMs", 10000},
+             {"remainingMs", 90000},
+             {"remainingUpdatedElapsedMs", 5000},
+             {"estimatedFinish", "2026-10-03T14:01:35.000Z"}};
+    REQUIRE(renderTimingText(entry).contains("Decorrido: 10s"));
+    REQUIRE(renderTimingText(entry).contains("restante estimado: 1min 25s"));
+    REQUIRE(renderTimingText(entry).contains("aproximadamente"));
+    entry["elapsedMs"] = 36000;
+    REQUIRE_FALSE(renderTimingText(entry).contains("restante estimado"));
+    entry["state"] = "Denoising";
+    REQUIRE(renderTimingText(entry).contains("finalizando"));
+    REQUIRE_FALSE(renderTimingText(entry).contains("restante estimado"));
+    entry["state"] = "Completed";
+    REQUIRE(renderTimingText(entry) == "Tempo em execução: 36s");
+    entry.erase("elapsedMs");
+    REQUIRE(renderTimingText(entry).contains("não registrado"));
+}
 TEST_CASE("Five light types retain Kelvin, physical dimensions, orientation and versioned snapshots",
           "[lighting]") {
     QTemporaryDir directory;

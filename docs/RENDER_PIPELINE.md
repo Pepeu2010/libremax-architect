@@ -1,4 +1,4 @@
-# Fila e galeria de renders — fontes 0.10.0
+# Fila e galeria de renders — fontes 0.11.0
 
 O LibreMax conserva o editor nativo Qt/OpenCASCADE. O Blender Cycles calcula as imagens em um processo independente, sem janela ou terminal. Não é necessário importar a cena nem configurar o projeto no Blender. Esta prévia ainda exige que o Blender 5.2 LTS ou superior esteja instalado; o aplicativo procura o executável no PATH e nas instalações Windows e permite selecioná-lo quando necessário.
 
@@ -7,7 +7,7 @@ O LibreMax conserva o editor nativo Qt/OpenCASCADE. O Blender Cycles calcula as 
 1. Prepare a câmera, iluminação e acabamentos no LibreMax.
 2. Escolha Rápido, Normal, Final ou Personalizado no painel Criar imagem.
 3. Crie uma imagem, uma prévia rápida ou imagens de todas as câmeras.
-4. Acompanhe a fila em Suas imagens. Voltar ao projeto permite continuar editando.
+4. Acompanhe a barra, tempo decorrido e restante estimado em Suas imagens. Voltar ao projeto permite continuar editando e acompanhar os mesmos tempos no painel Criar imagem.
 5. Abra o resultado, ajuste o zoom, salve uma cópia ou repita usando a cena original. Tentar com CPU cria um novo pedido preservando o histórico anterior.
 
 Cada pedido mantém sua própria cópia do documento, materiais, assets e câmera. Alterações posteriores não modificam imagens já enviadas. Apenas um processo Cycles renderiza por vez, na ordem de envio. A preparação usa até dois workers; a tesselação também ocorre fora da thread da interface.
@@ -35,7 +35,7 @@ A galeria persiste ao reabrir o programa. Pedidos interrompidos são identificad
 
 Blender recebe argumentos separados, sem shell. O script Python é um recurso distribuído, não é montado com texto do usuário. O processo recebe prioridade reduzida e até oito threads CPU. No Windows, um Job Object interrompe os processos associados ao fechar o aplicativo; no Linux, o processo recebe um sinal quando o pai termina. Cancelar também interrompe o processo ativo.
 
-Estados distinguem preparação, exportação, render, denoise, salvamento, conclusão, falha, cancelamento e interrupção. Percentuais usam contagens de amostras emitidas pelo Cycles. Quando não há contagem, a interface mostra atividade indeterminada. O tempo transcorrido nunca inventa percentual. Os registros guardam a versão Blender, dispositivo, parâmetros e código de saída.
+Estados distinguem preparação, exportação, render, denoise, salvamento, conclusão, falha, cancelamento e interrupção. Percentuais usam contagens de amostras e partes emitidas pelo Cycles. Quando não há contagem, a interface mostra atividade indeterminada. O tempo transcorrido nunca inventa percentual. A previsão acompanha o campo Remaining do motor; finalização aparece separadamente e 100% exige saída válida. O histórico guarda a duração, versão Blender, dispositivo, parâmetros e código de saída. [Progresso e estimativa](RENDER_PROGRESS.md).
 
 Uma imagem só substitui a saída depois de validar o arquivo e sua resolução. A cópia final usa QSaveFile; falha de processo ou imagem inválida preserva o resultado anterior. AUTO procura OptiX, CUDA, HIP e oneAPI; a seleção de dispositivo e a repetição após erro podem recorrer à CPU. A seleção HIP e um render real de apartamento foram validados na RX 7600 deste host Windows. NVIDIA/Intel, outras GPUs e HIP no Linux ainda não foram validados. A seleção usa apenas dispositivos do backend correspondente; a lista do Blender pode incluir dispositivos de outros backends.
 

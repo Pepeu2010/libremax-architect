@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(LibreMaxArchitect VERSION 0.10.0 LANGUAGES CXX)
+project(LibreMaxArchitect VERSION 0.11.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
@@ -13,6 +13,7 @@ find_path(FREEIMAGE_INCLUDE_DIR FreeImage.h REQUIRED)
 find_library(FREEIMAGE_LIBRARY NAMES freeimage FreeImage REQUIRED)
 find_package(OpenEXR 3 REQUIRED)
 add_library(lmx_core
+  libs/rendering/render_progress.cpp libs/rendering/render_progress.h
   libs/rendering/light_model.cpp libs/rendering/light_model.h
   libs/rendering/render_result.cpp libs/rendering/render_result.h
   libs/rendering/environment_map.cpp libs/rendering/environment_map.h
