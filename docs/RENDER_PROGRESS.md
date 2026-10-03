@@ -23,4 +23,4 @@ Windows Release: **40 testes / 2.269 verificações** passaram. O teste nativo c
 
 ![Barra e previsão durante render real, em janela de 900 pixels](screenshots/render-progress-900.png)
 
-[Captura em 1440 pixels](screenshots/render-progress.png). Os instaladores desta revisão aguardam os testes Windows e Linux da publicação. [Relatório](TEST_REPORT.md), [fila e galeria](RENDER_PIPELINE.md).
+[Captura em 1440 pixels](screenshots/render-progress.png). A [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37129048387) passou com Cycles real e o mesmo teste de barra, estimativa e layout. A [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37129048284) passou em Windows e Ubuntu instalado em runner novo. A [prévia 0.11](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.11.0-preview.1) está publicada. [Relatório](TEST_REPORT.md), [fila e galeria](RENDER_PIPELINE.md).
