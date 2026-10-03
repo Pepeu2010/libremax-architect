@@ -49,8 +49,13 @@ Evidência local: `build-render/experience-016-fixed/` e
 Build Release, clang-format 23.1.1 e git diff --check passaram. O núcleo
 concluiu 52 testes / 3.065 verificações, incluindo transformação de posições
 reais, objetos sobre mesas, histórico, recusa atômica e bloqueios herdados.
-A CI Linux e os instaladores 0.16 ainda precisam executar os gates desta fonte;
-os links atuais de instalação permanecem na prévia 0.15.0-preview.3.
+A [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37160630378)
+e os [gates dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37160630397)
+passaram na fonte `69f085827d048ffaa01e964fbf1241d9f2e5c88d`.
+A [prévia 0.16.0-preview.1](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.16.0-preview.1)
+está publicada. Os digests dos oito assets coincidem com os manifestos; o Setup
+Windows foi baixado integralmente e conferido por SHA256:
+`554dd6a7b70eabb0b083db0448e8d871e5200eafd4d59382cc4dfa08ea8c1d42`.
 
 O espelhamento usa o eixo horizontal da planta; pivô manual, gizmos e encaixe
 coletivo automático na parede permanecem pendentes. Colisões usam volumes que

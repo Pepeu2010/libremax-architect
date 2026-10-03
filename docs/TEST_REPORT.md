@@ -4,8 +4,13 @@ Windows Release: **52 testes / 3.065 verificações**, build e formato C++ passa
 Tutorial com 21 assuntos, navegação por teclado e janela compacta; giro e
 espelhamento de conjuntos pela interface; importação real, erro de OBJ com
 diagnóstico separado e três fotos Cycles CPU passaram no Windows.
-[Evidência, reprodução e limites](EXECUTION_016.md). Gates de instalação da nova
-fonte ainda pendentes. O relatório abaixo documenta a versão publicada 0.15.
+[Evidência, reprodução e limites](EXECUTION_016.md).
+A [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37160630378)
+e a [CI dos instaladores Windows/Ubuntu](https://github.com/Pepeu2010/libremax-architect/actions/runs/37160630397)
+passaram; a [prévia 0.16](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.16.0-preview.1)
+está publicada. Os oito digests GitHub correspondem aos checksums, e o Setup
+Windows baixado integralmente tem o SHA256 publicado. O relatório abaixo
+mantém as provas das versões anteriores.
 
 # Test report — montagem e modelos 0.15.0
 
