@@ -16,6 +16,19 @@ O [i3-6006U](https://www.intel.com/content/www/us/en/products/sku/91157/intel-co
 
 ## Aceitação no notebook
 
+O usuário confirmou disponibilidade do notebook e do VDMax em 3 de outubro de
+2026. A fonte 0.15 distribui **Testar notebook** no menu Iniciar do Windows.
+O teste registra o dispositivo OpenGL realmente usado, tempos de edição,
+CPU/GPU/driver/RAM e pico conjunto de memória do aplicativo e subprocessos.
+[Instruções e comparação](NOTEBOOK_VDMAX_TEST.md). Foi verificado no Ryzen/RX 7600;
+o resultado físico na HD 520 continua pendente.
+
+Na fonte 0.15, 57 modelos detalhados têm malha separada para a edição em Leve.
+As malhas completas permanecem nos projetos e no render. Uma cena controlada
+de 48 cortinas passou de 439.872 para 71.952 triângulos na edição. A validação
+de modelos tem cache limitado por hash, evitando analisar cópias idênticas
+repetidamente. Essas alterações não são uma garantia de FPS no notebook.
+
 A fonte 0.13 também reutiliza sólidos ao mover/girar cópias e malhas no Cycles,
 com preservação de modelos e texturas. Isso reduz trabalho e pacotes repetidos;
 não substitui as medições de fluidez e RAM abaixo. [Provas e limites](SHARED_GEOMETRY.md).

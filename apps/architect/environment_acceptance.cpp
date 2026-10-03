@@ -12,6 +12,7 @@
 #include <QScreen>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QSignalSpy>
 #include <QTest>
 #include <QTimer>
 #include <iostream>
@@ -39,7 +40,11 @@ void startEnvironmentAcceptance(MainWindow &window, QApplication &app, const QSt
     QObject::connect(poll, &QTimer::timeout, &window, [&window, &app, directory, blender, state, poll] {
         poll->stop();
         try {
-            ensure(state->elapsed.elapsed() < 240000, "Environment acceptance timed out");
+            if (state->elapsed.elapsed() >= 240000) {
+                window.screen()->grabWindow(window.winId()).save(directory + "/timeout.png");
+                throw std::runtime_error("Environment acceptance timed out in phase " +
+                                         std::to_string(state->phase));
+            }
             auto &editor = window.editor();
             auto &queue = window.renderQueue();
             if (state->phase == 0) {
@@ -54,8 +59,12 @@ void startEnvironmentAcceptance(MainWindow &window, QApplication &app, const QSt
                 dock->raise();
                 auto *button = window.findChild<QPushButton *>("useDaylightHdri");
                 ensure(button, "Bundled daylight button missing");
+                QTest::qWait(100);
                 window.findChild<QScrollArea *>("renderScroll")->ensureWidgetVisible(button);
+                QTest::qWait(100);
+                QSignalSpy clicked(button, &QPushButton::clicked);
                 QTest::mouseClick(button, Qt::LeftButton);
+                ensure(clicked.count() == 1, "Native daylight button click did not reach its target");
                 state->phase = 1;
             } else if (state->phase == 1 &&
                        editor.document().renderSettings.value("environmentMode", "studio") == "hdri") {
