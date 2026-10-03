@@ -2,6 +2,10 @@
 
 Fonte C++20, CMake ≥3.24, Ninja, Qt ≥6.4 (Core/Gui/Widgets/Sql/Concurrent/Test), OpenCASCADE, nlohmann/json, spdlog, libzip, FreeImage, OpenEXR ≥3 e Catch2. Preferir Catch2 3; aceitar 2.13 em distribuições com pacote antigo. Dependências não são baixadas pelo aplicativo em runtime.
 
+Empacotamento usa Python ≥3.12 e curl para baixar os arquivos oficiais do motor,
+sempre com SHA256 verificado. Windows 10/11 e runners usados já incluem curl;
+o bootstrap Linux instala essa ferramenta de desenvolvimento.
+
 Para usar sem compilar, veja [INSTALADOR](../INSTALADOR/README.md). O fluxo abaixo é para desenvolvimento.
 
 ## Reproduzir os instaladores

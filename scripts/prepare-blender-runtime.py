@@ -5,9 +5,9 @@ import json
 import os
 from pathlib import Path, PurePosixPath
 import shutil
+import subprocess
 import tarfile
 import tempfile
-import urllib.request
 import zipfile
 
 
@@ -29,8 +29,8 @@ def archive_for(entry, cache, supplied=None):
             temporary = Path(target.name)
             try:
                 print('Downloading official Blender: ' + entry['url'], flush=True)
-                with urllib.request.urlopen(entry['url'], timeout=120) as response:
-                    shutil.copyfileobj(response, target, length=1024 * 1024)
+                subprocess.run(['curl', '--fail', '--location', '--retry', '3',
+                                '--connect-timeout', '30', entry['url']], stdout=target, check=True)
             except BaseException:
                 target.close()
                 temporary.unlink(missing_ok=True)

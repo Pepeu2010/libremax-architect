@@ -2,7 +2,7 @@
 
 Pacote inicial para **Ubuntu 24.04 e Linux Mint 22, x86-64**. Outras distribuições ainda não foram validadas.
 
-1. Abra a [Release dos instaladores](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.14.0-preview.1).
+1. Abra a [Release dos instaladores](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.14.0-preview.2).
 2. Baixe **LibreMax-Architect-0.14.0-Linux-Ubuntu24.04-amd64.deb**.
 3. Abra o pacote no instalador de aplicativos da sua distribuição. Se ele não oferecer essa opção, use no Terminal, na pasta do download:
 
