@@ -75,8 +75,9 @@ try {
         Invoke-App -Arguments @('--experience-smoke', (Join-Path $evidence 'experience')) -Name 'experience'
         Invoke-App -Arguments @('--recovery-smoke') -Name 'recovery'
     }
+    Invoke-App -Arguments @('--render-smoke', (Join-Path $evidence 'render'), '--render-project', (Join-Path $installation 'share/libremax/examples/apartamento-moderno.lmx'), '--render-size', '320x180', '--render-samples', '8') -Name 'bundled-render'
     if ($Blender) {
-        Invoke-App -Arguments @('--render-smoke', (Join-Path $evidence 'render'), '--render-project', (Join-Path $installation 'share/libremax/examples/apartamento-moderno.lmx'), '--render-size', '320x180', '--render-samples', '8', '--blender', $Blender) -Name 'render'
+        Invoke-App -Arguments @('--render-smoke', (Join-Path $evidence 'external-render'), '--render-size', '160x90', '--render-samples', '8', '--blender', $Blender) -Name 'external-render'
     }
     Copy-Item -LiteralPath (Join-Path $evidence 'runtime/portable-project.lmx') -Destination (Join-Path $installation 'preserve-me.lmx')
 } finally {
@@ -95,8 +96,9 @@ try {
     }
 }
 if ((Test-Path -LiteralPath (Join-Path $installation 'bin/libremax-architect.exe')) -or
+    (Test-Path -LiteralPath (Join-Path $installation 'share/libremax/runtime/blender/blender.exe')) -or
     (Test-Path -LiteralPath $desktopLink) -or (Test-Path -LiteralPath $menu) -or (Test-Path -LiteralPath $registry)) {
     throw 'Application files or installed registration remained after uninstall.'
 }
 if (!(Test-Path -LiteralPath (Join-Path $installation 'preserve-me.lmx'))) { throw 'Uninstaller removed a project.' }
-Write-Output 'WINDOWS_INSTALLER_PASS: install, clean PATH runtime, shortcuts, uninstall and preserved project'
+Write-Output 'WINDOWS_INSTALLER_PASS: bundled Blender automatic detection and real render, clean PATH, shortcuts, uninstall and preserved project'

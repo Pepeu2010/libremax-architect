@@ -1,6 +1,10 @@
-# Render de apresentação — fontes 0.12.0
+# Render de apresentação — fontes 0.14.0
 
 O objetivo atual é uma aparência fotográfica com a geometria do projeto. Cycles calcula iluminação indireta, sombras, reflexos e transmissão; a qualidade depende da cena, materiais, iluminação e resolução. Um projeto com modelos simples continua mostrando esses limites.
+
+Blender 4.5.9 LTS/Cycles acompanha os instaladores e é configurado automaticamente.
+Abra Criar imagem; Configurar Blender é opcional para usar um motor externo.
+[Dependências incluídas](BUNDLED_RUNTIME.md).
 
 **Preparar:** o apartamento de exemplo tem câmera e luzes de teto prontas; **Preparar câmera do cômodo** cria uma câmera para o cômodo escolhido. Para texturas PBR, abra a cozinha de exemplo (já com seis mapas PBR incorporados) ou clique Render → Ativar texturas reais. Isso atualiza carvalho e pedra em placas no projeto. Selecione a câmera por UUID; escolha Luz neutra ou Céu natural. No céu, altura e direção do sol controlam entrada de luz pelas aberturas. Intensidade ambiente (0–5), exposição (-8 a +8 EV) e denoise entram no histórico/arquivo `.lmx`, junto ao modo de ambiente e sol. Arquivos antigos continuam usando Luz neutra quando os campos novos estão ausentes.
 

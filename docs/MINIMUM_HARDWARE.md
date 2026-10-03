@@ -26,7 +26,7 @@ Antes de declarar suporte confirmado, executar no hardware real:
 2. Confirmar início em Leve, catálogo completo, busca e criação de cômodo.
 3. Abrir `examples/apartamento-moderno.lmx`; mover, girar, encaixar e editar móveis em planta e 3D. Registrar fluidez e picos de RAM durante órbita/arraste e carregamento.
 4. Salvar e reabrir o projeto, com geometria e materiais preservados.
-5. Selecionar Blender 4.5 LTS e CPU, renderizar Rápido; verificar imagem válida, progresso/estimativa, edição durante cálculo e cancelamento.
+5. Usar o Blender 4.5 LTS incluído no instalador 0.14 e CPU, renderizar Rápido; verificar imagem válida, progresso/estimativa, edição durante cálculo e cancelamento.
 6. Calcular uma imagem de apresentação em 1920 × 1080, registrar tempo e pico de RAM, verificar finalização e preservação da imagem anterior após falha.
 
 Sem crash, falta de memória ou bloqueio prolongado da edição nessas cenas. Cenas maiores e texturas mais pesadas exigem avaliação própria. Não extrapolar testes em Ryzen/Radeon, afinidade de CPU ou Mesa para resultados na HD 520.

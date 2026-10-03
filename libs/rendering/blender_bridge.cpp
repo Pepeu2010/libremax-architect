@@ -1,4 +1,5 @@
 #include "blender_bridge.h"
+#include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
 #include <QStandardPaths>
@@ -81,6 +82,16 @@ BlenderBridge::~BlenderBridge() {
 QString BlenderBridge::findExecutable(const QString &preferred) {
     if (!preferred.isEmpty() && QFileInfo(preferred).isExecutable())
         return preferred;
+    const auto bundled = QDir(QCoreApplication::applicationDirPath())
+                             .absoluteFilePath(
+#ifdef Q_OS_WIN
+                                 "../share/libremax/runtime/blender/blender.exe"
+#else
+                                 "../share/libremax/runtime/blender/blender"
+#endif
+                             );
+    if (QFileInfo(bundled).isExecutable())
+        return QFileInfo(bundled).canonicalFilePath();
     auto path = QStandardPaths::findExecutable("blender");
     if (!path.isEmpty())
         return path;

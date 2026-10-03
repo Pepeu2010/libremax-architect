@@ -2238,8 +2238,9 @@ void MainWindow::renderScene() {
         throw std::runtime_error("Prepare uma câmera do cômodo antes de criar a imagem.");
     const auto executable = BlenderBridge::findExecutable(blenderPath->text());
     if (executable.isEmpty())
-        throw std::runtime_error("O mecanismo de render não foi encontrado. Instale o Blender 4.5 LTS ou "
-                                 "superior e selecione o executável em Configurar Blender.");
+        throw std::runtime_error("O mecanismo de render não foi encontrado. Reinstale o LibreMax para "
+                                 "restaurá-lo ou escolha uma instalação Blender 4.5 LTS ou superior em "
+                                 "Configurar Blender.");
     blenderPath->setText(executable);
     if (!testing)
         QSettings().setValue("blender", executable);

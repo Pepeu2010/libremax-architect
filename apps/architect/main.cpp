@@ -227,6 +227,20 @@ int main(int argc, char **argv) {
                 !QFileInfo::exists(lmx::resourcePath("scripts/cycles_lights.py")) ||
                 !QFileInfo::exists(lmx::resourcePath("resources/style.qss")))
                 throw std::runtime_error("Installed renderer resources invalid");
+            const auto engine = lmx::BlenderBridge::findExecutable();
+            const auto engineRoot = QDir(installedRoot + "/runtime/blender").canonicalPath();
+            if (engineRoot.isEmpty() || !engine.startsWith(engineRoot + "/") ||
+                !QFileInfo::exists(engineRoot + "/license/license.md") ||
+                !QFileInfo::exists(engineRoot + "/libremax-runtime.json"))
+                throw std::runtime_error("Installed Blender runtime missing or not automatically detected");
+            QProcess engineCheck;
+            engineCheck.setProcessChannelMode(QProcess::MergedChannels);
+            engineCheck.start(engine, {"--version"});
+            if (!engineCheck.waitForStarted(10000) || !engineCheck.waitForFinished(30000) ||
+                engineCheck.exitStatus() != QProcess::NormalExit || engineCheck.exitCode() != 0 ||
+                !engineCheck.readAll().contains("Blender 4.5.9"))
+                throw std::runtime_error("Installed Blender could not run with its bundled dependencies");
+            std::cout << "BUNDLED_BLENDER_PASS: automatically found and ran Blender 4.5.9\n";
             QImage codec(32, 32, QImage::Format_RGB32);
             codec.fill(Qt::darkBlue);
             if (!codec.save(output + "/image-codec.jpg", "JPEG") ||
@@ -291,6 +305,9 @@ int main(int argc, char **argv) {
             return 0;
         }
         if (parser.isSet("render-smoke")) {
+            const auto blender = lmx::BlenderBridge::findExecutable(parser.value("blender"));
+            if (blender.isEmpty())
+                throw std::runtime_error("Render engine not found");
             const auto script = parser.isSet("render-script")
                                     ? QFileInfo(parser.value("render-script")).absoluteFilePath()
                                     : lmx::resourcePath("scripts/cycles_render.py");
@@ -357,16 +374,16 @@ int main(int argc, char **argv) {
                 checkingFailure = true;
                 std::erase_if(document.entities, [](const auto &e) { return e.type == "Camera"; });
                 document.renderSettings["camera"] = "";
-                job.start(document, parser.value("blender"), script, path, renderWidth, renderHeight,
-                          renderSamples, renderDevice);
+                job.start(document, blender, script, path, renderWidth, renderHeight, renderSamples,
+                          renderDevice);
             });
             QTimer::singleShot(600000, &app, [&] {
                 job.cancel();
                 std::cerr << "Render acceptance timeout\n";
                 app.exit(1);
             });
-            job.start(document, parser.value("blender"), script, directory + "/cycles-kitchen.png",
-                      renderWidth, renderHeight, renderSamples, renderDevice);
+            job.start(document, blender, script, directory + "/cycles-kitchen.png", renderWidth, renderHeight,
+                      renderSamples, renderDevice);
             return app.exec();
         }
         lmx::applyStudioPalette();

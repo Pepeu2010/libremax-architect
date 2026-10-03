@@ -21,11 +21,23 @@ jobs:
             mingw-w64-ucrt-x86_64-catch mingw-w64-ucrt-x86_64-spdlog
             mingw-w64-ucrt-x86_64-nlohmann-json mingw-w64-ucrt-x86_64-nsis
             mingw-w64-ucrt-x86_64-python mingw-w64-ucrt-x86_64-openexr
-      - name: Build and core verification
+      - name: Locate Windows toolchain
         shell: msys2 {0}
         run: |
           echo "LMX_TOOL_PREFIX=$(cygpath -w "$MINGW_PREFIX")" >> "$GITHUB_ENV"
-          cmake -S . -B build-windows -G Ninja -DCMAKE_BUILD_TYPE=Release -DLMX_DEPLOYMENT_BUILD=ON
+      - name: Prepare official bundled Blender with checksum
+        shell: pwsh
+        run: |
+          $ProgressPreference = 'SilentlyContinue'
+          $engine = (Get-Content scripts/blender-runtime.json -Raw | ConvertFrom-Json).windows
+          New-Item -ItemType Directory -Force build/blender-package/cache | Out-Null
+          Invoke-WebRequest -Uri $engine.url -OutFile "build/blender-package/cache/$($engine.filename)"
+          & "$env:LMX_TOOL_PREFIX/bin/python.exe" scripts/prepare-blender-runtime.py --platform windows --archive "build/blender-package/cache/$($engine.filename)" --output build-windows-runtime
+          if ($LASTEXITCODE) { throw 'Bundled Blender preparation failed' }
+      - name: Build and core verification
+        shell: msys2 {0}
+        run: |
+          cmake -S . -B build-windows -G Ninja -DCMAKE_BUILD_TYPE=Release -DLMX_DEPLOYMENT_BUILD=ON -DLMX_BLENDER_RUNTIME_DIR="$PWD/build-windows-runtime"
           cmake --build build-windows --parallel 3
           ctest --test-dir build-windows --output-on-failure
       - name: Build setup and verify actual installation
@@ -38,6 +50,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: windows-installer
+          compression-level: 0
           path: |
             dist/windows/*Setup.exe
             dist/windows/SHA256SUMS-Windows.txt
@@ -54,11 +67,14 @@ jobs:
       - run: bash scripts/bootstrap.sh
       - name: Build and package
         run: |
-          cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release -DLMX_DEPLOYMENT_BUILD=ON
+          python3 scripts/prepare-blender-runtime.py --platform linux --output build-linux-runtime
+          cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release -DLMX_DEPLOYMENT_BUILD=ON -DLMX_BLENDER_RUNTIME_DIR="$PWD/build-linux-runtime"
           cmake --build build-linux --parallel 3
           ctest --test-dir build-linux --output-on-failure
           sudo apt-get install -y xvfb libgl1-mesa-dri libxrender1 libxi6 libxxf86vm1 libxfixes3 libxkbcommon0 libegl1 libsm6
           cmake --install build-linux --prefix "$PWD/build-linux/stage"
+          QT_QPA_PLATFORM=offscreen ./build-linux/stage/bin/libremax-architect --installation-smoke build-linux/bundled-runtime-evidence
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build-linux/stage/bin/libremax-architect --render-smoke build-linux/bundled-runtime-evidence/render --render-project build-linux/stage/share/libremax/examples/apartamento-moderno.lmx --render-size 320x180 --render-samples 8
           bash scripts/verify-cycles-linux.sh ./build-linux/stage/bin/libremax-architect build-linux/queue-evidence
           cpack --config build-linux/CPackConfig.cmake -G DEB -B dist/linux
           cd dist/linux
@@ -66,6 +82,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: linux-installer
+          compression-level: 0
           path: |
             dist/linux/*.deb
             dist/linux/SHA256SUMS-Linux.txt
@@ -74,7 +91,9 @@ jobs:
         if: always()
         with:
           name: linux-render-evidence
-          path: build-linux/queue-evidence
+          path: |
+            build-linux/queue-evidence
+            build-linux/bundled-runtime-evidence
   linux-installed:
     needs: linux
     runs-on: ubuntu-24.04
@@ -88,12 +107,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ./installer/*.deb xvfb libgl1-mesa-dri
           QT_QPA_PLATFORM=offscreen /usr/bin/libremax-architect --installation-smoke evidence/runtime
+          xvfb-run -a env QT_QPA_PLATFORM=xcb LIBGL_ALWAYS_SOFTWARE=1 /usr/bin/libremax-architect --render-smoke evidence/bundled-render --render-project /usr/share/libremax/examples/apartamento-moderno.lmx --render-size 320x180 --render-samples 8
           xvfb-run -a env QT_QPA_PLATFORM=xcb LIBGL_ALWAYS_SOFTWARE=1 /usr/bin/libremax-architect --ui-smoke evidence/expanded-library
           xvfb-run -a env QT_QPA_PLATFORM=xcb LIBGL_ALWAYS_SOFTWARE=1 /usr/bin/libremax-architect --modern-smoke evidence/native
           cp evidence/runtime/portable-project.lmx evidence/preserve-me.lmx
           sudo apt-get remove -y libremax-architect
           test -f evidence/preserve-me.lmx
           test ! -f /usr/bin/libremax-architect
+          test ! -f /usr/share/libremax/runtime/blender/blender
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -117,5 +138,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           git archive --format=tar.gz --prefix=LibreMax-Architect/ --output=release/LibreMax-Architect-Source.tar.gz HEAD
-          (cd release && sha256sum *.exe *.deb *.tar.gz > SHA256SUMS.txt)
+          python3 scripts/prepare-blender-runtime.py --source-only --output release/Blender-4.5.9-Source.tar.xz
+          (cd release && sha256sum *.exe *.deb *.tar.gz *.tar.xz > SHA256SUMS.txt)
           gh release create "$GITHUB_REF_NAME" release/* --verify-tag --prerelease --title "LibreMax Architect $GITHUB_REF_NAME — Instaladores Windows e Linux" --notes-file INSTALADOR/RELEASE_NOTES.md

@@ -9,7 +9,7 @@
 | nlohmann/json | Documento | MIT |
 | spdlog/fmt | Logs | MIT |
 | Catch2 | Testes | BSL-1.0 |
-| Blender/Cycles | Processo externo | GPL |
+| Blender/Cycles 4.5.9 LTS | Processo externo incluído no instalador | GPL |
 | FreeImage | Validação HDR em ponto flutuante | FreeImage Public License / GPL |
 | OpenEXR / Imath | Validação EXR em ponto flutuante | BSD-3-Clause |
 
@@ -18,6 +18,10 @@ Fontes: [Qt](https://doc.qt.io/qt-6/licensing.html), [OCCT](https://dev.opencasc
 As dependências são vinculadas dinamicamente onde distribuídas, exceto core próprio. Binário final deve incluir avisos, licenças e fontes/ofertas aplicáveis. Dependências transitivas do MSYS2 incluem mais módulos do que o app usa; não distribuir toda a pasta de desenvolvimento. SBOM/auditoria dos pacotes finais ainda não executados. Assimp ainda não integrado.
 
 ## Texturas distribuídas
+
+Blender é distribuído no formato oficial completo, sem modificações, com Python,
+bibliotecas e licenças originais. As Releases incluem o arquivo oficial
+`Blender-4.5.9-Source.tar.xz` e seu checksum. [Origem, manifesto e preparação](BUNDLED_RUNTIME.md).
 
 `starter-materials`: seis mapas CC0-1.0, Oak Veneer 03 (Jenelle van Heerden) e Marble 01 (Rob Tuytel), Poly Haven. Proveniência, escala e hashes em [catálogo](../starter-materials/catalog.json) e [avisos](../starter-materials/README.md). Licença dos assets: [Poly Haven](https://polyhaven.com/license). Não incluem renders promocionais, logotipos ou imagens do VDMax.
 

@@ -22,6 +22,10 @@ New-Item -ItemType Directory -Path $stage -Force | Out-Null
 & cmake --install $build --prefix $stage
 if ($LASTEXITCODE) { throw 'Failed to install application resources.' }
 $binaryDirectory = Join-Path $stage 'bin'
+if (!(Test-Path -LiteralPath (Join-Path $stage 'share/libremax/runtime/blender/blender.exe')) -or
+    !(Test-Path -LiteralPath (Join-Path $stage 'share/libremax/runtime/blender/libremax-runtime.json'))) {
+    throw 'Installer must include the verified Blender runtime; configure LMX_BLENDER_RUNTIME_DIR.'
+}
 $app = Join-Path $binaryDirectory 'libremax-architect.exe'
 & (Join-Path $ToolPrefix 'bin\windeployqt.exe') --release --no-translations --no-plugins --no-opengl-sw --dir $binaryDirectory $app
 if ($LASTEXITCODE) { throw 'Qt deployment failed.' }

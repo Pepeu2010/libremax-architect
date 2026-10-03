@@ -6,22 +6,26 @@ Para usar sem compilar, veja [INSTALADOR](../INSTALADOR/README.md). O fluxo abai
 
 ## Reproduzir os instaladores
 
-Compile uma cópia limpa da tag publicada com `-DLMX_DEPLOYMENT_BUILD=ON`. Essa opção exige recursos instalados em `share/libremax` e gera executável Windows sem terminal. Não use a opção para abrir um binário solto na pasta de build.
+Compile uma cópia limpa da tag publicada com `-DLMX_DEPLOYMENT_BUILD=ON` e `-DLMX_BLENDER_RUNTIME_DIR` apontando para o motor preparado. A distribuição exige Blender incluído e recursos instalados em `share/libremax`, e gera executável Windows sem terminal. Não use a opção para abrir um binário solto na pasta de build.
 
-No Windows, acrescente NSIS e Python ao toolchain UCRT64. Configure/compile em `build-install/bin`, depois:
+No Windows, acrescente NSIS e Python ao toolchain UCRT64. Prepare o motor, configure e compile:
 
 ```powershell
+python scripts/prepare-blender-runtime.py --platform windows --output build-install/blender-runtime
+cmake -S . -B build-install/bin -G Ninja -DCMAKE_BUILD_TYPE=Release -DLMX_DEPLOYMENT_BUILD=ON -DLMX_BLENDER_RUNTIME_DIR="$PWD/build-install/blender-runtime"
+cmake --build build-install/bin --parallel 3
 ./scripts/package-windows.ps1 -ToolPrefix 'C:/caminho/msys64/ucrt64' -Python 'C:/caminho/msys64/ucrt64/bin/python.exe'
-./scripts/verify-windows-installer.ps1 -Installer dist/windows/LibreMax-Architect-0.8.0-Windows-x64-Setup.exe -Gui
+./scripts/verify-windows-installer.ps1 -Installer dist/windows/LibreMax-Architect-0.14.0-Windows-x64-Setup.exe -Gui
 ```
 
-O verificador exige um usuário sem instalação/atalhos LibreMax existentes. Instala em uma pasta nova, limpa o PATH do processo de teste, verifica catálogo/SQLite/modelos/codecs/projeto, desinstala e confirma que um projeto permanece. `-Blender 'C:/caminho/blender.exe'` também verifica Cycles CPU. Os logs ficam em `build-install/installation-evidence`. Não modifica o PATH global.
+O verificador exige um usuário sem instalação/atalhos LibreMax existentes. Instala em uma pasta nova, limpa o PATH do processo de teste, verifica catálogo/SQLite/modelos/codecs/projeto e executa Cycles CPU usando o motor incluído automaticamente. Desinstala e confirma que um projeto permanece. `-Blender 'C:/caminho/blender.exe'` acrescenta um teste com motor externo. Os logs ficam em `build-install/installation-evidence`. Não modifica o PATH global.
 
 No Ubuntu 24.04:
 
 ```bash
 bash scripts/bootstrap.sh
-cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release -DLMX_DEPLOYMENT_BUILD=ON
+python3 scripts/prepare-blender-runtime.py --platform linux --output build-linux-runtime
+cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release -DLMX_DEPLOYMENT_BUILD=ON -DLMX_BLENDER_RUNTIME_DIR="$PWD/build-linux-runtime"
 cmake --build build-linux --parallel 3
 ctest --test-dir build-linux --output-on-failure
 cpack --config build-linux/CPackConfig.cmake -G DEB -B dist/linux

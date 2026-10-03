@@ -12,6 +12,7 @@ SetCompressor /SOLID lzma
 Icon "..\..\resources\libremax.ico"
 UninstallIcon "..\..\resources\libremax.ico"
 !define MUI_ABORTWARNING
+!define MUI_WELCOMEPAGE_TEXT "Este assistente instala o LibreMax Architect com modelos, exemplos e o mecanismo de imagem Blender/Cycles.$\r$\n$\r$\nTudo fica pronto para criar imagens, sem instalar o Blender separadamente.$\r$\n$\r$\nClique em Avançar para continuar."
 !define MUI_FINISHPAGE_RUN "$INSTDIR\bin\libremax-architect.exe"
 !define MUI_FINISHPAGE_RUN_TEXT "Abrir LibreMax Architect"
 !insertmacro MUI_PAGE_WELCOME

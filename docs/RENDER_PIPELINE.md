@@ -1,6 +1,6 @@
-# Fila e galeria de renders — fontes 0.12.0
+# Fila e galeria de renders — fontes 0.14.0
 
-O LibreMax conserva o editor nativo Qt/OpenCASCADE. O Blender Cycles calcula as imagens em um processo independente, sem janela ou terminal. Não é necessário importar a cena nem configurar o projeto no Blender. Esta prévia ainda exige que o Blender 4.5 LTS ou 5.2 LTS esteja instalado; o aplicativo procura o executável no PATH e nas instalações Windows e permite selecioná-lo quando necessário.
+O LibreMax conserva o editor nativo Qt/OpenCASCADE. O Blender Cycles calcula as imagens em um processo independente, sem janela ou terminal. Não é necessário importar a cena nem configurar o projeto no Blender. Os instaladores incluem Blender 4.5.9 LTS e o aplicativo o encontra automaticamente. Escolher outro executável é opcional; uma escolha explícita tem prioridade sobre o motor incluído. [Instalação e dependências](BUNDLED_RUNTIME.md).
 
 Para o alvo i3-6006U/HD 520/8 GB, o caminho é Blender 4.5 LTS com CPU e editor Leve. [Requisito e validação física pendente](MINIMUM_HARDWARE.md).
 
