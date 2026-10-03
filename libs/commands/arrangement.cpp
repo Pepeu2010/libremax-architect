@@ -18,9 +18,17 @@ std::vector<std::string> arrangementMembers(const Document &d, const std::vector
             parent = d.at(parent).parent;
         }
     }
-    for (const auto &id : ids)
+    for (const auto &id : ids) {
         if (d.at(id).locked || (!movable(d.at(id)) && d.at(id).type != "Group"))
             throw std::invalid_argument("Selecione móveis ou conjuntos para organizar.");
+        auto parent = d.at(id).parent;
+        while (!parent.empty()) {
+            if (d.at(parent).locked)
+                throw std::invalid_argument(
+                    "O móvel pertence a um conjunto bloqueado. Desbloqueie antes de mover.");
+            parent = d.at(parent).parent;
+        }
+    }
     for (const auto &e : d.entities)
         if (e.locked) {
             auto p = e.parent;
@@ -60,6 +68,7 @@ void ungroupObjects(Document &d, const std::vector<std::string> &ids) {
     }
     if (groups.empty())
         throw std::invalid_argument("Selecione um conjunto para separar.");
+    arrangementMembers(d, {groups.begin(), groups.end()});
     for (auto &e : d.entities)
         if (groups.contains(e.parent)) {
             auto parent = e.metadata.value("beforeGroupParent", std::string{});
@@ -86,8 +95,10 @@ std::vector<Entity> placedTogether(const Document &d, const std::vector<Entity> 
         auto result = placeObject(obstacles, check, x, y, false);
         if (!result.allowed)
             throw std::invalid_argument(result.message);
-        e.transform.x = result.object.transform.x;
-        e.transform.y = result.object.transform.y;
+        // Placement validates against the room and obstacles. Do not round each member independently:
+        // that would change relative distances and make repeated transforms drift.
+        e.transform.x += dx;
+        e.transform.y += dy;
         e.metadata.erase("placementWall");
         placed.push_back(e);
     }
@@ -120,6 +131,52 @@ std::array<double, 4> bounds(const Entity &e) {
     return b;
 }
 } // namespace
+namespace {
+void transformTogether(Document &d, const std::vector<std::string> &ids, double degrees, bool mirror) {
+    if (!std::isfinite(degrees))
+        throw std::invalid_argument("Informe um ângulo válido para girar os móveis.");
+    const auto members = arrangementMembers(d, ids);
+    if (members.empty())
+        throw std::invalid_argument("Selecione móveis ou um conjunto para transformar.");
+    std::array<double, 4> extent{1e30, 1e30, -1e30, -1e30};
+    for (const auto &id : members) {
+        const auto b = bounds(d.at(id));
+        for (int axis = 0; axis < 2; ++axis) {
+            extent[axis] = std::min(extent[axis], b[axis]);
+            extent[axis + 2] = std::max(extent[axis + 2], b[axis + 2]);
+        }
+    }
+    const double pivotX = (extent[0] + extent[2]) / 2, pivotY = (extent[1] + extent[3]) / 2;
+    const double angle = std::remainder(degrees, 360.0) * std::numbers::pi / 180;
+    const auto c = std::cos(angle), s = std::sin(angle);
+    std::vector<Entity> objects;
+    for (const auto &id : members) {
+        auto e = d.at(id);
+        const auto old = bounds(e);
+        const double x = (old[0] + old[2]) / 2 - pivotX, y = (old[1] + old[3]) / 2 - pivotY;
+        const double centerX = pivotX + (mirror ? -x : c * x - s * y),
+                     centerY = pivotY + (mirror ? y : s * x + c * y);
+        e.transform.yaw = std::remainder(mirror ? -e.transform.yaw : e.transform.yaw + degrees, 360.0);
+        if (mirror)
+            e.transform.mirrored = !e.transform.mirrored;
+        const auto a = e.transform.yaw * std::numbers::pi / 180;
+        e.transform.x = centerX - (e.width * std::cos(a) - e.depth * std::sin(a)) / 2;
+        e.transform.y = centerY - (e.width * std::sin(a) + e.depth * std::cos(a)) / 2;
+        objects.push_back(std::move(e));
+    }
+    // Validate the entire rigid transformation against external obstacles before writing any member.
+    // Internal overlaps (a vase on a table, for example) remain exactly as they were.
+    const auto placed = placedTogether(d, objects, 0, 0);
+    for (const auto &e : placed)
+        d.at(e.id) = e;
+}
+} // namespace
+void rotateObjects(Document &d, const std::vector<std::string> &ids, double degrees) {
+    transformTogether(d, ids, degrees, false);
+}
+void mirrorObjects(Document &d, const std::vector<std::string> &ids) {
+    transformTogether(d, ids, 0, true);
+}
 void arrangeObjects(Document &d, const std::vector<std::string> &ids, const std::string &mode) {
     auto members = arrangementMembers(d, ids);
     if (members.size() < 2)

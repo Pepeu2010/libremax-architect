@@ -1,4 +1,4 @@
-# Montagem, modelos e foto — fonte 0.15
+# Montagem, modelos e foto — fonte 0.16
 
 Implementação das seis frentes autorizadas. Continua sendo uma prévia: a matriz
 registra o que falta para superar o VDMax, sem declarar paridade integral.
@@ -26,14 +26,19 @@ Ctrl + clique seleciona vários móveis. **Editar → Juntar em conjunto** cria 
 conjunto que pode ser arrastado por qualquer peça. **Mover seleção com medidas**
 usa centímetros; os deslocamentos relativos são preservados. Os comandos de
 alinhamento e distribuição recusam sobreposição e posição fora do cômodo.
+**Girar móvel / Ctrl+R** gira o conjunto 90 graus sobre o centro comum;
+**Espelhar** reflete os móveis na horizontal da planta. Ambas preservam distâncias,
+altura e objetos sobre mesas, e recusam paredes, obstáculos ou saída do cômodo
+antes de alterar qualquer peça. Bloqueios do conjunto ou de seus móveis são respeitados.
 **Separar conjunto** preserva as peças. Tudo participa de Desfazer/Refazer e do
 arquivo único `.lmx`.
 
 O encaixe agora usa o contorno real do cômodo, inclusive recuos côncavos. Objetos
 de mesa precisam caber inteiros sobre o apoio; itens de parede respeitam a altura.
 A colisão continua usando o volume que envolve cada modelo, não cada almofada ou
-vão da malha. Giro/espelhamento de conjunto e encaixe conjunto em paredes ainda
-exigem melhoria; o movimento conjunto preserva sua orientação.
+vão da malha. O encaixe conjunto automático em paredes ainda exige melhoria. Giro e
+espelhamento não procuram outra posição quando o destino não cabe; a operação
+é recusada inteira. O movimento conjunto preserva sua orientação.
 
 ## Biblioteca e importação
 
@@ -94,3 +99,15 @@ CPU, GPU, RAM e pico de memória combinado do aplicativo e seus processos filhos
 Esses testes não substituem o notebook **i3-6006U / HD 520 / 8 GB**, fotos 1080p,
 FPS durante navegação ou uma comparação com o VDMax. Ainda não há evidência para
 afirmar superioridade ou suporte confirmado ao hardware mínimo.
+
+## Tutorial e linguagem
+
+A primeira abertura oferece 21 assuntos, com índice acessível por teclado.
+Desenho em L e giro de conjuntos incluem diagramas originais leves. Os textos
+cobrem importação, coleções, edição Leve, estilos, progresso, galeria e arquivo
+único. O tutorial usa rolagem vertical em janelas pequenas e pode ser reaberto
+na tela inicial ou em Ajuda. Não marca tarefas práticas como realizadas.
+A escolha de cálculo usa Automático ou Processador; os valores internos AUTO/CPU
+permanecem compatíveis. Falhas na importação mostram um aviso curto; o registro
+do Blender fica no botão de detalhes. Cancelar preserva o projeto sem abrir
+um aviso de erro.

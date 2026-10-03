@@ -212,6 +212,120 @@ TEST_CASE("Furniture sets move atomically and align without entering walls", "[a
     REQUIRE(editor.document().contains(group));
     REQUIRE_NOTHROW(editor.document().validate());
 }
+TEST_CASE("Furniture sets rotate and mirror their real members around a shared center",
+          "[apartment][arrangement]") {
+    Document d;
+    addRectangularRoom(d, 8000, 7000, 2700, 120);
+    auto table = entity("GeometryObject", "Mesa");
+    table.width = 1200;
+    table.depth = 800;
+    table.height = 700;
+    table.transform = {2200, 2200, 0, 23, false};
+    auto vase = entity("GeometryObject", "Vaso sobre a mesa");
+    vase.width = 120;
+    vase.depth = 180;
+    vase.height = 300;
+    vase.transform = {2600, 2600, 702, -17, true};
+    auto chair = entity("GeometryObject", "Cadeira");
+    chair.width = 500;
+    chair.depth = 600;
+    chair.height = 900;
+    chair.transform = {4000, 2800, 0, 37, false};
+    for (auto e : {table, vase, chair})
+        d.entities.push_back(e);
+    const std::vector<std::string> ids{table.id, vase.id, chair.id};
+    const auto group = groupObjects(d, ids);
+    auto point = [](const Entity &e, double x, double y) {
+        if (e.transform.mirrored)
+            x = e.width - x;
+        const auto a = e.transform.yaw * 3.141592653589793 / 180;
+        return std::array<double, 2>{e.transform.x + x * std::cos(a) - y * std::sin(a),
+                                     e.transform.y + x * std::sin(a) + y * std::cos(a)};
+    };
+    std::array<double, 4> b{1e30, 1e30, -1e30, -1e30};
+    for (auto id : ids)
+        for (auto xy : {std::array{0.0, 0.0}, std::array{d.at(id).width, 0.0},
+                        std::array{d.at(id).width, d.at(id).depth}, std::array{0.0, d.at(id).depth}}) {
+            const auto p = point(d.at(id), xy[0], xy[1]);
+            for (int axis = 0; axis < 2; ++axis) {
+                b[axis] = std::min(b[axis], p[axis]);
+                b[axis + 2] = std::max(b[axis + 2], p[axis]);
+            }
+        }
+    const auto cx = (b[0] + b[2]) / 2, cy = (b[1] + b[3]) / 2;
+    Editor editor;
+    editor.load(d);
+    editor.apply("Girar conjunto", [&](Document &doc) { rotateObjects(doc, {group, table.id}, 90); });
+    for (auto id : ids) {
+        const auto before = point(d.at(id), 70, 90), after = point(editor.document().at(id), 70, 90);
+        REQUIRE(after[0] == Catch::Approx(cx - (before[1] - cy)).margin(.001));
+        REQUIRE(after[1] == Catch::Approx(cy + (before[0] - cx)).margin(.001));
+        REQUIRE(editor.document().at(id).transform.z == d.at(id).transform.z);
+        REQUIRE(editor.document().at(id).transform.mirrored == d.at(id).transform.mirrored);
+    }
+    const auto rotated = editor.document().serialize();
+    editor.history.undo();
+    REQUIRE(editor.document().serialize() == d.serialize());
+    editor.history.redo();
+    REQUIRE(editor.document().serialize() == rotated);
+    editor.history.undo();
+    editor.apply("Espelhar conjunto", [&](Document &doc) { mirrorObjects(doc, {group}); });
+    for (auto id : ids) {
+        const auto before = point(d.at(id), 70, 90), after = point(editor.document().at(id), 70, 90);
+        REQUIRE(after[0] == Catch::Approx(2 * cx - before[0]).margin(.001));
+        REQUIRE(after[1] == Catch::Approx(before[1]).margin(.001));
+        REQUIRE(editor.document().at(id).transform.z == d.at(id).transform.z);
+        REQUIRE(editor.document().at(id).transform.mirrored != d.at(id).transform.mirrored);
+    }
+    mirrorObjects(d, {group});
+    mirrorObjects(d, {group});
+    editor.history.undo();
+    for (auto id : ids) {
+        REQUIRE(d.at(id).transform.x == Catch::Approx(editor.document().at(id).transform.x));
+        REQUIRE(d.at(id).transform.y == Catch::Approx(editor.document().at(id).transform.y));
+        REQUIRE(d.at(id).transform.yaw == editor.document().at(id).transform.yaw);
+        REQUIRE(d.at(id).transform.mirrored == editor.document().at(id).transform.mirrored);
+    }
+}
+TEST_CASE("Set transformations reject outside rooms, obstacles and inherited locks atomically",
+          "[apartment][arrangement]") {
+    Document d;
+    addRectangularRoom(d, 6000, 3000, 2700, 120);
+    std::vector<std::string> ids;
+    for (int i = 0; i < 2; ++i) {
+        auto e = entity("GeometryObject", "Banco");
+        e.width = 500;
+        e.depth = 500;
+        e.height = 500;
+        e.transform = {1000.0 + i * 3500, 1100, 0, 0, false};
+        ids.push_back(e.id);
+        d.entities.push_back(e);
+    }
+    const auto group = groupObjects(d, ids);
+    const auto before = d.serialize();
+    REQUIRE_THROWS(rotateObjects(d, {group}, 90));
+    REQUIRE(d.serialize() == before);
+    auto obstacle = entity("GeometryObject", "Móvel no destino espelhado");
+    obstacle.width = 500;
+    obstacle.depth = 500;
+    obstacle.height = 500;
+    obstacle.transform = {4500, 1100, 400, 0, false};
+    // Raise one member: reflecting it onto this tall obstacle must be rejected.
+    d.at(ids.front()).transform.z = 400;
+    d.at(ids.back()).height = 300;
+    obstacle.height = 1000;
+    d.entities.push_back(obstacle);
+    const auto obstructed = d.serialize();
+    REQUIRE_THROWS(mirrorObjects(d, {group}));
+    REQUIRE(d.serialize() == obstructed);
+    d.at(group).locked = true;
+    const auto locked = d.serialize();
+    REQUIRE_THROWS(moveObjects(d, {ids.front()}, 10, 10));
+    REQUIRE_THROWS(rotateObjects(d, {ids.front()}, 90));
+    REQUIRE_THROWS(mirrorObjects(d, {ids.front()}));
+    REQUIRE_THROWS(ungroupObjects(d, {group}));
+    REQUIRE(d.serialize() == locked);
+}
 TEST_CASE("L rooms retain their actual footprint and associative surfaces", "[apartment][outline]") {
     Document d;
     const Outline l{{0, 0}, {5000, 0}, {5000, 2000}, {2000, 2000}, {2000, 5000}, {0, 5000}};

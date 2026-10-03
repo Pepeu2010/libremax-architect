@@ -1,17 +1,22 @@
-# LibreMax Architect 0.15.0 — montar, importar e fotografar
+# LibreMax Architect 0.16.0 — montar, importar e fotografar
 
 Baixe o arquivo do seu sistema em Assets:
 
-- **Windows 64 bits:** `LibreMax-Architect-0.15.0-Windows-x64-Setup.exe`.
-- **Ubuntu 24.04, x86-64:** `LibreMax-Architect-0.15.0-Linux-Ubuntu24.04-amd64.deb`.
+- **Windows 64 bits:** `LibreMax-Architect-0.16.0-Windows-x64-Setup.exe`.
+- **Ubuntu 24.04, x86-64:** `LibreMax-Architect-0.16.0-Linux-Ubuntu24.04-amd64.deb`.
 
-Esta versão acrescenta cômodos em L ou desenhados canto a canto, piso/forro associados,
+Esta versão amplia o tutorial para 21 assuntos, com índice por teclado e ilustrações.
+Conjuntos agora giram e espelham seus móveis em uma operação reversível, respeitando
+colisões, limites do cômodo e bloqueios. Falhas de importação mostram uma mensagem
+simples, com diagnóstico técnico separado. O cálculo oferece Automático ou Processador.
+
+Também inclui cômodos em L ou desenhados canto a canto, piso/forro associados,
 medidas nas paredes, agrupamento, alinhamento e movimento conjunto; 28 modelos originais
 para apartamentos; importação GLB/glTF/OBJ/FBX/STL/PLY; coleções `.lmaxpack`, três estilos
 de foto e malhas menores durante a edição. São 203 itens, incluindo 176 modelos prontos.
 [Como usar e limites](https://github.com/Pepeu2010/libremax-architect/blob/main/docs/APARTMENT_TOOLS.md).
 
-O ajuste conjunto de paredes compartilhadas, giro de conjuntos, atualizações remotas
+O ajuste conjunto de paredes compartilhadas, encaixe coletivo em paredes, atualizações remotas
 e alguns formatos CAD ainda estão pendentes. Abra **Testar notebook** no menu Iniciar
 para executar o benchmark e guardar relatórios em Documentos/LibreMax-Benchmark.
 [Teste e comparação com VDMax](https://github.com/Pepeu2010/libremax-architect/blob/main/docs/NOTEBOOK_VDMAX_TEST.md).

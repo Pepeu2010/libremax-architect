@@ -91,7 +91,7 @@ RenderGallery::RenderGallery(RenderQueue &renderQueue, QWidget *parent)
     more->setPopupMode(QToolButton::InstantPopup);
     auto *menu = new QMenu(more);
     repeat = menu->addAction(tr("Renderizar novamente"));
-    cpu = menu->addAction(tr("Renderizar com CPU"));
+    cpu = menu->addAction(tr("Renderizar com o processador"));
     folder = menu->addAction(tr("Mostrar pasta da imagem"));
     logs = menu->addAction(tr("Ver detalhes do processo"));
     menu->addSeparator();

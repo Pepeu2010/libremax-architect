@@ -455,13 +455,32 @@ int main(int argc, char **argv) {
                     };
                     auto *tutorial = window.findChild<QWizard *>("firstRunTutorial");
                     ensure(tutorial && tutorial->isVisible(), "First opening tutorial missing");
-                    ensure(tutorial->pageIds().size() == 15, "Complete tutorial chapters missing");
+                    const auto chapterCount = tutorial->pageIds().size();
+                    ensure(chapterCount == 21, "Updated tutorial chapters missing");
                     auto *assets = window.findChild<QListWidget *>("assetList");
                     ensure(assets && assets->count() == 0, "Home eagerly loaded the furniture catalog");
                     ensure(
                         tutorial->screen()->grabWindow(tutorial->winId()).save(directory + "/tutorial.png"),
                         "Tutorial capture failed");
-                    for (int i = 0; i < 14; ++i) {
+                    tutorial->resize(680, 520);
+                    for (int i = 0; i < chapterCount; ++i) {
+                        auto *page = tutorial->currentPage();
+                        auto *scroll = page->findChild<QScrollArea *>("tutorialLessonScroll");
+                        auto *topics = page->findChild<QComboBox *>("tutorialTopics");
+                        ensure(scroll && topics && topics->count() == chapterCount,
+                               "Tutorial topic navigation missing");
+                        QTest::qWait(20);
+                        ensure(scroll->horizontalScrollBar()->maximum() == 0,
+                               "Compact tutorial requires horizontal scrolling");
+                        ensure(tutorial->rect().contains(tutorial->button(QWizard::CancelButton)->geometry()),
+                               "Compact tutorial buttons are clipped");
+                        if (i == 3 || i == 12)
+                            ensure(tutorial->screen()
+                                       ->grabWindow(tutorial->winId())
+                                       .save(directory + QString("/tutorial-chapter-%1.png").arg(i)),
+                                   "Illustrated lesson capture failed");
+                        if (i == chapterCount - 1)
+                            break;
                         QTest::mouseClick(tutorial->button(QWizard::NextButton), Qt::LeftButton);
                         QTest::qWait(20);
                         ensure(tutorial->currentId() == i + 1, "Tutorial keyboard/button navigation failed");
@@ -537,7 +556,27 @@ int main(int argc, char **argv) {
                     QTest::mouseClick(help, Qt::LeftButton);
                     ensure(restarted.findChild<QWizard *>("firstRunTutorial"),
                            "Tutorial cannot be reopened from home");
-                    std::cout << "EXPERIENCE_PASS: logo opening, 15 tutorial chapters, lazy home, new room, "
+                    auto *reopened = restarted.findChild<QWizard *>("firstRunTutorial");
+                    QTest::qWait(50);
+                    ensure(reopened->currentPage(), "Reopened tutorial has no active page");
+                    auto *topic = reopened->currentPage()->findChild<QComboBox *>("tutorialTopics");
+                    ensure(topic, "Reopened tutorial has no topic index");
+                    topic->setFocus();
+                    QTest::keyClick(topic, Qt::Key_Space);
+                    QTest::keyClick(topic, Qt::Key_End);
+                    QTest::keyClick(topic, Qt::Key_Return);
+                    QTest::qWait(50);
+                    ensure(reopened->currentId() == chapterCount - 1,
+                           "Keyboard topic selection cannot jump to a chapter");
+                    topic = reopened->currentPage()->findChild<QComboBox *>("tutorialTopics");
+                    topic->setFocus();
+                    QTest::keyClick(topic, Qt::Key_Space);
+                    QTest::keyClick(topic, Qt::Key_Home);
+                    QTest::keyClick(topic, Qt::Key_Return);
+                    QTest::qWait(50);
+                    ensure(reopened->currentId() == 0, "Topic selection cannot return to the introduction");
+                    std::cout << "EXPERIENCE_PASS: logo opening, 21 tutorial chapters, keyboard topic jumps, "
+                                 "compact illustrated lessons, lazy home, new room, "
                                  "single .lmx save/open, durable project cards, 900 px home\n";
                     app.exit(0);
                 } catch (const std::exception &error) {

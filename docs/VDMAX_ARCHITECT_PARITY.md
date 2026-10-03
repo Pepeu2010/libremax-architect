@@ -63,9 +63,9 @@ Fontes oficiais consultadas:
 | U06 | Automação | Envelopamento | Envolver módulos | Laterais e topo por fonte | — | IN_PROGRESS | P | União de grupo e controles adicionais faltam | — |
 | U07 | Automação | Associação | Requisito da spec | UUIDs de fontes, recálculo e exclusão em cascata | `[automation]` | FUNCTIONAL | SPEC | Snapshot/undo integrado; maior cobertura pendente | — |
 | V01 | Editor | Seleção e hierarquia | Requisito da spec | Clique/Ctrl+clique, hover AIS, árvore e conjuntos com seleção dos filhos | UI/apartment-tools-smoke | IN_PROGRESS | SPEC | Box selection e isolar pendentes | — |
-| V02 | Editor | Mover/rotacionar | Workflow de edição | Inspector em cm, arrasto direto, giro centrado individual e movimento conjunto | assembly/apartment-tools/UI smoke | FUNCTIONAL | SPEC | Gizmo, giro/espelhamento de conjuntos e QA amplo pendentes | — |
+| V02 | Editor | Mover/rotacionar | Workflow de edição | Inspector em cm, arrasto direto, giro individual e conjuntos movidos/girados atomicamente | assembly/apartment-tools/UI smoke | FUNCTIONAL | SPEC | Gizmo, pivô manual e QA amplo de conjuntos pendentes | — |
 | V03 | Editor | Duplicação | Workflow de edição | Cópia com novos UUIDs e associação de filhos | — | FUNCTIONAL | SPEC | UI QA pendente | — |
-| V04 | Editor | Espelhamento | Workflow de edição | Móveis e geometria independente | — | FUNCTIONAL | SPEC | Não é espelhamento completo de conjuntos | — |
+| V04 | Editor | Espelhamento | Workflow de edição | Móveis, geometria independente e conjuntos com reflexão dos membros | `[arrangement]` + apartment-tools-smoke | FUNCTIONAL | SPEC | Encaixe coletivo automático em paredes e pivô manual pendentes | — |
 | V05 | Editor | Alinhamento/distribuição | Requisito da spec | Bordas, centros e espaçamento em X/Y, colisão e Desfazer | `[arrangement]` + apartment-tools-smoke | FUNCTIONAL | SPEC | QA manual de conjuntos grandes pendente | — |
 | V06 | Editor | Visualização 3D | Apresentação de ambientes | AIS/V3d sobre B-rep, ortográfica superior/isométrica, orbit/pan/zoom | UI smoke | IN_PROGRESS | P | Dividida, perspectiva/walk e outras vistas faltam | VIEW-01,SCENE-01 |
 | V07 | Editor | Undo/redo | Requisito da spec | QUndoStack + Command Pattern validado | `[commands]` | FUNCTIONAL | SPEC | UI smoke amplia cobertura | — |

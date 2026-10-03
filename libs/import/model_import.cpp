@@ -43,8 +43,7 @@ ModelImporter::ModelImporter(QObject *parent) : QObject(parent) {
                 if (complete)
                     return;
                 if (code != 0 || status != QProcess::NormalExit) {
-                    fail(tr("Não foi possível abrir o modelo. Verifique o formato e as texturas.\n%1")
-                             .arg(QString::fromUtf8(log.right(2000))));
+                    fail(tr("Não foi possível abrir o modelo. Verifique o formato e as texturas."));
                     return;
                 }
                 try {
@@ -97,7 +96,9 @@ ModelImporter::ModelImporter(QObject *parent) : QObject(parent) {
                     complete = true;
                     emit ready(asset, details);
                 } catch (const std::exception &error) {
-                    fail(QString::fromUtf8(error.what()));
+                    log += "\n" + QByteArray(error.what());
+                    log = log.right(32768);
+                    fail(tr("O modelo não ficou pronto para usar. Confira o arquivo ou tente outro modelo."));
                 }
             });
 }
@@ -122,6 +123,7 @@ void ModelImporter::start(const QString &file, const QString &blender, const QSt
                    "--python", script, "--", QFileInfo(file).absoluteFilePath(), temporary.path()});
 }
 void ModelImporter::cancel() {
+    cancelled_ = true;
     fail(tr("Importação cancelada. O projeto foi preservado."));
     process.kill();
 }

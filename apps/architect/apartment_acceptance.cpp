@@ -16,6 +16,7 @@
 #include <QFile>
 #include <QImage>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QScreen>
 #include <QTableWidget>
@@ -37,6 +38,7 @@ void startApartmentAcceptance(MainWindow &window, QApplication &app, const QStri
     struct State {
         int phase = 0;
         std::string room, first, second;
+        Json beforeFailedImport;
         QStringList jobs;
         QElapsedTimer elapsed;
         bool importDialog = false;
@@ -131,6 +133,22 @@ void startApartmentAcceptance(MainWindow &window, QApplication &app, const QStri
                 ensure(editor.document().at(state->first).transform.y ==
                            editor.document().at(state->second).transform.y,
                        "Native alignment failed");
+                const auto arranged = editor.document().serialize();
+                auto *rotate = window.findChild<QAction *>("rotateFurniture");
+                auto *mirror = window.findChild<QAction *>("mirrorSelection");
+                ensure(rotate && mirror, "Furniture transformation actions missing");
+                rotate->trigger();
+                ensure(editor.document().at(state->first).transform.yaw == 90 &&
+                           editor.document().at(state->second).transform.yaw == 90,
+                       "Native rotation ignored the furniture set");
+                mirror->trigger();
+                ensure(editor.document().at(state->first).transform.mirrored &&
+                           editor.document().at(state->second).transform.mirrored,
+                       "Native reflection ignored group members");
+                editor.history.undo();
+                editor.history.undo();
+                ensure(editor.document().serialize() == arranged,
+                       "Set transform undo changed the arrangement");
                 window.resize(900, 700);
                 cad->setTop(true);
                 cad->frame();
@@ -142,7 +160,8 @@ void startApartmentAcceptance(MainWindow &window, QApplication &app, const QStri
                            editor.document().serialize(),
                        "New apartment workflow is not portable");
                 std::cout << "APARTMENT_TOOLS_PASS: native free contour, L floor, corner editing, "
-                             "dimensions, grouped mouse drag, alignment, undo and portable project\n";
+                             "dimensions, grouped mouse drag, alignment, rotation, reflection, undo and "
+                             "portable project\n";
                 QFile fixture(directory + "/imported-chair.obj");
                 ensure(fixture.open(QIODevice::WriteOnly), "Import fixture unavailable");
                 fixture.write("v 0 0 0\nv .5 0 0\nv .5 .5 0\nv 0 .5 0\nv 0 0 .7\nv .5 0 .7\nv .5 .5 .7\nv 0 "
@@ -245,7 +264,7 @@ void startApartmentAcceptance(MainWindow &window, QApplication &app, const QStri
                 std::cout << "MODEL_PACK_PASS: 28 real models with editing meshes, offline installation and "
                              "real furnished room\n";
                 state->phase = 3;
-            } else {
+            } else if (state->phase == 3) {
                 auto &queue = window.renderQueue();
                 if (queue.busy()) {
                     poll->start();
@@ -317,8 +336,30 @@ void startApartmentAcceptance(MainWindow &window, QApplication &app, const QStri
                 std::cout << "EDITOR_BENCHMARK: " << measurements.dump() << '\n';
                 std::cout << "ROOM_LOOK_RENDER_PASS: 3 distinct real Cycles CPU styles, generated lights, "
                              "actual apartment meshes and intact queue snapshots\n";
-                app.exit(0);
-                return;
+                state->beforeFailedImport = editor.document().serialize();
+                QFile invalid(directory + "/invalid-model.obj");
+                ensure(invalid.open(QIODevice::WriteOnly), "Invalid import fixture unavailable");
+                invalid.write("f 1 2 3\n");
+                invalid.close();
+                const auto file = directory + "/invalid-model.obj";
+                ensure(QMetaObject::invokeMethod(&window, "importModel", Qt::DirectConnection,
+                                                 Q_ARG(QString, file)),
+                       "Failed model import action unavailable");
+                state->phase = 4;
+            } else {
+                if (auto *error = window.findChild<QMessageBox *>("modelImportError");
+                    error && error->isVisible()) {
+                    ensure(error->text().size() < 200 && !error->text().contains("Traceback") &&
+                               !error->detailedText().isEmpty(),
+                           "Import error exposes a raw log or loses diagnostic details");
+                    ensure(editor.document().serialize() == state->beforeFailedImport,
+                           "Failed model import changed the project");
+                    error->accept();
+                    std::cout << "MODEL_IMPORT_ERROR_PASS: actual malformed OBJ, simple warning, separate "
+                                 "diagnostics and unchanged project\n";
+                    app.exit(0);
+                    return;
+                }
             }
             poll->start();
         } catch (const std::exception &error) {

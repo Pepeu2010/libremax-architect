@@ -411,7 +411,7 @@ void MainWindow::createShell() {
     edit->addAction(redo);
     edit->addSeparator();
     action(edit, tr("Duplicar"), QKeySequence("Ctrl+D"), [this] { transform("duplicate"); });
-    action(edit, tr("Espelhar"), {}, [this] { transform("mirror"); });
+    action(edit, tr("Espelhar"), {}, [this] { transform("mirror"); })->setObjectName("mirrorSelection");
     action(edit, tr("Excluir"), QKeySequence::Delete, [this] { transform("delete"); });
     action(edit, tr("Ocultar / mostrar"), {}, [this] { transform("visibility"); });
     action(edit, tr("Bloquear / desbloquear"), {}, [this] { transform("lock"); });
@@ -1109,9 +1109,11 @@ void MainWindow::createShell() {
     renderLayout->addRow(tr("Luz ambiente"), renderEnvironment);
     renderDevice = new QComboBox;
     renderDevice->setObjectName("renderDevice");
-    renderDevice->addItem(tr("GPU / CPU automático"), "AUTO");
-    renderDevice->addItem(tr("CPU"), "CPU");
-    renderLayout->addRow(tr("Dispositivo"), renderDevice);
+    renderDevice->addItem(tr("Automático"), "AUTO");
+    renderDevice->addItem(tr("Processador"), "CPU");
+    renderDevice->setToolTip(
+        tr("Automático usa uma placa de vídeo compatível. Processador funciona também com vídeo integrado."));
+    renderLayout->addRow(tr("Calcular com"), renderDevice);
     renderDenoise = new QCheckBox(tr("Reduzir ruído (denoise)"));
     renderDenoise->setObjectName("renderDenoise");
     renderDenoise->setChecked(true);
@@ -1552,8 +1554,9 @@ void MainWindow::refreshInspector() {
                             : selectedIds.isEmpty() ? tr("Selecione um objeto")
                                                     : tr("%1 objetos selecionados").arg(selectedIds.size()));
     hint->setText(
-        e && e->type == "Group" ? tr("Arraste qualquer móvel do conjunto para mover todos juntos. Use Editar "
-                                     "para alinhar ou separar.")
+        e && e->type == "Group"
+            ? tr("Arraste qualquer móvel para mover o conjunto. Ctrl+R gira todos juntos. "
+                 "Use Editar para espelhar, alinhar ou separar.")
         : e && e->type == "Light"
             ? tr("O marcador mostra onde está a luz. Ajuste o brilho e crie uma prévia para ver o resultado.")
             : tr("Arraste para mover. Use centímetros para ajustar o tamanho. Ctrl+clique seleciona vários "
@@ -2083,8 +2086,25 @@ void MainWindow::transform(const QString &mode) {
         for (const auto &id : selected)
             if (d.at(id).locked && mode != "lock")
                 throw std::invalid_argument("A seleção contém objetos bloqueados");
+        if (mode != "lock")
+            for (const auto &id : selected) {
+                auto parent = d.at(id).parent;
+                while (!parent.empty()) {
+                    if (d.at(parent).locked)
+                        throw std::invalid_argument("O objeto pertence a um conjunto bloqueado.");
+                    parent = d.at(parent).parent;
+                }
+            }
         if (mode == "delete") {
             eraseCascade(d, selected);
+            return;
+        }
+        const bool together = selected.size() > 1 || d.at(selected.front()).type == "Group";
+        if (together && (mode == "rotate" || mode == "mirror")) {
+            if (mode == "rotate")
+                rotateObjects(d, selected, 90);
+            else
+                mirrorObjects(d, selected);
             return;
         }
         if (mode == "rotate") {
@@ -2599,6 +2619,16 @@ void MainWindow::importModel(const QString &providedFile) {
         progress->close();
         progress->deleteLater();
         statusBar()->showMessage(message, 20000);
+        if (!job->cancelled()) {
+            auto *error = new QMessageBox(QMessageBox::Warning, tr("Não foi possível adicionar o modelo"),
+                                          message, QMessageBox::Ok, this);
+            error->setAttribute(Qt::WA_DeleteOnClose);
+            error->setObjectName("modelImportError");
+            error->setTextFormat(Qt::PlainText);
+            if (!job->diagnostics().isEmpty())
+                error->setDetailedText(job->diagnostics());
+            error->open();
+        }
         job->deleteLater();
     });
     connect(job, &ModelImporter::ready, this, [this, job, progress](Asset asset, const Json &details) {

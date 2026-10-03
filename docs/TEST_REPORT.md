@@ -1,3 +1,12 @@
+# Test report — fonte 0.16
+
+Windows Release: **52 testes / 3.065 verificações**, build e formato C++ passaram.
+Tutorial com 21 assuntos, navegação por teclado e janela compacta; giro e
+espelhamento de conjuntos pela interface; importação real, erro de OBJ com
+diagnóstico separado e três fotos Cycles CPU passaram no Windows.
+[Evidência, reprodução e limites](EXECUTION_016.md). Gates de instalação da nova
+fonte ainda pendentes. O relatório abaixo documenta a versão publicada 0.15.
+
 # Test report — montagem e modelos 0.15.0
 
 Windows Release: **50 testes / 3.018 verificações**, build e formato C++ passaram.

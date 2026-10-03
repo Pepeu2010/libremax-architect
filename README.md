@@ -6,6 +6,12 @@ Editor desktop open source de interiores, com C++20, Qt 6 e OpenCASCADE. Linux �
 
 ![Coleção Apartamento atual no programa nativo](docs/screenshots/modern-catalog.png)
 
+A fonte 0.16 amplia o tutorial para 21 assuntos, com índice por teclado e ilustrações,
+e permite girar e espelhar conjuntos em uma única alteração reversível. Erros de
+importação usam um aviso curto e detalhes técnicos separados. A distribuição
+0.16 aguarda os gates de instalação; os links acima continuam sendo da prévia 0.15.
+[Provas e limites deste ciclo](docs/EXECUTION_016.md).
+
 A fonte 0.15 acrescenta [cômodos com contorno, conjuntos, importação 3D,
 coleções, estilos de foto e malhas leves](docs/APARTMENT_TOOLS.md). O catálogo
 tem 203 itens e 64 modelos em Apartamento atual. Os instaladores passaram em
@@ -31,7 +37,7 @@ Já disponível neste ciclo:
 - Inserir portas e janelas com recortes booleanos reais, vinculadas à parede.
 - Biblioteca local SQLite/FTS5 com busca sem acentos, filtros, favoritos e recentes; 203 itens: 25 receitas próprias, porta/janela e 176 modelos prontos, incluindo 40 designs originais LibreMax CC0. O filtro **Apartamento atual** reúne 64 modelos. Os modelos Poly Haven preservam mapas/UVs; os designs originais usam acabamentos procedurais no Cycles.
 - Modos Leve, Equilibrado e Mais detalhes em Vista; texturas/suavização da tela e workers de miniaturas ajustáveis, preservando o render final.
-- Tutorial de 15 capítulos na primeira abertura, reaberto em Ajuda ou na tela inicial. Biblioteca de projetos locais com imagem, nome, data e aviso de arquivo movido.
+- Tutorial de 21 assuntos com índice e ilustrações na primeira abertura, reaberto em Ajuda ou na tela inicial. Biblioteca de projetos locais com imagem, nome, data e aviso de arquivo movido.
 - Catálogo carregado ao entrar no editor; busca sem carregar todas as malhas, miniaturas em 1, 2 ou 4 workers conforme o modo de edição e cache de geometria para evitar reconstruir sólidos inalterados. Essas melhorias não constituem benchmark de apartamentos grandes.
 - Arrastar móveis em planta/3D com orientação pela parede, encaixe em cantos/vizinhos, prévia verde/vermelha e bloqueio de posição ocupada. Objetos pequenos acompanham o topo do móvel e o novo pendente acompanha a altura do cômodo. Arrastar itens existentes confirma uma alteração reversível.
 - Duplo clique aguarda escolher o lugar; R gira a prévia, Esc cancela. Editar medidas comuns em centímetros, com vírgula e expressões; coordenadas técnicas ficam nos ajustes adicionais.
@@ -40,7 +46,7 @@ Já disponível neste ciclo:
 - Gerar tampos, rodatampos, rodapés, rodaforros, painel lateral e envelopamento sobre fontes associadas. A cobertura ainda é restrita aos casos documentados em [AUTOMATIONS](docs/AUTOMATIONS.md).
 - Importar DXF ASCII com layers e unidade; incorporar texturas JPG/PNG ao projeto.
 - Importar GLB/glTF, OBJ, FBX, STL e PLY pela interface e instalar/atualizar coleções `.lmaxpack` locais, com validação e modelos incorporados ao projeto.
-- Agrupar, separar, mover, alinhar e distribuir conjuntos de móveis, com colisão, encaixe e Desfazer/Refazer.
+- Agrupar, separar, mover, girar, espelhar, alinhar e distribuir conjuntos de móveis, com colisão, encaixe e Desfazer/Refazer.
 - Escolher estilos Natural, Claro ou Aconchegante para materiais e luz do cômodo. Em Leve, 57 modelos têm malha de edição reduzida; o render preserva a malha completa.
 - Salvar/abrir `.lmx` ZIP versionado, backup `.bak`, undo/redo, autosave configurável (1–60 minutos) e recuperação de versões locais.
 - Criar câmeras e luzes ponto/spot/painel/LED/sol; escolher tons de luz ou Kelvin, dimensões em centímetros, raio, feixe e sombra solar. Marcadores selecionáveis ajudam a localizar as luzes. Renderizar com Blender/Cycles em processo separado, PNG/JPEG, presets, seleção de câmera, exposição, luz ambiente, denoise e descoberta GPU com fallback CPU.

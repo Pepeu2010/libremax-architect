@@ -13,12 +13,15 @@ class ModelImporter final : public QObject {
     QString source;
     QByteArray log;
     bool complete = false;
+    bool cancelled_ = false;
     void fail(const QString &message);
 
   public:
     explicit ModelImporter(QObject *parent = nullptr);
     void start(const QString &file, const QString &blender, const QString &script);
     void cancel();
+    QString diagnostics() const { return QString::fromUtf8(log); }
+    bool cancelled() const { return cancelled_; }
   signals:
     void ready(const lmx::Asset &asset, const lmx::Json &details);
     void failed(const QString &message);
