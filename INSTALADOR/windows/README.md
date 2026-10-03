@@ -1,7 +1,7 @@
 # Windows
 
-1. Abra a [Release dos instaladores](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.14.0-preview.3).
-2. Baixe **LibreMax-Architect-0.14.0-Windows-x64-Setup.exe**.
+1. Abra a [Release dos instaladores](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.15.0-preview.3).
+2. Baixe **LibreMax-Architect-0.15.0-Windows-x64-Setup.exe**.
 3. Abra o arquivo e siga o instalador em português.
 4. Use **LibreMax Architect** no menu Iniciar ou na Área de Trabalho.
 
@@ -16,3 +16,7 @@ Esta prévia ainda não possui assinatura digital. O Windows pode mostrar um avi
 Para fotos realistas, abra Criar imagem. O motor já está configurado; não é necessário abrir Blender ou baixar outro programa. Configurar Blender permite escolher uma instalação externa, se desejar.
 
 Para o alvo mínimo **i3-6006U / HD 520 / 8 GB**, use o motor incluído com **CPU** no painel Criar imagem. Comece pelo modo Rápido. Sem preferência anterior, CPUs com até quatro threads começam em Leve; a opção também fica em Vista → Desempenho durante edição. [Teste físico ainda pendente](../../docs/MINIMUM_HARDWARE.md).
+
+No menu Iniciar, abra **LibreMax Architect → Testar notebook** para medir a cena
+controlada e criar relatórios em Documentos/LibreMax-Benchmark.
+[Roteiro de teste e comparação com VDMax](../../docs/NOTEBOOK_VDMAX_TEST.md).

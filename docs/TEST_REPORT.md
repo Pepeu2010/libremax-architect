@@ -27,7 +27,26 @@ A instalação/desinstalação Windows passou na CI da primeira tentativa 0.15.
 O Linux parou no teste de clique do botão HDRI antes de produzir renders.
 O seletor de estilo agora respeita a largura do painel; o teste verifica posição,
 ausência de rolagem horizontal e chegada do clique, usando a janela nativa.
-HDRI/EXR e UI local passaram novamente. A nova CI e a publicação aguardam conclusão.
+HDRI/EXR e UI local passaram novamente. A
+[CI Linux completa](https://github.com/Pepeu2010/libremax-architect/actions/runs/37157341255)
+passou com Blender 4.5.9 e 5.2.1: interface, montagem, importação dos seis formatos,
+fila, HDRI/EXR, luzes e comparação de instâncias. A
+[CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37157341232)
+passou: instalação Windows com PATH restrito ao sistema; Ubuntu em runner novo,
+montagem e importação nativas, renders com motor incluído, desinstalação
+preservando um projeto. A
+[prévia 0.15.0-preview.3](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.15.0-preview.3)
+publica a fonte exata `3c6b8d32f6cbec3271f90bee45c7626826a58c18`.
+
+Os oito digests publicados correspondem aos três manifestos de checksum baixados.
+O instalador Windows também foi baixado integralmente e conferido: 487.451.300
+bytes, SHA256 `8820a32d43e32155ae36c021a490943187b5f24cd50087851c3f89249b3a2044`.
+O `.deb` tem 596.162.134 bytes e digest
+`22fc93f6a01fdb163b0076db6e6fa4845dfcb3ec200761c6249ccf8b9ac9f651`;
+seu binário completo não foi baixado de novo no host Windows. A instalação real
+do `.deb` foi comprovada no runner Ubuntu novo. A coleção publicada corresponde
+ao arquivo local original; fontes e demais payloads foram conferidos por
+manifestos/digests da API. Relatório local: `build-bundled/release-015-verification.json`.
 O usuário confirmou disponibilidade de notebook e VDMax;
 [teste físico e comparação](NOTEBOOK_VDMAX_TEST.md) continuam pendentes.
 

@@ -40,5 +40,8 @@ forro oculto e excesso de luz; os estilos agora fecham o teto e usam luz mais su
 O usuário confirmou disponibilidade do notebook mínimo e do VDMax.
 [Teste por duplo clique e comparação](NOTEBOOK_VDMAX_TEST.md).
 
-CI Ubuntu e instaladores 0.15 ainda precisam passar. O notebook mínimo, a imagem
-1080p nele e a comparação com VDMax seguem pendentes. A matriz continua parcial.
+CI Ubuntu 37157341255 e instaladores 37157341232 passaram. A
+[prévia 0.15.0-preview.3](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.15.0-preview.3)
+publica Windows e Ubuntu com Blender, a coleção e as fontes correspondentes.
+O notebook mínimo, a imagem 1080p nele e a comparação com VDMax seguem pendentes.
+A matriz continua parcial.

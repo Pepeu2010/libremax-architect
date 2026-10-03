@@ -2,19 +2,18 @@
 
 Editor desktop open source de interiores, com C++20, Qt 6 e OpenCASCADE. Linux é o alvo principal. A implementação é independente e clean-room, usando o VDMax Arquitetos e Decoradores somente como referência pública de capacidades.
 
-**Estado: prévia 0.14.0 com instaladores Windows e Linux [publicados](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.14.0-preview.3), incluindo Blender 4.5.9 LTS. Esta entrega ainda não atende à paridade integral da master spec e não é uma release 1.0.** A [master spec](docs/MASTER_SPEC.md) é o requisito de referência. A [matriz de paridade](docs/VDMAX_ARCHITECT_PARITY.md) registra as lacunas por requisito, sem promover testes do kernel a prova de um workflow completo.
+**Estado: prévia 0.15.0 com instaladores Windows e Linux [publicados](https://github.com/Pepeu2010/libremax-architect/releases/tag/v0.15.0-preview.3), incluindo Blender 4.5.9 LTS. Esta entrega ainda não atende à paridade integral da master spec e não é uma release 1.0.** A [master spec](docs/MASTER_SPEC.md) é o requisito de referência. A [matriz de paridade](docs/VDMAX_ARCHITECT_PARITY.md) registra as lacunas por requisito, sem promover testes do kernel a prova de um workflow completo.
 
 ![Coleção Apartamento atual no programa nativo](docs/screenshots/modern-catalog.png)
 
 A fonte 0.15 acrescenta [cômodos com contorno, conjuntos, importação 3D,
 coleções, estilos de foto e malhas leves](docs/APARTMENT_TOOLS.md). O catálogo
-tem 203 itens e 64 modelos em Apartamento atual. A publicação dos novos
-instaladores depende dos gates desta versão; o link acima identifica a versão
-anterior já publicada.
+tem 203 itens e 64 modelos em Apartamento atual. Os instaladores passaram em
+Windows e Ubuntu novo; o notebook mínimo e a comparação VDMax continuam pendentes.
 
 A direção visual atual usa grafite neutro, violeta e cobre, com logo próprio, abertura breve e opção para desativar animações. A tela inicial reúne projetos recentes e ações para criar, abrir ou experimentar um apartamento.
 
-A imagem acima é uma captura do programa compilado no Windows, com viewport OpenCASCADE; não é um mockup. Build, testes, interface nativa com Xvfb/Mesa, pacote Debian e iluminação Cycles CPU passaram na [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37144046955). A instalação Windows e Ubuntu 24.04 em runner novo passou na [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37144046796), incluindo render com o Blender do próprio pacote. O apartamento com Kelvin/LED também gerou [uma imagem 4K](docs/LIGHTING.md#apartamento-em-4k), 512 amostras máximas e 12 reflexões, na RX 7600/HIP deste Windows. Esse teste pelo pipeline não comprova equivalência fotográfica, todas as câmeras ou outros drivers/GPUs.
+A imagem acima é uma captura do programa compilado no Windows, com viewport OpenCASCADE; não é um mockup. Build, testes, interface nativa com Xvfb/Mesa, pacote Debian e iluminação Cycles CPU passaram na [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/37157341255). A instalação Windows e Ubuntu 24.04 em runner novo passou na [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37157341232), incluindo render com o Blender do próprio pacote. O apartamento com Kelvin/LED também gerou [uma imagem 4K](docs/LIGHTING.md#apartamento-em-4k), 512 amostras máximas e 12 reflexões, na RX 7600/HIP deste Windows. Esse teste pelo pipeline não comprova equivalência fotográfica, todas as câmeras ou outros drivers/GPUs.
 
 Ampliações atuais: [60 novos modelos, fontes e modos de desempenho](docs/MODEL_LIBRARIES_PERFORMANCE.md) e [iluminação Kelvin, LED e sol](docs/LIGHTING.md). No host de desenvolvimento, `Abrir LibreMax.cmd` abre a build atualizada.
 
@@ -58,7 +57,7 @@ Para apresentação, abra `examples/cozinha.lmx`, escolha **Céu natural** e a q
 
 Abra [INSTALADOR](INSTALADOR/README.md) e escolha [Windows](INSTALADOR/windows/README.md) ou [Linux](INSTALADOR/linux/README.md). Os arquivos `.exe` e `.deb` ficam nas [Releases](https://github.com/Pepeu2010/libremax-architect/releases). É preciso acesso ao repositório privado.
 
-Os instaladores 0.14 incluem modelos, texturas, exemplos e Blender 4.5.9 LTS/Cycles. O motor é configurado automaticamente; abra Criar imagem para renderizar. Uma instalação externa continua opcional nos ajustes. [Dependências incluídas e testes](docs/BUNDLED_RUNTIME.md). A versão é uma prévia em desenvolvimento.
+Os instaladores 0.15 incluem modelos, texturas, exemplos e Blender 4.5.9 LTS/Cycles. O motor é configurado automaticamente; abra Criar imagem para renderizar. Uma instalação externa continua opcional nos ajustes. [Dependências incluídas e testes](docs/BUNDLED_RUNTIME.md). A versão é uma prévia em desenvolvimento.
 
 Para validar o notebook i3/HD 520/8 GB após instalar a versão 0.15, use **Testar notebook** no menu Iniciar. [Instruções e comparação com VDMax](docs/NOTEBOOK_VDMAX_TEST.md).
 

@@ -1,10 +1,10 @@
 # Matriz de paridade — VDMax 3.0 Arquitetos e Decoradores
 
-Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. LibreMax: prévia 0.14.0 com instaladores Windows e Ubuntu publicados, incluindo Blender/Cycles. **Não há paridade completa nem release 1.0.**
+Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. LibreMax: prévia 0.15.0 com instaladores Windows e Ubuntu publicados, incluindo Blender/Cycles. **Não há paridade completa nem release 1.0.**
 
 Complemento visual em 2026-09-30: [auditoria](VISUAL_REFERENCE_AUDIT.md), 11 imagens inspecionadas de 47 referências indexadas. `visual_refs` indica somente essas imagens consultadas; não promove paridade funcional automaticamente.
 
-Fonte 0.15 em execução: [montagem, importação, coleções, estilos e malhas leves](APARTMENT_TOOLS.md).
+Fonte 0.15 validada: [montagem, importação, coleções, estilos e malhas leves](APARTMENT_TOOLS.md).
 Novos controles passaram na UI Windows com importação OBJ pelo Blender 4.5.9 e três
 fotos Cycles CPU. Os seis formatos passaram com fixtures reais. Catálogo atual:
 203 itens / 176 modelos prontos, 64 em Apartamento atual. As linhas históricas
@@ -41,10 +41,10 @@ Fontes oficiais consultadas:
 | G04 | Geometria | Rodatetos | Tutorial oficial dedicado | — | — | NOT_STARTED | V | Falta varredura de perímetro | — |
 | I01 | Importação | DXF | Tabela e tutorial dedicados | DXF ASCII, cinco tipos 2D, unidade/layers bloqueados persistentes | `[dxf]` | FUNCTIONAL | C,V | Sem malhas, bulge, conversão de linhas ou QA do diálogo | — |
 | I02 | Importação | Modelos externos | Formatos exigidos pela spec | GLB/glTF, OBJ, FBX, STL e PLY pelo Blender, interface de medidas, mapas e incorporação | apartment-tools-smoke + verify-model-import.py 4.5/5.2 | IN_PROGRESS | SPEC | DAE/STEP/IGES e cenas complexas pendentes; importação reduz modelos muito pesados | — |
-| L01 | Biblioteca | Biblioteca de módulos | Módulos cozinha/dormitório | SQLite WAL/FTS5 + 25 receitas, duas aberturas, 52 Kenney, 53 KayKit, 31 Poly Haven e 12 LibreMax | `[library]` + UI/modern-smoke | IN_PROGRESS | P,C | 175 miniaturas reais; três modos de edição; atualização remota de packs e catálogo extenso faltam | LIB-01 |
+| L01 | Biblioteca | Biblioteca de módulos | Módulos cozinha/dormitório | SQLite WAL/FTS5 + 25 receitas, duas aberturas, 52 Kenney, 53 KayKit, 31 Poly Haven e 40 LibreMax | `[library]` + UI/modern/apartment-tools-smoke | IN_PROGRESS | P,C | 203 miniaturas reais; três modos de edição e 57 malhas leves; atualização remota de packs e catálogo extenso faltam | LIB-01 |
 | L02 | Biblioteca | Pesquisa local | Biblioteca categorizada | Busca sem acentos, filtros, favoritos, recentes | `[library]` | FUNCTIONAL | C,SPEC | Benchmark usa 10.000 fixtures, não 10.000 assets distribuídos | LIB-01 |
 | L03 | Biblioteca | Arrastar e soltar | Workflow exigido pela spec | MIME, prévia real, parede/piso/cantos/vizinhos, colisão e posição externa recusadas | assembly-smoke: planta/3D, MIME/ghost/drop + undo | FUNCTIONAL | manual oficial | Arraste manual e múltiplas plataformas pendentes | LIB-01 |
-| L04 | Biblioteca | Importar .lmaxpack | Formato LibreMax | Coleção local validada, hashes, limites, procedência e atualização preservando favoritos | `[model-pack]` + apartment-tools-smoke | FUNCTIONAL | SPEC | Download/atualização remotos e remoção de versões antigas pendentes | — |
+| L04 | Biblioteca | Importar .lmaxpack | Formato LibreMax | Coleção local validada, hashes, limites, procedência e atualização preservando favoritos | `[packs]` + apartment-tools-smoke | FUNCTIONAL | SPEC | Download/atualização remotos e remoção de versões antigas pendentes | — |
 | L05 | Biblioteca | Biblioteca decorativa extensa | Mais de 3.000 itens | 203 itens: 25 receitas próprias, duas aberturas e 176 modelos prontos | UI/modern/apartment-tools/assembly-smoke | IN_PROGRESS | P,B | 64 modelos em Apartamento atual e 57 malhas leves; não atende meta de 3.000 | — |
 | M01 | Módulos | Cozinha | Largura/altura/profundidade editáveis | Balcões, gaveteiro, aéreos, torre, nicho, ilha | `[modules]` + UI smoke | IN_PROGRESS | P,C | Cantos e famílias complexas ausentes | — |
 | M02 | Módulos | Dormitório | Modulação própria da categoria | Roupeiros 2/3/4 portas, criado, cama | `[modules]` | IN_PROGRESS | P,C | Correr/canto/espelho frontal faltam | — |
@@ -63,7 +63,7 @@ Fontes oficiais consultadas:
 | U06 | Automação | Envelopamento | Envolver módulos | Laterais e topo por fonte | — | IN_PROGRESS | P | União de grupo e controles adicionais faltam | — |
 | U07 | Automação | Associação | Requisito da spec | UUIDs de fontes, recálculo e exclusão em cascata | `[automation]` | FUNCTIONAL | SPEC | Snapshot/undo integrado; maior cobertura pendente | — |
 | V01 | Editor | Seleção e hierarquia | Requisito da spec | Clique/Ctrl+clique, hover AIS, árvore e conjuntos com seleção dos filhos | UI/apartment-tools-smoke | IN_PROGRESS | SPEC | Box selection e isolar pendentes | — |
-| V02 | Editor | Mover/rotacionar | Workflow de edição | Inspector em cm, arrasto direto e giro centrado | assembly-smoke + UI smoke | FUNCTIONAL | SPEC | Gizmo, seleção em grupo e QA amplo faltam | — |
+| V02 | Editor | Mover/rotacionar | Workflow de edição | Inspector em cm, arrasto direto, giro centrado individual e movimento conjunto | assembly/apartment-tools/UI smoke | FUNCTIONAL | SPEC | Gizmo, giro/espelhamento de conjuntos e QA amplo pendentes | — |
 | V03 | Editor | Duplicação | Workflow de edição | Cópia com novos UUIDs e associação de filhos | — | FUNCTIONAL | SPEC | UI QA pendente | — |
 | V04 | Editor | Espelhamento | Workflow de edição | Móveis e geometria independente | — | FUNCTIONAL | SPEC | Não é espelhamento completo de conjuntos | — |
 | V05 | Editor | Alinhamento/distribuição | Requisito da spec | Bordas, centros e espaçamento em X/Y, colisão e Desfazer | `[arrangement]` + apartment-tools-smoke | FUNCTIONAL | SPEC | QA manual de conjuntos grandes pendente | — |
@@ -78,7 +78,7 @@ Fontes oficiais consultadas:
 | P03 | Projetos | Crash recovery | Requisito da spec | Seleção de versão, diálogo, descarte seguro, skip de corruptos | `[recovery]` + `--recovery-smoke` (processo morto e outro iniciado) | FUNCTIONAL | SPEC | Um projeto via UI comprovado; múltiplas versões via core; energia/interrupção durante escrita não testadas | — |
 | P04 | Projetos | Backup da biblioteca | Requisito da spec | — | — | NOT_STARTED | SPEC | — | — |
 | X01 | Produto | Offline completo | Exigência LibreMax | Edição, biblioteca, save/open/render locais | Rede desabilitada a executar | IN_PROGRESS | SPEC | Não declarar offline testado por ausência de código de rede | — |
-| X02 | Produto | Pacotes Linux | Exigência LibreMax | CMake install/CPack e `.deb` publicado 0.14; Blender incluído, dependências do sistema declaradas | CI Linux 37144046955 + instalação Ubuntu novo 37144046796 | FUNCTIONAL | SPEC | Ubuntu 24.04 amd64, render automático, UI Mesa/Xvfb, modelos e desinstalação preservando projeto; Mint, ARM, AppImage e hardware físico adicional pendentes | — |
+| X02 | Produto | Pacotes Linux | Exigência LibreMax | CMake install/CPack e `.deb` publicado 0.15; Blender incluído, dependências do sistema declaradas | CI Linux 37157341255 + instalação Ubuntu novo 37157341232 | FUNCTIONAL | SPEC | Ubuntu 24.04 amd64, render automático, UI Mesa/Xvfb, importação, modelos e desinstalação preservando projeto; Mint, ARM, AppImage e hardware físico adicional pendentes | — |
 
 Fora de escopo: plano de corte, nesting, BOM industrial, ERP/MRP, CNC, custos de matéria-prima, etiquetas e produção. Nenhuma dessas funções é incluída no roadmap.
 
