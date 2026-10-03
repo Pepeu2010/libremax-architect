@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(LibreMaxArchitect VERSION 0.16.0 LANGUAGES CXX)
+project(LibreMaxArchitect VERSION 0.17.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
@@ -13,6 +13,7 @@ find_path(FREEIMAGE_INCLUDE_DIR FreeImage.h REQUIRED)
 find_library(FREEIMAGE_LIBRARY NAMES freeimage FreeImage REQUIRED)
 find_package(OpenEXR 3 REQUIRED)
 add_library(lmx_core
+  libs/rendering/camera_model.cpp libs/rendering/camera_model.h
   libs/rendering/render_progress.cpp libs/rendering/render_progress.h
   libs/rendering/room_look.cpp libs/rendering/room_look.h
   libs/rendering/light_model.cpp libs/rendering/light_model.h
@@ -63,6 +64,7 @@ target_sources(libremax-architect PRIVATE apps/architect/queue_acceptance.cpp ap
 target_sources(libremax-architect PRIVATE apps/architect/environment_acceptance.cpp apps/architect/environment_acceptance.h)
 target_sources(libremax-architect PRIVATE apps/architect/lighting_acceptance.cpp apps/architect/lighting_acceptance.h)
 target_sources(libremax-architect PRIVATE apps/architect/apartment_acceptance.cpp apps/architect/apartment_acceptance.h)
+target_sources(libremax-architect PRIVATE apps/architect/camera_acceptance.cpp apps/architect/camera_acceptance.h)
 target_sources(libremax-architect PRIVATE apps/architect/project_home.cpp apps/architect/project_home.h apps/architect/first_run.cpp apps/architect/first_run.h)
 qt_add_resources(libremax-architect studio_icons PREFIX "/studio" BASE resources
   FILES resources/arrow-down.png resources/arrow-up.png resources/check.png resources/brand/libremax-mark.png resources/brand/apartment-preview.png)

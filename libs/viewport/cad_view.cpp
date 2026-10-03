@@ -2,6 +2,7 @@
 #include "commands/arrangement.h"
 #include "document/room_outline.h"
 #include "geometry/geometry.h"
+#include "rendering/camera_model.h"
 #include <AIS_TexturedShape.hxx>
 #include <Aspect_DisplayConnection.hxx>
 #include <Aspect_GridType.hxx>
@@ -20,6 +21,7 @@
 #include <QKeyEvent>
 #include <QMimeData>
 #include <QMouseEvent>
+#include <QPainter>
 #include <QToolTip>
 #include <QWheelEvent>
 #include <Standard_Failure.hxx>
@@ -41,6 +43,26 @@
 #endif
 
 namespace lmx {
+namespace {
+class CameraOverlay final : public QWidget {
+  public:
+    QRectF frame;
+    explicit CameraOverlay(QWidget *parent) : QWidget(parent) {
+        setAttribute(Qt::WA_TransparentForMouseEvents);
+        setAttribute(Qt::WA_NoSystemBackground);
+        setObjectName("cameraFrameOverlay");
+        setAccessibleName(tr("A moldura mostra exatamente a área da foto."));
+    }
+
+  protected:
+    void paintEvent(QPaintEvent *) override {
+        QPainter p(this);
+        p.fillRect(rect(), QColor(17, 17, 24));
+        p.setPen(QPen(QColor("#c89250"), 2));
+        p.drawRect(frame.adjusted(1, 1, -1, -1));
+    }
+};
+} // namespace
 CadView::CadView(QWidget *parent) : QWidget(parent) {
     setAttribute(Qt::WA_NativeWindow);
     setAttribute(Qt::WA_PaintOnScreen);
@@ -92,8 +114,11 @@ void CadView::paintEvent(QPaintEvent *) {
         view->Redraw();
 }
 void CadView::resizeEvent(QResizeEvent *) {
-    if (!view.IsNull())
+    if (!view.IsNull()) {
         view->MustBeResized();
+        if (photographicCamera)
+            updateCameraFrame();
+    }
 }
 int CadView::multisampling() const {
     return view.IsNull() ? 0 : view->RenderingParams().NbMsaaSamples;
@@ -109,6 +134,16 @@ void CadView::setPerformanceMode(int mode) {
     }
 }
 void CadView::scene(const Document &d) {
+    if (photographicCamera && (d.id != current.id || !d.contains(photographicCamera->id)))
+        leaveCameraFrame();
+    if (photographicCamera && photographDirty && current.contains(photographicCamera->id)) {
+        const auto &before = current.at(photographicCamera->id), &after = d.at(photographicCamera->id);
+        if (before.parameters != after.parameters || before.transform.x != after.transform.x ||
+            before.transform.y != after.transform.y || before.transform.z != after.transform.z) {
+            photographDirty = false;
+            emit cameraFramingChanged(false);
+        }
+    }
     movingSet.clear();
     pendingSet.clear();
     current = d;
@@ -137,12 +172,13 @@ void CadView::scene(const Document &d) {
                 locked |= d.at(parent).locked;
                 parent = d.at(parent).parent;
             }
-            if (cutaway && owner.type == "Ceiling")
+            if (cutaway && !photographicCamera && owner.type == "Ceiling")
                 continue;
             const Entity *wall = &owner;
             if (owner.type == "Door" || owner.type == "Window")
                 wall = &d.at(owner.parent);
-            if (cutaway && !top && (wall->type == "Wall" || wall->type == "HalfWall")) {
+            if (cutaway && !photographicCamera && !top &&
+                (wall->type == "Wall" || wall->type == "HalfWall")) {
                 double angle = wall->transform.yaw * std::numbers::pi / 180;
                 if (std::sin(angle) - std::cos(angle) > 0.01)
                     continue;
@@ -327,6 +363,11 @@ void CadView::scene(const Document &d) {
                 context->Deactivate(label);
                 measurements.push_back(label);
             }
+        if (photographicCamera) {
+            if (!photographDirty)
+                photographicCamera = current.at(photographicCamera->id);
+            updateCameraFrame();
+        }
         view->Redraw();
     } catch (const Standard_Failure &e) {
         emit failure(QString::fromUtf8(e.GetMessageString()));
@@ -389,6 +430,8 @@ void CadView::setTool(const QString &mode) {
 void CadView::beginPlacement(const QString &id) {
     if (!findAsset)
         return;
+    if (photographicCamera)
+        setTop(true);
     setTool("select");
     placingAsset = findAsset(id);
     placementYaw = 0;
@@ -490,11 +533,14 @@ void CadView::previewAsset(const Asset &asset, const QPoint &pixel) {
     showPlacement(placement, &asset);
 }
 void CadView::setTop(bool enabled) {
+    leaveCameraFrame();
     top = enabled;
     wallStart.reset();
     clearPreview();
     if (view.IsNull())
         return;
+    view->Camera()->ResetCustomProjection();
+    view->Camera()->SetProjectionType(Graphic3d_Camera::Projection_Orthographic);
     view->SetProj(enabled ? V3d_Zpos : V3d_XposYposZpos);
     if (enabled)
         view->Viewer()->ActivateGrid(Aspect_GT_Rectangular, Aspect_GDM_Lines);
@@ -511,6 +557,8 @@ void CadView::setGrid(double step) {
     }
 }
 void CadView::frame() {
+    if (photographicCamera)
+        setTop(false);
     if (!view.IsNull()) {
         view->FitAll(0.12, false);
         view->ZFitAll();
@@ -518,6 +566,8 @@ void CadView::frame() {
     }
 }
 void CadView::frameRoom(const std::string &id) {
+    if (photographicCamera)
+        setTop(false);
     if (view.IsNull() || !current.contains(id))
         return;
     const auto &room = current.at(id);
@@ -548,6 +598,79 @@ void CadView::selection() {
         result << QString::fromStdString(id);
     emit selected(result);
 }
+QSizeF CadView::cameraCanvasSize() const {
+    if (view.IsNull())
+        return size();
+    int width = 0, height = 0;
+    view->Window()->Size(width, height);
+    return {width / devicePixelRatioF(), height / devicePixelRatioF()};
+}
+QRectF CadView::photographFrame() const {
+    return photographicCamera ? cameraFrame(cameraCanvasSize(), photographSize) : QRectF{};
+}
+QPointF CadView::cameraScreenPoint(double x, double y, double z) const {
+    if (view.IsNull())
+        throw std::runtime_error("A vista da câmera ainda não abriu.");
+    int width = 0, height = 0;
+    view->Window()->Size(width, height);
+    const auto point = view->Camera()->Project(gp_Pnt(x, y, z));
+    return {(point.X() + 1) * width / (2 * devicePixelRatioF()),
+            (1 - point.Y()) * height / (2 * devicePixelRatioF())};
+}
+void CadView::leaveCameraFrame() {
+    photographicCamera.reset();
+    photographDirty = false;
+    if (cameraOverlay)
+        cameraOverlay->hide();
+    if (!view.IsNull()) {
+        view->Camera()->ResetCustomProjection();
+        view->Camera()->SetProjectionType(Graphic3d_Camera::Projection_Orthographic);
+    }
+    emit cameraFramingChanged(false);
+}
+void CadView::showCameraFrame(const Entity &camera, const QSize &image) {
+    cameraModel(camera);
+    cameraFrame(size(), image);
+    initialize();
+    if (view.IsNull())
+        throw std::runtime_error("A vista 3D não abriu para mostrar a câmera.");
+    setTool("select");
+    photographicCamera = camera;
+    photographSize = image;
+    photographDirty = false;
+    top = false;
+    view->Viewer()->DeactivateGrid();
+    scene(current);
+    updateCameraFrame();
+    emit cameraFramingChanged(false);
+}
+void CadView::updateCameraFrame() {
+    if (!photographicCamera || view.IsNull())
+        return;
+    const auto c = cameraModel(*photographicCamera);
+    const auto camera = view->Camera();
+    camera->SetProjectionType(Graphic3d_Camera::Projection_Perspective);
+    camera->SetEyeAndCenter(gp_Pnt(c.position[0], c.position[1], c.position[2]),
+                            gp_Pnt(c.target[0], c.target[1], c.target[2]));
+    camera->SetUp(gp_Dir(c.up[0], c.up[1], c.up[2]));
+    camera->SetZRange(c.clipNear, c.clipFar);
+    const auto projection = cameraProjection(c, cameraCanvasSize(), photographSize);
+    camera->SetFOVy(2 * std::atan(1 / projection.GetValue(1, 1)) * 180 / std::numbers::pi);
+    camera->SetCustomMonoProjection(projection);
+    if (!cameraOverlay)
+        cameraOverlay = new CameraOverlay(this);
+    auto *overlay = static_cast<CameraOverlay *>(cameraOverlay);
+    overlay->frame = photographFrame();
+    overlay->setGeometry(rect());
+    // The CAD canvas paints directly to its native window. Keep the photo area
+    // outside Qt's backing store so a child widget cannot erase the scene.
+    overlay->setMask(
+        QRegion(rect()).subtracted(QRegion(overlay->frame.adjusted(2, 2, -2, -2).toAlignedRect())));
+    overlay->show();
+    overlay->raise();
+    overlay->update();
+    view->Redraw();
+}
 void CadView::select(const std::vector<std::string> &ids) {
     if (context.IsNull())
         return;
@@ -573,6 +696,13 @@ void CadView::mousePressEvent(QMouseEvent *e) {
     last = e->pos();
     pressed = e->pos();
     moved = false;
+    if (photographicCamera) {
+        if (e->button() == Qt::RightButton)
+            view->StartRotation(qRound(e->pos().x() * devicePixelRatioF()),
+                                qRound(e->pos().y() * devicePixelRatioF()));
+        e->accept();
+        return;
+    }
     if (e->button() == Qt::LeftButton && placingAsset) {
         previewAsset(*placingAsset, e->pos());
         if (pendingPlacement && pendingPlacement->allowed) {
@@ -673,6 +803,44 @@ void CadView::mousePressEvent(QMouseEvent *e) {
 void CadView::mouseMoveEvent(QMouseEvent *e) {
     if (view.IsNull())
         return;
+    if (photographicCamera) {
+        if (!(e->buttons() & (Qt::MiddleButton | Qt::RightButton)))
+            return;
+        if (e->buttons() & Qt::RightButton) {
+            view->Rotation(qRound(e->pos().x() * devicePixelRatioF()),
+                           qRound(e->pos().y() * devicePixelRatioF()));
+            const auto c = view->Camera();
+            const auto eye = c->Eye(), target = c->Center();
+            photographicCamera->transform.x = eye.X();
+            photographicCamera->transform.y = eye.Y();
+            photographicCamera->transform.z = eye.Z();
+            photographicCamera->parameters["target"] = {target.X(), target.Y(), target.Z()};
+            const auto up = c->Up();
+            photographicCamera->parameters["up"] = {up.X(), up.Y(), up.Z()};
+        } else {
+            const auto c = cameraModel(*photographicCamera);
+            const auto delta = e->pos() - last;
+            double distance = 0;
+            for (int axis = 0; axis < 3; ++axis)
+                distance += std::pow(c.target[axis] - c.position[axis], 2);
+            const double scale = std::sqrt(distance) * c.sensorWidth / c.lens / photographFrame().width();
+            auto eye = c.position, target = c.target;
+            for (int axis = 0; axis < 3; ++axis) {
+                const auto movement = scale * (-delta.x() * c.right[axis] + delta.y() * c.up[axis]);
+                eye[axis] += movement;
+                target[axis] += movement;
+            }
+            photographicCamera->transform.x = eye[0];
+            photographicCamera->transform.y = eye[1];
+            photographicCamera->transform.z = eye[2];
+            photographicCamera->parameters["target"] = target;
+        }
+        last = e->pos();
+        photographDirty = true;
+        updateCameraFrame();
+        emit cameraFramingChanged(true);
+        return;
+    }
     auto p = position(e->pos());
     if (placingAsset) {
         previewAsset(*placingAsset, e->pos());
@@ -802,6 +970,16 @@ void CadView::mouseReleaseEvent(QMouseEvent *event) {
 void CadView::wheelEvent(QWheelEvent *e) {
     if (view.IsNull())
         return;
+    if (photographicCamera) {
+        const auto lens = cameraModel(*photographicCamera).lens;
+        photographicCamera->parameters["lens"] =
+            std::clamp(lens * std::pow(1.12, e->angleDelta().y() / 120.0), 1.0, 1000.0);
+        photographDirty = true;
+        updateCameraFrame();
+        emit cameraFramingChanged(true);
+        e->accept();
+        return;
+    }
     view->StartZoomAtPoint(qRound(e->position().x() * devicePixelRatioF()),
                            qRound(e->position().y() * devicePixelRatioF()));
     view->ZoomAtPoint(0, 0, 0, e->angleDelta().y() / 4);
@@ -809,6 +987,8 @@ void CadView::wheelEvent(QWheelEvent *e) {
 }
 void CadView::keyPressEvent(QKeyEvent *e) {
     if (e->key() == Qt::Key_Escape) {
+        if (photographicCamera)
+            setTop(false);
         setTool("select");
         e->accept();
     } else if (e->key() == Qt::Key_R && placingAsset) {
@@ -819,6 +999,8 @@ void CadView::keyPressEvent(QKeyEvent *e) {
         QWidget::keyPressEvent(e);
 }
 void CadView::dragEnterEvent(QDragEnterEvent *e) {
+    if (photographicCamera)
+        setTop(true);
     if (e->mimeData()->hasFormat("application/x-libremax-asset"))
         e->acceptProposedAction();
 }

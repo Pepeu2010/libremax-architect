@@ -1,4 +1,5 @@
 #include "apartment_acceptance.h"
+#include "camera_acceptance.h"
 #include "environment_acceptance.h"
 #include "first_run.h"
 #include "lighting_acceptance.h"
@@ -64,6 +65,9 @@ int main(int argc, char **argv) {
          "Verify room contours, grouped placement, actual model import, packs and 3 real photo styles",
          "directory"});
     parser.addVersionOption();
+    parser.addOption({"camera-smoke",
+                      "Verify native camera framing against actual Blender projection and render",
+                      "directory"});
     parser.addOption({"queue-smoke", "Verify native batch render queue, snapshots and gallery", "directory"});
     parser.addOption({"environment-smoke", "Verify native HDRI and real Cycles EXR queue", "directory"});
     parser.addOption(
@@ -94,13 +98,13 @@ int main(int argc, char **argv) {
     parser.addOption({"blender", "Blender executable for render acceptance", "executable"});
     parser.addPositionalArgument("project", ".lmx project to open");
     parser.process(app);
-    bool test = parser.isSet("apartment-tools-smoke") || parser.isSet("lighting-smoke") ||
-                parser.isSet("environment-smoke") || parser.isSet("queue-smoke") ||
-                parser.isSet("installation-smoke") || parser.isSet("experience-smoke") ||
-                parser.isSet("modern-smoke") || parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") ||
-                parser.isSet("examples") || parser.isSet("render-smoke") ||
-                parser.isSet("instances-fixture") || parser.isSet("recovery-smoke") ||
-                parser.isSet("recovery-fixture") || parser.isSet("recovery-verify");
+    bool test =
+        parser.isSet("camera-smoke") || parser.isSet("apartment-tools-smoke") ||
+        parser.isSet("lighting-smoke") || parser.isSet("environment-smoke") || parser.isSet("queue-smoke") ||
+        parser.isSet("installation-smoke") || parser.isSet("experience-smoke") ||
+        parser.isSet("modern-smoke") || parser.isSet("assembly-smoke") || parser.isSet("ui-smoke") ||
+        parser.isSet("examples") || parser.isSet("render-smoke") || parser.isSet("instances-fixture") ||
+        parser.isSet("recovery-smoke") || parser.isSet("recovery-fixture") || parser.isSet("recovery-verify");
     if (test)
         QStandardPaths::setTestModeEnabled(true);
     QTemporaryDir settingsDirectory;
@@ -414,6 +418,8 @@ int main(int argc, char **argv) {
         if (!parser.positionalArguments().isEmpty())
             window.loadProject(parser.positionalArguments().first());
         window.show();
+        if (parser.isSet("camera-smoke"))
+            lmx::startCameraAcceptance(window, app, parser.value("camera-smoke"), parser.value("blender"));
         if (parser.isSet("apartment-tools-smoke"))
             lmx::startApartmentAcceptance(window, app, parser.value("apartment-tools-smoke"),
                                           parser.value("blender"));

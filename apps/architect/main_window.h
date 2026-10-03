@@ -128,6 +128,8 @@ class MainWindow final : public QMainWindow {
     Q_INVOKABLE void createLight();
     void createCamera();
     void simpleCamera();
+    Q_INVOKABLE void showCameraFrame();
+    Q_INVOKABLE void saveCameraFrame();
     Q_INVOKABLE void roomLook(const QString &style);
     void importDxf();
     Q_INVOKABLE void importModel(const QString &file = {});

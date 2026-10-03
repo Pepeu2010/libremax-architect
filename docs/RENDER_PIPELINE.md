@@ -14,7 +14,10 @@ Para o alvo i3-6006U/HD 520/8 GB, o caminho é Blender 4.5 LTS com CPU e editor 
 
 Cada pedido mantém sua própria cópia do documento, materiais, assets e câmera. Alterações posteriores não modificam imagens já enviadas. Apenas um processo Cycles renderiza por vez, na ordem de envio. A preparação usa até dois workers; a tesselação também ocorre fora da thread da interface.
 
-Os scripts confiáveis `cycles_render.py` e `cycles_lights.py` acompanham cada pedido novo. Repetir o render usa essa cópia, incluindo o tradutor Kelvin/LED/sol, e preserva a cena original. Pedidos anteriores que usavam um script único continuam repetíveis.
+Os scripts confiáveis `cycles_render.py`, `cycles_lights.py` e `cycles_camera.py` acompanham cada pedido novo. Repetir o render usa essa cópia, incluindo os tradutores de luz e câmera, e preserva a cena original. Pedidos anteriores que usavam um script único continuam repetíveis.
+
+A fonte 0.17 permite [ver e ajustar a moldura da câmera](CAMERA_FRAMING.md) no editor.
+Enviar a imagem guarda primeiro o enquadramento pendente, antes de preparar a cópia da cena.
 
 ## Modos e arquivos
 
@@ -60,7 +63,7 @@ Kelvin, LED contínuo, sol e os controles adicionais de área/ponto/spot estão 
 
 O pipeline também produziu o apartamento moderno com Kelvin/LED em 3840 × 2160, 512 amostras máximas e 12 reflexões, com denoise e HIP na RX 7600 deste Windows. O tempo no motor foi 08:08,98. É evidência da saída com parâmetros de apresentação, sem verificar o gesto de selecionar Final na galeria nem equivalência fotográfica. [Imagem e reprodução](LIGHTING.md#apartamento-em-4k).
 
-Esta entrega não completa toda a especificação de render. Permanecem pendentes: desfoque opcional de HDRI; canais adicionais de metalicidade, opacidade e emissão por mapa; validação exata de enquadramento entre viewport e Cycles; instâncias e tesselação própria de apresentação; políticas de cache; diagnóstico dedicado de versões/dispositivos; seleção Final pela interface e QA amplo de apresentação; benchmarks de apartamentos grandes e QA com outras GPUs NVIDIA/AMD/Intel, incluindo HIP no Linux. O catálogo e a iluminação também condicionam o realismo. Não há comprovação de superioridade geral sobre o VDMax.
+Esta entrega não completa toda a especificação de render. Permanecem pendentes: desfoque opcional de HDRI; canais adicionais de metalicidade, opacidade e emissão por mapa; QA do enquadramento em outros drivers/GPU; instâncias e tesselação própria de apresentação; políticas de cache; diagnóstico dedicado de versões/dispositivos; seleção Final pela interface e QA amplo de apresentação; benchmarks de apartamentos grandes e QA com outras GPUs NVIDIA/AMD/Intel, incluindo HIP no Linux. O catálogo e a iluminação também condicionam o realismo. Não há comprovação de superioridade geral sobre o VDMax.
 
 
 ## Reproduzir a verificação HIP no Windows

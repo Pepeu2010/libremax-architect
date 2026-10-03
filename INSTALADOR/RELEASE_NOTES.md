@@ -1,11 +1,16 @@
-# LibreMax Architect 0.16.0 — montar, importar e fotografar
+# LibreMax Architect 0.17.0 — montar, importar e fotografar
 
 Baixe o arquivo do seu sistema em Assets:
 
-- **Windows 64 bits:** `LibreMax-Architect-0.16.0-Windows-x64-Setup.exe`.
-- **Ubuntu 24.04, x86-64:** `LibreMax-Architect-0.16.0-Linux-Ubuntu24.04-amd64.deb`.
+- **Windows 64 bits:** `LibreMax-Architect-0.17.0-Windows-x64-Setup.exe`.
+- **Ubuntu 24.04, x86-64:** `LibreMax-Architect-0.17.0-Linux-Ubuntu24.04-amd64.deb`.
 
-Esta versão amplia o tutorial para 21 assuntos, com índice por teclado e ilustrações.
+Esta versão acrescenta a moldura exata da câmera no editor, com ajuste pelo mouse,
+inclinação, lente, sensor, deslocamentos e recorte preservados no Blender. Guardar
+enquadramento confirma; enviar a imagem guarda o ajuste antes de copiar a cena.
+[Uso e testes](https://github.com/Pepeu2010/libremax-architect/blob/main/docs/CAMERA_FRAMING.md).
+
+O tutorial tem 21 assuntos, com índice por teclado e ilustrações.
 Conjuntos agora giram e espelham seus móveis em uma operação reversível, respeitando
 colisões, limites do cômodo e bloqueios. Falhas de importação mostram uma mensagem
 simples, com diagnóstico técnico separado. O cálculo oferece Automático ou Processador.

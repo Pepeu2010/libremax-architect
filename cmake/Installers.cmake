@@ -40,7 +40,7 @@ install(DIRECTORY starter-materials/ DESTINATION share/libremax/starter-material
 install(DIRECTORY starter-environments/ DESTINATION share/libremax/starter-environments)
 install(DIRECTORY starter-models/ DESTINATION share/libremax/starter-models)
 install(DIRECTORY collections/ DESTINATION share/libremax/collections)
-install(FILES scripts/cycles_render.py scripts/cycles_lights.py scripts/import-model.py DESTINATION share/libremax/scripts)
+install(FILES scripts/cycles_render.py scripts/cycles_lights.py scripts/cycles_camera.py scripts/verify-camera-projection.py scripts/import-model.py DESTINATION share/libremax/scripts)
 install(FILES scripts/benchmark-windows.ps1 DESTINATION share/libremax/scripts)
 install(FILES resources/style.qss DESTINATION share/libremax/resources)
 install(DIRECTORY examples/ DESTINATION share/libremax/examples)

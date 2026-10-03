@@ -1,3 +1,12 @@
+# Test report — fonte 0.17
+
+Windows Release: **54 testes / 3.194 verificações**, build e formato C++ passaram.
+Moldura nativa em quatro formatos, projeção real do Blender 4.5.9/5.2.1,
+controles pelo mouse, janela compacta, histórico, arquivo único e envio com
+ajuste pendente passaram. Cinco fotos Cycles CPU por execução; UI e comparação
+com o leitor arquivado também passaram. [Provas e limites](EXECUTION_017.md).
+CI Linux e instaladores da nova fonte ainda precisam concluir.
+
 # Test report — fonte 0.16
 
 Windows Release: **52 testes / 3.065 verificações**, build e formato C++ passaram.

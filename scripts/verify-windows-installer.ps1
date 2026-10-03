@@ -81,6 +81,9 @@ try {
         Invoke-App -Arguments @('--experience-smoke', (Join-Path $evidence 'experience')) -Name 'experience'
         Invoke-App -Arguments @('--recovery-smoke') -Name 'recovery'
     }
+    $env:QT_QPA_PLATFORM = 'windows'
+    Invoke-App -Arguments @('--camera-smoke', (Join-Path $evidence 'camera')) -Name 'camera'
+    if (!$Gui) { $env:QT_QPA_PLATFORM = 'offscreen' }
     Invoke-App -Arguments @('--render-smoke', (Join-Path $evidence 'render'), '--render-project', (Join-Path $installation 'share/libremax/examples/apartamento-moderno.lmx'), '--render-size', '320x180', '--render-samples', '8') -Name 'bundled-render'
     if ($Blender) {
         Invoke-App -Arguments @('--render-smoke', (Join-Path $evidence 'external-render'), '--render-size', '160x90', '--render-samples', '8', '--blender', $Blender) -Name 'external-render'

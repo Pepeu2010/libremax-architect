@@ -241,9 +241,13 @@ void showTutorial(QWidget *parent) {
          "Experimente: faça uma foto Natural e outra Aconchegante do mesmo cômodo."},
         {"Prepare uma câmera", "A câmera escolhe o que aparece na foto.",
          "Selecione o cômodo e use Preparar câmera do cômodo em 4 Foto. O programa cria uma câmera com um "
-         "enquadramento inicial.\n\nEscolha a câmera no painel Criar imagem. Nos ajustes avançados, Lente "
-         "altera o campo de visão e Foco escolhe a distância nítida. Se parte do ambiente desaparecer, "
-         "confira a posição e o alvo da câmera antes de renderizar."},
+         "enquadramento inicial.\n\nEscolha a câmera e o tamanho da foto no painel Criar imagem. Ver e "
+         "ajustar "
+         "enquadramento mostra a área exata da foto. O botão direito gira, o botão do meio arrasta e a roda "
+         "aproxima. Guardar enquadramento confirma; Criar imagem também guarda antes de calcular. Esc volta "
+         "à edição; guarde antes de trocar de vista.\n\nNos ajustes avançados, Lente altera o campo de visão "
+         "e Foco escolhe a distância nítida. O enquadramento coincide; a iluminação da tela é uma prévia "
+         "simples e a foto final usa o Cycles."},
         {"Gere sua imagem", "O trabalho pesado acontece em segundo plano.",
          "Escolha a qualidade, o tamanho da imagem e a câmera. Rápido ajuda a conferir; Normal equilibra "
          "tempo e qualidade; Final usa mais amostras para apresentação. Personalizado mostra controles "

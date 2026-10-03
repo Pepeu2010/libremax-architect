@@ -12,6 +12,10 @@ importação usam um aviso curto e detalhes técnicos separados. A distribuiçã
 0.16 aguarda os gates de instalação; os links acima continuam sendo da prévia 0.15.
 [Provas e limites deste ciclo](docs/EXECUTION_016.md).
 
+A fonte 0.17 acrescenta [enquadramento da câmera no editor](docs/CAMERA_FRAMING.md),
+com moldura da foto, ajuste pelo mouse e composição compartilhada com o Blender.
+Os instaladores publicados acima continuam sendo da versão 0.16 até os novos gates.
+
 A fonte 0.15 acrescenta [cômodos com contorno, conjuntos, importação 3D,
 coleções, estilos de foto e malhas leves](docs/APARTMENT_TOOLS.md). O catálogo
 tem 203 itens e 64 modelos em Apartamento atual. Os instaladores passaram em

@@ -75,6 +75,7 @@ jobs:
           cmake --install build-linux --prefix "$PWD/build-linux/stage"
           QT_QPA_PLATFORM=offscreen ./build-linux/stage/bin/libremax-architect --installation-smoke build-linux/bundled-runtime-evidence
           xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build-linux/stage/bin/libremax-architect --apartment-tools-smoke build-linux/bundled-runtime-evidence/apartment-tools
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build-linux/stage/bin/libremax-architect --camera-smoke build-linux/bundled-runtime-evidence/camera
           xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 ./build-linux/stage/bin/libremax-architect --render-smoke build-linux/bundled-runtime-evidence/render --render-project build-linux/stage/share/libremax/examples/apartamento-moderno.lmx --render-size 320x180 --render-samples 8
           bash scripts/verify-cycles-linux.sh ./build-linux/stage/bin/libremax-architect build-linux/queue-evidence
           cpack --config build-linux/CPackConfig.cmake -G DEB -B dist/linux
@@ -111,6 +112,7 @@ jobs:
           xvfb-run -a env QT_QPA_PLATFORM=xcb LIBGL_ALWAYS_SOFTWARE=1 /usr/bin/libremax-architect --render-smoke evidence/bundled-render --render-project /usr/share/libremax/examples/apartamento-moderno.lmx --render-size 320x180 --render-samples 8
           xvfb-run -a env QT_QPA_PLATFORM=xcb LIBGL_ALWAYS_SOFTWARE=1 /usr/bin/libremax-architect --ui-smoke evidence/expanded-library
           xvfb-run -a env QT_QPA_PLATFORM=xcb LIBGL_ALWAYS_SOFTWARE=1 /usr/bin/libremax-architect --modern-smoke evidence/native
+          xvfb-run -a env QT_QPA_PLATFORM=xcb LIBGL_ALWAYS_SOFTWARE=1 /usr/bin/libremax-architect --camera-smoke evidence/camera
           xvfb-run -a env QT_QPA_PLATFORM=xcb LIBGL_ALWAYS_SOFTWARE=1 /usr/bin/libremax-architect --apartment-tools-smoke evidence/apartment-tools
           cp evidence/runtime/portable-project.lmx evidence/preserve-me.lmx
           sudo apt-get remove -y libremax-architect

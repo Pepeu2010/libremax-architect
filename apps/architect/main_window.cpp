@@ -810,7 +810,12 @@ void MainWindow::createShell() {
                                                   {"targetZ", tr("Alvo Z (mm)")},
                                                   {"lens", tr("Lente (mm)")},
                                                   {"fstop", tr("Abertura f/")},
-                                                  {"focusDistance", tr("Foco (mm)")}}) {
+                                                  {"focusDistance", tr("Foco (mm)")},
+                                                  {"sensorWidth", tr("Sensor (mm)")},
+                                                  {"shiftX", tr("Deslocar quadro na horizontal")},
+                                                  {"shiftY", tr("Deslocar quadro na vertical")},
+                                                  {"clipNear", tr("Distância mínima da foto (mm)")},
+                                                  {"clipFar", tr("Distância máxima da foto (mm)")}}) {
         auto *field = new QLineEdit;
         field->setObjectName(key + "Field");
         field->setAccessibleName(label);
@@ -923,6 +928,22 @@ void MainWindow::createShell() {
     renderCamera->setObjectName("renderCamera");
     renderCamera->setAccessibleName(tr("Câmera para renderizar"));
     renderLayout->addRow(tr("Câmera"), renderCamera);
+    auto *cameraFrameButton = new QPushButton(tr("Ver e ajustar enquadramento"));
+    cameraFrameButton->setObjectName("showCameraFrame");
+    renderLayout->addRow(cameraFrameButton);
+    connect(cameraFrameButton, &QPushButton::clicked, this, [this] { protect([&] { showCameraFrame(); }); });
+    auto *saveFraming = new QPushButton(tr("Guardar enquadramento"));
+    saveFraming->setObjectName("saveCameraFrame");
+    saveFraming->setEnabled(false);
+    renderLayout->addRow(saveFraming);
+    connect(saveFraming, &QPushButton::clicked, this, [this] { protect([&] { saveCameraFrame(); }); });
+    connect(viewport, &CadView::cameraFramingChanged, saveFraming, &QPushButton::setEnabled);
+    connect(viewport, &CadView::cameraFramingChanged, this, [this](bool) {
+        placementBanner->setText(
+            viewport->hasCameraFrame()
+                ? tr("Foto: direito gira; meio arrasta; roda aproxima. Guarde antes de sair.")
+                : tr("Arraste um móvel para o cômodo. Perto da parede, ele encaixa sozinho."));
+    });
     renderQuality = new QComboBox;
     renderQuality->setObjectName("renderQuality");
     renderQuality->addItem(tr("Rápido · conferir luz e câmera"), "rapid");
@@ -939,6 +960,10 @@ void MainWindow::createShell() {
         renderSize->addItem(QString("%1 × %2").arg(size.width()).arg(size.height()), size);
     renderSize->setCurrentIndex(2);
     renderLayout->addRow(tr("Tamanho da imagem"), renderSize);
+    connect(renderSize, &QComboBox::currentIndexChanged, this, [this] {
+        if (viewport->hasCameraFrame())
+            viewport->setCameraImageSize(renderSize->currentData().toSize());
+    });
     renderFormat = new QComboBox;
     renderFormat->setObjectName("renderFormat");
     renderFormat->addItems({"PNG", "JPEG", "EXR"});
@@ -1189,6 +1214,7 @@ void MainWindow::createShell() {
     renderLayout->addRow(allCameras);
     connect(allCameras, &QPushButton::clicked, this, [this] {
         protect([&] {
+            saveCameraFrame();
             applyRenderSettings();
             const auto document = editor_.document();
             for (const auto &camera : document.entities)
@@ -1211,7 +1237,11 @@ void MainWindow::createShell() {
     connect(details, &QPushButton::toggled, renderLog, &QWidget::setVisible);
     connect(renderCamera, &QComboBox::currentIndexChanged, this, [this] {
         if (!refreshing)
-            protect([&] { applyRenderSettings(); });
+            protect([&] {
+                applyRenderSettings();
+                if (viewport->hasCameraFrame())
+                    showCameraFrame();
+            });
     });
     connect(renderExposure, &QDoubleSpinBox::editingFinished, this,
             [this] { protect([&] { applyRenderSettings(); }); });
@@ -1583,12 +1613,14 @@ void MainWindow::refreshInspector() {
             visible = e && e->type != "Light" && e->type != "Camera";
         if (key == "angle" || key == "blend")
             visible = e && e->type == "Light" && e->parameters.value("kind", std::string("area")) == "spot";
-        if (key == "lens" || key == "fstop" || key == "focusDistance")
+        if (key == "lens" || key == "fstop" || key == "focusDistance" || key == "sensorWidth" ||
+            key == "shiftX" || key == "shiftY" || key == "clipNear" || key == "clipFar")
             visible = e && e->type == "Camera";
         if (key.startsWith("target"))
             visible = e && (e->type == "Camera" || e->type == "Light");
         if (key == "x" || key == "y" || key == "yaw" || key.startsWith("target") || key == "lens" ||
-            key == "fstop" || key == "focusDistance")
+            key == "fstop" || key == "focusDistance" || key == "sensorWidth" || key == "shiftX" ||
+            key == "shiftY" || key == "clipNear" || key == "clipFar")
             visible = visible && advancedProperties->isChecked();
         if (e && e->type == "Group")
             visible = key == "name";
@@ -1666,6 +1698,9 @@ void MainWindow::refreshInspector() {
     refreshLightControls();
     fields["lens"]->setEnabled(e->type == "Camera" && !e->locked);
     set("lens", e->parameters.value("lens", 28.0));
+    for (const auto &[key, fallback] : std::vector<std::pair<const char *, double>>{
+             {"sensorWidth", 36}, {"shiftX", 0}, {"shiftY", 0}, {"clipNear", 100}, {"clipFar", 1e6}})
+        set(key, e->parameters.value(key, fallback));
     for (auto *key : {"fstop", "focusDistance"})
         fields[key]->setEnabled(e->type == "Camera" && !e->locked);
     set("fstop", e->parameters.value("fstop", 8.0));
@@ -1719,7 +1754,7 @@ void MainWindow::applyInspector() {
                  name == "sill" || name == "size" || name == "sizeY" || name == "radius")
                     ? 10
                     : 1;
-            if (name == "sunAngle" || name == "blend")
+            if (name == "sunAngle" || name == "blend" || name == "shiftX" || name == "shiftY")
                 return fields[key]->isEnabled() ? evaluate(fields[key]->text().toStdString()) : previous;
             return fields[key]->isEnabled() ? millimeters(evaluate(fields[key]->text().toStdString()) * unit)
                                             : previous;
@@ -1733,7 +1768,8 @@ void MainWindow::applyInspector() {
         if (e.type == "MeshObject")
             e.parameters["originalMaterials"] = originalModelColors->isChecked();
         for (const auto *key : {"offset", "sill", "openAngle", "power", "lens", "size", "angle", "blend",
-                                "fstop", "focusDistance", "sizeY", "radius", "sunAngle"})
+                                "fstop", "focusDistance", "sizeY", "radius", "sunAngle", "sensorWidth",
+                                "shiftX", "shiftY", "clipNear", "clipFar"})
             if (fields[key]->isEnabled())
                 e.parameters[key] = value(key, 0);
         if (e.type == "Light" || e.type == "Camera")
@@ -2416,6 +2452,37 @@ void MainWindow::simpleCamera() {
     });
     statusBar()->showMessage(tr("Câmera preparada. Escolha a qualidade e clique em Criar imagem."), 8000);
 }
+void MainWindow::showCameraFrame() {
+    const auto id = renderCamera->currentData().toString().toStdString();
+    if (id.empty() || !editor_.document().contains(id))
+        throw std::invalid_argument("Prepare uma câmera do cômodo antes de ajustar a foto.");
+    const auto options = selectedRenderOptions();
+    showEditorWorkspace();
+    viewport->showCameraFrame(editor_.document().at(id),
+                              QSize(options.at("width").get<int>(), options.at("height").get<int>()));
+    statusBar()->showMessage(tr("Foto: direito gira; meio arrasta; roda aproxima. Guarde antes de sair."),
+                             20000);
+}
+void MainWindow::saveCameraFrame() {
+    const auto camera = viewport->framedCamera();
+    if (!camera || !viewport->cameraFrameChanged())
+        return;
+    auto ancestor = camera->id;
+    while (!ancestor.empty()) {
+        const auto &item = editor_.document().at(ancestor);
+        if (item.locked)
+            throw std::invalid_argument(
+                "Desbloqueie a câmera ou seu conjunto antes de guardar o enquadramento.");
+        ancestor = item.parent;
+    }
+    editor_.apply(tr("Ajustar enquadramento da câmera"), [&](Document &d) {
+        d.at(camera->id).transform = camera->transform;
+        d.at(camera->id).parameters = camera->parameters;
+    });
+    viewport->markCameraFrameSaved();
+    findChild<QPushButton *>("saveCameraFrame")->setEnabled(false);
+    statusBar()->showMessage(tr("Enquadramento guardado. Desfazer recupera a câmera anterior."), 8000);
+}
 Json MainWindow::selectedRenderOptions() const {
     auto options = renderPreset(renderQuality->currentData().toString());
     const bool custom = renderQuality->currentData() == "custom";
@@ -2479,6 +2546,7 @@ void MainWindow::importHdri(const QString &provided) {
     }));
 }
 void MainWindow::renderScene() {
+    saveCameraFrame();
     if (renderCamera->currentData().toString().isEmpty())
         throw std::runtime_error("Prepare uma câmera do cômodo antes de criar a imagem.");
     const auto executable = BlenderBridge::findExecutable(blenderPath->text());
@@ -2565,6 +2633,7 @@ void MainWindow::applyRenderSettings() {
         if (options.at("format") == "EXR" || d.renderSettings.at("environmentMode") == "solid")
             d.version = std::max(2, d.version);
     });
+    viewport->setCameraImageSize(QSize(options.at("width").get<int>(), options.at("height").get<int>()));
 }
 void MainWindow::showRenderImage(const QString &filename) {
     if (!preview) {

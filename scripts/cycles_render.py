@@ -13,6 +13,7 @@ from mathutils import Vector, Matrix
 LIBREMAX_SCENE_SCHEMA = 2
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from cycles_lights import translate_light
+from cycles_camera import translate_camera
 
 def arguments():
     parser = argparse.ArgumentParser()
@@ -245,20 +246,7 @@ def main():
     camera_entry = next((camera for camera in package['cameras'] if camera['id'] == selected_id), None) if selected_id else (package['cameras'][0] if package['cameras'] else None)
     if camera_entry is None:
         raise ValueError('Create a persistent camera before rendering')
-    camera = bpy.data.cameras.new(camera_entry['name'])
-    camera.lens = camera_entry['parameters'].get('lens', 28)
-    camera.sensor_width = 36
-    camera.sensor_fit = 'HORIZONTAL'
-    obj = bpy.data.objects.new(camera_entry['name'], camera)
-    scene.collection.objects.link(obj)
-    obj.location = camera_entry['position']
-    target = Vector([v / 1000 for v in camera_entry['parameters'].get('target', [2000, 1500, 1000])])
-    obj.rotation_euler = (target - obj.location).to_track_quat('-Z', 'Y').to_euler()
-    scene.camera = obj
-    camera.dof.use_dof = True
-    camera.dof.aperture_fstop = camera_entry['parameters'].get('fstop', 8)
-    camera.dof.focus_distance = camera_entry['parameters'].get('focusDistance', (target - obj.location).length * 1000) / 1000
-    camera.dof.aperture_blades = 7
+    camera = translate_camera(camera_entry, scene)
     scene.world.use_nodes = True
     scene.world.node_tree.nodes['Background'].inputs['Color'].default_value = (*settings.get('backgroundColor', [0.7, 0.8, 1.0]), 1.0)
     scene.world.node_tree.nodes['Background'].inputs['Strength'].default_value = settings.get('environmentStrength', 0.2)

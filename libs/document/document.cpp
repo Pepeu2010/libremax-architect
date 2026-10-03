@@ -1,5 +1,6 @@
 #include "document.h"
 #include "library/model.h"
+#include "rendering/camera_model.h"
 #include "rendering/high_dynamic_image.h"
 #include "rendering/light_model.h"
 #include "rendering/render_options.h"
@@ -343,12 +344,8 @@ void Document::validate() const {
                 if (advancedLight(e) && version < 3)
                     throw std::invalid_argument("Esta iluminação exige um projeto da versão 3");
             }
-            if (e.type == "Camera" &&
-                (e.parameters.value("lens", 28.0) < 1 || e.parameters.value("lens", 28.0) > 1000 ||
-                 e.parameters.value("fstop", 8.0) < 1 || e.parameters.value("fstop", 8.0) > 64 ||
-                 e.parameters.value("focusDistance", 2500.0) < 100 ||
-                 e.parameters.value("focusDistance", 2500.0) > 1e7))
-                throw std::invalid_argument("Lente, abertura ou foco inválidos");
+            if (e.type == "Camera")
+                cameraModel(e);
         }
         if (e.type == "Stair") {
             int steps = e.parameters.value("steps", 15);

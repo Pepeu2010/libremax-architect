@@ -3,6 +3,7 @@
 #include "geometry/geometry.h"
 #include "materials/texture.h"
 #include "persistence/project_store.h"
+#include "rendering/camera_model.h"
 #include "rendering/environment_map.h"
 #include "rendering/high_dynamic_image.h"
 #include "rendering/light_model.h"
@@ -26,6 +27,87 @@
 #include <catch2/catch.hpp>
 #endif
 using namespace lmx;
+TEST_CASE("Camera validation covers sensor, shifts, clipping and orientation", "[render][camera]") {
+    auto e = entity("Camera", "Câmera");
+    e.transform = {0, 4000, 1500, 0, false};
+    e.parameters = {{"target", {0, 0, 1500}}};
+    const auto original = cameraModel(e);
+    REQUIRE(original.lens == 28);
+    REQUIRE(original.sensorWidth == 36);
+    REQUIRE(original.focusDistance == 4000);
+    for (const auto &[key, value] :
+         std::vector<std::pair<const char *, double>>{{"lens", std::numeric_limits<double>::quiet_NaN()},
+                                                      {"sensorWidth", 0},
+                                                      {"shiftX", 3},
+                                                      {"shiftY", std::numeric_limits<double>::infinity()},
+                                                      {"clipNear", -1},
+                                                      {"clipFar", 99},
+                                                      {"fstop", 0},
+                                                      {"focusDistance", 1}}) {
+        auto bad = e;
+        bad.parameters[key] = value;
+        REQUIRE_THROWS(cameraModel(bad));
+    }
+    auto bad = e;
+    bad.parameters["up"] = {0, -1, 0};
+    REQUIRE_THROWS(cameraModel(bad));
+    for (const auto key : {"up", "target"}) {
+        for (const auto size : {2, 4}) {
+            bad = e;
+            bad.parameters[key] = Json::array();
+            for (int axis = 0; axis < size; ++axis)
+                bad.parameters[key].push_back(axis);
+            REQUIRE_THROWS(cameraModel(bad));
+        }
+    }
+    bad = e;
+    bad.parameters["target"] = {0, 3999, 1500};
+    REQUIRE_NOTHROW(cameraModel(bad));
+    bad = e;
+    bad.parameters["target"] = {0, 4000, 1500};
+    REQUIRE_THROWS(cameraModel(bad));
+    e.parameters["sensorWidth"] = 24;
+    e.parameters["shiftX"] = .12;
+    e.parameters["shiftY"] = -.08;
+    e.parameters["clipNear"] = 25;
+    e.parameters["clipFar"] = 80000;
+    e.parameters["up"] = {.1, 0, 1};
+    Document d;
+    d.entities.push_back(e);
+    REQUIRE_NOTHROW(d.validate());
+    QTemporaryDir dir;
+    ProjectStore::save(dir.filePath("camera.lmx"), d);
+    const auto reopened = ProjectStore::open(dir.filePath("camera.lmx"));
+    REQUIRE(reopened.at(e.id).parameters == e.parameters);
+    REQUIRE(meshSnapshot(reopened).at("cameras").at(0).at("parameters") == e.parameters);
+}
+TEST_CASE("Perspective frames preserve normalized image coordinates on every viewport shape",
+          "[render][camera]") {
+    auto e = entity("Camera", "Câmera");
+    e.transform = {0, 4000, 1500, 0, false};
+    e.parameters = {{"target", {0, 0, 1500}}, {"lens", 35},     {"sensorWidth", 24}, {"shiftX", .13},
+                    {"shiftY", -.06},         {"clipNear", 10}, {"clipFar", 80000}};
+    const auto c = cameraModel(e);
+    for (const auto image : {QSizeF(1920, 1080), QSizeF(1080, 1920), QSizeF(1080, 1080), QSizeF(1600, 1200)})
+        for (const auto viewport : {QSizeF(900, 600), QSizeF(400, 800), QSizeF(1600, 700)}) {
+            const auto frame = cameraFrame(viewport, image);
+            REQUIRE(std::abs(frame.width() / frame.height() - image.width() / image.height()) < 1e-10);
+            REQUIRE(frame.left() >= 0);
+            REQUIRE(frame.top() >= 0);
+            const auto projection = cameraProjection(c, viewport, image);
+            for (const auto p : {std::array{0.0, 0.0, 1500.0}, std::array{300.0, 0.0, 1800.0},
+                                 std::array{-700.0, -1000.0, 1100.0}}) {
+                const auto imagePoint = cameraPoint(c, image, p);
+                const double x = -p[0], y = p[2] - 1500, z = p[1] - 4000;
+                const auto nx = (projection.GetValue(0, 0) * x + projection.GetValue(0, 2) * z) / -z,
+                           ny = (projection.GetValue(1, 1) * y + projection.GetValue(1, 2) * z) / -z;
+                const auto screenX = (nx + 1) * viewport.width() / 2,
+                           screenY = (1 - ny) * viewport.height() / 2;
+                REQUIRE(std::abs((screenX - frame.left()) / frame.width() - imagePoint[0]) < 1e-10);
+                REQUIRE(std::abs(1 - (screenY - frame.top()) / frame.height() - imagePoint[1]) < 1e-10);
+            }
+        }
+}
 TEST_CASE("Shared render packets retain PBR and HDRI assets and legacy world-mapped CAD surfaces",
           "[instances][materials]") {
     auto document = kitchenExample();

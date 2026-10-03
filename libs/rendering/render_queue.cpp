@@ -257,10 +257,12 @@ void RenderQueue::prepare(const QString &id, const QString &, const QString &scr
                 ProjectStore::save(destination, snapshot->document(), false);
                 if (!QFile::copy(script, scriptFile))
                     throw std::runtime_error("Não foi possível preparar o mecanismo de render");
-                const auto lightTranslator = QFileInfo(script).dir().filePath("cycles_lights.py");
-                if (QFileInfo::exists(lightTranslator) &&
-                    !QFile::copy(lightTranslator, QFileInfo(scriptFile).dir().filePath("cycles_lights.py")))
-                    throw std::runtime_error("Não foi possível preparar a iluminação do render");
+                for (const auto *module : {"cycles_lights.py", "cycles_camera.py"}) {
+                    const auto translator = QFileInfo(script).dir().filePath(module);
+                    if (QFileInfo::exists(translator) &&
+                        !QFile::copy(translator, QFileInfo(scriptFile).dir().filePath(module)))
+                        throw std::runtime_error("Não foi possível preparar os arquivos do render");
+                }
                 return {};
             } catch (const std::exception &e) {
                 return QString::fromUtf8(e.what());

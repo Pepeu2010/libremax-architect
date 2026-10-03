@@ -39,6 +39,13 @@ class CadView final : public QWidget {
     QPoint last;
     bool top = true;
     bool cutaway = true;
+    std::optional<Entity> photographicCamera;
+    QSize photographSize;
+    QWidget *cameraOverlay = nullptr;
+    bool photographDirty = false;
+    void updateCameraFrame();
+    void leaveCameraFrame();
+    QSizeF cameraCanvasSize() const;
     int performance = 1;
     QString tool = "select";
     std::function<std::optional<Asset>(const QString &)> findAsset;
@@ -97,6 +104,19 @@ class CadView final : public QWidget {
     void setGrid(double step);
     void frame();
     void frameRoom(const std::string &id);
+    void showCameraFrame(const Entity &camera, const QSize &image);
+    bool hasCameraFrame() const { return photographicCamera.has_value(); }
+    bool cameraFrameChanged() const { return photographDirty; }
+    std::optional<Entity> framedCamera() const { return photographicCamera; }
+    QRectF photographFrame() const;
+    QPointF cameraScreenPoint(double x, double y, double z) const;
+    void setCameraImageSize(const QSize &image) {
+        if (photographicCamera) {
+            photographSize = image;
+            updateCameraFrame();
+        }
+    }
+    void markCameraFrameSaved() { photographDirty = false; }
     void select(const std::vector<std::string> &ids);
     void assetResolver(std::function<std::optional<Asset>(const QString &)> resolver) {
         findAsset = std::move(resolver);
@@ -114,5 +134,6 @@ class CadView final : public QWidget {
     void placementStatus(const QString &text, bool active, bool allowed);
     void coordinates(const QString &text);
     void failure(const QString &message);
+    void cameraFramingChanged(bool changed);
 };
 } // namespace lmx
