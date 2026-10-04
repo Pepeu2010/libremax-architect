@@ -1,6 +1,11 @@
 # Matriz de paridade — VDMax 3.0 Arquitetos e Decoradores
 
-Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. LibreMax: prévia 0.15.0 com instaladores Windows e Ubuntu publicados, incluindo Blender/Cycles. **Não há paridade completa nem release 1.0.**
+Pesquisa inicial: 2026-09-29. Implementação clean-room, sem binários ou assets VDMax. LibreMax: prévia 0.16.0 com instaladores Windows e Ubuntu publicados, incluindo Blender/Cycles. **Não há paridade completa nem release 1.0.**
+
+Fonte 0.17: [moldura e composição de câmera](CAMERA_FRAMING.md), com projeção
+nativa comparada ao Blender 4.5/5.2, ajuste pelo mouse, histórico e envio pela
+interface. [Provas e gates em execução](EXECUTION_017.md). A fonte 0.16 acrescenta
+giro/espelho de conjuntos e tutorial com 21 assuntos. O catálogo permanece em 203 itens.
 
 Complemento visual em 2026-09-30: [auditoria](VISUAL_REFERENCE_AUDIT.md), 11 imagens inspecionadas de 47 referências indexadas. `visual_refs` indica somente essas imagens consultadas; não promove paridade funcional automaticamente.
 

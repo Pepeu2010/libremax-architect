@@ -1,7 +1,8 @@
 # Teste no notebook e comparação com VDMax
 
 Use o notebook i3-6006U, Intel HD Graphics 520, 8 GB conectado à tomada. Feche
-outros programas e instale a prévia 0.15. O Blender já acompanha o instalador.
+outros programas e instale a prévia publicada indicada em [INSTALADOR](../INSTALADOR/README.md).
+O Blender já acompanha o instalador.
 
 No menu Iniciar, abra **LibreMax Architect → Testar notebook**. O editor abrirá
 sozinho, fará operações de montagem e produzirá três imagens pequenas com o
