@@ -5,7 +5,8 @@ Moldura nativa em quatro formatos, projeção real do Blender 4.5.9/5.2.1,
 controles pelo mouse, janela compacta, histórico, arquivo único e envio com
 ajuste pendente passaram. Cinco fotos Cycles CPU por execução; UI e comparação
 com o leitor arquivado também passaram. [Provas e limites](EXECUTION_017.md).
-CI Linux e instaladores da nova fonte ainda precisam concluir.
+A CI Linux completa e o pacote instalado em Ubuntu novo passaram. O gate
+Windows da nova fonte ainda precisa concluir.
 
 # Test report — fonte 0.16
 

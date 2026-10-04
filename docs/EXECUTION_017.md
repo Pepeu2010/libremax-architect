@@ -46,8 +46,10 @@ A [CI Linux](https://github.com/Pepeu2010/libremax-architect/actions/runs/371633
 inclui o teste com os dois Blenders e Mesa; a
 [CI dos instaladores](https://github.com/Pepeu2010/libremax-architect/actions/runs/37163354206)
 executa o teste nos pacotes Windows/Ubuntu. Ambas usam a fonte
-`c3d68484d933a1765228a025386874afff859cec`. Os novos gates ainda precisam concluir;
-os instaladores publicados permanecem na prévia 0.16.
+`c3d68484d933a1765228a025386874afff859cec`. A CI Linux completa e os gates
+do pacote Linux/Ubuntu instalado passaram. As capturas do pacote Linux foram
+inspecionadas: foto visível e controles compactos acessíveis. O gate Windows
+ainda precisa concluir; os instaladores publicados permanecem na prévia 0.16.
 
 Essa prova não cobre todas as GPUs/driver, navegação a pé, vistas divididas,
 gizmos ou desempenho em apartamentos grandes. A cena de calibração usa sólidos
